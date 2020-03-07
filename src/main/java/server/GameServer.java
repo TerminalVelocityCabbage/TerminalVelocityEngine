@@ -34,6 +34,9 @@ public class GameServer {
 					return;
 				}
 			}
+		} else {
+			Log.info("Found existing save with name " + id + " loading that save.");
+			start();
 		}
 		Log.error("Something went wrong during server initialization, the server will not start.");
 	}

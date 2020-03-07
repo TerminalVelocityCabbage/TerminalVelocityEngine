@@ -30,8 +30,7 @@ public class GameClient {
 			// If messages arrive from other clients, print them to the console.
 			client.readStringAlways(System.out::println);
 
-			System.out.print("Enter your nickname: ");
-			Packet.builder().putByte(1).putString(scanner.nextLine()).queueAndFlush(client);
+			Packet.builder().putByte(1).putString(id).queueAndFlush(client);
 
 			// Infinite loop to accept user-input for the chat server.
 			while (true) {

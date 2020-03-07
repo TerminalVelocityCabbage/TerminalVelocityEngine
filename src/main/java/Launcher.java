@@ -37,12 +37,12 @@ public class Launcher {
 				isInvalid = false;
 
 				//Create a client object with the given username
-				//System.out.println("Enter a username:");
-				//GameClient gameClient = new GameClient(input.nextLine().replace(" ", "-"));
+				System.out.println("Enter a username:");
+				GameClient client = new GameClient(input.nextLine().replace(" ", "-"));
 
 				//Pass on further operation to the Client
 				Log.info("Launching Client.");
-				GameClient client = new GameClient("id");
+				//GameClient client = new GameClient("id");
 				client.start();
 
 			} else {
