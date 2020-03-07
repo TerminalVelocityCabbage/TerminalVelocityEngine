@@ -1,5 +1,6 @@
 import client.GameClient;
 import engine.debug.Log;
+import org.fusesource.jansi.AnsiConsole;
 import server.GameServer;
 
 import java.util.Scanner;
@@ -7,6 +8,8 @@ import java.util.Scanner;
 public class Launcher {
 
 	public static void main(String[] args) {
+
+		AnsiConsole.systemInstall();
 
 		boolean isInvalid = true;
 
@@ -40,12 +43,14 @@ public class Launcher {
 				//Pass on further operation to the Client
 				Log.info("Launching Client.");
 				GameClient client = new GameClient("id");
-				client.init();
+				client.start();
 
 			} else {
 				Log.error("Invalid input", "pick either c for client or s for server.");
 			}
 		} while (isInvalid);
+
+		AnsiConsole.systemUninstall();
 	}
 
 }

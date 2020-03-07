@@ -3,6 +3,7 @@ package client;
 import com.github.simplenet.Client;
 import com.github.simplenet.packet.Packet;
 import engine.debug.Log;
+import org.fusesource.jansi.AnsiConsole;
 
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -15,7 +16,10 @@ public class GameClient {
 		this.id = id;
 	}
 
-	public void init() {
+	public void start() {
+		//Enable Console colors
+		AnsiConsole.systemInstall();
+
 		// Initialize a new client.
 		Client client = new Client();
 
@@ -31,8 +35,6 @@ public class GameClient {
 
 			// Infinite loop to accept user-input for the chat server.
 			while (true) {
-				System.out.print("> ");
-
 				// Read the client's message from the console.
 				var message = scanner.nextLine();
 
@@ -44,7 +46,6 @@ public class GameClient {
 
 				// Otherwise, send a packet to the server containing the client's message.
 				Packet.builder().putByte(2).putString(message).queueAndFlush(client);
-				Log.info("message sent: " + message);
 			}
 		});
 

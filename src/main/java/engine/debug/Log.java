@@ -1,27 +1,30 @@
 package engine.debug;
 
+import static org.fusesource.jansi.Ansi.Color.*;
+import static org.fusesource.jansi.Ansi.ansi;
+
 public class Log {
 
 	public static void error(String message) {
-		System.out.println(ConsoleColors.RED_BOLD_BRIGHT + "ERROR:" + ConsoleColors.RESET + ConsoleColors.RED + message + ConsoleColors.RESET);
+		System.out.println( ansi().fg(RED).a("ERROR: ").reset().a(message).reset() );
 	}
 
 	public static void error(String message, String additionalInfo) {
-		System.out.println(ConsoleColors.RED_BOLD_BRIGHT + "ERROR: " + ConsoleColors.RESET + ConsoleColors.RED + message + ConsoleColors.RESET);
-		System.out.println(ConsoleColors.RED + " " + additionalInfo + ConsoleColors.RESET);
+		System.out.println( ansi().fg(RED).a("ERROR: ").reset().a(message).reset() );
+		System.out.println( ansi().fg(RED).a(additionalInfo).reset() );
 	}
 
 	public static void warn(String message) {
-		System.out.println(ConsoleColors.YELLOW_BOLD_BRIGHT + "WARNING:" + ConsoleColors.RESET + ConsoleColors.YELLOW + message + ConsoleColors.RESET);
+		System.out.println( ansi().fg(YELLOW).a("WARNING: ").reset().a(message).reset() );
 	}
 
 	public static void warn(String message, String additionalInfo) {
-		System.out.println(ConsoleColors.YELLOW_BOLD_BRIGHT + "WARNING: " + ConsoleColors.RESET + ConsoleColors.YELLOW + message + ConsoleColors.RESET);
-		System.out.println(ConsoleColors.RED + " " + additionalInfo + ConsoleColors.RESET);
+		System.out.println( ansi().fg(YELLOW).a("WARNING: ").reset().a(message).reset() );
+		System.out.println( ansi().fg(YELLOW).a(additionalInfo).reset() );
 	}
 
 	public static void info(String message) {
-		System.out.println(ConsoleColors.BLUE_BOLD_BRIGHT + "INFO:" + ConsoleColors.RESET + ConsoleColors.WHITE + message + ConsoleColors.RESET);
+		System.out.println( ansi().fg(BLUE).a("INFO: ").reset().a(message).reset() );
 	}
 
 }
