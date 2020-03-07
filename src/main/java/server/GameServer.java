@@ -5,9 +5,11 @@ import com.github.simplenet.Server;
 import com.github.simplenet.packet.Packet;
 import engine.configs.Config;
 import engine.debug.Log;
-import engine.io.SaveManager;
+import engine.saves.SaveManager;
 import org.fusesource.jansi.AnsiConsole;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class GameServer {
@@ -25,11 +27,12 @@ public class GameServer {
 			if (SaveManager.createSaveDirectory(id)) {
 				Config config = Config.builder()
 						.setFileName("config")
+						.setPath("saves" + File.separator + id)
 						.addKey("ip", "localhost")
 						.addKey("port", "49056")
 						.addKey("motd", "Message of the Day!")
 						.build();
-				if (SaveManager.createConfigFile(config, id)) {
+				if (config.save()) {
 					start();
 					return;
 				}
@@ -80,9 +83,16 @@ public class GameServer {
 			});
 		});
 
-		//Bind the server to the configured port and IP
-		//TODO read from server config
-		server.bind("localhost", 49056);
+		//Load the server's config file into a usable object
+		try {
+			Config config = Config.load("saves" + File.separator + this.id , "config");
+			//Bind the server to the configured port and IP
+			//TODO read from server config
+			server.bind(config.getOptions().get("ip"),
+					Integer.parseInt(config.getOptions().get("port")));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
