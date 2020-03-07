@@ -20,16 +20,22 @@ public class GameServer {
 
 	public void init() {
 		Log.info("Server Starting with ID: " + id);
-		//TODO check for existing save file
-		SaveManager.createSaveDirectory(id);
-		Config config = Config.builder()
-				.setFileName("config")
-				.addKey("ip", "localhost")
-				.addKey("port", "49056")
-				.addKey("motd", "Message of the Day!")
-				.build();
-		SaveManager.createConfigFile(config, id);
-		start();
+		if (!SaveManager.checkForSaveDirectory(id)) {
+			Log.info("No save Directory found for this save, assuming its a new save.");
+			if (SaveManager.createSaveDirectory(id)) {
+				Config config = Config.builder()
+						.setFileName("config")
+						.addKey("ip", "localhost")
+						.addKey("port", "49056")
+						.addKey("motd", "Message of the Day!")
+						.build();
+				if (SaveManager.createConfigFile(config, id)) {
+					start();
+					return;
+				}
+			}
+		}
+		Log.error("Something went wrong during server initialization, the server will not start.");
 	}
 
 	public void start() {
@@ -37,10 +43,10 @@ public class GameServer {
 		AnsiConsole.systemInstall();
 
 		//Start up the network listeners
-		Server server = new Server();
+		var server = new Server();
 
 		//Create a map of the clients and their usernames
-		ConcurrentHashMap<Client, String> clients = new ConcurrentHashMap();
+		var clients = new ConcurrentHashMap<Client, String>();
 
 		server.onConnect(client -> {
 

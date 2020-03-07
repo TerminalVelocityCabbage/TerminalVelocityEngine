@@ -36,6 +36,9 @@ public class SaveManager {
 		}
 	}
 
-
+	public static boolean checkForSaveDirectory(String saveName) {
+		File file = new File("saves" + File.separator + saveName);
+		return file.exists();
+	}
 
 }
