@@ -43,7 +43,7 @@ public class Launcher {
 				//Pass on further operation to the Client
 				Log.info("Launching Client.");
 				//GameClient client = new GameClient("id");
-				client.start();
+				client.init();
 
 			} else {
 				Log.error("Invalid input", "pick either c for client or s for server.");

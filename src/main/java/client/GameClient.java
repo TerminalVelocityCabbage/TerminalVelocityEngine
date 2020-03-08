@@ -1,36 +1,27 @@
 package client;
 
-import com.github.simplenet.Client;
 import com.github.simplenet.packet.Packet;
-import engine.debug.Log;
-import org.fusesource.jansi.AnsiConsole;
+import engine.client.ClientBase;
 
-import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-public class GameClient {
-
-	String id;
+public class GameClient extends ClientBase {
 
 	public GameClient(String id) {
-		this.id = id;
+		super(id);
 	}
 
-	public void start() {
-		//Enable Console colors
-		AnsiConsole.systemInstall();
-
-		// Initialize a new client.
-		Client client = new Client();
+	public void init() {
+		super.init();
 
 		// This callback is invoked when this client connects to a server.
-		client.onConnect(() -> {
+		getClient().onConnect(() -> {
 			var scanner = new Scanner(System.in);
 
 			// If messages arrive from other clients, print them to the console.
-			client.readStringAlways(System.out::println);
+			getClient().readStringAlways(System.out::println);
 
-			Packet.builder().putByte(1).putString(id).queueAndFlush(client);
+			Packet.builder().putByte(1).putString(getID()).queueAndFlush(getClient());
 
 			// Infinite loop to accept user-input for the chat server.
 			while (true) {
@@ -39,16 +30,20 @@ public class GameClient {
 
 				// If this client types "/leave", close their connection to the server.
 				if ("/leave".equals(message)) {
-					client.close();
+					getClient().close();
 					break;
 				}
 
 				// Otherwise, send a packet to the server containing the client's message.
-				Packet.builder().putByte(2).putString(message).queueAndFlush(client);
+				Packet.builder().putByte(2).putString(message).queueAndFlush(getClient());
 			}
 		});
 
-		// Attempt to connect to a server AFTER registering listeners.
-		client.connect("localhost", 49056);
+		this.start();
+	}
+
+	@Override
+	public void start() {
+		super.start();
 	}
 }
