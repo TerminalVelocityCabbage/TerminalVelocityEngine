@@ -29,8 +29,8 @@ public class GameClient extends ClientBase {
 				var message = scanner.nextLine();
 
 				// If this client types "/leave", close their connection to the server.
-				if ("/leave".equals(message)) {
-					getClient().close();
+				if (message.startsWith("/")) {
+					Packet.builder().putByte(0).putString(message).queueAndFlush(getClient());
 					break;
 				}
 
