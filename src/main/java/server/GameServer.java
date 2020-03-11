@@ -45,7 +45,7 @@ public class GameServer extends ServerBase {
 					Command.builder()
 							.alias("hello", "hi")
 							.executes((player, arguments) -> {
-								Log.info(player + " said hello.");
+								Log.info(player.getUsername() + " said hello.");
 								return CommandResult.success();
 							})
 							.build()
