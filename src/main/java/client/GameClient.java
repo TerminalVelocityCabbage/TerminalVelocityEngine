@@ -31,11 +31,10 @@ public class GameClient extends ClientBase {
 				// If this client types "/leave", close their connection to the server.
 				if (message.startsWith("/")) {
 					Packet.builder().putByte(0).putString(message).queueAndFlush(getClient());
-					continue;
+				} else {
+					// Otherwise, send a packet to the server containing the client's message.
+					Packet.builder().putByte(2).putString(message).queueAndFlush(getClient());
 				}
-
-				// Otherwise, send a packet to the server containing the client's message.
-				Packet.builder().putByte(2).putString(message).queueAndFlush(getClient());
 			}
 		});
 

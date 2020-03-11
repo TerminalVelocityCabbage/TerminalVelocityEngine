@@ -11,7 +11,7 @@ public class CommandParser {
 		input = input.substring(1);
 		for (Command command : CommandStorage.getCommands()) {
 			for (String alias : command.getAliases()) {
-				command.getExecutable().execute(player, input);
+				return command.getExecutable().execute(player, input);
 			}
 		}
 		return CommandResult.failure("");
