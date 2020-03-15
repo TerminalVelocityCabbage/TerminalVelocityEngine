@@ -8,11 +8,11 @@ import java.util.Collection;
 public class EventDispatcher {
 	Collection<Object> handlers = new ArrayList<Object>();
 
-	public void addHandler(Object handler) {
+	public void addEventHandler(Object handler) {
 		this.handlers.add(handler);
 	}
 
-	public void removeHandler(Object handler) {
+	public void removeEventHandler(Object handler) {
 		this.handlers.remove(handler);
 	}
 

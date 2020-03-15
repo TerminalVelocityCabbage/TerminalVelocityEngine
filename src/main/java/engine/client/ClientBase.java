@@ -1,9 +1,12 @@
 package engine.client;
 
 import com.github.simplenet.Client;
+import engine.debug.Log;
+import engine.events.EventDispatcher;
+import engine.events.client.ClientConnectionEvent;
 import org.fusesource.jansi.AnsiConsole;
 
-public abstract class ClientBase {
+public abstract class ClientBase extends EventDispatcher {
 
 	String id;
 	Client client;
@@ -26,15 +29,27 @@ public abstract class ClientBase {
 	}
 
 	public void start() {
+
+		client.onConnect(() -> {
+			Log.info(ClientConnectionEvent.CONNECT);
+			dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.CONNECT, client));
+		});
+
+		client.preDisconnect(() -> {
+			Log.info(ClientConnectionEvent.PRE_DISCONNECT);
+			dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.PRE_DISCONNECT, client));
+		});
+
+		client.postDisconnect(() -> {
+			Log.info(ClientConnectionEvent.POST_DISCONNECT);
+			dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.POST_DISCONNECT, client));
+		});
+
 		// Attempt to connect to a server AFTER registering listeners.
 		client.connect("localhost", 49056);
 	}
 
-	public Client getClient() {
-		return client;
-	}
-
 	public String getID() {
-		return id;
+		return this.id;
 	}
 }

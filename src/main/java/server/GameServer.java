@@ -33,6 +33,7 @@ public class GameServer extends ServerBase {
 
 			//When a client disconnects remove them from the map
 			client.postDisconnect(() -> {
+				//TODO check to see if the client ever achieved player status
 				Log.info(clients.get(client).getUsername() + " left.");
 				clients.remove(client);
 			});
