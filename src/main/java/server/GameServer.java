@@ -68,6 +68,10 @@ public class GameServer extends ServerBase {
 							CommandResult result = CommandParser.parse(arguments, clients.get(client));
 							if (!result.wasSuccessful()) {
 								Packet.builder().putString("Error: " + result.getFeedback()).queueAndFlush(client);
+							} else {
+								if (result.getFeedback().length() > 0) {
+									Packet.builder().putString(result.getFeedback()).queueAndFlush(client);
+								}
 							}
 						});
 						break;
