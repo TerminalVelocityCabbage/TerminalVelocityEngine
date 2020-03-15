@@ -1,23 +1,21 @@
 package engine.server;
 
 import com.github.simplenet.Server;
-import engine.configs.Config;
-import engine.debug.Log;
 import engine.events.EventDispatcher;
+import engine.events.server.ServerBindEvent;
 import engine.events.server.ServerClientConnectionEvent;
-import engine.saves.SaveManager;
+import engine.events.server.ServerStartEvent;
 import org.fusesource.jansi.AnsiConsole;
-
-import java.io.File;
-import java.io.IOException;
 
 public abstract class ServerBase extends EventDispatcher {
 
 	String id;
 	Server server;
+	private boolean shouldClose;
 
 	public ServerBase(String id) {
 		this.id = id;
+		shouldClose = false;
 	}
 
 	public void init() {
@@ -27,31 +25,17 @@ public abstract class ServerBase extends EventDispatcher {
 
 		//Start up the network listeners
 		server = new Server();
+		dispatchEvent(new ServerStartEvent(ServerStartEvent.INIT, server));
+		postInit();
 	}
 
 	//Basically set the server files up before starting any connections
-	private void preInit() {
-		//Check for and load or create new server configuration
-		Log.info("Server Starting with ID: " + id);
-		if (!SaveManager.checkForSaveDirectory(id)) {
-			Log.info("No save Directory found for this save, assuming its a new save.");
-			if (SaveManager.createSaveDirectory(id)) {
-				Config config = Config.builder()
-						.setFileName("server")
-						.setPath("saves" + File.separator + id)
-						.addKey("ip", "localhost")
-						.addKey("port", "49056")
-						.addKey("motd", "Message of the Day!")
-						.build();
-				if (config.save()) {
-					return;
-				}
-			}
-		} else {
-			Log.info("Found existing save with name " + id + " loading that save.");
-			return;
-		}
-		Log.error("Something went wrong during server initialization, the server will not start.");
+	public void preInit() {
+		dispatchEvent(new ServerStartEvent(ServerStartEvent.PRE_INIT, server));
+	}
+
+	public void postInit() {
+		dispatchEvent(new ServerStartEvent(ServerStartEvent.POST_INIT, server));
 	}
 
 	//Binds the server and begins allowing connections
@@ -62,14 +46,15 @@ public abstract class ServerBase extends EventDispatcher {
 			dispatchEvent(new ServerClientConnectionEvent(ServerClientConnectionEvent.CONNECT, server, client));
 		});
 
-		//Load the server's config file into a usable object
-		try {
-			Config config = Config.load("saves" + File.separator + this.id , "server");
-			//Bind the server to the configured port and IP
-			server.bind(config.getOptions().get("ip"),
-					Integer.parseInt(config.getOptions().get("port")));
-		} catch (IOException e) {
-			e.printStackTrace();
+		dispatchEvent(new ServerStartEvent(ServerStartEvent.START, server));
+	}
+
+	public void bind(String address, int port) {
+		dispatchEvent(new ServerBindEvent(ServerBindEvent.PRE, server));
+		server.bind(address, port);
+		dispatchEvent(new ServerBindEvent(ServerBindEvent.POST, server));
+		while (!shouldClose) {
+
 		}
 	}
 
@@ -77,4 +62,11 @@ public abstract class ServerBase extends EventDispatcher {
 		return this.server;
 	}
 
+	public String getId() {
+		return this.id;
+	}
+
+	public void setShouldClose(boolean shouldClose) {
+		this.shouldClose = shouldClose;
+	}
 }

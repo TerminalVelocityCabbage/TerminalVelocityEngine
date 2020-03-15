@@ -7,12 +7,17 @@ import engine.command.Command;
 import engine.command.CommandParser;
 import engine.command.CommandResult;
 import engine.command.CommandStorage;
+import engine.configs.Config;
 import engine.debug.Log;
 import engine.entity.Player;
 import engine.events.HandleEvent;
 import engine.events.server.ServerClientConnectionEvent;
+import engine.events.server.ServerStartEvent;
+import engine.saves.SaveManager;
 import engine.server.ServerBase;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class GameServer extends ServerBase {
@@ -22,24 +27,88 @@ public class GameServer extends ServerBase {
 
 	public GameServer(String id) {
 		super(id);
-	}
-
-	@Override
-	public void init() {
-		super.init();
-		super.addEventHandler(this);
-		//Create a map of the clients and their usernames
-		this.clients = new ConcurrentHashMap<>();
-		this.start();
-	}
-
-	@Override
-	public void start() {
-		super.start();
+		addEventHandler(this);
 	}
 
 	public CommandStorage getCommandStorage() {
 		return commandStorage;
+	}
+
+	@HandleEvent(ServerStartEvent.PRE_INIT)
+	public void onPreInit(ServerStartEvent event) {
+		//Check for and load or create new server configuration
+		Log.info("Server Starting with ID: " + getId());
+		if (!SaveManager.checkForSaveDirectory(getId())) {
+			Log.info("No save Directory found for this save, assuming its a new save.");
+			if (SaveManager.createSaveDirectory(getId())) {
+				Config config = Config.builder()
+						.setFileName("server")
+						.setPath("saves" + File.separator + getId())
+						.addKey("ip", "localhost")
+						.addKey("port", "49056")
+						.addKey("motd", "Message of the Day!")
+						.build();
+				if (config.save()) {
+					return;
+				}
+			}
+		} else {
+			Log.info("Found existing save with name " + getId() + " loading that save.");
+			return;
+		}
+		Log.error("Something went wrong during server initialization, the server will not start.");
+	}
+
+	@HandleEvent(ServerStartEvent.INIT)
+	public void onInit(ServerStartEvent event) {
+		this.clients = new ConcurrentHashMap<>();
+
+		//Initialize Command Storage
+		this.commandStorage = new CommandStorage();
+
+		//Create commands
+		getCommandStorage().addCommand(
+				Command.builder()
+						.alias("hello", "hi")
+						.addSubCommand(
+								Command.builder()
+										.alias("all")
+										.executes((player, arguments) -> {
+											getServer().queueAndFlushToAllExcept(Packet.builder().putString(player.getUsername() + ": said hi."));
+											return CommandResult.success();
+										})
+										.build()
+						)
+						.executes((player, arguments) -> {
+							Log.info(player.getUsername() + " said hello.");
+							return CommandResult.success();
+						})
+						.build()
+		);
+
+		getCommandStorage().addCommand(
+				Command.builder()
+						.alias("stop")
+						.executes(((player, arguments) -> {
+							//TODO this needs to use a permission system probably
+							setShouldClose(true);
+							return CommandResult.success();
+						}))
+						.build()
+		);
+	}
+
+	@HandleEvent(ServerStartEvent.START)
+	public void onStart(ServerStartEvent event) {
+		//Load the server's config file into a usable object
+		try {
+			Config config = Config.load("saves" + File.separator + getId() , "server");
+			//Bind the server to the configured port and IP
+			super.bind(config.getOptions().get("ip"),
+					Integer.parseInt(config.getOptions().get("port")));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@HandleEvent(ServerClientConnectionEvent.CONNECT)
@@ -57,29 +126,6 @@ public class GameServer extends ServerBase {
 		client.postDisconnect(() -> {
 			super.dispatchEvent(new ServerClientConnectionEvent(ServerClientConnectionEvent.POST_DISCONNECT, server, client));
 		});
-
-		//Initialize Command Storage
-		this.commandStorage = new CommandStorage();
-
-		//Create a command
-		getCommandStorage().addCommand(
-				Command.builder()
-						.alias("hello", "hi")
-						.addSubCommand(
-								Command.builder()
-										.alias("all")
-										.executes((player, arguments) -> {
-											getServer().queueAndFlushToAllExcept(Packet.builder().putString(player.getUsername() + ": said hi."), client);
-											return CommandResult.success();
-										})
-										.build()
-						)
-						.executes((player, arguments) -> {
-							Log.info(player.getUsername() + " said hello.");
-							return CommandResult.success();
-						})
-						.build()
-		);
 
 		//Read bytes as they come in one at a time
 		client.readByteAlways(opcode -> {

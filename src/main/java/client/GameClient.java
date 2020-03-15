@@ -11,18 +11,20 @@ public class GameClient extends ClientBase {
 
 	public GameClient(String id) {
 		super(id);
+		super.addEventHandler(this);
 	}
 
 	public void init() {
 		super.init();
 		//Register this class as an event listener
-		super.addEventHandler(this);
 		this.start();
 	}
 
 	@Override
 	public void start() {
 		super.start();
+		//TODO have the client choose the address and port
+		connect("localhost", 49056);
 	}
 
 	@HandleEvent({ClientConnectionEvent.CONNECT})
@@ -42,6 +44,7 @@ public class GameClient extends ClientBase {
 
 			// If this client types a command use opcode 0
 			// Otherwise, send a packet to the server containing the client's message use opcode 2.
+			//TODO the server should decide weather there is command parsing or not
 			if (message.startsWith("/")) {
 				Packet.builder().putByte(0).putString(message).queueAndFlush(event.getClient());
 			} else {
