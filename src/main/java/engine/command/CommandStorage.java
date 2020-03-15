@@ -14,4 +14,16 @@ public class CommandStorage {
 		return commands;
 	}
 
+	public static ArrayList<String> getCommandTree(Command command, String currentText) {
+		var possibilities = new ArrayList<String>();
+		for (Command possible : command.getSubCommands()) {
+			for (String alias : possible.getAliases()) {
+				if (alias.startsWith(currentText)) {
+					possibilities.add(alias);
+				}
+			}
+		}
+		return possibilities;
+	}
+
 }
