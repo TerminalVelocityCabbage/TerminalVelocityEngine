@@ -31,17 +31,14 @@ public abstract class ClientBase extends EventDispatcher {
 	public void start() {
 
 		client.onConnect(() -> {
-			Log.info(ClientConnectionEvent.CONNECT);
 			dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.CONNECT, client));
 		});
 
 		client.preDisconnect(() -> {
-			Log.info(ClientConnectionEvent.PRE_DISCONNECT);
 			dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.PRE_DISCONNECT, client));
 		});
 
 		client.postDisconnect(() -> {
-			Log.info(ClientConnectionEvent.POST_DISCONNECT);
 			dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.POST_DISCONNECT, client));
 		});
 
