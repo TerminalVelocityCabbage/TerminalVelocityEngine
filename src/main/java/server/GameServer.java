@@ -44,6 +44,15 @@ public class GameServer extends ServerBase {
 			getCommandStorage().addCommand(
 					Command.builder()
 							.alias("hello", "hi")
+							.addSubCommand(
+									Command.builder()
+											.alias("all")
+											.executes((player, arguments) -> {
+												getServer().queueAndFlushToAllExcept(Packet.builder().putString(player.getUsername() + ": said hi."), client);
+												return CommandResult.success();
+											})
+											.build()
+							)
 							.executes((player, arguments) -> {
 								Log.info(player.getUsername() + " said hello.");
 								return CommandResult.success();
@@ -56,7 +65,10 @@ public class GameServer extends ServerBase {
 				switch (opcode) {
 					case 0: //Command
 						client.readString(arguments -> {
-							CommandParser.parse(arguments, clients.get(client));
+							CommandResult result = CommandParser.parse(arguments, clients.get(client));
+							if (!result.wasSuccessful()) {
+								Packet.builder().putString("Error: " + result.getFeedback()).queueAndFlush(client);
+							}
 						});
 						break;
 					case 1: //Change nickname

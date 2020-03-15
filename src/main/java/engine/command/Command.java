@@ -60,4 +60,6 @@ public class Command {
 		return executable;
 	}
 
+	public boolean hasSubCommands() { return subCommands.size() > 0; }
+
 }

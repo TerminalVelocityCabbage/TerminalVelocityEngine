@@ -15,7 +15,7 @@ public class CommandResult {
 	}
 
 	public static CommandResult success(String feedback) {
-		return new CommandResult(true, "");
+		return new CommandResult(true, feedback);
 	}
 
 	public static CommandResult failure() {
@@ -23,7 +23,7 @@ public class CommandResult {
 	}
 
 	public static CommandResult failure(String feedback) {
-		return new CommandResult(false, "");
+		return new CommandResult(false, feedback);
 	}
 
 	public String getFeedback() {
