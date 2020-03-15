@@ -54,7 +54,7 @@ public abstract class ServerBase extends EventDispatcher {
 		server.bind(address, port);
 		dispatchEvent(new ServerBindEvent(ServerBindEvent.POST, server));
 		while (!shouldClose) {
-
+			continue;
 		}
 	}
 

@@ -100,62 +100,65 @@ public class GameServer extends ServerBase {
 
 	@HandleEvent(ServerStartEvent.START)
 	public void onStart(ServerStartEvent event) {
+
+		//Register server listeners
+		event.getServer().onConnect(client -> {
+			client.preDisconnect(() -> {
+				super.dispatchEvent(new ServerClientConnectionEvent(ServerClientConnectionEvent.PRE_DISCONNECT, event.getServer(), client));
+			});
+
+			//When a client disconnects remove them from the map
+			client.postDisconnect(() -> {
+				super.dispatchEvent(new ServerClientConnectionEvent(ServerClientConnectionEvent.POST_DISCONNECT, event.getServer(), client));
+			});
+
+			//Read bytes as they come in one at a time
+			//TODO make these fire events based on their opcode
+			client.readByteAlways(opcode -> {
+				switch (opcode) {
+					case 0: //Command
+						client.readString(arguments -> {
+							CommandResult result = CommandParser.parse(arguments, clients.get(client));
+							if (!result.wasSuccessful()) {
+								Packet.builder().putString("Error: " + result.getFeedback()).queueAndFlush(client);
+							} else {
+								if (result.getFeedback().length() > 0) {
+									Packet.builder().putString(result.getFeedback()).queueAndFlush(client);
+								}
+							}
+						});
+						break;
+					case 1: //Change nickname
+						client.readString(username -> {
+							clients.put(client, new Player(username));
+							Log.info("Client packet received: " + username + " successfully joined.");
+						});
+						break;
+					case 2: //Send message to connected clients
+						client.readString(message -> {
+							message = clients.get(client).getUsername() + ": " + message;
+							getServer().queueAndFlushToAllExcept(Packet.builder().putString(message), client);
+						});
+						break;
+				}
+			});
+		});
+
 		//Load the server's config file into a usable object
 		try {
 			Config config = Config.load("saves" + File.separator + getId() , "server");
 			//Bind the server to the configured port and IP
-			super.bind(config.getOptions().get("ip"),
-					Integer.parseInt(config.getOptions().get("port")));
+			bind(config.getOptions().get("ip"), Integer.parseInt(config.getOptions().get("port")));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
+	//TODO these client methods need to be added to the server before it's bound
+
 	@HandleEvent(ServerClientConnectionEvent.CONNECT)
 	public void onClientConnect(ServerClientConnectionEvent event) {
 		Log.info("Client attempting to establish connection.");
-
-		Client client = event.getClient();
-		Server server = event.getServer();
-
-		client.preDisconnect(() -> {
-			super.dispatchEvent(new ServerClientConnectionEvent(ServerClientConnectionEvent.PRE_DISCONNECT, server, client));
-		});
-
-		//When a client disconnects remove them from the map
-		client.postDisconnect(() -> {
-			super.dispatchEvent(new ServerClientConnectionEvent(ServerClientConnectionEvent.POST_DISCONNECT, server, client));
-		});
-
-		//Read bytes as they come in one at a time
-		client.readByteAlways(opcode -> {
-			switch (opcode) {
-				case 0: //Command
-					client.readString(arguments -> {
-						CommandResult result = CommandParser.parse(arguments, clients.get(client));
-						if (!result.wasSuccessful()) {
-							Packet.builder().putString("Error: " + result.getFeedback()).queueAndFlush(client);
-						} else {
-							if (result.getFeedback().length() > 0) {
-								Packet.builder().putString(result.getFeedback()).queueAndFlush(client);
-							}
-						}
-					});
-					break;
-				case 1: //Change nickname
-					client.readString(username -> {
-						clients.put(client, new Player(username));
-						Log.info("Client packet received: " + username + " successfully joined.");
-					});
-					break;
-				case 2: //Send message to connected clients
-					client.readString(message -> {
-						message = clients.get(client).getUsername() + ": " + message;
-						getServer().queueAndFlushToAllExcept(Packet.builder().putString(message), client);
-					});
-					break;
-			}
-		});
 	}
 
 	@HandleEvent(ServerClientConnectionEvent.POST_DISCONNECT)
