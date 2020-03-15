@@ -2,7 +2,6 @@ package client;
 
 import com.github.simplenet.packet.Packet;
 import engine.client.ClientBase;
-import engine.debug.Log;
 import engine.events.HandleEvent;
 import engine.events.client.ClientConnectionEvent;
 

@@ -1,7 +1,6 @@
 package engine.client;
 
 import com.github.simplenet.Client;
-import engine.debug.Log;
 import engine.events.EventDispatcher;
 import engine.events.client.ClientConnectionEvent;
 import org.fusesource.jansi.AnsiConsole;
@@ -43,6 +42,7 @@ public abstract class ClientBase extends EventDispatcher {
 		});
 
 		// Attempt to connect to a server AFTER registering listeners.
+		//TODO make the client choose the address and port
 		client.connect("localhost", 49056);
 	}
 

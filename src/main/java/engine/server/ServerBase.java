@@ -3,13 +3,15 @@ package engine.server;
 import com.github.simplenet.Server;
 import engine.configs.Config;
 import engine.debug.Log;
+import engine.events.EventDispatcher;
+import engine.events.server.ServerClientConnectionEvent;
 import engine.saves.SaveManager;
 import org.fusesource.jansi.AnsiConsole;
 
 import java.io.File;
 import java.io.IOException;
 
-public abstract class ServerBase {
+public abstract class ServerBase extends EventDispatcher {
 
 	String id;
 	Server server;
@@ -54,6 +56,12 @@ public abstract class ServerBase {
 
 	//Binds the server and begins allowing connections
 	public void start() {
+
+		//dispatch events
+		server.onConnect(client -> {
+			dispatchEvent(new ServerClientConnectionEvent(ServerClientConnectionEvent.CONNECT, server, client));
+		});
+
 		//Load the server's config file into a usable object
 		try {
 			Config config = Config.load("saves" + File.separator + this.id , "server");
