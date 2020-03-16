@@ -1,17 +1,19 @@
 package engine.server;
 
 import com.github.simplenet.Server;
-import com.github.simplenet.packet.Packet;
-import engine.debug.Log;
-import engine.entity.Player;
+import engine.configs.Config;
 import engine.events.EventDispatcher;
 import engine.events.server.*;
 import org.fusesource.jansi.AnsiConsole;
+
+import java.io.File;
+import java.io.IOException;
 
 public abstract class ServerBase extends EventDispatcher {
 
 	String id;
 	Server server;
+	//TODO should close should instead be a packet to call server.close() but I need to do it safely.
 	private boolean shouldClose;
 
 	public ServerBase(String id) {
@@ -25,40 +27,38 @@ public abstract class ServerBase extends EventDispatcher {
 		AnsiConsole.systemInstall();
 
 		//Start up the network listeners
-		server = new Server();
-		dispatchEvent(new ServerStartEvent(ServerStartEvent.INIT, server));
+		this.server = new Server();
+		dispatchEvent(new ServerStartEvent(ServerStartEvent.INIT, getServer()));
 		postInit();
 	}
 
 	//Basically set the server files up before starting any connections
 	public void preInit() {
-		dispatchEvent(new ServerStartEvent(ServerStartEvent.PRE_INIT, server));
+		dispatchEvent(new ServerStartEvent(ServerStartEvent.PRE_INIT, getServer()));
 	}
 
 	public void postInit() {
-		dispatchEvent(new ServerStartEvent(ServerStartEvent.POST_INIT, server));
+		dispatchEvent(new ServerStartEvent(ServerStartEvent.POST_INIT, getServer()));
 	}
 
 	//Binds the server and begins allowing connections
 	public void start() {
 
 		//dispatch events
-		server.onConnect(client -> {
-			dispatchEvent(new ServerClientConnectionEvent(ServerClientConnectionEvent.CONNECT, server, client));
-		});
-
 		//Register server listeners
-		server.onConnect(client -> {
+		getServer().onConnect(client -> {
+
+			dispatchEvent(new ServerClientConnectionEvent(ServerClientConnectionEvent.CONNECT, getServer(), client));
+
 			client.preDisconnect(() -> {
-				super.dispatchEvent(new ServerClientConnectionEvent(ServerClientConnectionEvent.PRE_DISCONNECT, server, client));
+				super.dispatchEvent(new ServerClientConnectionEvent(ServerClientConnectionEvent.PRE_DISCONNECT, getServer(), client));
 			});
 
-			//When a client disconnects remove them from the map
 			client.postDisconnect(() -> {
-				super.dispatchEvent(new ServerClientConnectionEvent(ServerClientConnectionEvent.POST_DISCONNECT, server, client));
+				super.dispatchEvent(new ServerClientConnectionEvent(ServerClientConnectionEvent.POST_DISCONNECT, getServer(), client));
 			});
 
-			//Read bytes as they come in one at a time
+			//Read packets and dispatch events based on opcode
 			client.readByteAlways(opcode -> {
 				switch (opcode) {
 					case PacketTypes.COMMAND:
@@ -80,16 +80,19 @@ public abstract class ServerBase extends EventDispatcher {
 			});
 		});
 
-		dispatchEvent(new ServerStartEvent(ServerStartEvent.START, server));
-	}
-
-	public void bind(String address, int port) {
-		dispatchEvent(new ServerBindEvent(ServerBindEvent.PRE, server));
-		server.bind(address, port);
-		dispatchEvent(new ServerBindEvent(ServerBindEvent.POST, server));
-		while (!shouldClose) {
-			continue;
+		//Load the server's config file into a usable object
+		try {
+			Config config = Config.load("saves" + File.separator + getId() , "server");
+			//Bind the server to the configured port and IP
+			//TODO binding needs it's own system so that an event can pass information back to the ServerBase before post bind if it needs information pre bind
+			dispatchEvent(new ServerBindEvent(ServerBindEvent.PRE, getServer()));
+			getServer().bind(config.getOptions().get("ip"), Integer.parseInt(config.getOptions().get("port")));
+			dispatchEvent(new ServerBindEvent(ServerBindEvent.POST, getServer()));
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+
+		dispatchEvent(new ServerStartEvent(ServerStartEvent.START, getServer()));
 	}
 
 	public Server getServer() {

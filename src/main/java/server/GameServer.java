@@ -15,7 +15,6 @@ import engine.saves.SaveManager;
 import engine.server.ServerBase;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class GameServer extends ServerBase {
@@ -98,15 +97,7 @@ public class GameServer extends ServerBase {
 
 	@HandleEvent(ServerStartEvent.START)
 	public void onStart(ServerStartEvent event) {
-
-		//Load the server's config file into a usable object
-		try {
-			Config config = Config.load("saves" + File.separator + getId() , "server");
-			//Bind the server to the configured port and IP
-			bind(config.getOptions().get("ip"), Integer.parseInt(config.getOptions().get("port")));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		Log.info("Server Started.");
 	}
 
 	@HandleEvent(ServerCommandReceivedEvent.RECEIVED)

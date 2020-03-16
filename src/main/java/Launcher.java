@@ -30,6 +30,7 @@ public class Launcher {
 				//Let the server class handle itself now.
 				Log.info("Launching Server.");
 				gameServer.init();
+				gameServer.start();
 
 			} else if (selection.equals("c")) {
 
@@ -42,7 +43,6 @@ public class Launcher {
 
 				//Pass on further operation to the Client
 				Log.info("Launching Client.");
-				//GameClient client = new GameClient("id");
 				client.init();
 
 			} else {
