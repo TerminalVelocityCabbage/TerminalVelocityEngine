@@ -1,10 +1,11 @@
 package engine.server;
 
 import com.github.simplenet.Server;
+import com.github.simplenet.packet.Packet;
+import engine.debug.Log;
+import engine.entity.Player;
 import engine.events.EventDispatcher;
-import engine.events.server.ServerBindEvent;
-import engine.events.server.ServerClientConnectionEvent;
-import engine.events.server.ServerStartEvent;
+import engine.events.server.*;
 import org.fusesource.jansi.AnsiConsole;
 
 public abstract class ServerBase extends EventDispatcher {
@@ -44,6 +45,39 @@ public abstract class ServerBase extends EventDispatcher {
 		//dispatch events
 		server.onConnect(client -> {
 			dispatchEvent(new ServerClientConnectionEvent(ServerClientConnectionEvent.CONNECT, server, client));
+		});
+
+		//Register server listeners
+		server.onConnect(client -> {
+			client.preDisconnect(() -> {
+				super.dispatchEvent(new ServerClientConnectionEvent(ServerClientConnectionEvent.PRE_DISCONNECT, server, client));
+			});
+
+			//When a client disconnects remove them from the map
+			client.postDisconnect(() -> {
+				super.dispatchEvent(new ServerClientConnectionEvent(ServerClientConnectionEvent.POST_DISCONNECT, server, client));
+			});
+
+			//Read bytes as they come in one at a time
+			client.readByteAlways(opcode -> {
+				switch (opcode) {
+					case PacketTypes.COMMAND:
+						client.readString(arguments -> {
+							super.dispatchEvent(new ServerCommandReceivedEvent(ServerCommandReceivedEvent.RECEIVED, client, arguments));
+						});
+						break;
+					case PacketTypes.CLIENT_VALIDATION:
+						client.readString(username -> {
+							super.dispatchEvent(new ServerClientPacketReceivedEvent(ServerClientPacketReceivedEvent.RECEIVED, client, username));
+						});
+						break;
+					case PacketTypes.CHAT:
+						client.readString(message -> {
+							super.dispatchEvent(new ServerChatEvent(ServerChatEvent.RECEIVED, client, message));
+						});
+						break;
+				}
+			});
 		});
 
 		dispatchEvent(new ServerStartEvent(ServerStartEvent.START, server));

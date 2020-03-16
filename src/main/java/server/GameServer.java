@@ -1,7 +1,6 @@
 package server;
 
 import com.github.simplenet.Client;
-import com.github.simplenet.Server;
 import com.github.simplenet.packet.Packet;
 import engine.command.Command;
 import engine.command.CommandParser;
@@ -11,8 +10,7 @@ import engine.configs.Config;
 import engine.debug.Log;
 import engine.entity.Player;
 import engine.events.HandleEvent;
-import engine.events.server.ServerClientConnectionEvent;
-import engine.events.server.ServerStartEvent;
+import engine.events.server.*;
 import engine.saves.SaveManager;
 import engine.server.ServerBase;
 
@@ -101,49 +99,6 @@ public class GameServer extends ServerBase {
 	@HandleEvent(ServerStartEvent.START)
 	public void onStart(ServerStartEvent event) {
 
-		//Register server listeners
-		event.getServer().onConnect(client -> {
-			client.preDisconnect(() -> {
-				super.dispatchEvent(new ServerClientConnectionEvent(ServerClientConnectionEvent.PRE_DISCONNECT, event.getServer(), client));
-			});
-
-			//When a client disconnects remove them from the map
-			client.postDisconnect(() -> {
-				super.dispatchEvent(new ServerClientConnectionEvent(ServerClientConnectionEvent.POST_DISCONNECT, event.getServer(), client));
-			});
-
-			//Read bytes as they come in one at a time
-			//TODO make these fire events based on their opcode
-			client.readByteAlways(opcode -> {
-				switch (opcode) {
-					case 0: //Command
-						client.readString(arguments -> {
-							CommandResult result = CommandParser.parse(arguments, clients.get(client));
-							if (!result.wasSuccessful()) {
-								Packet.builder().putString("Error: " + result.getFeedback()).queueAndFlush(client);
-							} else {
-								if (result.getFeedback().length() > 0) {
-									Packet.builder().putString(result.getFeedback()).queueAndFlush(client);
-								}
-							}
-						});
-						break;
-					case 1: //Change nickname
-						client.readString(username -> {
-							clients.put(client, new Player(username));
-							Log.info("Client packet received: " + username + " successfully joined.");
-						});
-						break;
-					case 2: //Send message to connected clients
-						client.readString(message -> {
-							message = clients.get(client).getUsername() + ": " + message;
-							getServer().queueAndFlushToAllExcept(Packet.builder().putString(message), client);
-						});
-						break;
-				}
-			});
-		});
-
 		//Load the server's config file into a usable object
 		try {
 			Config config = Config.load("saves" + File.separator + getId() , "server");
@@ -152,6 +107,30 @@ public class GameServer extends ServerBase {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@HandleEvent(ServerCommandReceivedEvent.RECEIVED)
+	public void onCommand(ServerCommandReceivedEvent event) {
+		CommandResult result = CommandParser.parse(event.getCommand(), clients.get(event.getClient()));
+		if (!result.wasSuccessful()) {
+			Packet.builder().putString("Error: " + result.getFeedback()).queueAndFlush(event.getClient());
+		} else {
+			if (result.getFeedback().length() > 0) {
+				Packet.builder().putString(result.getFeedback()).queueAndFlush(event.getClient());
+			}
+		}
+	}
+
+	@HandleEvent(ServerClientPacketReceivedEvent.RECEIVED)
+	public void onClientValidation(ServerClientPacketReceivedEvent event) {
+		clients.put(event.getClient(), new Player(event.getUsername()));
+		Log.info("Client packet received: " + event.getUsername() + " successfully joined.");
+	}
+
+	@HandleEvent(ServerChatEvent.RECEIVED)
+	public void onChat(ServerChatEvent event) {
+		getServer().queueAndFlushToAllExcept(Packet.builder().putString(clients.get(event.getClient()).getUsername() +
+				": " + event.getMessage()), event.getClient());
 	}
 
 	//TODO these client methods need to be added to the server before it's bound
