@@ -61,11 +61,6 @@ public abstract class ServerBase extends EventDispatcher {
 			//Read packets and dispatch events based on opcode
 			client.readByteAlways(opcode -> {
 				switch (opcode) {
-					case PacketTypes.COMMAND:
-						client.readString(arguments -> {
-							super.dispatchEvent(new ServerCommandReceivedEvent(ServerCommandReceivedEvent.RECEIVED, client, arguments));
-						});
-						break;
 					case PacketTypes.CLIENT_VALIDATION:
 						client.readString(username -> {
 							super.dispatchEvent(new ServerClientPacketReceivedEvent(ServerClientPacketReceivedEvent.RECEIVED, client, username));
@@ -73,7 +68,11 @@ public abstract class ServerBase extends EventDispatcher {
 						break;
 					case PacketTypes.CHAT:
 						client.readString(message -> {
-							super.dispatchEvent(new ServerChatEvent(ServerChatEvent.RECEIVED, client, message));
+							if (message.startsWith("/")) {
+								super.dispatchEvent(new ServerCommandReceivedEvent(ServerCommandReceivedEvent.RECEIVED, client, message));
+							} else {
+								super.dispatchEvent(new ServerChatEvent(ServerChatEvent.RECEIVED, client, message));
+							}
 						});
 						break;
 				}

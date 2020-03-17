@@ -12,6 +12,7 @@ import engine.entity.Player;
 import engine.events.HandleEvent;
 import engine.events.server.*;
 import engine.saves.SaveManager;
+import engine.server.PacketTypes;
 import engine.server.ServerBase;
 
 import java.io.File;
@@ -71,7 +72,7 @@ public class GameServer extends ServerBase {
 								Command.builder()
 										.alias("all")
 										.executes((player, arguments) -> {
-											getServer().queueAndFlushToAllExcept(Packet.builder().putString(player.getUsername() + ": said hi."));
+											getServer().queueAndFlushToAllExcept(Packet.builder().putByte(PacketTypes.CHAT).putString(player.getUsername() + ": said hi."));
 											return CommandResult.success();
 										})
 										.build()
@@ -104,10 +105,10 @@ public class GameServer extends ServerBase {
 	public void onCommand(ServerCommandReceivedEvent event) {
 		CommandResult result = CommandParser.parse(event.getCommand(), clients.get(event.getClient()));
 		if (!result.wasSuccessful()) {
-			Packet.builder().putString("Error: " + result.getFeedback()).queueAndFlush(event.getClient());
+			Packet.builder().putByte(PacketTypes.CHAT).putString("Error: " + result.getFeedback()).queueAndFlush(event.getClient());
 		} else {
 			if (result.getFeedback().length() > 0) {
-				Packet.builder().putString(result.getFeedback()).queueAndFlush(event.getClient());
+				Packet.builder().putByte(PacketTypes.CHAT).putString(result.getFeedback()).queueAndFlush(event.getClient());
 			}
 		}
 	}
@@ -118,13 +119,12 @@ public class GameServer extends ServerBase {
 		Log.info("Client packet received: " + event.getUsername() + " successfully joined.");
 	}
 
+	//TODO make this use a chat opcode
 	@HandleEvent(ServerChatEvent.RECEIVED)
 	public void onChat(ServerChatEvent event) {
-		getServer().queueAndFlushToAllExcept(Packet.builder().putString(clients.get(event.getClient()).getUsername() +
+		getServer().queueAndFlushToAllExcept(Packet.builder().putByte(PacketTypes.CHAT).putString(clients.get(event.getClient()).getUsername() +
 				": " + event.getMessage()), event.getClient());
 	}
-
-	//TODO these client methods need to be added to the server before it's bound
 
 	@HandleEvent(ServerClientConnectionEvent.CONNECT)
 	public void onClientConnect(ServerClientConnectionEvent event) {
