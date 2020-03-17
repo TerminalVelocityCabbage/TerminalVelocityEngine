@@ -40,10 +40,10 @@ public abstract class ClientBase extends EventDispatcher {
 		client.postDisconnect(() -> {
 			dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.POST_DISCONNECT, client));
 		});
+	}
 
-		// Attempt to connect to a server AFTER registering listeners.
-		//TODO make the client choose the address and port
-		client.connect("localhost", 49056);
+	public void connect(String address, int port) {
+		client.connect(address, port);
 	}
 
 	public String getID() {

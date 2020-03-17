@@ -2,10 +2,8 @@ package engine.server;
 
 import com.github.simplenet.Server;
 import engine.configs.Config;
-import engine.debug.Log;
 import engine.events.EventDispatcher;
-import engine.events.server.ServerClientConnectionEvent;
-import engine.saves.SaveManager;
+import engine.events.server.*;
 import org.fusesource.jansi.AnsiConsole;
 
 import java.io.File;
@@ -15,9 +13,12 @@ public abstract class ServerBase extends EventDispatcher {
 
 	String id;
 	Server server;
+	//TODO should close should instead be a packet to call server.close() but I need to do it safely.
+	private boolean shouldClose;
 
 	public ServerBase(String id) {
 		this.id = id;
+		shouldClose = false;
 	}
 
 	public void init() {
@@ -26,55 +27,83 @@ public abstract class ServerBase extends EventDispatcher {
 		AnsiConsole.systemInstall();
 
 		//Start up the network listeners
-		server = new Server();
+		this.server = new Server();
+		dispatchEvent(new ServerStartEvent(ServerStartEvent.INIT, getServer()));
+		postInit();
 	}
 
 	//Basically set the server files up before starting any connections
-	private void preInit() {
-		//Check for and load or create new server configuration
-		Log.info("Server Starting with ID: " + id);
-		if (!SaveManager.checkForSaveDirectory(id)) {
-			Log.info("No save Directory found for this save, assuming its a new save.");
-			if (SaveManager.createSaveDirectory(id)) {
-				Config config = Config.builder()
-						.setFileName("server")
-						.setPath("saves" + File.separator + id)
-						.addKey("ip", "localhost")
-						.addKey("port", "49056")
-						.addKey("motd", "Message of the Day!")
-						.build();
-				if (config.save()) {
-					return;
-				}
-			}
-		} else {
-			Log.info("Found existing save with name " + id + " loading that save.");
-			return;
-		}
-		Log.error("Something went wrong during server initialization, the server will not start.");
+	public void preInit() {
+		dispatchEvent(new ServerStartEvent(ServerStartEvent.PRE_INIT, getServer()));
+	}
+
+	public void postInit() {
+		dispatchEvent(new ServerStartEvent(ServerStartEvent.POST_INIT, getServer()));
 	}
 
 	//Binds the server and begins allowing connections
 	public void start() {
 
 		//dispatch events
-		server.onConnect(client -> {
-			dispatchEvent(new ServerClientConnectionEvent(ServerClientConnectionEvent.CONNECT, server, client));
+		//Register server listeners
+		getServer().onConnect(client -> {
+
+			dispatchEvent(new ServerClientConnectionEvent(ServerClientConnectionEvent.CONNECT, getServer(), client));
+
+			client.preDisconnect(() -> {
+				super.dispatchEvent(new ServerClientConnectionEvent(ServerClientConnectionEvent.PRE_DISCONNECT, getServer(), client));
+			});
+
+			client.postDisconnect(() -> {
+				super.dispatchEvent(new ServerClientConnectionEvent(ServerClientConnectionEvent.POST_DISCONNECT, getServer(), client));
+			});
+
+			//Read packets and dispatch events based on opcode
+			client.readByteAlways(opcode -> {
+				switch (opcode) {
+					case PacketTypes.COMMAND:
+						client.readString(arguments -> {
+							super.dispatchEvent(new ServerCommandReceivedEvent(ServerCommandReceivedEvent.RECEIVED, client, arguments));
+						});
+						break;
+					case PacketTypes.CLIENT_VALIDATION:
+						client.readString(username -> {
+							super.dispatchEvent(new ServerClientPacketReceivedEvent(ServerClientPacketReceivedEvent.RECEIVED, client, username));
+						});
+						break;
+					case PacketTypes.CHAT:
+						client.readString(message -> {
+							super.dispatchEvent(new ServerChatEvent(ServerChatEvent.RECEIVED, client, message));
+						});
+						break;
+				}
+			});
 		});
 
 		//Load the server's config file into a usable object
 		try {
-			Config config = Config.load("saves" + File.separator + this.id , "server");
+			Config config = Config.load("saves" + File.separator + getId() , "server");
 			//Bind the server to the configured port and IP
-			server.bind(config.getOptions().get("ip"),
-					Integer.parseInt(config.getOptions().get("port")));
+			//TODO binding needs it's own system so that an event can pass information back to the ServerBase before post bind if it needs information pre bind
+			dispatchEvent(new ServerBindEvent(ServerBindEvent.PRE, getServer()));
+			getServer().bind(config.getOptions().get("ip"), Integer.parseInt(config.getOptions().get("port")));
+			dispatchEvent(new ServerBindEvent(ServerBindEvent.POST, getServer()));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+		dispatchEvent(new ServerStartEvent(ServerStartEvent.START, getServer()));
 	}
 
 	public Server getServer() {
 		return this.server;
 	}
 
+	public String getId() {
+		return this.id;
+	}
+
+	public void setShouldClose(boolean shouldClose) {
+		this.shouldClose = shouldClose;
+	}
 }
