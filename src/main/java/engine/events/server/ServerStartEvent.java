@@ -5,10 +5,10 @@ import engine.events.Event;
 
 public class ServerStartEvent extends Event {
 
-	public static final String PRE_INIT = "preInit";
-	public static final String INIT = "init";
-	public static final String POST_INIT = "postInit";
-	public static final String START = "start";
+	public static final String PRE_INIT = "serverPreInit";
+	public static final String INIT = "serverInit";
+	public static final String POST_INIT = "serverPostInit";
+	public static final String START = "serverStart";
 
 	Server server;
 

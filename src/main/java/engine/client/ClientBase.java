@@ -3,6 +3,7 @@ package engine.client;
 import com.github.simplenet.Client;
 import engine.events.EventDispatcher;
 import engine.events.client.ClientConnectionEvent;
+import engine.events.client.ClientStartEvent;
 import org.fusesource.jansi.AnsiConsole;
 
 public abstract class ClientBase extends EventDispatcher {
@@ -21,10 +22,16 @@ public abstract class ClientBase extends EventDispatcher {
 
 		//Start up the network listeners
 		client = new Client();
+		dispatchEvent(new ClientStartEvent(ClientStartEvent.INIT, client));
+		postInit();
 	}
 
 	private void preInit() {
+		dispatchEvent(new ClientStartEvent(ClientStartEvent.PRE_INIT, client));
+	}
 
+	private void postInit() {
+		dispatchEvent(new ClientStartEvent(ClientStartEvent.POST_INIT, client));
 	}
 
 	public void start() {
@@ -40,6 +47,8 @@ public abstract class ClientBase extends EventDispatcher {
 		client.postDisconnect(() -> {
 			dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.POST_DISCONNECT, client));
 		});
+
+		dispatchEvent(new ClientStartEvent(ClientStartEvent.START, client));
 	}
 
 	public void connect(String address, int port) {

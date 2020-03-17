@@ -4,6 +4,7 @@ import com.github.simplenet.packet.Packet;
 import engine.client.ClientBase;
 import engine.events.HandleEvent;
 import engine.events.client.ClientConnectionEvent;
+import engine.events.client.ClientStartEvent;
 import engine.server.PacketTypes;
 
 import java.util.Scanner;
@@ -12,19 +13,11 @@ public class GameClient extends ClientBase {
 
 	public GameClient(String id) {
 		super(id);
-		super.addEventHandler(this);
+		addEventHandler(this);
 	}
 
-	public void init() {
-		super.init();
-		//Register this class as an event listener
-		this.start();
-	}
-
-	@Override
-	public void start() {
-		super.start();
-		//TODO have the client choose the address and port
+	@HandleEvent(ClientStartEvent.START)
+	public void onStart(ClientStartEvent event) {
 		connect("localhost", 49056);
 	}
 
@@ -33,6 +26,7 @@ public class GameClient extends ClientBase {
 		var scanner = new Scanner(System.in);
 
 		// If messages arrive from other clients, print them to the console.
+		//TODO make a packet reader and opcodes like the server
 		event.getClient().readStringAlways(System.out::println);
 
 		//Send a username packet to the server with the id
