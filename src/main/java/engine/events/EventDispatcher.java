@@ -19,7 +19,6 @@ public class EventDispatcher {
 	public void dispatchEvent(Event event) {
 		for (Object handler : handlers) {
 			dispatchEventTo(event, handler);
-
 		}
 	}
 

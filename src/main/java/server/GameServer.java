@@ -119,7 +119,6 @@ public class GameServer extends ServerBase {
 		Log.info("Client packet received: " + event.getUsername() + " successfully joined.");
 	}
 
-	//TODO make this use a chat opcode
 	@HandleEvent(ServerChatEvent.RECEIVED)
 	public void onChat(ServerChatEvent event) {
 		getServer().queueAndFlushToAllExcept(Packet.builder().putByte(PacketTypes.CHAT).putString(clients.get(event.getClient()).getUsername() +
@@ -133,8 +132,10 @@ public class GameServer extends ServerBase {
 
 	@HandleEvent(ServerClientConnectionEvent.POST_DISCONNECT)
 	public void postDisconnect(ServerClientConnectionEvent event) {
-		//TODO check to see if the client ever achieved player status
-		Log.info(clients.get(event.getClient()).getUsername() + " left.");
-		clients.remove(event.getClient());
+		//Sometimes for example in a ping the client never becomes a player
+		if (clients.get(event.getClient()) != null) {
+			Log.info(clients.get(event.getClient()).getUsername() + " left.");
+			clients.remove(event.getClient());
+		}
 	}
 }
