@@ -4,7 +4,6 @@ import com.github.simplenet.Client;
 import engine.events.EventDispatcher;
 import engine.events.client.ClientConnectionEvent;
 import engine.events.client.ClientStartEvent;
-import org.fusesource.jansi.AnsiConsole;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -15,14 +14,10 @@ public abstract class ClientBase extends EventDispatcher {
 	Client client;
 	boolean shouldDisconnect;
 
-	public ClientBase(String id) {
-		this.id = id;
-	}
+	public ClientBase() {}
 
 	public void init() {
 		preInit();
-		//Enable Console colors
-		AnsiConsole.systemInstall();
 
 		//Start up the network listeners
 		client = new Client();
@@ -97,6 +92,10 @@ public abstract class ClientBase extends EventDispatcher {
 			disconnect();
 			dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.RECONNECT_FAIL, client));
 		}
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getID() {
