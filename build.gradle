@@ -2,13 +2,13 @@ apply plugin: "java"
 apply plugin: "application"
 apply plugin: "com.github.johnrengelman.shadow"
 
+mainClassName = 'Engine'
+
 jar {
 	manifest {
-		attributes('Main-Class': 'Launcher')
+		attributes('Main-Class': mainClassName)
 	}
 }
-
-mainClassName = 'Launcher'
 
 buildscript {
 	repositories {
