@@ -11,21 +11,18 @@ import java.io.IOException;
 
 public abstract class ServerBase extends EventDispatcher {
 
-	String id;
 	Server server;
 	//TODO should close should instead be a packet to call server.close() but I need to do it safely.
 	private boolean shouldClose;
+	String address;
+	int port;
 
-	public ServerBase(String id) {
-		this.id = id;
+	public ServerBase() {
 		shouldClose = false;
 	}
 
 	public void init() {
 		preInit();
-		//Enable Console colors
-		AnsiConsole.systemInstall();
-
 		//Start up the network listeners
 		this.server = new Server();
 		dispatchEvent(new ServerStartEvent(ServerStartEvent.INIT, getServer()));
@@ -77,19 +74,12 @@ public abstract class ServerBase extends EventDispatcher {
 						break;
 				}
 			});
+
 		});
 
-		//Load the server's config file into a usable object
-		try {
-			Config config = Config.load("saves" + File.separator + getId() , "server");
-			//Bind the server to the configured port and IP
-			//TODO binding needs it's own system so that an event can pass information back to the ServerBase before post bind if it needs information pre bind
-			dispatchEvent(new ServerBindEvent(ServerBindEvent.PRE, getServer()));
-			getServer().bind(config.getOptions().get("ip"), Integer.parseInt(config.getOptions().get("port")));
-			dispatchEvent(new ServerBindEvent(ServerBindEvent.POST, getServer()));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		dispatchEvent(new ServerBindEvent(ServerBindEvent.PRE, getServer()));
+		getServer().bind(getAddress(), getPort());
+		dispatchEvent(new ServerBindEvent(ServerBindEvent.POST, getServer()));
 
 		dispatchEvent(new ServerStartEvent(ServerStartEvent.START, getServer()));
 	}
@@ -98,8 +88,20 @@ public abstract class ServerBase extends EventDispatcher {
 		return this.server;
 	}
 
-	public String getId() {
-		return this.id;
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
+	}
+
+	public int getPort() {
+		return port;
 	}
 
 	public void setShouldClose(boolean shouldClose) {

@@ -28,8 +28,13 @@ public class Config {
 	}
 
 	public boolean save() {
-		Path file = Paths.get(this.getDirectory() + File.separator + this.getFileName() + ".config");
 		try {
+			Path file;
+			if (this.getDirectory() != null) {
+				file = Paths.get(this.getDirectory() + File.separator + this.getFileName() + ".config");
+			} else {
+				file = Paths.get(this.getFileName() + ".config");
+			}
 			Files.write(file, this.asWritableArray(), StandardCharsets.UTF_8);
 			return true;
 		} catch (IOException e) {
@@ -38,8 +43,8 @@ public class Config {
 		}
 	}
 
-	public static Config load(String path, String fileName) throws IOException {
-		List<String> realContents = Files.readAllLines(Paths.get(path + File.separator + fileName + ".config"));
+	private static Config buildFromFile(Path path) throws IOException {
+		List<String> realContents = Files.readAllLines(path);
 		Config.Builder builder = Config.builder();
 		for (String line : realContents) {
 
@@ -53,6 +58,14 @@ public class Config {
 			}
 		}
 		return builder.build();
+	}
+
+	public static Config load(String path, String fileName) throws IOException {
+		return buildFromFile(Paths.get(path + File.separator + fileName + ".config"));
+	}
+
+	public static Config load(String fileName) throws IOException {
+		return buildFromFile(Paths.get(fileName + ".config"));
 	}
 
 	public static class Builder {
