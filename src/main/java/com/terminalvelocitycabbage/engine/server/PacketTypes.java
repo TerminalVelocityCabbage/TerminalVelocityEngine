@@ -1,4 +1,4 @@
-package engine.server;
+package com.terminalvelocitycabbage.engine.server;
 
 public class PacketTypes {
 

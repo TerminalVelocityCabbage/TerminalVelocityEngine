@@ -1,7 +1,7 @@
-package engine.events.server;
+package com.terminalvelocitycabbage.engine.events.server;
 
 import com.github.simplenet.Client;
-import engine.events.Event;
+import com.terminalvelocitycabbage.engine.events.Event;
 
 public class ServerChatEvent extends Event {
 

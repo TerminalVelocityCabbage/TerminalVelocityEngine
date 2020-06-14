@@ -1,13 +1,9 @@
-package engine.server;
+package com.terminalvelocitycabbage.engine.server;
 
 import com.github.simplenet.Server;
-import engine.configs.Config;
-import engine.events.EventDispatcher;
+import com.terminalvelocitycabbage.engine.events.EventDispatcher;
+import com.terminalvelocitycabbage.engine.events.server.*;
 import engine.events.server.*;
-import org.fusesource.jansi.AnsiConsole;
-
-import java.io.File;
-import java.io.IOException;
 
 public abstract class ServerBase extends EventDispatcher {
 

@@ -1,4 +1,4 @@
-package engine.events;
+package com.terminalvelocitycabbage.engine.events;
 
 public abstract class Event {
 	private String name;

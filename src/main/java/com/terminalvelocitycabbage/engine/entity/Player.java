@@ -1,4 +1,4 @@
-package engine.entity;
+package com.terminalvelocitycabbage.engine.entity;
 
 import java.util.UUID;
 

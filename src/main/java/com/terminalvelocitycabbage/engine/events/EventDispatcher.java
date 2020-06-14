@@ -1,4 +1,4 @@
-package engine.events;
+package com.terminalvelocitycabbage.engine.events;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
