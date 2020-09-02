@@ -2,8 +2,6 @@ apply plugin: "java"
 apply plugin: "application"
 apply plugin: "com.github.johnrengelman.shadow"
 
-sourceCompatibility = 1.11
-
 mainClassName = 'Engine'
 
 jar {
@@ -54,6 +52,6 @@ dependencies {
 
 	implementation 'com.github.jhg023:SimpleNet:1.6.4'
 
-	compile group: 'org.fusesource.jansi', name: 'jansi', version: '1.11'
+	compile group: 'org.fusesource.jansi', name: 'jansi', version: '1.8'
 
 }
