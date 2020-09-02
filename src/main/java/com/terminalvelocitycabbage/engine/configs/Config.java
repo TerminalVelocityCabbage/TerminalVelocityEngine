@@ -1,4 +1,4 @@
-package engine.configs;
+package com.terminalvelocitycabbage.engine.configs;
 
 import java.io.File;
 import java.io.IOException;

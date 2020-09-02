@@ -1,9 +1,9 @@
-package engine.client;
+package com.terminalvelocitycabbage.engine.client;
 
 import com.github.simplenet.Client;
-import engine.events.EventDispatcher;
-import engine.events.client.ClientConnectionEvent;
-import engine.events.client.ClientStartEvent;
+import com.terminalvelocitycabbage.engine.events.EventDispatcher;
+import com.terminalvelocitycabbage.engine.events.client.ClientConnectionEvent;
+import com.terminalvelocitycabbage.engine.events.client.ClientStartEvent;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;

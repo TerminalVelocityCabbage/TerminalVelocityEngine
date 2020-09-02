@@ -1,4 +1,4 @@
-package engine.command;
+package com.terminalvelocitycabbage.engine.command;
 
 import java.util.ArrayList;
 

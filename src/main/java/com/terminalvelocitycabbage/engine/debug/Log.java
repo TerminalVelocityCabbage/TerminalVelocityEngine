@@ -1,4 +1,4 @@
-package engine.debug;
+package com.terminalvelocitycabbage.engine.debug;
 
 import static org.fusesource.jansi.Ansi.Color.*;
 import static org.fusesource.jansi.Ansi.ansi;

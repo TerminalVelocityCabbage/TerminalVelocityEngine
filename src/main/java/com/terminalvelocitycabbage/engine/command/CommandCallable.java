@@ -1,6 +1,6 @@
-package engine.command;
+package com.terminalvelocitycabbage.engine.command;
 
-import engine.entity.Player;
+import com.terminalvelocitycabbage.engine.entity.Player;
 
 public interface CommandCallable {
 

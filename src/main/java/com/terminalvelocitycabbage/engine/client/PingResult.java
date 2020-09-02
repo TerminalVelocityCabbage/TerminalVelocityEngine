@@ -1,4 +1,4 @@
-package engine.client;
+package com.terminalvelocitycabbage.engine.client;
 
 public class PingResult {
 
