@@ -3,7 +3,6 @@ package com.terminalvelocitycabbage.engine.server;
 import com.github.simplenet.Server;
 import com.terminalvelocitycabbage.engine.events.EventDispatcher;
 import com.terminalvelocitycabbage.engine.events.server.*;
-import engine.events.server.*;
 
 public abstract class ServerBase extends EventDispatcher {
 
