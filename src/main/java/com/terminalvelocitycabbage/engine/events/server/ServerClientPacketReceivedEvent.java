@@ -6,7 +6,7 @@ import com.terminalvelocitycabbage.engine.events.EventIdentifier;
 
 public class ServerClientPacketReceivedEvent extends Event {
 
-	public static final EventIdentifier RECEIVED = new EventIdentifier(ServerClientPacketReceivedEvent.class, "received");
+	public static final String RECEIVED = "serverClientPacketReceivedEventReceived";
 
 	//TODO this will need to house more information about the joined player like uuid etc.
 	private Client client;

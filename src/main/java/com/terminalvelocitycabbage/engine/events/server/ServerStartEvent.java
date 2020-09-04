@@ -6,10 +6,10 @@ import com.terminalvelocitycabbage.engine.events.EventIdentifier;
 
 public class ServerStartEvent extends Event {
 
-	public static final EventIdentifier PRE_INIT = new EventIdentifier(ServerStartEvent.class, "pre");
-	public static final EventIdentifier INIT = new EventIdentifier(ServerStartEvent.class, "init");
-	public static final EventIdentifier POST_INIT = new EventIdentifier(ServerStartEvent.class, "post");
-	public static final EventIdentifier START = new EventIdentifier(ServerStartEvent.class, "start");
+	public static final String PRE_INIT = "serverStartEventPreInit";
+	public static final String INIT = "serverStartEventInit";
+	public static final String POST_INIT = "serverStartEventPostInit";
+	public static final String START = "serverStartEventStart";
 
 	Server server;
 

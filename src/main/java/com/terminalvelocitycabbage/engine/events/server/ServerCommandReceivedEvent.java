@@ -6,7 +6,7 @@ import com.terminalvelocitycabbage.engine.events.EventIdentifier;
 
 public class ServerCommandReceivedEvent extends Event {
 
-	public static final EventIdentifier RECEIVED = new EventIdentifier(ServerCommandReceivedEvent.class, "received");
+	public static final String RECEIVED = "serverCommandReceivedEventReceived";
 
 	private Client client;
 	private String command;

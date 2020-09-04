@@ -6,7 +6,7 @@ import com.terminalvelocitycabbage.engine.events.EventIdentifier;
 
 public class ServerChatEvent extends Event {
 
-	public static final EventIdentifier RECEIVED = new EventIdentifier(ServerChatEvent.class, "received");
+	public static final String RECEIVED = "serverChatEventReceived";
 
 	private Client client;
 	private String message;

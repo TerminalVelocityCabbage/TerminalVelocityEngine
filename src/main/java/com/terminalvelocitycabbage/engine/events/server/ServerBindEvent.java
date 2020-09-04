@@ -6,8 +6,8 @@ import com.terminalvelocitycabbage.engine.events.EventIdentifier;
 
 public class ServerBindEvent extends Event {
 
-	public static final EventIdentifier PRE = new EventIdentifier(ServerBindEvent.class, "pre");
-	public static final EventIdentifier POST = new EventIdentifier(ServerBindEvent.class, "post");
+	public static final String PRE = "serverBindEventPre";
+	public static final String POST = "serverBindEventPost";
 
 	private Server server;
 

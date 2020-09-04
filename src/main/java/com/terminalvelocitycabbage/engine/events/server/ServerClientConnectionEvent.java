@@ -7,9 +7,9 @@ import com.terminalvelocitycabbage.engine.events.EventIdentifier;
 
 public class ServerClientConnectionEvent extends Event {
 
-	public static final EventIdentifier CONNECT = new EventIdentifier(ServerClientConnectionEvent.class, "connect");
-	public static final EventIdentifier PRE_DISCONNECT = new EventIdentifier(ServerClientConnectionEvent.class, "pre");
-	public static final EventIdentifier POST_DISCONNECT = new EventIdentifier(ServerClientConnectionEvent.class, "post");
+	public static final String CONNECT = "serverClientConnectionEventConnect";
+	public static final String PRE_DISCONNECT = "serverClientConnectionEventPreConnect";
+	public static final String POST_DISCONNECT = "serverClientConnectionEventPostConnect";
 
 	private Server server;
 	private Client client;
