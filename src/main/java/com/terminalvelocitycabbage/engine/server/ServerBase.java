@@ -20,17 +20,17 @@ public abstract class ServerBase extends EventDispatcher {
 		preInit();
 		//Start up the network listeners
 		this.server = new Server();
-		dispatchEvent(new ServerStartEvent(ServerStartEvent.INIT.getIdentifier(), getServer()));
+		dispatchEvent(new ServerStartEvent(ServerStartEvent.INIT, getServer()));
 		postInit();
 	}
 
 	//Basically set the server files up before starting any connections
 	public void preInit() {
-		dispatchEvent(new ServerStartEvent(ServerStartEvent.PRE_INIT.getIdentifier(), getServer()));
+		dispatchEvent(new ServerStartEvent(ServerStartEvent.PRE_INIT, getServer()));
 	}
 
 	public void postInit() {
-		dispatchEvent(new ServerStartEvent(ServerStartEvent.POST_INIT.getIdentifier(), getServer()));
+		dispatchEvent(new ServerStartEvent(ServerStartEvent.POST_INIT, getServer()));
 	}
 
 	//Binds the server and begins allowing connections
@@ -40,14 +40,14 @@ public abstract class ServerBase extends EventDispatcher {
 		//Register server listeners
 		getServer().onConnect(client -> {
 
-			dispatchEvent(new ServerClientConnectionEvent(ServerClientConnectionEvent.CONNECT.getIdentifier(), getServer(), client));
+			dispatchEvent(new ServerClientConnectionEvent(ServerClientConnectionEvent.CONNECT, getServer(), client));
 
 			client.preDisconnect(() -> {
-				super.dispatchEvent(new ServerClientConnectionEvent(ServerClientConnectionEvent.PRE_DISCONNECT.getIdentifier(), getServer(), client));
+				super.dispatchEvent(new ServerClientConnectionEvent(ServerClientConnectionEvent.PRE_DISCONNECT, getServer(), client));
 			});
 
 			client.postDisconnect(() -> {
-				super.dispatchEvent(new ServerClientConnectionEvent(ServerClientConnectionEvent.POST_DISCONNECT.getIdentifier(), getServer(), client));
+				super.dispatchEvent(new ServerClientConnectionEvent(ServerClientConnectionEvent.POST_DISCONNECT, getServer(), client));
 			});
 
 			//Read packets and dispatch events based on opcode
@@ -55,15 +55,15 @@ public abstract class ServerBase extends EventDispatcher {
 				switch (opcode) {
 					case PacketTypes.CLIENT_VALIDATION:
 						client.readString(username -> {
-							super.dispatchEvent(new ServerClientPacketReceivedEvent(ServerClientPacketReceivedEvent.RECEIVED.getIdentifier(), client, username));
+							super.dispatchEvent(new ServerClientPacketReceivedEvent(ServerClientPacketReceivedEvent.RECEIVED, client, username));
 						});
 						break;
 					case PacketTypes.CHAT:
 						client.readString(message -> {
 							if (message.startsWith("/")) {
-								super.dispatchEvent(new ServerCommandReceivedEvent(ServerCommandReceivedEvent.RECEIVED.getIdentifier(), client, message));
+								super.dispatchEvent(new ServerCommandReceivedEvent(ServerCommandReceivedEvent.RECEIVED, client, message));
 							} else {
-								super.dispatchEvent(new ServerChatEvent(ServerChatEvent.RECEIVED.getIdentifier(), client, message));
+								super.dispatchEvent(new ServerChatEvent(ServerChatEvent.RECEIVED, client, message));
 							}
 						});
 						break;
@@ -72,11 +72,11 @@ public abstract class ServerBase extends EventDispatcher {
 
 		});
 
-		dispatchEvent(new ServerBindEvent(ServerBindEvent.PRE.getIdentifier(), getServer()));
+		dispatchEvent(new ServerBindEvent(ServerBindEvent.PRE, getServer()));
 		getServer().bind(getAddress(), getPort());
-		dispatchEvent(new ServerBindEvent(ServerBindEvent.POST.getIdentifier(), getServer()));
+		dispatchEvent(new ServerBindEvent(ServerBindEvent.POST, getServer()));
 
-		dispatchEvent(new ServerStartEvent(ServerStartEvent.START.getIdentifier(), getServer()));
+		dispatchEvent(new ServerStartEvent(ServerStartEvent.START, getServer()));
 	}
 
 	public Server getServer() {

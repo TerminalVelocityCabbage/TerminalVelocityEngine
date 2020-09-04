@@ -1,7 +1,7 @@
 package com.terminalvelocitycabbage.engine.events;
 
 public abstract class Event {
-	private String name;
+	private final String name;
 
 	public Event(String name){
 		this.name = name;
