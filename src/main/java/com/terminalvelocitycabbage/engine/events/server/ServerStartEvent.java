@@ -5,10 +5,10 @@ import com.terminalvelocitycabbage.engine.events.Event;
 
 public class ServerStartEvent extends Event {
 
-	public static final String PRE_INIT = "serverPreInit";
-	public static final String INIT = "serverInit";
-	public static final String POST_INIT = "serverPostInit";
-	public static final String START = "serverStart";
+	public static final String PRE_INIT = "serverStartEventPreInit";
+	public static final String INIT = "serverStartEventInit";
+	public static final String POST_INIT = "serverStartEventPostInit";
+	public static final String START = "serverStartEventStart";
 
 	Server server;
 

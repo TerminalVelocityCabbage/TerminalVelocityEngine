@@ -5,7 +5,7 @@ import com.terminalvelocitycabbage.engine.events.Event;
 
 public class ServerChatEvent extends Event {
 
-	public static final String RECEIVED = "received";
+	public static final String RECEIVED = "serverChatEventReceived";
 
 	private Client client;
 	private String message;

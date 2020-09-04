@@ -5,13 +5,13 @@ import com.terminalvelocitycabbage.engine.events.Event;
 
 public class ClientConnectionEvent extends Event {
 
-	public static final String PRE_RECONNECT = "clientPreReConnect";
-	public static final String RECONNECT_TRY_FAIL = "clientReConnectTryFail";
-	public static final String POST_RECONNECT = "clientPostReConnect";
-	public static final String RECONNECT_FAIL = "clientReConnectFailure";
-	public static final String CONNECT = "clientConnect";
-	public static final String PRE_DISCONNECT = "clientPreDisconnect";
-	public static final String POST_DISCONNECT = "clientPostDisconnect";
+	public static final String PRE_RECONNECT = "clientConnectionEventPreReConnect";
+	public static final String RECONNECT_TRY_FAIL = "clientConnectionEventReConnectTryFail";
+	public static final String POST_RECONNECT = "clientConnectionEventPostReConnect";
+	public static final String RECONNECT_FAIL = "clientConnectionEventReConnectFailure";
+	public static final String CONNECT = "clientConnectionEventConnect";
+	public static final String PRE_DISCONNECT = "clientConnectionEventPreDisconnect";
+	public static final String POST_DISCONNECT = "clientConnectionEventPostDisconnect";
 
 	private Client client;
 
