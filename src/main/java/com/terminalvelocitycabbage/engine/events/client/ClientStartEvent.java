@@ -2,13 +2,14 @@ package com.terminalvelocitycabbage.engine.events.client;
 
 import com.github.simplenet.Client;
 import com.terminalvelocitycabbage.engine.events.Event;
+import com.terminalvelocitycabbage.engine.events.EventIdentifier;
 
 public class ClientStartEvent extends Event {
 
-	public static final String PRE_INIT = "clientPreInit";
-	public static final String INIT = "clientInit";
-	public static final String POST_INIT = "clientPostInit";
-	public static final String START = "clientStart";
+	public static final EventIdentifier PRE_INIT = new EventIdentifier(ClientStartEvent.class, "pre");
+	public static final EventIdentifier INIT = new EventIdentifier(ClientStartEvent.class, "init");
+	public static final EventIdentifier POST_INIT = new EventIdentifier(ClientStartEvent.class, "post");
+	public static final EventIdentifier START = new EventIdentifier(ClientStartEvent.class, "start");
 
 	Client client;
 

@@ -21,33 +21,33 @@ public abstract class ClientBase extends EventDispatcher {
 
 		//Start up the network listeners
 		client = new Client();
-		dispatchEvent(new ClientStartEvent(ClientStartEvent.INIT, client));
+		dispatchEvent(new ClientStartEvent(ClientStartEvent.INIT.getIdentifier(), client));
 		postInit();
 	}
 
 	private void preInit() {
-		dispatchEvent(new ClientStartEvent(ClientStartEvent.PRE_INIT, client));
+		dispatchEvent(new ClientStartEvent(ClientStartEvent.PRE_INIT.getIdentifier(), client));
 	}
 
 	private void postInit() {
-		dispatchEvent(new ClientStartEvent(ClientStartEvent.POST_INIT, client));
+		dispatchEvent(new ClientStartEvent(ClientStartEvent.POST_INIT.getIdentifier(), client));
 	}
 
 	public void start() {
 
 		client.onConnect(() -> {
-			dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.CONNECT, client));
+			dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.CONNECT.getIdentifier(), client));
 		});
 
 		client.preDisconnect(() -> {
-			dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.PRE_DISCONNECT, client));
+			dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.PRE_DISCONNECT.getIdentifier(), client));
 		});
 
 		client.postDisconnect(() -> {
-			dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.POST_DISCONNECT, client));
+			dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.POST_DISCONNECT.getIdentifier(), client));
 		});
 
-		dispatchEvent(new ClientStartEvent(ClientStartEvent.START, client));
+		dispatchEvent(new ClientStartEvent(ClientStartEvent.START.getIdentifier(), client));
 	}
 
 	public void connect(String address, int port) {
@@ -66,7 +66,7 @@ public abstract class ClientBase extends EventDispatcher {
 
 	public void reconnect(String address, int port, int delay, int tries) throws InterruptedException {
 
-		dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.PRE_RECONNECT, client));
+		dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.PRE_RECONNECT.getIdentifier(), client));
 
 		var latch = new CountDownLatch(tries);
 		var pingClient = new PingClient(address, port);
@@ -78,7 +78,7 @@ public abstract class ClientBase extends EventDispatcher {
 				shouldConnect = true;
 				break;
 			}
-			dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.RECONNECT_TRY_FAIL, client));
+			dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.RECONNECT_TRY_FAIL.getIdentifier(), client));
 			latch.countDown();
 			tries--;
 		}
@@ -87,10 +87,10 @@ public abstract class ClientBase extends EventDispatcher {
 			disconnect();
 			init();
 			start();
-			dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.POST_RECONNECT, client));
+			dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.POST_RECONNECT.getIdentifier(), client));
 		} else {
 			disconnect();
-			dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.RECONNECT_FAIL, client));
+			dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.RECONNECT_FAIL.getIdentifier(), client));
 		}
 	}
 

@@ -2,16 +2,17 @@ package com.terminalvelocitycabbage.engine.events.client;
 
 import com.github.simplenet.Client;
 import com.terminalvelocitycabbage.engine.events.Event;
+import com.terminalvelocitycabbage.engine.events.EventIdentifier;
 
 public class ClientConnectionEvent extends Event {
 
-	public static final String PRE_RECONNECT = "clientPreReConnect";
-	public static final String RECONNECT_TRY_FAIL = "clientReConnectTryFail";
-	public static final String POST_RECONNECT = "clientPostReConnect";
-	public static final String RECONNECT_FAIL = "clientReConnectFailure";
-	public static final String CONNECT = "clientConnect";
-	public static final String PRE_DISCONNECT = "clientPreDisconnect";
-	public static final String POST_DISCONNECT = "clientPostDisconnect";
+	public static final EventIdentifier PRE_RECONNECT = new EventIdentifier(ClientConnectionEvent.class, "preReconnect");
+	public static final EventIdentifier RECONNECT_TRY_FAIL = new EventIdentifier(ClientConnectionEvent.class, "reconnectTryFail");
+	public static final EventIdentifier POST_RECONNECT = new EventIdentifier(ClientConnectionEvent.class, "postReconnect");
+	public static final EventIdentifier RECONNECT_FAIL = new EventIdentifier(ClientConnectionEvent.class, "reconnectFailure");
+	public static final EventIdentifier CONNECT = new EventIdentifier(ClientConnectionEvent.class, "connect");
+	public static final EventIdentifier PRE_DISCONNECT = new EventIdentifier(ClientConnectionEvent.class, "preDisconnect");
+	public static final EventIdentifier POST_DISCONNECT = new EventIdentifier(ClientConnectionEvent.class, "postDisconnect");
 
 	private Client client;
 
