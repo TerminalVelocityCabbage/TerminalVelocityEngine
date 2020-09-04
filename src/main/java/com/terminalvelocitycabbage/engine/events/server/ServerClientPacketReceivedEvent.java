@@ -2,10 +2,11 @@ package com.terminalvelocitycabbage.engine.events.server;
 
 import com.github.simplenet.Client;
 import com.terminalvelocitycabbage.engine.events.Event;
+import com.terminalvelocitycabbage.engine.events.EventIdentifier;
 
 public class ServerClientPacketReceivedEvent extends Event {
 
-	public static final String RECEIVED = createID(ServerClientPacketReceivedEvent.class, "received");
+	public static final EventIdentifier RECEIVED = new EventIdentifier(ServerClientPacketReceivedEvent.class, "received");
 
 	//TODO this will need to house more information about the joined player like uuid etc.
 	private Client client;

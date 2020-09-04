@@ -2,10 +2,11 @@ package com.terminalvelocitycabbage.engine.events.server;
 
 import com.github.simplenet.Client;
 import com.terminalvelocitycabbage.engine.events.Event;
+import com.terminalvelocitycabbage.engine.events.EventIdentifier;
 
 public class ServerChatEvent extends Event {
 
-	public static final String RECEIVED = createID(ServerChatEvent.class, "received");
+	public static final EventIdentifier RECEIVED = new EventIdentifier(ServerChatEvent.class, "received");
 
 	private Client client;
 	private String message;
