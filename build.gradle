@@ -53,5 +53,6 @@ dependencies {
 	implementation 'com.github.jhg023:SimpleNet:1.6.4'
 
 	compile group: 'org.fusesource.jansi', name: 'jansi', version: '1.8'
+	compile group: 'commons-io', name: 'commons-io', version: '2.5'
 
 }
