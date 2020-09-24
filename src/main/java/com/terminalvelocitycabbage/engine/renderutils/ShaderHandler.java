@@ -14,16 +14,18 @@ import static org.lwjgl.opengl.GL20.glDeleteShader;
 
 public class ShaderHandler {
 
-	public static List<Shader> shaderQueue = new ArrayList<>();
+	private final int shaderProgram;
+	private static final List<Shader> shaderQueue = new ArrayList<>();
 
-	public ShaderHandler() {
+	public ShaderHandler(int shaderProgram) {
+		this.shaderProgram = shaderProgram;
 	}
 
-	public static void queueShader(int type, int shaderProgram, ResourceManager resourceManager, Identifier identifier) {
+	public void queueShader(int type, ResourceManager resourceManager, Identifier identifier) {
 		shaderQueue.add(new Shader(type, shaderProgram, resourceManager, identifier));
 	}
 
-	private static void createShader(Shader shader) {
+	private void createShader(Shader shader) {
 		Optional<Resource> resource = shader.getResourceManager().getResource(shader.getIdentifier());
 		String src = resource.flatMap(Resource::asString).orElseThrow();
 		int typedShader = glCreateShader(shader.getType());
@@ -36,7 +38,7 @@ public class ShaderHandler {
 		glDeleteShader(typedShader);
 	}
 
-	public static void setupShaders(int shaderProgram) {
+	public void setupShaders() {
 		for (Shader shader : shaderQueue) {
 			createShader(shader);
 		}
@@ -44,5 +46,13 @@ public class ShaderHandler {
 		if (glGetProgrami(shaderProgram, GL_LINK_STATUS) == GL_FALSE) {
 			Log.error(glGetProgramInfoLog(shaderProgram));
 		}
+	}
+
+	public void use() {
+		glUseProgram(shaderProgram);
+	}
+
+	public void delete() {
+		glDeleteProgram(shaderProgram);
 	}
 }
