@@ -1,14 +1,14 @@
-package com.terminalvelocitycabbage.engine.renderutils;
+package com.terminalvelocitycabbage.engine.shader;
 
 import com.terminalvelocitycabbage.engine.resources.Identifier;
 import com.terminalvelocitycabbage.engine.resources.ResourceManager;
 
 public class Shader {
 
-	private int type;
-	private int shaderProgram;
-	private ResourceManager resourceManager;
-	private Identifier identifier;
+	private final int type;
+	private final int shaderProgram;
+	private final ResourceManager resourceManager;
+	private final Identifier identifier;
 
 	Shader(int type, int shaderProgram, ResourceManager resourceManager, Identifier identifier) {
 		this.type = type;

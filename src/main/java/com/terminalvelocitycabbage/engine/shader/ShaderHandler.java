@@ -1,4 +1,4 @@
-package com.terminalvelocitycabbage.engine.renderutils;
+package com.terminalvelocitycabbage.engine.shader;
 
 import com.terminalvelocitycabbage.engine.debug.Log;
 import com.terminalvelocitycabbage.engine.resources.Identifier;
