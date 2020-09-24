@@ -16,7 +16,6 @@ public class ClassLoaderResourceManager implements ResourceManager {
 
 	@Override
 	public Optional<Resource> getResource(Identifier identifier) {
-		System.out.println(classLoader.getResource(prefix + identifier.getNamespace() + "/" + identifier.getPath()));
 		return Optional.ofNullable(classLoader.getResource(prefix + identifier.getNamespace() + "/" + identifier.getPath()))
 				.map(url -> {
 					UrlResource resource = new UrlResource(identifier, url);

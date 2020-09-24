@@ -1,5 +1,6 @@
 package com.terminalvelocitycabbage.engine.renderutils;
 
+import com.terminalvelocitycabbage.engine.debug.Log;
 import com.terminalvelocitycabbage.engine.resources.Identifier;
 import com.terminalvelocitycabbage.engine.resources.Resource;
 import com.terminalvelocitycabbage.engine.resources.ResourceManager;
@@ -28,6 +29,9 @@ public class ShaderHandler {
 		int typedShader = glCreateShader(shader.getType());
 		glShaderSource(typedShader, src);
 		glCompileShader(typedShader);
+		if (glGetShaderi(typedShader, GL_COMPILE_STATUS) == GL_FALSE) {
+			Log.error(glGetShaderInfoLog(shader.getShaderProgram()));
+		}
 		glAttachShader(shader.getShaderProgram(), typedShader);
 		glDeleteShader(typedShader);
 	}
@@ -37,5 +41,8 @@ public class ShaderHandler {
 			createShader(shader);
 		}
 		glLinkProgram(shaderProgram);
+		if (glGetProgrami(shaderProgram, GL_LINK_STATUS) == GL_FALSE) {
+			Log.error(glGetProgramInfoLog(shaderProgram));
+		}
 	}
 }
