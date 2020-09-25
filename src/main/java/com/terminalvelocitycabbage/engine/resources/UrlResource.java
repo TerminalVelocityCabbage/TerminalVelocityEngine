@@ -54,7 +54,10 @@ public class UrlResource implements Resource {
 	@Override
 	public Optional<BufferedImage> getImage() {
 		try {
-			return Optional.of(ImageIO.read(new ByteArrayInputStream(openStream().readAllBytes())));
+			InputStream stream = openStream();
+			Optional<BufferedImage> bi = Optional.of(ImageIO.read(new ByteArrayInputStream(stream.readAllBytes())));
+			stream.close();
+			return bi;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
