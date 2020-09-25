@@ -2,6 +2,9 @@ package com.terminalvelocitycabbage.engine.resources;
 
 import org.apache.commons.io.IOUtils;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -42,6 +45,16 @@ public class UrlResource implements Resource {
 			ByteBuffer buffer = ByteBuffer.allocate(bytes.length);
 			buffer.put(bytes).flip();
 			return Optional.of(buffer);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return Optional.empty();
+	}
+
+	@Override
+	public Optional<BufferedImage> getImage() {
+		try {
+			return Optional.of(ImageIO.read(new ByteArrayInputStream(openStream().readAllBytes())));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
