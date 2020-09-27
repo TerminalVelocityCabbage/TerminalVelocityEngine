@@ -17,8 +17,8 @@ public class ShaderHandler {
 	private final int shaderProgram;
 	private static final List<Shader> shaderQueue = new ArrayList<>();
 
-	public ShaderHandler(int shaderProgram) {
-		this.shaderProgram = shaderProgram;
+	public ShaderHandler() {
+		this.shaderProgram = glCreateProgram();
 	}
 
 	public void queueShader(int type, ResourceManager resourceManager, Identifier identifier) {
