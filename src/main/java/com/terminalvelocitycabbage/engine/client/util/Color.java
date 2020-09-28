@@ -1,4 +1,4 @@
-package com.terminalvelocitycabbage.engine.util;
+package com.terminalvelocitycabbage.engine.client.util;
 
 import org.joml.Vector4f;
 import org.joml.Vector4i;

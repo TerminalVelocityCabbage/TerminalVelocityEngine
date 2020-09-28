@@ -1,7 +1,7 @@
-package com.terminalvelocitycabbage.engine.shader;
+package com.terminalvelocitycabbage.engine.client.shader;
 
-import com.terminalvelocitycabbage.engine.resources.Identifier;
-import com.terminalvelocitycabbage.engine.resources.ResourceManager;
+import com.terminalvelocitycabbage.engine.client.resources.Identifier;
+import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
 
 public class Shader {
 

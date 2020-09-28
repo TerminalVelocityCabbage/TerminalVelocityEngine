@@ -1,4 +1,4 @@
-package com.terminalvelocitycabbage.engine.resources;
+package com.terminalvelocitycabbage.engine.client.resources;
 
 import java.io.IOException;
 import java.io.InputStream;
