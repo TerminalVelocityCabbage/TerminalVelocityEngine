@@ -8,8 +8,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PingClient {
 
-	private String address;
-	private int port;
+	private final String address;
+	private final int port;
 
 	public PingClient(String address, int port) {
 		this.address = address;

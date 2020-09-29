@@ -2,7 +2,6 @@ package com.terminalvelocitycabbage.engine.client.resources;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
 import java.util.Optional;
 
 public interface Resource {
@@ -12,6 +11,4 @@ public interface Resource {
 	InputStream openStream() throws IOException;
 
 	Optional<String> asString();
-
-	Optional<ByteBuffer> getByteBufferFromPNG();
 }

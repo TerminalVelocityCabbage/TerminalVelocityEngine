@@ -34,19 +34,9 @@ public abstract class ClientBase extends EventDispatcher {
 	}
 
 	public void start() {
-
-		client.onConnect(() -> {
-			dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.CONNECT, client));
-		});
-
-		client.preDisconnect(() -> {
-			dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.PRE_DISCONNECT, client));
-		});
-
-		client.postDisconnect(() -> {
-			dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.POST_DISCONNECT, client));
-		});
-
+		client.onConnect(() -> dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.CONNECT, client)));
+		client.preDisconnect(() -> dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.PRE_DISCONNECT, client)));
+		client.postDisconnect(() -> dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.POST_DISCONNECT, client)));
 		dispatchEvent(new ClientStartEvent(ClientStartEvent.START, client));
 	}
 
@@ -60,7 +50,7 @@ public abstract class ClientBase extends EventDispatcher {
 		client.close();
 	}
 
-	public boolean disconnected() {
+	public boolean shouldDisconnect() {
 		return shouldDisconnect;
 	}
 
@@ -83,13 +73,12 @@ public abstract class ClientBase extends EventDispatcher {
 			tries--;
 		}
 
+		disconnect();
 		if (shouldConnect) {
-			disconnect();
 			init();
 			start();
 			dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.POST_RECONNECT, client));
 		} else {
-			disconnect();
 			dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.RECONNECT_FAIL, client));
 		}
 	}

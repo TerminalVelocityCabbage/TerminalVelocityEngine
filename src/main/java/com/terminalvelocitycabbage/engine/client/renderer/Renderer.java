@@ -1,14 +1,17 @@
 package com.terminalvelocitycabbage.engine.client.renderer;
 
 import com.terminalvelocitycabbage.engine.client.input.InputHandler;
+import com.terminalvelocitycabbage.engine.debug.Log;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.IntBuffer;
+import java.util.Objects;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
@@ -16,9 +19,9 @@ public abstract class Renderer {
 
 	// The window handle
 	private static long window;
-	private static int initialWidth;
-	private static int initialHeight;
-	private static String title;
+	private final int initialWidth;
+	private final int initialHeight;
+	private final String title;
 
 	public Renderer(int width, int height, String title) {
 		initialWidth = width;
@@ -38,7 +41,7 @@ public abstract class Renderer {
 
 		// Terminate GLFW and free the error callback
 		glfwTerminate();
-		glfwSetErrorCallback(null).free();
+		Objects.requireNonNull(glfwSetErrorCallback(null)).free();
 	}
 
 	public void init(InputHandler inputHandler) {
@@ -57,8 +60,7 @@ public abstract class Renderer {
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
-		//MacOS
-		//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
 		// Create the window
 		window = glfwCreateWindow(initialWidth, initialHeight, title, NULL, NULL);
@@ -79,6 +81,11 @@ public abstract class Renderer {
 
 			// Get the resolution of the primary monitor
 			GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+			if (videoMode == null) {
+				Log.error("Could not start window");
+				System.exit(-1);
+			}
 
 			// Center the window
 			glfwSetWindowPos(
