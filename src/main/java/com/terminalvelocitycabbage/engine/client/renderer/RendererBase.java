@@ -13,14 +13,9 @@ public abstract class RendererBase {
 
 	// The window handle
 	private Window window;
-	private final int initialWidth;
-	private final int initialHeight;
-	private final String title;
 
-	public RendererBase(int width, int height, String title) {
-		initialWidth = width;
-		initialHeight = height;
-		this.title = title;
+	public RendererBase(int width, int height, String title, InputHandler inputHandler) {
+		window = new Window(width, height, title, true, this, inputHandler, true);
 	}
 
 	public void run() {
@@ -31,7 +26,7 @@ public abstract class RendererBase {
 		destroy();
 	}
 
-	public void init(InputHandler inputHandler) {
+	public void init() {
 		// Setup an error callback. The default implementation
 		// will print the error message in System.err.
 		GLFWErrorCallback.createPrint(System.err).set();
@@ -49,7 +44,6 @@ public abstract class RendererBase {
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-		window = new Window(initialWidth, initialHeight, title, true, this, inputHandler, true);
 		window.create();
 		window.init();
 	}
