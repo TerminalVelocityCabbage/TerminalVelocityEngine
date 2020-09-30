@@ -2,13 +2,14 @@ package com.terminalvelocitycabbage.engine.client.renderer;
 
 import com.terminalvelocitycabbage.engine.client.input.InputHandler;
 import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.opengl.GL;
 
 import java.util.Objects;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.GL_TRUE;
 
-public abstract class Renderer {
+public abstract class RendererBase {
 
 	// The window handle
 	private Window window;
@@ -16,7 +17,7 @@ public abstract class Renderer {
 	private final int initialHeight;
 	private final String title;
 
-	public Renderer(int width, int height, String title) {
+	public RendererBase(int width, int height, String title) {
 		initialWidth = width;
 		initialHeight = height;
 		this.title = title;
@@ -24,6 +25,8 @@ public abstract class Renderer {
 
 	public void run() {
 		window.show();
+		// creates the GLCapabilities instance and makes the OpenGL bindings available for use.
+		GL.createCapabilities();
 		loop();
 		destroy();
 	}
@@ -69,4 +72,9 @@ public abstract class Renderer {
 	}
 
 	public abstract void loop();
+
+	public void push() {
+		glfwSwapBuffers(getWindowID());
+		glfwPollEvents();
+	}
 }

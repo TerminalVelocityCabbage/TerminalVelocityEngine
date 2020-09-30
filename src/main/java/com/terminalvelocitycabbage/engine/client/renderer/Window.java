@@ -20,14 +20,14 @@ public class Window {
 	private int windowHeight;
 	private String title;
 	private boolean vSync;
-	private Renderer renderer;
+	private RendererBase renderer;
 	private InputHandler inputHandler;
 	private boolean center;
 
 	private int monitorWidth;
 	private int monitorHeight;
 
-	public Window(int width, int height, String title, boolean vSync, Renderer renderer, InputHandler inputHandler, boolean center) {
+	public Window(int width, int height, String title, boolean vSync, RendererBase renderer, InputHandler inputHandler, boolean center) {
 		this.windowWidth = width;
 		this.windowHeight = height;
 		this.title = title;

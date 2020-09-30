@@ -43,6 +43,9 @@ public class ShaderHandler {
 	public void createUniform(String name) {
 		int uniformLocation = glGetUniformLocation(shaderProgram, name);
 		if (uniformLocation < 0) {
+			//Note: when a uniform is not used in a shader it will silently be removed upon compilation
+			//		this can lead to some confusion here since it may be defined in the shader correctly,
+			//		but if it's not used it will also throw this error.
 			throw new RuntimeException("No uniform defined by name: " + name);
 		}
 		uniforms.put(name, shaderProgram);
