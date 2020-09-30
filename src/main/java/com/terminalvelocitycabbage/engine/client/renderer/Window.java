@@ -104,4 +104,12 @@ public class Window {
 	public int getMonitorHeight() {
 		return monitorHeight;
 	}
+
+	public int width() {
+		return windowWidth;
+	}
+
+	public int height() {
+		return windowHeight;
+	}
 }

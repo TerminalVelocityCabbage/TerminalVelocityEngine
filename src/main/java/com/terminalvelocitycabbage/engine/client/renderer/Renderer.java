@@ -60,8 +60,12 @@ public abstract class Renderer {
 		Objects.requireNonNull(glfwSetErrorCallback(null)).free();
 	}
 
-	public long getWindow() {
+	public long getWindowID() {
 		return window.getWindow();
+	}
+
+	public Window getWindow() {
+		return window;
 	}
 
 	public abstract void loop();
