@@ -1,24 +1,17 @@
 package com.terminalvelocitycabbage.engine.client.renderer;
 
 import com.terminalvelocitycabbage.engine.client.input.InputHandler;
-import com.terminalvelocitycabbage.engine.debug.Log;
 import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.glfw.GLFWVidMode;
-import org.lwjgl.system.MemoryStack;
 
-import java.nio.IntBuffer;
 import java.util.Objects;
 
-import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.GL_TRUE;
-import static org.lwjgl.system.MemoryStack.stackPush;
-import static org.lwjgl.system.MemoryUtil.NULL;
 
 public abstract class Renderer {
 
 	// The window handle
-	private static long window;
+	private Window window;
 	private final int initialWidth;
 	private final int initialHeight;
 	private final String title;
@@ -30,18 +23,9 @@ public abstract class Renderer {
 	}
 
 	public void run() {
+		window.show();
 		loop();
 		destroy();
-	}
-
-	private void destroy() {
-		// Free the window callbacks and destroy the window
-		glfwFreeCallbacks(window);
-		glfwDestroyWindow(window);
-
-		// Terminate GLFW and free the error callback
-		glfwTerminate();
-		Objects.requireNonNull(glfwSetErrorCallback(null)).free();
 	}
 
 	public void init(InputHandler inputHandler) {
@@ -62,51 +46,23 @@ public abstract class Renderer {
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-		// Create the window
-		window = glfwCreateWindow(initialWidth, initialHeight, title, NULL, NULL);
-		if ( window == NULL ) {
-			throw new RuntimeException("Failed to create the GLFW window");
-		}
+		window = new Window(initialWidth, initialHeight, title, true, this, inputHandler, true);
+		window.create();
+		window.init();
+	}
 
-		// Setup a key callback. It will be called every time a key is pressed, repeated or released.
-		inputHandler.processInput(window);
+	private void destroy() {
+		// Free the window callbacks and destroy the window
+		window.destroy();
 
-		// Get the thread stack and push a new frame
-		try ( MemoryStack stack = stackPush() ) {
-			IntBuffer pWidth = stack.mallocInt(1); // int*
-			IntBuffer pHeight = stack.mallocInt(1); // int*
+		// Terminate GLFW and free the error callback
+		glfwTerminate();
+		Objects.requireNonNull(glfwSetErrorCallback(null)).free();
+	}
 
-			// Get the window size passed to glfwCreateWindow
-			glfwGetWindowSize(window, pWidth, pHeight);
-
-			// Get the resolution of the primary monitor
-			GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-
-			if (videoMode == null) {
-				Log.error("Could not start window");
-				System.exit(-1);
-			}
-
-			// Center the window
-			glfwSetWindowPos(
-					window,
-					(videoMode.width() - pWidth.get(0)) / 2,
-					(videoMode.height() - pHeight.get(0)) / 2
-			);
-		} // the stack frame is popped automatically
-
-		// Make the OpenGL context current
-		glfwMakeContextCurrent(window);
-		// Enable v-sync
-		glfwSwapInterval(1);
-
-		// Make the window visible
-		glfwShowWindow(window);
+	public long getWindow() {
+		return window.getWindow();
 	}
 
 	public abstract void loop();
-
-	public static long getWindow() {
-		return window;
-	}
 }

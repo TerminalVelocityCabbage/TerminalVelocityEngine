@@ -38,7 +38,7 @@ public class ShaderHandler {
 		glDeleteShader(typedShader);
 	}
 
-	public void setupShaders() {
+	public void bindAll() {
 		for (Shader shader : shaderQueue) {
 			createShader(shader);
 		}
