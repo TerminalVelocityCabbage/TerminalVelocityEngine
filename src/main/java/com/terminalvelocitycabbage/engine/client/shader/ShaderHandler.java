@@ -48,7 +48,7 @@ public class ShaderHandler {
 			//		but if it's not used it will also throw this error.
 			throw new RuntimeException("No uniform defined by name: " + name);
 		}
-		uniforms.put(name, shaderProgram);
+		uniforms.put(name, uniformLocation);
 	}
 
 	public void setUniformMat4f(String name, Matrix4f value) {
