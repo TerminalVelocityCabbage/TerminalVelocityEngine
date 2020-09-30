@@ -20,7 +20,6 @@ public class Window {
 	private int windowHeight;
 	private String title;
 	private boolean vSync;
-	private RendererBase renderer;
 	private InputHandler inputHandler;
 	private boolean center;
 
@@ -32,7 +31,6 @@ public class Window {
 		this.windowHeight = height;
 		this.title = title;
 		this.vSync = vSync;
-		this.renderer = renderer;
 		this.inputHandler = inputHandler;
 		this.center = center;
 	}
