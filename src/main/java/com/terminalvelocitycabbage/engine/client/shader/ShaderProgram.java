@@ -12,19 +12,20 @@ import java.util.*;
 
 import static org.lwjgl.opengl.GL20.*;
 
-public class ShaderHandler {
+public class ShaderProgram {
 
-	private final int shaderProgram;
+	private final int id;
+	private boolean inUse = false;
 	private static final List<Shader> shaderQueue = new ArrayList<>();
 	private final Map<String, Integer> uniforms;
 
-	public ShaderHandler() {
-		this.shaderProgram = glCreateProgram();
+	public ShaderProgram() {
+		this.id = glCreateProgram();
 		uniforms = new HashMap<>();
 	}
 
 	public void queueShader(int type, ResourceManager resourceManager, Identifier identifier) {
-		shaderQueue.add(new Shader(type, shaderProgram, resourceManager, identifier));
+		shaderQueue.add(new Shader(type, id, resourceManager, identifier));
 	}
 
 	private void createShader(Shader shader) {
@@ -41,7 +42,7 @@ public class ShaderHandler {
 	}
 
 	public void createUniform(String name) {
-		int uniformLocation = glGetUniformLocation(shaderProgram, name);
+		int uniformLocation = glGetUniformLocation(id, name);
 		if (uniformLocation < 0) {
 			//Note: when a uniform is not used in a shader it will silently be removed upon compilation
 			//		this can lead to some confusion here since it may be defined in the shader correctly,
@@ -52,6 +53,9 @@ public class ShaderHandler {
 	}
 
 	public void setUniformMat4f(String name, Matrix4f value) {
+		if (!inUse) {
+			throw new RuntimeException("Cant update uniform value before shader program is in use.");
+		}
 		try (MemoryStack stack = MemoryStack.stackPush()) {
 			FloatBuffer fb = stack.mallocFloat(16);
 			value.get(fb);
@@ -63,17 +67,19 @@ public class ShaderHandler {
 		for (Shader shader : shaderQueue) {
 			createShader(shader);
 		}
-		glLinkProgram(shaderProgram);
-		if (glGetProgrami(shaderProgram, GL_LINK_STATUS) == GL_FALSE) {
-			Log.error(glGetProgramInfoLog(shaderProgram));
+		glLinkProgram(id);
+		if (glGetProgrami(id, GL_LINK_STATUS) == GL_FALSE) {
+			Log.error(glGetProgramInfoLog(id));
 		}
 	}
 
 	public void use() {
-		glUseProgram(shaderProgram);
+		glUseProgram(id);
+		inUse = true;
 	}
 
 	public void delete() {
-		glDeleteProgram(shaderProgram);
+		glDeleteProgram(id);
+		inUse = false;
 	}
 }
