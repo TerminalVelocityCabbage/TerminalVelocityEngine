@@ -1,6 +1,7 @@
-package com.terminalvelocitycabbage.engine.client.renderer;
+package com.terminalvelocitycabbage.engine.client.renderer.components;
 
 import com.terminalvelocitycabbage.engine.client.input.InputHandler;
+import com.terminalvelocitycabbage.engine.client.renderer.RendererBase;
 import com.terminalvelocitycabbage.engine.debug.Log;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.MemoryStack;
