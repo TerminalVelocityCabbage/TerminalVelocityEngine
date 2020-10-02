@@ -1,7 +1,5 @@
 package com.terminalvelocitycabbage.engine.client.renderer.model;
 
-import org.joml.Vector3f;
-
 import java.util.ArrayList;
 
 public class Model {
@@ -12,10 +10,25 @@ public class Model {
 		this.modelParts = modelParts;
 	}
 
-	public void setTranslation(Vector3f position, Vector3f rotation, Vector3f scale) {
+	public void move(float x, float y, float z) {
 		for (Model.Part part : modelParts) {
-			part.setTranslation(position, rotation, scale);
+			part.move(x, y, z);
 		}
+		update();
+	}
+
+	public void rotate(float x, float y, float z) {
+		for (Model.Part part : modelParts) {
+			part.rotate(x, y, z);
+		}
+		update();
+	}
+
+	public void scale(float x, float y, float z) {
+		for (Model.Part part : modelParts) {
+			part.scale(x, y, z);
+		}
+		update();
 	}
 
 	public void bind() {
@@ -56,11 +69,28 @@ public class Model {
 			return children;
 		}
 
-		public void setTranslation(Vector3f position, Vector3f rotation, Vector3f scale) {
-			mesh.setTranslation(position, rotation, scale);
+		public void move(float x, float y, float z) {
+			mesh.move(x, y, z);
 			for (Model.Part child : children) {
-				child.setTranslation(position, rotation, scale);
+				child.move(x, y, z);
 			}
+			update();
+		}
+
+		public void rotate(float x, float y, float z) {
+			mesh.rotate(x, y, z);
+			for (Model.Part child : children) {
+				child.rotate(x, y, z);
+			}
+			update();
+		}
+
+		public void scale(float x, float y, float z) {
+			mesh.scaleAxis(x, y, z);
+			for (Model.Part child : children) {
+				child.scale(x, y, z);
+			}
+			update();
 		}
 
 		public void bind() {

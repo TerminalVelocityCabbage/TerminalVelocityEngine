@@ -1,7 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.renderer.model;
 
 import com.terminalvelocitycabbage.engine.client.renderer.shapes.TexturedVertex;
-import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
@@ -15,14 +14,12 @@ import static org.lwjgl.opengl.GL30.*;
 
 public abstract class Mesh {
 
-	Vector3f offset;
-	Vector3f position;
-	Vector3f rotation;
-	Vector3f scale;
-
 	private int vaoID;
 	private int vboID;
 	private int eboID;
+
+	protected TexturedVertex[] vertices;
+	protected byte[] vertexOrder;
 
 	public void bind() {
 		//Create the VAO and bind it
@@ -58,7 +55,7 @@ public abstract class Mesh {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
 
 		// Draw the vertices
-		glDrawElements(GL_TRIANGLES, indexOrder().length, GL_UNSIGNED_BYTE, 0);
+		glDrawElements(GL_TRIANGLES, vertexOrder.length, GL_UNSIGNED_BYTE, 0);
 
 		// Put everything back to default (deselect)
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -76,7 +73,7 @@ public abstract class Mesh {
 	public void update() {
 		// Put the new data in a ByteBuffer (in the view of a FloatBuffer)
 		FloatBuffer vertexFloatBuffer = getCombinedVertices();
-		for (int i = 0; i < numVertices(); i++) {
+		for (int i = 0; i < vertices.length; i++) {
 			vertexFloatBuffer.rewind();
 			vertexFloatBuffer.put(getVertex(i).getElements());
 			vertexFloatBuffer.flip();
@@ -85,67 +82,41 @@ public abstract class Mesh {
 	}
 
 	public TexturedVertex getVertex(int index) {
-		return getVertices()[index];
+		return vertices[index];
 	}
 
 	public FloatBuffer getCombinedVertices() {
-		FloatBuffer verticesBuffer = BufferUtils.createFloatBuffer(getVertices().length * TexturedVertex.ELEMENT_COUNT);
-		for (TexturedVertex vertex : getVertices()) {
+		FloatBuffer verticesBuffer = BufferUtils.createFloatBuffer(vertices.length * TexturedVertex.ELEMENT_COUNT);
+		for (TexturedVertex vertex : vertices) {
 			verticesBuffer.put(vertex.getElements());
 		}
 		return verticesBuffer.flip();
 	}
 
 	private ByteBuffer getIndicesBuffer() {
-		return BufferUtils.createByteBuffer(indexOrder().length).put(indexOrder()).flip();
-	}
-
-	public void setTranslation(Vector3f position, Vector3f rotation, Vector3f scale) {
-		this.position = position;
-		this.rotation = rotation;
-		this.scale = scale;
+		return BufferUtils.createByteBuffer(vertexOrder.length).put(vertexOrder).flip();
 	}
 
 	public void offset(float x, float y, float z) {
-		offset.add(x, y, z);
+		//TODO
 	}
 
 	public void move(float x, float y, float z) {
-		position.add(x, y, z);
+		for (TexturedVertex vertex : vertices) {
+			vertex.addXYZW(x, y, z, 0.0f);
+		}
 	}
 
 	public void rotate(float x, float y, float z) {
-		rotation.add(x, y, z);
+		//TODO
 	}
 
 	public void scaleAxis(float x, float y, float z) {
-		scale.add(x, y, z);
+		//TODO
 	}
 
 	public void scale(float amount) {
-		scale.mul(amount);
+		//TODO
 	}
-
-	public Vector3f getOffset() {
-		return offset;
-	}
-
-	public Vector3f getPosition() {
-		return position;
-	}
-
-	public Vector3f getRotation() {
-		return rotation;
-	}
-
-	public Vector3f getScale() {
-		return scale;
-	}
-
-	public abstract int numVertices();
-
-	public abstract byte[] indexOrder();
-
-	public abstract TexturedVertex[] getVertices();
 
 }
