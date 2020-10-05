@@ -1,6 +1,7 @@
 package com.terminalvelocitycabbage.engine.entity;
 
 import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public class GameObject {
@@ -59,7 +60,7 @@ public class GameObject {
 				rotation = new Vector3f(0, 0, 0);
 			}
 			if (scale == null) {
-				scale = new Vector3f(0, 0, 0); //TODO make sure this isn't supposed to be 1, 1, 1
+				scale = new Vector3f(1, 1, 1);
 			}
 			return new GameObject(position, rotation, scale, model);
 		}
@@ -97,6 +98,15 @@ public class GameObject {
 
 	public void destroy() {
 		model.destroy();
+	}
+
+	public Matrix4f getWorldMatrix() {
+		return new Matrix4f().identity()
+				.translate(position)
+				.rotateX((float)Math.toRadians(rotation.x))
+				.rotateY((float)Math.toRadians(rotation.y))
+				.rotateZ((float)Math.toRadians(rotation.z))
+				.scale(scale);
 	}
 
 }

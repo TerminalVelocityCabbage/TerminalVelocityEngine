@@ -43,8 +43,6 @@ public abstract class Mesh {
 	}
 
 	public void render() {
-		//TODO create worldUniform and render the object
-
 		// Bind to the VAO that has all the information about the vertices
 		glBindVertexArray(vaoID);
 		glEnableVertexAttribArray(0);
