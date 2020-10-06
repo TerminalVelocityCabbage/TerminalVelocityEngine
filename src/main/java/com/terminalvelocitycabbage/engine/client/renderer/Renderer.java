@@ -10,12 +10,12 @@ import java.util.Objects;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.GL_TRUE;
 
-public abstract class RendererBase {
+public abstract class Renderer {
 
 	// The window handle
 	private Window window;
 
-	public RendererBase(int width, int height, String title, InputHandler inputHandler) {
+	public Renderer(int width, int height, String title, InputHandler inputHandler) {
 		window = new Window(width, height, title, true, this, inputHandler, true);
 	}
 
@@ -59,7 +59,7 @@ public abstract class RendererBase {
 	}
 
 	public long getWindowID() {
-		return window.getWindow();
+		return window.getID();
 	}
 
 	public Window getWindow() {

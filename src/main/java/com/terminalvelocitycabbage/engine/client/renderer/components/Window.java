@@ -1,7 +1,7 @@
 package com.terminalvelocitycabbage.engine.client.renderer.components;
 
 import com.terminalvelocitycabbage.engine.client.input.InputHandler;
-import com.terminalvelocitycabbage.engine.client.renderer.RendererBase;
+import com.terminalvelocitycabbage.engine.client.renderer.Renderer;
 import com.terminalvelocitycabbage.engine.debug.Log;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.MemoryStack;
@@ -17,6 +17,8 @@ public class Window {
 
 	private long windowID;
 
+	private Renderer renderer;
+
 	private int windowWidth;
 	private int windowHeight;
 	private String title;
@@ -27,7 +29,7 @@ public class Window {
 	private int monitorWidth;
 	private int monitorHeight;
 
-	public Window(int width, int height, String title, boolean vSync, RendererBase renderer, InputHandler inputHandler, boolean center) {
+	public Window(int width, int height, String title, boolean vSync, Renderer renderer, InputHandler inputHandler, boolean center) {
 		this.windowWidth = width;
 		this.windowHeight = height;
 		this.title = title;
@@ -46,7 +48,7 @@ public class Window {
 
 	public void init() {
 		// Setup a key callback. It will be called every time a key is pressed, repeated or released.
-		inputHandler.processInput(windowID);
+		inputHandler.processInput(this);
 
 		// Get the thread stack and push a new frame
 		try (MemoryStack stack = stackPush()) {
@@ -76,6 +78,9 @@ public class Window {
 			if (center) {
 				glfwSetWindowPos(windowID, (videoMode.width() - pWidth.get(0))/2, (videoMode.height() - pHeight.get(0))/2);
 			}
+
+			//init the input handler
+			inputHandler.init(this);
 		}
 	}
 
@@ -92,8 +97,12 @@ public class Window {
 		glfwShowWindow(windowID);
 	}
 
-	public long getWindow() {
+	public long getID() {
 		return windowID;
+	}
+
+	public Renderer getRenderer() {
+		return renderer;
 	}
 
 	public int getMonitorWidth() {
@@ -110,5 +119,9 @@ public class Window {
 
 	public int height() {
 		return windowHeight;
+	}
+
+	public InputHandler getInputHandler() {
+		return inputHandler;
 	}
 }
