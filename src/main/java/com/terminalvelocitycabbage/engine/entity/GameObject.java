@@ -12,11 +12,16 @@ public class GameObject {
 
 	Model model;
 
+	Matrix4f modelViewMatrix;
+
 	private GameObject(Vector3f position, Vector3f rotation, Vector3f scale, Model model) {
 		this.position = position;
 		this.rotation = rotation;
 		this.scale = scale;
+
 		this.model = model;
+
+		modelViewMatrix = new Matrix4f();
 	}
 
 	public static GameObject.Builder builder() {
@@ -100,13 +105,14 @@ public class GameObject {
 		model.destroy();
 	}
 
-	public Matrix4f getWorldMatrix() {
-		return new Matrix4f().identity()
-				.translate(position)
-				.rotateX((float)Math.toRadians(rotation.x))
-				.rotateY((float)Math.toRadians(rotation.y))
-				.rotateZ((float)Math.toRadians(rotation.z))
-				.scale(scale);
+	public Matrix4f getModelViewMatrix(Matrix4f viewMatrix) {
+		modelViewMatrix.identity().translate(position).
+				rotateX((float)Math.toRadians(-rotation.x)).
+				rotateY((float)Math.toRadians(-rotation.y)).
+				rotateZ((float)Math.toRadians(-rotation.z)).
+				scale(scale);
+		Matrix4f viewCurr = new Matrix4f(viewMatrix);
+		return viewCurr.mul(modelViewMatrix);
 	}
 
 }
