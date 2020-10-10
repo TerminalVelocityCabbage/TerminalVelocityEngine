@@ -34,16 +34,12 @@ public abstract class InputHandler {
 			previousPos.x = currentPos.x;
 			previousPos.y = currentPos.y;
 		});
-		glfwSetCursorEnterCallback(window.getID(), (windowHandle, entered) -> {
-			focused = entered;
-		});
+		glfwSetCursorEnterCallback(window.getID(), (windowHandle, entered) -> focused = entered);
 		glfwSetMouseButtonCallback(window.getID(), (windowHandle, button, action, mode) -> {
 			leftButtonPressed = button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS;
 			rightButtonPressed = button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS;
 		});
-		glfwSetKeyCallback(window.getID(), (win, key, scancode, action, mods) -> {
-			processInput(new KeyBind(win, key, scancode, action, mods));
-		});
+		glfwSetKeyCallback(window.getID(), (win, key, scancode, action, mods) -> processInput(new KeyBind(key, scancode, action, mods)));
 	}
 
 	public abstract void processInput(KeyBind keyBind);

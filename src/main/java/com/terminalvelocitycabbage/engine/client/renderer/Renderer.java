@@ -13,10 +13,10 @@ import static org.lwjgl.opengl.GL11.GL_TRUE;
 public abstract class Renderer {
 
 	// The window handle
-	private Window window;
+	private static Window window;
 
 	public Renderer(int width, int height, String title, InputHandler inputHandler) {
-		window = new Window(width, height, title, true, this, inputHandler, true);
+		window = new Window(width, height, title, true, inputHandler, true);
 	}
 
 	public void run() {
@@ -58,18 +58,14 @@ public abstract class Renderer {
 		Objects.requireNonNull(glfwSetErrorCallback(null)).free();
 	}
 
-	public long getWindowID() {
-		return window.getID();
-	}
-
-	public Window getWindow() {
+	public static Window getWindow() {
 		return window;
 	}
 
 	public abstract void loop();
 
 	public void push() {
-		glfwSwapBuffers(getWindowID());
+		glfwSwapBuffers(window.getID());
 		glfwPollEvents();
 	}
 }

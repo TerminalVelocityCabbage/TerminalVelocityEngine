@@ -1,4 +1,4 @@
-package com.terminalvelocitycabbage.engine.client;
+package com.terminalvelocitycabbage.engine.client.networking;
 
 import com.github.simplenet.Client;
 

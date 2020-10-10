@@ -1,7 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.renderer.components;
 
 import com.terminalvelocitycabbage.engine.client.input.InputHandler;
-import com.terminalvelocitycabbage.engine.client.renderer.Renderer;
 import com.terminalvelocitycabbage.engine.debug.Log;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.MemoryStack;
@@ -17,8 +16,6 @@ public class Window {
 
 	private long windowID;
 
-	private Renderer renderer;
-
 	private int windowWidth;
 	private int windowHeight;
 	private String title;
@@ -29,7 +26,7 @@ public class Window {
 	private int monitorWidth;
 	private int monitorHeight;
 
-	public Window(int width, int height, String title, boolean vSync, Renderer renderer, InputHandler inputHandler, boolean center) {
+	public Window(int width, int height, String title, boolean vSync, InputHandler inputHandler, boolean center) {
 		this.windowWidth = width;
 		this.windowHeight = height;
 		this.title = title;
@@ -101,15 +98,11 @@ public class Window {
 		return windowID;
 	}
 
-	public Renderer getRenderer() {
-		return renderer;
-	}
-
-	public int getMonitorWidth() {
+	public int monitorWidth() {
 		return monitorWidth;
 	}
 
-	public int getMonitorHeight() {
+	public int monitorHeight() {
 		return monitorHeight;
 	}
 

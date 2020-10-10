@@ -1,5 +1,7 @@
 package com.terminalvelocitycabbage.engine.client.input;
 
+import com.terminalvelocitycabbage.engine.client.renderer.Renderer;
+
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.glfwGetKey;
 
@@ -14,16 +16,16 @@ public class KeyBind {
 	public static final int ANY = -1;
 	public static final int NONE = 0;
 
-	public KeyBind(long window, int key) {
-		this.window = window;
+	public KeyBind(int key) {
+		this.window = Renderer.getWindow().getID();
 		this.keyCode = key;
 		this.scancode = ANY;
 		this.action = ANY;
 		this.modifiers = NONE;
 	}
 
-	public KeyBind(long window, int key, int scancode, int action, int modifiers) {
-		this.window = window;
+	public KeyBind(int key, int scancode, int action, int modifiers) {
+		this.window = Renderer.getWindow().getID();
 		this.keyCode = key;
 		this.scancode = scancode;
 		this.action = action;

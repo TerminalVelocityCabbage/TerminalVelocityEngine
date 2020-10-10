@@ -1,5 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.renderer.components;
 
+import com.terminalvelocitycabbage.engine.client.renderer.Renderer;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -15,12 +16,12 @@ public class Camera {
 	private final Vector3f position;
 	private final Vector3f rotation;
 
-	public Camera(float fov, float clippingPlane, float farPlane, int width, int height) {
-		this.fov = fov;
+	public Camera(int fov, float clippingPlane, float farPlane) {
+		this.fov = (float)Math.toRadians(fov);
 		this.clippingPlane = clippingPlane;
 		this.farPlane = farPlane;
 
-		projectionMatrix = updateProjectionMatrix(width, height);
+		projectionMatrix = updateProjectionMatrix(Renderer.getWindow().width(), Renderer.getWindow().height());
 		viewMatrix = new Matrix4f();
 
 		position = new Vector3f(0, 0, 0);
