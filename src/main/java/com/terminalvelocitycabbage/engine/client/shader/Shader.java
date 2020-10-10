@@ -1,7 +1,14 @@
 package com.terminalvelocitycabbage.engine.client.shader;
 
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
+import com.terminalvelocitycabbage.engine.client.resources.Resource;
 import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
+
+import java.util.Optional;
+
+import static org.lwjgl.opengl.GL11.GL_FALSE;
+import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL20.glAttachShader;
 
 public class Shader {
 
@@ -17,19 +24,16 @@ public class Shader {
 		this.identifier = identifier;
 	}
 
-	public int getType() {
-		return type;
-	}
-
-	public int getShaderProgram() {
-		return shaderProgram;
-	}
-
-	public ResourceManager getResourceManager() {
-		return resourceManager;
-	}
-
-	public Identifier getIdentifier() {
-		return identifier;
+	public void create() {
+		Optional<Resource> resource = resourceManager.getResource(identifier);
+		String src = resource.flatMap(Resource::asString).orElseThrow();
+		int shader = glCreateShader(type);
+		glShaderSource(shader, src);
+		glCompileShader(shader);
+		if (glGetShaderi(shader, GL_COMPILE_STATUS) == GL_FALSE) {
+			throw  new RuntimeException("Could not compile shader " + identifier.getPath() + " " + glGetShaderInfoLog(shaderProgram));
+		}
+		glAttachShader(shaderProgram, shader);
+		glDeleteShader(shader);
 	}
 }

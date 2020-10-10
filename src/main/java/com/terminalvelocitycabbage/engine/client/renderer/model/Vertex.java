@@ -1,6 +1,6 @@
-package com.terminalvelocitycabbage.engine.client.renderer.shapes;
+package com.terminalvelocitycabbage.engine.client.renderer.model;
 
-public class TexturedVertex {
+public class Vertex {
 
 	//Vertex information
 	private float[] xyzw = new float[] {0f, 0f, 0f, 1f};
@@ -30,37 +30,37 @@ public class TexturedVertex {
 	//The total number of bytes this vertex requires
 	public static final int STRIDE = POSITION_BYTES + COLOR_BYTES + TEXTURE_BYTES;
 
-	public TexturedVertex setXYZW(float x, float y, float z, float w) {
+	public Vertex setXYZW(float x, float y, float z, float w) {
 		this.xyzw = new float[] {x, y, z, w};
 		return this;
 	}
 
-	public TexturedVertex setXYZ(float x, float y, float z) {
+	public Vertex setXYZ(float x, float y, float z) {
 		return setXYZW(x, y, z, 1.0f);
 	}
 
-	public TexturedVertex addXYZW(float x, float y, float z, float w) {
+	public Vertex addXYZW(float x, float y, float z, float w) {
 		return setXYZW(xyzw[0] + x, xyzw[1] + y, xyzw[2] + z, xyzw[3] + w);
 	}
 
-	public TexturedVertex setRGBA(float r, float g, float b, float a) {
+	public Vertex setRGBA(float r, float g, float b, float a) {
 		rgba = new float[] {r, g, b, a};
 		return this;
 	}
 
-	public TexturedVertex setRGBA(int r, int g, int b, float a) {
+	public Vertex setRGBA(int r, int g, int b, float a) {
 		return setRGBA((float)r/255, (float)g/255, (float)b/255, a);
 	}
 
-	public TexturedVertex setRGB(int r, int g, int b) {
+	public Vertex setRGB(int r, int g, int b) {
 		return setRGBA((float)r/255, (float)g/255, (float)b/255, 1.0f);
 	}
 
-	public TexturedVertex setRGB(float r, float g, float b) {
+	public Vertex setRGB(float r, float g, float b) {
 		return setRGBA(r, g, b, 1.0f);
 	}
 
-	public TexturedVertex setUv(float u, float v) {
+	public Vertex setUv(float u, float v) {
 		uv = new float[] {u, v};
 		return this;
 	}

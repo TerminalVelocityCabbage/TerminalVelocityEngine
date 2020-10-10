@@ -1,14 +1,16 @@
 package com.terminalvelocitycabbage.engine.client.shader;
 
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
-import com.terminalvelocitycabbage.engine.client.resources.Resource;
 import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
 import com.terminalvelocitycabbage.engine.debug.Log;
 import org.joml.Matrix4f;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.FloatBuffer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.lwjgl.opengl.GL20.*;
 
@@ -21,6 +23,9 @@ public class ShaderProgram {
 
 	public ShaderProgram() {
 		this.id = glCreateProgram();
+		if (this.id == 0) {
+			throw new RuntimeException("Could not create shader program");
+		}
 		uniforms = new HashMap<>();
 	}
 
@@ -28,17 +33,14 @@ public class ShaderProgram {
 		shaderQueue.add(new Shader(type, id, resourceManager, identifier));
 	}
 
-	private void createShader(Shader shader) {
-		Optional<Resource> resource = shader.getResourceManager().getResource(shader.getIdentifier());
-		String src = resource.flatMap(Resource::asString).orElseThrow();
-		int typedShader = glCreateShader(shader.getType());
-		glShaderSource(typedShader, src);
-		glCompileShader(typedShader);
-		if (glGetShaderi(typedShader, GL_COMPILE_STATUS) == GL_FALSE) {
-			Log.error(glGetShaderInfoLog(shader.getShaderProgram()));
+	public void bindAll() {
+		for (Shader shader : shaderQueue) {
+			shader.create();
 		}
-		glAttachShader(shader.getShaderProgram(), typedShader);
-		glDeleteShader(typedShader);
+		glLinkProgram(id);
+		if (glGetProgrami(id, GL_LINK_STATUS) == GL_FALSE) {
+			Log.error(glGetProgramInfoLog(id));
+		}
 	}
 
 	public void createUniform(String name) {
@@ -63,19 +65,14 @@ public class ShaderProgram {
 		}
 	}
 
-	public void bindAll() {
-		for (Shader shader : shaderQueue) {
-			createShader(shader);
-		}
-		glLinkProgram(id);
-		if (glGetProgrami(id, GL_LINK_STATUS) == GL_FALSE) {
-			Log.error(glGetProgramInfoLog(id));
-		}
-	}
-
-	public void use() {
+	public void enable() {
 		glUseProgram(id);
 		inUse = true;
+	}
+
+	public void disable() {
+		glUseProgram(0);
+		inUse = false;
 	}
 
 	public void delete() {
