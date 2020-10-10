@@ -14,14 +14,25 @@ public class GameObject {
 
 	Matrix4f modelViewMatrix;
 
+	boolean textured;
+
+	private GameObject(Vector3f position, Vector3f rotation, Vector3f scale, Model model, boolean textured) {
+		this.position = position;
+		this.rotation = rotation;
+		this.scale = scale;
+		this.model = model;
+		this.modelViewMatrix = new Matrix4f();
+		this.textured = textured;
+	}
+
 	private GameObject(Vector3f position, Vector3f rotation, Vector3f scale, Model model) {
 		this.position = position;
 		this.rotation = rotation;
 		this.scale = scale;
-
 		this.model = model;
+		this.modelViewMatrix = new Matrix4f();
 
-		modelViewMatrix = new Matrix4f();
+		this.textured = true;
 	}
 
 	public static GameObject.Builder builder() {
@@ -33,6 +44,7 @@ public class GameObject {
 		Vector3f rotation = null;
 		Vector3f scale = null;
 		Model model = null;
+		boolean textured;
 
 		public GameObject.Builder setPosition(Vector3f position) {
 			this.position = position;
@@ -51,6 +63,13 @@ public class GameObject {
 
 		public GameObject.Builder setModel(Model model) {
 			this.model = model;
+			this.textured = true;
+			return this;
+		}
+
+		public GameObject.Builder setModel(Model model, boolean textured) {
+			this.model = model;
+			this.textured = textured;
 			return this;
 		}
 
@@ -67,7 +86,7 @@ public class GameObject {
 			if (scale == null) {
 				scale = new Vector3f(1, 1, 1);
 			}
-			return new GameObject(position, rotation, scale, model);
+			return new GameObject(position, rotation, scale, model, textured);
 		}
 	}
 
@@ -115,4 +134,7 @@ public class GameObject {
 		return viewCurr.mul(modelViewMatrix);
 	}
 
+	public boolean isTextured() {
+		return textured;
+	}
 }

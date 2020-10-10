@@ -1,5 +1,7 @@
 package com.terminalvelocitycabbage.engine.client.renderer.shapes;
 
+import com.terminalvelocitycabbage.engine.client.renderer.model.TexturedMesh;
+import com.terminalvelocitycabbage.engine.client.renderer.model.TexturedVertex;
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
 

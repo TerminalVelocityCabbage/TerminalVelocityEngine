@@ -1,13 +1,12 @@
 package com.terminalvelocitycabbage.engine.client.renderer.model;
 
-import com.terminalvelocitycabbage.engine.client.renderer.shapes.TexturedVertex;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
-import static com.terminalvelocitycabbage.engine.client.renderer.shapes.TexturedVertex.*;
+import static com.terminalvelocitycabbage.engine.client.renderer.model.TexturedVertex.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
@@ -18,7 +17,7 @@ public abstract class Mesh {
 	private int vboID;
 	private int eboID;
 
-	protected TexturedVertex[] vertices;
+	protected Vertex[] vertices;
 	protected byte[] vertexOrder;
 
 	public void bind() {
@@ -79,13 +78,13 @@ public abstract class Mesh {
 		}
 	}
 
-	public TexturedVertex getVertex(int index) {
+	public Vertex getVertex(int index) {
 		return vertices[index];
 	}
 
 	public FloatBuffer getCombinedVertices() {
 		FloatBuffer verticesBuffer = BufferUtils.createFloatBuffer(vertices.length * TexturedVertex.ELEMENT_COUNT);
-		for (TexturedVertex vertex : vertices) {
+		for (Vertex vertex : vertices) {
 			verticesBuffer.put(vertex.getElements());
 		}
 		return verticesBuffer.flip();
@@ -100,7 +99,7 @@ public abstract class Mesh {
 	}
 
 	public void move(float x, float y, float z) {
-		for (TexturedVertex vertex : vertices) {
+		for (Vertex vertex : vertices) {
 			vertex.addXYZW(x, y, z, 0.0f);
 		}
 	}

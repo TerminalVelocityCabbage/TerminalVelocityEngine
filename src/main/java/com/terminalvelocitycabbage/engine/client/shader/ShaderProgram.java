@@ -1,14 +1,15 @@
 package com.terminalvelocitycabbage.engine.client.shader;
 
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
-import com.terminalvelocitycabbage.engine.client.resources.Resource;
 import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
 import com.terminalvelocitycabbage.engine.debug.Log;
 import org.joml.Matrix4f;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.FloatBuffer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.lwjgl.opengl.GL20.*;
 
@@ -16,29 +17,35 @@ public class ShaderProgram {
 
 	private final int id;
 	private boolean inUse = false;
-	private static final List<Shader> shaderQueue = new ArrayList<>();
+	private static Map<String, Shader> shaderStorage = new HashMap<>();
+	private static ArrayList<String> enabledShaders = new ArrayList<>();
 	private final Map<String, Integer> uniforms;
 
 	public ShaderProgram() {
 		this.id = glCreateProgram();
+		if (this.id == 0) {
+			throw new RuntimeException("Could not create shader program");
+		}
 		uniforms = new HashMap<>();
 	}
 
-	public void queueShader(int type, ResourceManager resourceManager, Identifier identifier) {
-		shaderQueue.add(new Shader(type, id, resourceManager, identifier));
+	public void createShader(String name, int type, ResourceManager resourceManager, Identifier identifier) {
+		shaderStorage.put(name, new Shader(type, id, resourceManager, identifier).bind());
 	}
 
-	private void createShader(Shader shader) {
-		Optional<Resource> resource = shader.getResourceManager().getResource(shader.getIdentifier());
-		String src = resource.flatMap(Resource::asString).orElseThrow();
-		int typedShader = glCreateShader(shader.getType());
-		glShaderSource(typedShader, src);
-		glCompileShader(typedShader);
-		if (glGetShaderi(typedShader, GL_COMPILE_STATUS) == GL_FALSE) {
-			Log.error(glGetShaderInfoLog(shader.getShaderProgram()));
+	public void enableShader(String name) {
+		getShader(name).attach();
+	}
+
+	public void disableShader(String name) {
+		getShader(name).detach();
+	}
+
+	private Shader getShader(String name) {
+		if (!shaderStorage.containsKey(name)) {
+			throw new RuntimeException("Could not get shader " + name + ", it doesnt exist");
 		}
-		glAttachShader(shader.getShaderProgram(), typedShader);
-		glDeleteShader(typedShader);
+		return shaderStorage.get(name);
 	}
 
 	public void createUniform(String name) {
@@ -63,10 +70,7 @@ public class ShaderProgram {
 		}
 	}
 
-	public void bindAll() {
-		for (Shader shader : shaderQueue) {
-			createShader(shader);
-		}
+	public void link() {
 		glLinkProgram(id);
 		if (glGetProgrami(id, GL_LINK_STATUS) == GL_FALSE) {
 			Log.error(glGetProgramInfoLog(id));
@@ -79,6 +83,10 @@ public class ShaderProgram {
 	}
 
 	public void delete() {
+		for (Shader shader : shaderStorage.values()) {
+			shader.detach();
+			shader.delete();
+		}
 		glDeleteProgram(id);
 		inUse = false;
 	}
