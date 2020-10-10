@@ -12,7 +12,7 @@ public abstract class InputHandler {
 
 	private Vector2d previousPos;
 	private final Vector2d currentPos;
-	private final Vector2f displayVector;
+	protected final Vector2f displayVector;
 
 	private boolean focused = false;
 
