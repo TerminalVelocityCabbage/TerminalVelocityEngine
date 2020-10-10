@@ -1,12 +1,12 @@
 package com.terminalvelocitycabbage.engine.client.renderer.shapes;
 
-import com.terminalvelocitycabbage.engine.client.renderer.model.ColoredVertex;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Mesh;
+import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
 
 public class ColoredCuboid extends Mesh {
-	public ColoredCuboid(ColoredVertex topLeftF, ColoredVertex bottomLeftF, ColoredVertex bottomRightF, ColoredVertex topRightF,
-						 ColoredVertex topLeftR, ColoredVertex bottomLeftR, ColoredVertex bottomRightR, ColoredVertex topRightR) {
-		vertices = new ColoredVertex[]{topLeftF, bottomLeftF, bottomRightF, topRightF, topLeftR, bottomLeftR, bottomRightR, topRightR};
+	public ColoredCuboid(Vertex topLeftF, Vertex bottomLeftF, Vertex bottomRightF, Vertex topRightF,
+						 Vertex topLeftR, Vertex bottomLeftR, Vertex bottomRightR, Vertex topRightR) {
+		vertices = new Vertex[]{topLeftF, bottomLeftF, bottomRightF, topRightF, topLeftR, bottomLeftR, bottomRightR, topRightR};
 		vertexOrder = new byte[]{
 				3, 0, 2, 0, 1, 2,	//Front			4---7
 				7, 3, 6, 3, 2, 6,	//Right		   /|  /|

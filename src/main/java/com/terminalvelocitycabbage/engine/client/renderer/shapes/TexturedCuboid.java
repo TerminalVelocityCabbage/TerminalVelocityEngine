@@ -1,16 +1,16 @@
 package com.terminalvelocitycabbage.engine.client.renderer.shapes;
 
 import com.terminalvelocitycabbage.engine.client.renderer.model.TexturedMesh;
-import com.terminalvelocitycabbage.engine.client.renderer.model.TexturedVertex;
+import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
 
 public class TexturedCuboid extends TexturedMesh {
-	public TexturedCuboid(TexturedVertex topLeftF, TexturedVertex bottomLeftF, TexturedVertex bottomRightF, TexturedVertex topRightF,
-						  TexturedVertex topLeftR, TexturedVertex bottomLeftR, TexturedVertex bottomRightR, TexturedVertex topRightR,
+	public TexturedCuboid(Vertex topLeftF, Vertex bottomLeftF, Vertex bottomRightF, Vertex topRightF,
+						  Vertex topLeftR, Vertex bottomLeftR, Vertex bottomRightR, Vertex topRightR,
 						  ResourceManager resourceManager, Identifier texture) {
 		super(resourceManager, texture);
-		vertices = new TexturedVertex[]{topLeftF, bottomLeftF, bottomRightF, topRightF, topLeftR, bottomLeftR, bottomRightR, topRightR};
+		vertices = new Vertex[]{topLeftF, bottomLeftF, bottomRightF, topRightF, topLeftR, bottomLeftR, bottomRightR, topRightR};
 		vertexOrder = new byte[]{
 				3, 0, 2, 0, 1, 2,	//Front			4---7
 				7, 3, 6, 3, 2, 6,	//Right		   /|  /|

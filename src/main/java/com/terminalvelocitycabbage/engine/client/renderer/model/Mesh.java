@@ -6,7 +6,7 @@ import org.lwjgl.opengl.GL11;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
-import static com.terminalvelocitycabbage.engine.client.renderer.model.TexturedVertex.*;
+import static com.terminalvelocitycabbage.engine.client.renderer.model.Vertex.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
@@ -83,7 +83,7 @@ public abstract class Mesh {
 	}
 
 	public FloatBuffer getCombinedVertices() {
-		FloatBuffer verticesBuffer = BufferUtils.createFloatBuffer(vertices.length * TexturedVertex.ELEMENT_COUNT);
+		FloatBuffer verticesBuffer = BufferUtils.createFloatBuffer(vertices.length * Vertex.ELEMENT_COUNT);
 		for (Vertex vertex : vertices) {
 			verticesBuffer.put(vertex.getElements());
 		}
