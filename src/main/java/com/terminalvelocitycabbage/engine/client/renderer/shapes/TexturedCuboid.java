@@ -6,17 +6,29 @@ import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
 
 public class TexturedCuboid extends TexturedMesh {
-	public TexturedCuboid(Vertex topLeftF, Vertex bottomLeftF, Vertex bottomRightF, Vertex topRightF,
-						  Vertex topLeftR, Vertex bottomLeftR, Vertex bottomRightR, Vertex topRightR,
+	public TexturedCuboid(Vertex frontTL, Vertex frontBL, Vertex frontBR, Vertex frontTR,
+						  Vertex rightTL, Vertex rightBL, Vertex rightBR, Vertex rightTR,
+						  Vertex backTL, Vertex backBL, Vertex backBR, Vertex backTR,
+						  Vertex leftTL, Vertex leftBL, Vertex leftBR, Vertex leftTR,
+						  Vertex topTL, Vertex topBL, Vertex topBR, Vertex topTR,
+						  Vertex bottomTL, Vertex bottomBL, Vertex bottomBR, Vertex bottomTR,
 						  ResourceManager resourceManager, Identifier texture) {
 		super(resourceManager, texture);
-		vertices = new Vertex[]{topLeftF, bottomLeftF, bottomRightF, topRightF, topLeftR, bottomLeftR, bottomRightR, topRightR};
+		vertices = new Vertex[]{
+				frontTL, frontBL, frontBR, frontTR,
+				rightTL, rightBL, rightBR, rightTR,
+				backTL, backBL, backBR, backTR,
+				leftTL, leftBL, leftBR, leftTR,
+				topTL, topBL, topBR, topTR,
+				bottomTL, bottomBL, bottomBR, bottomTR,
+				};
 		vertexOrder = new byte[]{
-				3, 0, 2, 0, 1, 2,	//Front			4---7
-				7, 3, 6, 3, 2, 6,	//Right		   /|  /|
-				7, 5, 4, 7, 6, 5,	//Rear		  0---3 |
-				0, 4, 1, 4, 5, 1,	//Left        | 5-|-6
-				4, 0, 3, 3, 7, 4,	//Top		  |/  |/
-				5, 6, 1, 6, 2, 1};	//Bottom	  1---2
+				0, 1, 2, 2, 3, 0,
+				4, 5, 6, 6, 7, 4,
+				8, 9, 10, 10, 11, 8,
+				12, 13, 14, 14, 15, 12,
+				16, 17, 18, 18, 19, 16,
+				20, 21, 22, 22, 23, 20
+		};
 	}
 }
