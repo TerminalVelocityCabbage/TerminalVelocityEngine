@@ -9,6 +9,7 @@ import org.lwjgl.system.MemoryStack;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.lwjgl.opengl.GL20.*;
@@ -17,8 +18,7 @@ public class ShaderProgram {
 
 	private final int id;
 	private boolean inUse = false;
-	private static Map<String, Shader> shaderStorage = new HashMap<>();
-	private static ArrayList<String> enabledShaders = new ArrayList<>();
+	private static final List<Shader> shaderQueue = new ArrayList<>();
 	private final Map<String, Integer> uniforms;
 
 	public ShaderProgram() {
@@ -29,23 +29,18 @@ public class ShaderProgram {
 		uniforms = new HashMap<>();
 	}
 
-	public void createShader(String name, int type, ResourceManager resourceManager, Identifier identifier) {
-		shaderStorage.put(name, new Shader(type, id, resourceManager, identifier).bind());
+	public void queueShader(int type, ResourceManager resourceManager, Identifier identifier) {
+		shaderQueue.add(new Shader(type, id, resourceManager, identifier));
 	}
 
-	public void enableShader(String name) {
-		getShader(name).attach();
-	}
-
-	public void disableShader(String name) {
-		getShader(name).detach();
-	}
-
-	private Shader getShader(String name) {
-		if (!shaderStorage.containsKey(name)) {
-			throw new RuntimeException("Could not get shader " + name + ", it doesnt exist");
+	public void bindAll() {
+		for (Shader shader : shaderQueue) {
+			shader.create();
 		}
-		return shaderStorage.get(name);
+		glLinkProgram(id);
+		if (glGetProgrami(id, GL_LINK_STATUS) == GL_FALSE) {
+			Log.error(glGetProgramInfoLog(id));
+		}
 	}
 
 	public void createUniform(String name) {
@@ -70,23 +65,17 @@ public class ShaderProgram {
 		}
 	}
 
-	public void link() {
-		glLinkProgram(id);
-		if (glGetProgrami(id, GL_LINK_STATUS) == GL_FALSE) {
-			Log.error(glGetProgramInfoLog(id));
-		}
-	}
-
-	public void use() {
+	public void enable() {
 		glUseProgram(id);
 		inUse = true;
 	}
 
+	public void disable() {
+		glUseProgram(0);
+		inUse = false;
+	}
+
 	public void delete() {
-		for (Shader shader : shaderStorage.values()) {
-			shader.detach();
-			shader.delete();
-		}
 		glDeleteProgram(id);
 		inUse = false;
 	}
