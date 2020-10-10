@@ -8,6 +8,8 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public abstract class InputHandler {
 
+	private static long window;
+
 	private Vector2d previousPos;
 	private final Vector2d currentPos;
 	private final Vector2f displayVector;
@@ -24,6 +26,7 @@ public abstract class InputHandler {
 	}
 
 	public void init(Window window) {
+		InputHandler.window = window.getID();
 		glfwSetCursorPosCallback(window.getID(), (windowHandle, xpos, ypos) -> {
 			currentPos.x = xpos;
 			currentPos.y = ypos;
@@ -38,9 +41,12 @@ public abstract class InputHandler {
 			leftButtonPressed = button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS;
 			rightButtonPressed = button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS;
 		});
+		glfwSetKeyCallback(window.getID(), (win, key, scancode, action, mods) -> {
+			processInput(new KeyBind(win, key, scancode, action, mods));
+		});
 	}
 
-	public abstract void processInput(Window window);
+	public abstract void processInput(KeyBind keyBind);
 
 
 	public Vector2f getDisplayVector() {
@@ -81,5 +87,9 @@ public abstract class InputHandler {
 
 	public boolean isFocused() {
 		return focused;
+	}
+
+	public static long getWindow() {
+		return window;
 	}
 }

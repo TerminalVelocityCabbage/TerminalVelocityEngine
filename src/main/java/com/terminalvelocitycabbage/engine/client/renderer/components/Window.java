@@ -48,7 +48,7 @@ public class Window {
 
 	public void init() {
 		// Setup a key callback. It will be called every time a key is pressed, repeated or released.
-		inputHandler.processInput(this);
+		inputHandler.init(this);
 
 		// Get the thread stack and push a new frame
 		try (MemoryStack stack = stackPush()) {
