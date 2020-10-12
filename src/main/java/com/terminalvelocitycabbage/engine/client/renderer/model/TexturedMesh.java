@@ -5,6 +5,7 @@ import com.terminalvelocitycabbage.engine.client.resources.Resource;
 import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
 import com.terminalvelocitycabbage.engine.client.util.PNGDecoder;
 import com.terminalvelocitycabbage.engine.debug.Log;
+import org.joml.Vector3f;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,7 +24,8 @@ public abstract class TexturedMesh extends Mesh {
 
 	private int textureID;
 
-	public TexturedMesh(ResourceManager resourceManager, Identifier texture) {
+	public TexturedMesh(Vector3f rotationPoint, ResourceManager resourceManager, Identifier texture) {
+		super(rotationPoint);
 		this.resourceManager = resourceManager;
 		this.texture = texture;
 	}

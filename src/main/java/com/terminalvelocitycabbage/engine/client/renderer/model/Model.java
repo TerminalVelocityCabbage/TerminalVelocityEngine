@@ -57,39 +57,26 @@ public class Model {
 
 	public static class Part {
 
-		Mesh mesh;
-		ArrayList<Model.Part> children;
+		private Mesh mesh;
+		private ArrayList<Model.Part> children;
 
 		public Part(Mesh mesh, ArrayList<Model.Part> children) {
 			this.mesh = mesh;
 			this.children = children;
 		}
 
-		public ArrayList<Part> getChildren() {
-			return children;
-		}
-
 		public void move(float x, float y, float z) {
 			mesh.move(x, y, z);
-			for (Model.Part child : children) {
-				child.move(x, y, z);
-			}
 			update();
 		}
 
 		public void rotate(float x, float y, float z) {
 			mesh.rotate(x, y, z);
-			for (Model.Part child : children) {
-				child.rotate(x, y, z);
-			}
 			update();
 		}
 
 		public void scale(float x, float y, float z) {
 			mesh.scaleAxis(x, y, z);
-			for (Model.Part child : children) {
-				child.scale(x, y, z);
-			}
 			update();
 		}
 

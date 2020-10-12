@@ -92,19 +92,16 @@ public class GameObject {
 
 	public void move(float x, float y, float z) {
 		position.add(x, y, z);
-		model.move(x, y, z);
 		update();
 	}
 
 	public void rotate(float x, float y, float z) {
 		rotation.add(x, y, z);
-		model.rotate(x, y, z);
 		update();
 	}
 
 	public void scale(float x, float y, float z) {
 		scale.add(x, y, z);
-		model.scale(x, y, z);
 		update();
 	}
 

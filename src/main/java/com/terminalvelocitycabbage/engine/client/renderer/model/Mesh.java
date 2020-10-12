@@ -1,5 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.renderer.model;
 
+import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
@@ -19,6 +20,18 @@ public abstract class Mesh {
 
 	protected Vertex[] vertices;
 	protected byte[] vertexOrder;
+
+	protected Vector3f originPos;
+
+	//TODO note that these translations have to be done in a specific order so we should make it clear and make an API that dummi-proofs it
+	//1. Scale	- so that the axis stuff is scaled properly
+	//2. Offset	- so that rotations happen about the rotation point
+	//3. Rotate	- so that the move action doesnt mess up the rotation point pos
+	//4. Move	- because moving is dum
+
+	public Mesh(Vector3f rotationPoint) {
+		this.originPos = rotationPoint;
+	}
 
 	public void bind() {
 		//Create the VAO and bind it
@@ -94,26 +107,42 @@ public abstract class Mesh {
 		return BufferUtils.createByteBuffer(vertexOrder.length).put(vertexOrder).flip();
 	}
 
+	//The offset is how far the mesh is away from it's origin
 	public void offset(float x, float y, float z) {
-		//TODO
-	}
-
-	public void move(float x, float y, float z) {
 		for (Vertex vertex : vertices) {
 			vertex.addXYZW(x, y, z, 0.0f);
 		}
 	}
 
+	//When you move the object it is moving the origin
+	public void move(float x, float y, float z) {
+		for (Vertex vertex : vertices) {
+			vertex.addXYZ(x, y, z);
+		}
+	}
+
+	//Rotations should happen about the origin
 	public void rotate(float x, float y, float z) {
 		//TODO
+		for (Vertex vertex : vertices) {
+			vertex.addXYZ(0,(float)Math.sin(z), 0);
+		}
 	}
 
+	//This allows you to scale the mesh on each axis individually
 	public void scaleAxis(float x, float y, float z) {
-		//TODO
+		float modX, modY, modZ;
+		for (Vertex vertex : vertices) {
+			modX = vertex.getXYZW()[0] >= 0 ? x : -x;
+			modY = vertex.getXYZW()[1] >= 0 ? y : -y;
+			modZ = vertex.getXYZW()[2] >= 0 ? z : -z;
+			vertex.addXYZ(modX, modY, modZ);
+		}
 	}
 
+	//The scalar scale value applies to every axis
 	public void scale(float amount) {
-		//TODO
+		scaleAxis(amount, amount, amount);
 	}
 
 }

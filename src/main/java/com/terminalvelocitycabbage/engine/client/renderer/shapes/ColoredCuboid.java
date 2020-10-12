@@ -2,10 +2,12 @@ package com.terminalvelocitycabbage.engine.client.renderer.shapes;
 
 import com.terminalvelocitycabbage.engine.client.renderer.model.Mesh;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
+import org.joml.Vector3f;
 
 public class ColoredCuboid extends Mesh {
 	public ColoredCuboid(Vertex topLeftF, Vertex bottomLeftF, Vertex bottomRightF, Vertex topRightF,
 						 Vertex topLeftR, Vertex bottomLeftR, Vertex bottomRightR, Vertex topRightR) {
+		super(new Vector3f(0, 0, 0));
 		vertices = new Vertex[]{topLeftF, bottomLeftF, bottomRightF, topRightF, topLeftR, bottomLeftR, bottomRightR, topRightR};
 		vertexOrder = new byte[]{
 				3, 0, 2, 0, 1, 2,	//Front			4---7

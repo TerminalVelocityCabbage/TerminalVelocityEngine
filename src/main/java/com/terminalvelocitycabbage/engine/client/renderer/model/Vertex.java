@@ -39,6 +39,10 @@ public class Vertex {
 		return setXYZW(x, y, z, 1.0f);
 	}
 
+	public Vertex addXYZ(float x, float y, float z) {
+		return addXYZW(x, y, z, 0.0f);
+	}
+
 	public Vertex addXYZW(float x, float y, float z, float w) {
 		return setXYZW(xyzw[0] + x, xyzw[1] + y, xyzw[2] + z, xyzw[3] + w);
 	}
