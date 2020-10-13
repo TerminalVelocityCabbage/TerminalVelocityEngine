@@ -95,7 +95,8 @@ public abstract class Model {
 		}
 
 		public void updateTransforms(Matrix4f transformationMatrix) {
-			this.transformationMatrix = transformationMatrix;
+			this.transformationMatrix.set(transformationMatrix);
+			update();
 		}
 
 		public void update() {

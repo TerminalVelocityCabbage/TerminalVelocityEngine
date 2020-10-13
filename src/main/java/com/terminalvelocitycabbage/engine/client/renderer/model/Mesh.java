@@ -79,14 +79,12 @@ public abstract class Mesh {
 		//Update the vertex positions
 		Vector4f positions;
 		Vertex currentVertex;
-		for (int j = 0; j < vertices.length; j++) {
-			currentVertex = getVertex(j);
-			positions = new Vector4f(currentVertex.getXYZW()).mul(translationMatrix);
-			currentVertex.setXYZW(positions.x, positions.y, positions.z, positions.w);
-		}
-		// Put the new data in a ByteBuffer (in the view of a FloatBuffer)
 		FloatBuffer vertexFloatBuffer = getCombinedVertices();
 		for (int i = 0; i < vertices.length; i++) {
+			currentVertex = getVertex(i);
+			positions = new Vector4f(currentVertex.getXYZW()).mul(translationMatrix);
+			currentVertex.setXYZW(positions.x, positions.y, positions.z, positions.w);
+			// Put the new data in a ByteBuffer (in the view of a FloatBuffer)
 			vertexFloatBuffer.rewind();
 			vertexFloatBuffer.put(getVertex(i).getElements());
 			vertexFloatBuffer.flip();
