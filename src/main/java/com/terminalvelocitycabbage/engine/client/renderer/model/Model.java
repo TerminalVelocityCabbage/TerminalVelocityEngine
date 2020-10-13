@@ -23,7 +23,7 @@ public abstract class Model {
 
 	public void update(Vector3f position, Vector3f rotation, Vector3f scale) {
 		for (Model.Part part : modelParts) {
-			part.update(transformationMatrix.identity().translate(position).
+			part.updateTransforms(transformationMatrix.identity().translate(position).
 					rotateX((float)Math.toRadians(-rotation.x)).
 					rotateY((float)Math.toRadians(-rotation.y)).
 					rotateZ((float)Math.toRadians(-rotation.z)).
@@ -94,7 +94,11 @@ public abstract class Model {
 			}
 		}
 
-		public void update(Matrix4f transformationMatrix) {
+		public void updateTransforms(Matrix4f transformationMatrix) {
+			this.transformationMatrix = transformationMatrix;
+		}
+
+		public void update() {
 			transformationMatrix
 					.translate(position)
 					.rotateX(rotation.x)
@@ -104,7 +108,7 @@ public abstract class Model {
 					.scale(scale);
 			mesh.update(transformationMatrix);
 			for (Model.Part child : children) {
-				child.update(transformationMatrix);
+				child.update();
 			}
 		}
 	}
