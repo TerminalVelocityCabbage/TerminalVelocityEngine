@@ -1,34 +1,34 @@
 package com.terminalvelocitycabbage.engine.client.renderer.model;
 
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+
 import java.util.ArrayList;
 
-public class Model {
+/**
+ * The Model class is only a container for a list of model parts
+ * This class also handles passing calls from the game object down to the model parts who handle meshes
+ * Models have no point in space however model parts do contain translations
+ */
+public abstract class Model {
 
 	ArrayList<Model.Part> modelParts;
+	//To avoid creating a new one every part render call
+	Matrix4f transformationMatrix;
 
 	public Model(ArrayList<Model.Part> modelParts) {
 		this.modelParts = modelParts;
+		this.transformationMatrix = new Matrix4f();
 	}
 
-	public void move(float x, float y, float z) {
+	public void update(Vector3f position, Vector3f rotation, Vector3f scale) {
 		for (Model.Part part : modelParts) {
-			part.move(x, y, z);
+			part.update(transformationMatrix.identity().translate(position).
+					rotateX((float)Math.toRadians(-rotation.x)).
+					rotateY((float)Math.toRadians(-rotation.y)).
+					rotateZ((float)Math.toRadians(-rotation.z)).
+					scale(scale));
 		}
-		update();
-	}
-
-	public void rotate(float x, float y, float z) {
-		for (Model.Part part : modelParts) {
-			part.rotate(x, y, z);
-		}
-		update();
-	}
-
-	public void scale(float x, float y, float z) {
-		for (Model.Part part : modelParts) {
-			part.scale(x, y, z);
-		}
-		update();
 	}
 
 	public void bind() {
@@ -49,35 +49,28 @@ public class Model {
 		}
 	}
 
-	public void update() {
-		for (Model.Part part : modelParts) {
-			part.update();
-		}
-	}
-
 	public static class Part {
 
 		private Mesh mesh;
 		private ArrayList<Model.Part> children;
 
-		public Part(Mesh mesh, ArrayList<Model.Part> children) {
+		Vector3f offset;
+		Vector3f position;
+		Vector3f rotation;
+		Vector3f scale;
+
+		Matrix4f transformationMatrix;
+
+		public Part(Mesh mesh, Vector3f offset, Vector3f position, Vector3f rotation, Vector3f scale, ArrayList<Model.Part> children) {
 			this.mesh = mesh;
+
+			this.offset = offset;
+			this.position = position;
+			this.rotation = rotation;
+			this.scale = scale;
+
 			this.children = children;
-		}
-
-		public void move(float x, float y, float z) {
-			mesh.move(x, y, z);
-			update();
-		}
-
-		public void rotate(float x, float y, float z) {
-			mesh.rotate(x, y, z);
-			update();
-		}
-
-		public void scale(float x, float y, float z) {
-			mesh.scaleAxis(x, y, z);
-			update();
+			this.transformationMatrix = new Matrix4f();
 		}
 
 		public void bind() {
@@ -101,10 +94,17 @@ public class Model {
 			}
 		}
 
-		public void update() {
-			mesh.update();
+		public void update(Matrix4f transformationMatrix) {
+			transformationMatrix
+					.translate(position)
+					.rotateX(rotation.x)
+					.rotateY(rotation.y)
+					.rotateZ(rotation.z)
+					.translate(offset)
+					.scale(scale);
+			mesh.update(transformationMatrix);
 			for (Model.Part child : children) {
-				child.update();
+				child.update(transformationMatrix);
 			}
 		}
 	}

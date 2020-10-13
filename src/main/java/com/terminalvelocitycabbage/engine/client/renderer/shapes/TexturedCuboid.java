@@ -4,7 +4,6 @@ import com.terminalvelocitycabbage.engine.client.renderer.model.TexturedMesh;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
-import org.joml.Vector3f;
 
 public class TexturedCuboid extends TexturedMesh {
 	public TexturedCuboid(Vertex frontTL, Vertex frontBL, Vertex frontBR, Vertex frontTR,
@@ -14,7 +13,7 @@ public class TexturedCuboid extends TexturedMesh {
 						  Vertex topTL, Vertex topBL, Vertex topBR, Vertex topTR,
 						  Vertex bottomTL, Vertex bottomBL, Vertex bottomBR, Vertex bottomTR,
 						  ResourceManager resourceManager, Identifier texture) {
-		super(new Vector3f(0, 0, 0), resourceManager, texture);
+		super(resourceManager, texture);
 		vertices = new Vertex[]{
 				frontTL, frontBL, frontBR, frontTR,
 				rightTL, rightBL, rightBR, rightTR,
