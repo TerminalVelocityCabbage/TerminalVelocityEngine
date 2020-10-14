@@ -7,7 +7,6 @@ import org.lwjgl.opengl.GL11;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
-import java.util.Arrays;
 
 import static com.terminalvelocitycabbage.engine.client.renderer.model.Vertex.*;
 import static org.lwjgl.opengl.GL15.*;
@@ -81,18 +80,18 @@ public abstract class Mesh {
 		Vector4f positions = new Vector4f();
 		Vertex currentVertex;
 		FloatBuffer vertexFloatBuffer = getCombinedVertices();
+		float[] currentXYZ;
 		for (int i = 0; i < vertices.length; i++) {
 			currentVertex = getVertex(i);
-
-			float[] xyz = currentVertex.getXYZ();
-			positions.set(xyz[0], xyz[1], xyz[2], 1F).mul(translationMatrix);
+			currentXYZ = currentVertex.getXYZ();
+			positions.set(currentXYZ[0], currentXYZ[1], currentXYZ[2], 1f).mul(translationMatrix);
 
 			// Put the new data in a ByteBuffer (in the view of a FloatBuffer)
 			vertexFloatBuffer.rewind();
-			var vertex = getVertex(i);
-			vertexFloatBuffer.put(Vertex.getElements( new float[] { positions.x, positions.y, positions.z, positions.w },  vertex.getRGBA(), vertex.getUV() ));
+			vertexFloatBuffer.put(Vertex.getElements( new float[] { positions.x, positions.y, positions.z, positions.w },  currentVertex.getRGBA(), currentVertex.getUV() ));
 			vertexFloatBuffer.flip();
 
+			//Pass new data to OpenGL
 			glBindBuffer(GL_ARRAY_BUFFER, vboID);
 			glBufferSubData(GL_ARRAY_BUFFER, i * STRIDE, vertexFloatBuffer);
 		}
