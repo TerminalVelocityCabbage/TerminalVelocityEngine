@@ -16,6 +16,8 @@ public class GameObject {
 
 	boolean textured;
 
+	boolean dirty = true;
+
 	private GameObject(Vector3f position, Vector3f rotation, Vector3f scale, Model model, boolean textured) {
 		this.position = position;
 		this.rotation = rotation;
@@ -39,14 +41,17 @@ public class GameObject {
 
 	public void move(float x, float y, float z) {
 		position.add(x, y, z);
+		dirty = true;
 	}
 
 	public void rotate(float x, float y, float z) {
 		rotation.add(x, y, z);
+		dirty = true;
 	}
 
 	public void scale(float x, float y, float z) {
 		scale.add(x, y, z);
+		dirty = true;
 	}
 
 	public void bind() {
@@ -57,8 +62,15 @@ public class GameObject {
 		model.render();
 	}
 
+	public void setDirty() {
+		dirty = true;
+	}
+
 	public void update() {
-		model.update(position, rotation, scale);
+		if(dirty) {
+			model.update(position, rotation, scale);
+			dirty = false;
+		}
 	}
 
 	public Matrix4f getModelViewMatrix(Matrix4f viewMatrix) {

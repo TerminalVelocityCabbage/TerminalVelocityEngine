@@ -3,7 +3,7 @@ package com.terminalvelocitycabbage.engine.client.renderer.model;
 public class Vertex {
 
 	//Vertex information
-	private float[] xyzw = new float[] {0f, 0f, 0f, 1f};
+	private float[] xyz = new float[] {0f, 0f, 0f};
 	private float[] rgba = new float[] {1f, 1f, 1f, 1f};
 	private float[] uv = new float[] {0f, 0f};
 
@@ -30,21 +30,13 @@ public class Vertex {
 	//The total number of bytes this vertex requires
 	public static final int STRIDE = POSITION_BYTES + COLOR_BYTES + TEXTURE_BYTES;
 
-	public Vertex setXYZW(float x, float y, float z, float w) {
-		this.xyzw = new float[] {x, y, z, w};
+	public Vertex setXYZ(float x, float y, float z) {
+		this.xyz = new float[] {x, y, z};
 		return this;
 	}
 
-	public Vertex setXYZ(float x, float y, float z) {
-		return setXYZW(x, y, z, 1.0f);
-	}
-
 	public Vertex addXYZ(float x, float y, float z) {
-		return addXYZW(x, y, z, 0.0f);
-	}
-
-	public Vertex addXYZW(float x, float y, float z, float w) {
-		return setXYZW(xyzw[0] + x, xyzw[1] + y, xyzw[2] + z, xyzw[3] + w);
+		return setXYZ(xyz[0] + x, xyz[1] + y, xyz[2] + z);
 	}
 
 	public Vertex setRGBA(float r, float g, float b, float a) {
@@ -69,8 +61,8 @@ public class Vertex {
 		return this;
 	}
 
-	public float[] getXYZW() {
-		return xyzw;
+	public float[] getXYZ() {
+		return xyz;
 	}
 
 	public float[] getRGBA() {
@@ -81,14 +73,14 @@ public class Vertex {
 		return uv;
 	}
 
-	public float[] getElements() {
+	public static float[] getElements(float[] xyz, float[] rgba, float[] uv) {
 		float[] out = new float[ELEMENT_COUNT];
 		int i = 0;
 
-		out[i++] = xyzw[0];
-		out[i++] = xyzw[1];
-		out[i++] = xyzw[2];
-		out[i++] = xyzw[3];
+		out[i++] = xyz[0];
+		out[i++] = xyz[1];
+		out[i++] = xyz[2];
+		out[i++] = 1;
 
 		out[i++] = rgba[0];
 		out[i++] = rgba[1];
