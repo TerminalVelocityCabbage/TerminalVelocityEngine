@@ -16,13 +16,16 @@ public class GameObject {
 
 	boolean textured;
 
+	boolean dirty = true;
+
 	private GameObject(Vector3f position, Vector3f rotation, Vector3f scale, Model model, boolean textured) {
 		this.position = position;
 		this.rotation = rotation;
 		this.scale = scale;
 		this.model = model;
-		this.modelViewMatrix = new Matrix4f();
 		this.textured = textured;
+
+		modelViewMatrix = new Matrix4f();
 	}
 
 	private GameObject(Vector3f position, Vector3f rotation, Vector3f scale, Model model) {
@@ -30,9 +33,62 @@ public class GameObject {
 		this.rotation = rotation;
 		this.scale = scale;
 		this.model = model;
-		this.modelViewMatrix = new Matrix4f();
 
 		this.textured = true;
+
+		modelViewMatrix = new Matrix4f();
+	}
+
+	public void move(float x, float y, float z) {
+		position.add(x, y, z);
+		dirty = true;
+	}
+
+	public void rotate(float x, float y, float z) {
+		rotation.add(x, y, z);
+		dirty = true;
+	}
+
+	public void scale(float x, float y, float z) {
+		scale.add(x, y, z);
+		dirty = true;
+	}
+
+	public void bind() {
+		model.bind();
+	}
+
+	public void render() {
+		model.render();
+	}
+
+	public void setDirty() {
+		dirty = true;
+	}
+
+	public void update() {
+		if(dirty) {
+			model.update(position, rotation, scale);
+			dirty = false;
+		}
+	}
+
+	public Matrix4f getModelViewMatrix(Matrix4f viewMatrix) {
+		modelViewMatrix.identity().translate(position).
+				rotateX((float)Math.toRadians(-rotation.x)).
+				rotateY((float)Math.toRadians(-rotation.y)).
+				rotateZ((float)Math.toRadians(-rotation.z)).
+				scale(scale);
+		Matrix4f viewCurr = new Matrix4f(viewMatrix);
+		return viewCurr.mul(modelViewMatrix);
+	}
+
+	public void destroy() {
+		model.destroy();
+	}
+
+	public boolean isTextured() {
+		return textured;
 	}
 
 	public static GameObject.Builder builder() {
@@ -88,50 +144,5 @@ public class GameObject {
 			}
 			return new GameObject(position, rotation, scale, model, textured);
 		}
-	}
-
-	public void move(float x, float y, float z) {
-		position.add(x, y, z);
-		update();
-	}
-
-	public void rotate(float x, float y, float z) {
-		rotation.add(x, y, z);
-		update();
-	}
-
-	public void scale(float x, float y, float z) {
-		scale.add(x, y, z);
-		update();
-	}
-
-	public void bind() {
-		model.bind();
-	}
-
-	public void render() {
-		model.render();
-	}
-
-	public void update() {
-		model.update();
-	}
-
-	public void destroy() {
-		model.destroy();
-	}
-
-	public Matrix4f getModelViewMatrix(Matrix4f viewMatrix) {
-		modelViewMatrix.identity().translate(position).
-				rotateX((float)Math.toRadians(-rotation.x)).
-				rotateY((float)Math.toRadians(-rotation.y)).
-				rotateZ((float)Math.toRadians(-rotation.z)).
-				scale(scale);
-		Matrix4f viewCurr = new Matrix4f(viewMatrix);
-		return viewCurr.mul(modelViewMatrix);
-	}
-
-	public boolean isTextured() {
-		return textured;
 	}
 }
