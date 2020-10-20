@@ -61,6 +61,7 @@ public abstract class Mesh {
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 		glEnableVertexAttribArray(2);
+		glEnableVertexAttribArray(3);
 
 		// Bind to the index VBO/EBO that has all the information about the order of the vertices
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
@@ -73,6 +74,7 @@ public abstract class Mesh {
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(2);
+		glDisableVertexAttribArray(3);
 	}
 
 	public void destroy() {
@@ -97,7 +99,7 @@ public abstract class Mesh {
 
 			// Put the new data in a ByteBuffer (in the view of a FloatBuffer)
 			vertexFloatBuffer.rewind();
-			vertexFloatBuffer.put(Vertex.getElements( new float[] { positions.x, positions.y, positions.z, positions.w },  currentVertex.getRGBA(), currentVertex.getUV() ));
+			vertexFloatBuffer.put(Vertex.getElements( new float[] { positions.x, positions.y, positions.z },  currentVertex.getRGBA(), currentVertex.getUV(), currentVertex.getNormals() ));
 			vertexFloatBuffer.flip();
 
 			//Pass new data to OpenGL
@@ -113,7 +115,7 @@ public abstract class Mesh {
 	public FloatBuffer getCombinedVertices() {
 		FloatBuffer verticesBuffer = BufferUtils.createFloatBuffer(vertices.length * Vertex.ELEMENT_COUNT);
 		for (Vertex vertex : vertices) {
-			verticesBuffer.put(Vertex.getElements(vertex.getXYZ(), vertex.getRGBA(), vertex.getUV()));
+			verticesBuffer.put(Vertex.getElements(vertex.getXYZ(), vertex.getRGBA(), vertex.getUV(), vertex.getNormals()));
 		}
 		return verticesBuffer.flip();
 	}

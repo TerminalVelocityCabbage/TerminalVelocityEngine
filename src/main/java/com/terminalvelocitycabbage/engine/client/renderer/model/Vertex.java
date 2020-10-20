@@ -6,12 +6,14 @@ public class Vertex {
 	private float[] xyz = new float[] {0f, 0f, 0f};
 	private float[] rgba = new float[] {1f, 1f, 1f, 1f};
 	private float[] uv = new float[] {0f, 0f};
+	private float[] normal = new float[] {0f, 0f, 0f};
 
 	public static final int ELEMENT_BYTES = Float.BYTES;
 
-	public static final int POSITION_ELEMENT_COUNT = 4;
+	public static final int POSITION_ELEMENT_COUNT = 3;
 	public static final int COLOR_ELEMENT_COUNT = 4;
 	public static final int TEXTURE_ELEMENT_COUNT = 2;
+	public static final int NORMAL_ELEMENT_COUNT = 3;
 
 	//The number of bytes required to store each section of vertex information
 	public static final int POSITION_BYTES = POSITION_ELEMENT_COUNT * ELEMENT_BYTES;
@@ -24,8 +26,7 @@ public class Vertex {
 	public static final int TEXTURE_OFFSET = COLOR_OFFSET + COLOR_BYTES;
 
 	//The total number of elements in this vertex
-	//xyzw.length + rgba.length + uv.length
-	public static final int ELEMENT_COUNT = 10;
+	public static final int ELEMENT_COUNT = POSITION_ELEMENT_COUNT + COLOR_ELEMENT_COUNT + TEXTURE_ELEMENT_COUNT + NORMAL_ELEMENT_COUNT;
 
 	//The total number of bytes this vertex requires
 	public static final int STRIDE = POSITION_BYTES + COLOR_BYTES + TEXTURE_BYTES;
@@ -61,6 +62,11 @@ public class Vertex {
 		return this;
 	}
 
+	public Vertex setNormal(float x, float y, float z) {
+		this.normal = new float[] {x, y, z};
+		return this;
+	}
+
 	public float[] getXYZ() {
 		return xyz;
 	}
@@ -73,14 +79,17 @@ public class Vertex {
 		return uv;
 	}
 
-	public static float[] getElements(float[] xyz, float[] rgba, float[] uv) {
+	public float[] getNormals() {
+		return normal;
+	}
+
+	public static float[] getElements(float[] xyz, float[] rgba, float[] uv, float[] normals) {
 		float[] out = new float[ELEMENT_COUNT];
 		int i = 0;
 
 		out[i++] = xyz[0];
 		out[i++] = xyz[1];
 		out[i++] = xyz[2];
-		out[i++] = 1;
 
 		out[i++] = rgba[0];
 		out[i++] = rgba[1];
@@ -89,6 +98,10 @@ public class Vertex {
 
 		out[i++] = uv[0];
 		out[i++] = uv[1];
+
+		out[i++] = normals[0];
+		out[i++] = normals[1];
+		out[i++] = normals[2];
 
 		return out;
 	}
