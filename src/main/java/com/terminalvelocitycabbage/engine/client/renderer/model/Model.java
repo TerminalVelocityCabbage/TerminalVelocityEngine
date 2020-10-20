@@ -109,5 +109,9 @@ public abstract class Model {
 			mesh.update(transformationMatrix);
 		}
 
+		public Material getMaterial() {
+			return mesh.getMaterial();
+		}
+
 	}
 }

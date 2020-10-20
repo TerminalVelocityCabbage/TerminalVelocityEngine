@@ -31,7 +31,7 @@ public class Shader {
 		glShaderSource(shader, src);
 		glCompileShader(shader);
 		if (glGetShaderi(shader, GL_COMPILE_STATUS) == GL_FALSE) {
-			throw  new RuntimeException("Could not compile shader " + identifier.getPath() + " " + glGetShaderInfoLog(shaderProgram));
+			throw new RuntimeException("Could not compile shader " + identifier.getPath() + " " + glGetShaderInfoLog(shader));
 		}
 		glAttachShader(shaderProgram, shader);
 		glDeleteShader(shader);

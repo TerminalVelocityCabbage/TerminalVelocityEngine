@@ -121,4 +121,8 @@ public abstract class Mesh {
 	private ByteBuffer getIndicesBuffer() {
 		return BufferUtils.createByteBuffer(vertexOrder.length).put(vertexOrder).flip();
 	}
+
+	public Material getMaterial() {
+		return material;
+	}
 }

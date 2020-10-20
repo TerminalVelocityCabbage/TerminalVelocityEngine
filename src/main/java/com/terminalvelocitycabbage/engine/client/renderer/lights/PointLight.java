@@ -2,6 +2,7 @@ package com.terminalvelocitycabbage.engine.client.renderer.lights;
 
 import com.terminalvelocitycabbage.engine.client.renderer.lights.components.Attenuation;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 public class PointLight {
 
@@ -19,6 +20,11 @@ public class PointLight {
 
 	public PointLight(Vector3f position, Vector3f color, float intensity) {
 		this(position, color, intensity, new Attenuation(1, 0, 0));
+	}
+
+	//Used for copying a point light
+	public PointLight(PointLight pointLight, Vector4f position) {
+		this(new Vector3f(pointLight.color), new Vector3f(position.x, position.y, position.z), pointLight.intensity, pointLight.attenuation);
 	}
 
 	public Vector3f getPosition() {
