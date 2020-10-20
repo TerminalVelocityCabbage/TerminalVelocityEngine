@@ -16,35 +16,29 @@ import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
-public abstract class TexturedMesh extends Mesh {
+public class Texture {
 
-	private ResourceManager resourceManager;
-	private Identifier texture;
+	private final ResourceManager resourceManager;
+	private final Identifier identifier;
 
 	private int textureID;
 
-	public TexturedMesh(ResourceManager resourceManager, Identifier texture) {
+	public Texture(ResourceManager resourceManager, Identifier identifier) {
 		this.resourceManager = resourceManager;
-		this.texture = texture;
+		this.identifier = identifier;
 	}
 
-	@Override
 	public void bind() {
-		super.bind();
-		//Load texture
-		textureID = loadPNGTexture(resourceManager, texture, GL_TEXTURE0);
-		// Bind the texture
+		textureID = loadPNGTexture(resourceManager, identifier, GL_TEXTURE0);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, textureID);
 	}
 
-	@Override
 	public void destroy() {
-		super.destroy();
 		glDeleteTextures(textureID);
 	}
 
-	protected static int loadPNGTexture(ResourceManager resourceManager, Identifier identifier, int textureUnit) {
+	private static int loadPNGTexture(ResourceManager resourceManager, Identifier identifier, int textureUnit) {
 		ByteBuffer buf = null;
 		int tWidth = 0;
 		int tHeight = 0;

@@ -111,9 +111,9 @@ public class ShaderProgram {
 		setUniform(name + ".position", pointLight.getPosition());
 		setUniform(name + ".intensity", pointLight.getIntensity());
 		Attenuation att = pointLight.getAttenuation();
-		setUniform(name + ".att.constant", att.getConstant());
-		setUniform(name + ".att.linear", att.getLinear());
-		setUniform(name + ".att.exponent", att.getExponential());
+		setUniform(name + ".attenuation.constant", att.getConstant());
+		setUniform(name + ".attenuation.linear", att.getLinear());
+		setUniform(name + ".attenuation.exponent", att.getExponential());
 	}
 
 	public void setUniform(String name, Material material) {
@@ -121,7 +121,7 @@ public class ShaderProgram {
 		setUniform(name + ".ambient", material.getAmbientColor());
 		setUniform(name + ".diffuse", material.getDiffuseColor());
 		setUniform(name + ".specular", material.getSpecularColor());
-		setUniform(name + ".hasTexture", material.getTexture() != null ? 1 : 0);
+		setUniform(name + ".hasTexture", material.hasTexture() ? 1 : 0);
 		setUniform(name + ".reflectance", material.getReflectivity());
 	}
 

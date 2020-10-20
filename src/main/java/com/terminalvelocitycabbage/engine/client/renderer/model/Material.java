@@ -1,6 +1,5 @@
 package com.terminalvelocitycabbage.engine.client.renderer.model;
 
-import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 import org.joml.Vector4f;
 
 public class Material {
@@ -13,7 +12,7 @@ public class Material {
 
 	private float reflectivity;
 
-	private Identifier texture;
+	private Texture texture;
 
 	public Material() {
 		this(DEFAULT_COLOR, DEFAULT_COLOR, DEFAULT_COLOR, null, 0.0f);
@@ -23,15 +22,15 @@ public class Material {
 		this(color, color, color, null, reflectivity);
 	}
 
-	public Material(Identifier texture) {
+	public Material(Texture texture) {
 		this(DEFAULT_COLOR, DEFAULT_COLOR, DEFAULT_COLOR, texture, 0.0f);
 	}
 
-	public Material(Identifier texture, float reflectivity) {
+	public Material(Texture texture, float reflectivity) {
 		this(DEFAULT_COLOR, DEFAULT_COLOR, DEFAULT_COLOR, texture, 0.0f);
 	}
 
-	public Material(Vector4f ambientColor, Vector4f diffuseColor, Vector4f specularColor, Identifier texture, float reflectivity) {
+	public Material(Vector4f ambientColor, Vector4f diffuseColor, Vector4f specularColor, Texture texture, float reflectivity) {
 		this.ambientColor = ambientColor;
 		this.diffuseColor = diffuseColor;
 		this.specularColor = specularColor;
@@ -71,11 +70,15 @@ public class Material {
 		this.reflectivity = reflectivity;
 	}
 
-	public Identifier getTexture() {
+	public Texture getTexture() {
 		return texture;
 	}
 
-	public void setTexture(Identifier texture) {
+	public void setTexture(Texture texture) {
 		this.texture = texture;
+	}
+
+	public boolean hasTexture() {
+		return texture != null;
 	}
 }

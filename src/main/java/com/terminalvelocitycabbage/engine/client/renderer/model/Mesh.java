@@ -22,6 +22,8 @@ public abstract class Mesh {
 	protected Vertex[] vertices;
 	protected byte[] vertexOrder;
 
+	protected Material material;
+
 	//TODO note that these translations have to be done in a specific order so we should make it clear and make an API that dummi-proofs it
 	//1. Scale	- so that the axis stuff is scaled properly
 	//2. Offset	- so that rotations happen about the rotation point
@@ -47,6 +49,10 @@ public abstract class Mesh {
 		eboID = glGenBuffers();
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, getIndicesBuffer(), GL_STATIC_DRAW);
+
+		if (material.hasTexture()) {
+			material.getTexture().bind();
+		}
 	}
 
 	public void render() {
@@ -73,6 +79,9 @@ public abstract class Mesh {
 		glDeleteBuffers(vboID);
 		glDeleteBuffers(eboID);
 		glDeleteVertexArrays(vaoID);
+		if (material.hasTexture()) {
+			material.getTexture().destroy();
+		}
 	}
 
 	public void update(Matrix4f translationMatrix) {
