@@ -2,9 +2,7 @@ package com.terminalvelocitycabbage.engine.client.renderer.model;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import org.joml.Vector4f;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,9 +27,9 @@ public abstract class Model {
 			rotateY((float)Math.toRadians(-rotation.y)).
 			rotateZ((float)Math.toRadians(-rotation.z)).
 			scale(scale);
-		var mat = new Matrix4f();
+		var mat = new Matrix4f(transformationMatrix);
 		for (Model.Part part : modelParts) {
-			part.updateTransforms(mat.set(transformationMatrix));
+			part.updateTransforms(mat);
 		}
 	}
 

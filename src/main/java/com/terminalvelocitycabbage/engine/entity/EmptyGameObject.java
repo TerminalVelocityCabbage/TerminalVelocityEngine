@@ -25,7 +25,7 @@ public abstract class EmptyGameObject {
 	}
 
 	public void rotate(float x, float y, float z) {
-		rotation.add(x, y, z);
+		rotation.sub(x, y, z);
 		needsUpdate = true;
 	}
 
