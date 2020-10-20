@@ -23,12 +23,10 @@ public class ModeledGameObject extends EmptyGameObject {
 		modelViewMatrix = new Matrix4f();
 	}
 
-	@Override
 	public void bind() {
 		model.bind();
 	}
 
-	@Override
 	public void render() {
 		model.render();
 	}
@@ -39,7 +37,6 @@ public class ModeledGameObject extends EmptyGameObject {
 		model.update(position, rotation, scale);
 	}
 
-	@Override
 	public void destroy() {
 		model.destroy();
 	}

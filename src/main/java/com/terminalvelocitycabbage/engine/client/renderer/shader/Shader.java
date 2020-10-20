@@ -1,4 +1,4 @@
-package com.terminalvelocitycabbage.engine.client.shader;
+package com.terminalvelocitycabbage.engine.client.renderer.shader;
 
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 import com.terminalvelocitycabbage.engine.client.resources.Resource;

@@ -38,12 +38,6 @@ public abstract class EmptyGameObject {
 		needsUpdate = true;
 	}
 
-	public abstract void bind();
-
-	public abstract void render();
-
-	public abstract void destroy();
-
 	public void update() {
 		if(needsUpdate) {
 			needsUpdate = false;
