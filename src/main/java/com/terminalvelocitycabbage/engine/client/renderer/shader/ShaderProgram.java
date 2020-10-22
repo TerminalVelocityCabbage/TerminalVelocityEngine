@@ -38,7 +38,7 @@ public class ShaderProgram {
 		shaderQueue.add(new Shader(type, id, resourceManager, identifier));
 	}
 
-	public void bindAll() {
+	public void build() {
 		for (Shader shader : shaderQueue) {
 			shader.create();
 		}
@@ -144,5 +144,9 @@ public class ShaderProgram {
 	public void delete() {
 		glDeleteProgram(id);
 		enabled = false;
+	}
+
+	public int getID() {
+		return id;
 	}
 }
