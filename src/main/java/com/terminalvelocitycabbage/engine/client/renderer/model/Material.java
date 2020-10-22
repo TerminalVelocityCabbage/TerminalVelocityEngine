@@ -27,7 +27,7 @@ public class Material {
 	}
 
 	public Material(Texture texture, float reflectivity) {
-		this(DEFAULT_COLOR, DEFAULT_COLOR, DEFAULT_COLOR, texture, 0.0f);
+		this(DEFAULT_COLOR, DEFAULT_COLOR, DEFAULT_COLOR, texture, reflectivity);
 	}
 
 	public Material(Vector4f ambientColor, Vector4f diffuseColor, Vector4f specularColor, Texture texture, float reflectivity) {
