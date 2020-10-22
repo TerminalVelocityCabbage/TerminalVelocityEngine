@@ -16,7 +16,7 @@ public abstract class Renderer {
 	private static Window window;
 
 	public Renderer(int width, int height, String title, InputHandler inputHandler) {
-		window = new Window(width, height, title, true, inputHandler, true);
+		window = new Window(width, height, title, true, inputHandler, true, true);
 	}
 
 	public void run() {
