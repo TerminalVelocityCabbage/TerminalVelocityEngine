@@ -19,17 +19,19 @@ public class Vertex {
 	public static final int POSITION_BYTES = POSITION_ELEMENT_COUNT * ELEMENT_BYTES;
 	public static final int COLOR_BYTES = COLOR_ELEMENT_COUNT * ELEMENT_BYTES;
 	public static final int TEXTURE_BYTES = TEXTURE_ELEMENT_COUNT * ELEMENT_BYTES;
+	public static final int NORMAL_BYTES = NORMAL_ELEMENT_COUNT * ELEMENT_BYTES;
 
 	//The index offset for the beginning of each section of vertex information
 	public static final int POSITION_OFFSET = 0;
 	public static final int COLOR_OFFSET = POSITION_OFFSET + POSITION_BYTES;
 	public static final int TEXTURE_OFFSET = COLOR_OFFSET + COLOR_BYTES;
+	public static final int NORMAL_OFFSET = TEXTURE_OFFSET + NORMAL_BYTES;
 
 	//The total number of elements in this vertex
 	public static final int ELEMENT_COUNT = POSITION_ELEMENT_COUNT + COLOR_ELEMENT_COUNT + TEXTURE_ELEMENT_COUNT + NORMAL_ELEMENT_COUNT;
 
 	//The total number of bytes this vertex requires
-	public static final int STRIDE = POSITION_BYTES + COLOR_BYTES + TEXTURE_BYTES;
+	public static final int STRIDE = POSITION_BYTES + COLOR_BYTES + TEXTURE_BYTES + NORMAL_BYTES;
 
 	public Vertex setXYZ(float x, float y, float z) {
 		this.xyz = new float[] {x, y, z};
