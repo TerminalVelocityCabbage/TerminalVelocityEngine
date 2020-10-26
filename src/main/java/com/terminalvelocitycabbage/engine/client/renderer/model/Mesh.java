@@ -90,17 +90,22 @@ public abstract class Mesh {
 	public void update(Matrix4f translationMatrix) {
 		//Update the vertex positions
 		Vector4f positions = new Vector4f();
+		//Vector4f normals = new Vector4f();
 		Vertex currentVertex;
 		FloatBuffer vertexFloatBuffer = getCombinedVertices();
 		float[] currentXYZ;
+		//float[] currentNormal;
 		for (int i = 0; i < vertices.length; i++) {
 			currentVertex = getVertex(i);
 			currentXYZ = currentVertex.getXYZ();
 			positions.set(currentXYZ[0], currentXYZ[1], currentXYZ[2], 1f).mul(translationMatrix);
+			//currentNormal = currentVertex.getNormals();
+			//normals.set(currentNormal[0], currentNormal[1], currentNormal[2], 1f).mul(translationMatrix);
 
 			// Put the new data in a ByteBuffer (in the view of a FloatBuffer)
 			vertexFloatBuffer.rewind();
 			vertexFloatBuffer.put(Vertex.getElements( new float[] { positions.x, positions.y, positions.z },  currentVertex.getRGBA(), currentVertex.getUV(), currentVertex.getNormals() ));
+			//vertexFloatBuffer.put(Vertex.getElements( new float[] { positions.x, positions.y, positions.z },  currentVertex.getRGBA(), currentVertex.getUV(), new float[] { normals.x, normals.y, normals.z } ));
 			vertexFloatBuffer.flip();
 
 			//Pass new data to OpenGL
