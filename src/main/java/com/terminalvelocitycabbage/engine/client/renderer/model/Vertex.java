@@ -25,7 +25,7 @@ public class Vertex {
 	public static final int POSITION_OFFSET = 0;
 	public static final int COLOR_OFFSET = POSITION_OFFSET + POSITION_BYTES;
 	public static final int TEXTURE_OFFSET = COLOR_OFFSET + COLOR_BYTES;
-	public static final int NORMAL_OFFSET = TEXTURE_OFFSET + NORMAL_BYTES;
+	public static final int NORMAL_OFFSET = TEXTURE_OFFSET + TEXTURE_BYTES;
 
 	//The total number of elements in this vertex
 	public static final int ELEMENT_COUNT = POSITION_ELEMENT_COUNT + COLOR_ELEMENT_COUNT + TEXTURE_ELEMENT_COUNT + NORMAL_ELEMENT_COUNT;
@@ -65,7 +65,7 @@ public class Vertex {
 	}
 
 	public Vertex setNormal(float x, float y, float z) {
-		this.normal = new float[] {x, y, z};
+		normal = new float[] {x, y, z};
 		return this;
 	}
 
