@@ -61,10 +61,10 @@ public class ShaderProgram {
 
 	public void createMaterialUniform(String name) {
 		createUniform(name + ".ambient");
-		//createUniform(name + ".diffuse");
-		//createUniform(name + ".specular");
+		createUniform(name + ".diffuse");
+		createUniform(name + ".specular");
 		createUniform(name + ".hasTexture");
-		//createUniform(name + ".reflectivity");
+		createUniform(name + ".reflectivity");
 	}
 
 	public void createPointLightUniform(String name) {
@@ -117,10 +117,10 @@ public class ShaderProgram {
 
 	public void setUniform(String name, Material material) {
 		setUniform(name + ".ambient", material.getAmbientColor());
-		//setUniform(name + ".diffuse", material.getDiffuseColor());
-		//setUniform(name + ".specular", material.getSpecularColor());
+		setUniform(name + ".diffuse", material.getDiffuseColor());
+		setUniform(name + ".specular", material.getSpecularColor());
 		setUniform(name + ".hasTexture", material.hasTexture() ? 1 : 0);
-		//setUniform(name + ".reflectivity", material.getReflectivity());
+		setUniform(name + ".reflectivity", material.getReflectivity());
 	}
 
 	private void test() {
