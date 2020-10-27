@@ -61,16 +61,16 @@ public class ShaderProgram {
 
 	public void createMaterialUniform(String name) {
 		createUniform(name + ".ambient");
-		createUniform(name + ".diffuse");
-		createUniform(name + ".specular");
+		//createUniform(name + ".diffuse");
+		//createUniform(name + ".specular");
 		createUniform(name + ".hasTexture");
-		createUniform(name + ".reflectivity");
+		//createUniform(name + ".reflectivity");
 	}
 
 	public void createPointLightUniform(String name) {
-		createUniform(name + ".color");
+		//createUniform(name + ".color");
 		createUniform(name + ".position");
-		createUniform(name + ".intensity");
+		//createUniform(name + ".intensity");
 		createUniform(name + ".attenuation.constant");
 		createUniform(name + ".attenuation.linear");
 		createUniform(name + ".attenuation.exponential");
@@ -107,9 +107,9 @@ public class ShaderProgram {
 
 	public void setUniform(String name, PointLight pointLight) {
 		test();
-		setUniform(name + ".color", pointLight.getColor());
+		//setUniform(name + ".color", pointLight.getColor());
 		setUniform(name + ".position", pointLight.getPosition());
-		setUniform(name + ".intensity", pointLight.getIntensity());
+		//setUniform(name + ".intensity", pointLight.getIntensity());
 		Attenuation att = pointLight.getAttenuation();
 		setUniform(name + ".attenuation.constant", att.getConstant());
 		setUniform(name + ".attenuation.linear", att.getLinear());
@@ -119,10 +119,10 @@ public class ShaderProgram {
 	public void setUniform(String name, Material material) {
 		test();
 		setUniform(name + ".ambient", material.getAmbientColor());
-		setUniform(name + ".diffuse", material.getDiffuseColor());
-		setUniform(name + ".specular", material.getSpecularColor());
+		//setUniform(name + ".diffuse", material.getDiffuseColor());
+		//setUniform(name + ".specular", material.getSpecularColor());
 		setUniform(name + ".hasTexture", material.hasTexture() ? 1 : 0);
-		setUniform(name + ".reflectivity", material.getReflectivity());
+		//setUniform(name + ".reflectivity", material.getReflectivity());
 	}
 
 	private void test() {
