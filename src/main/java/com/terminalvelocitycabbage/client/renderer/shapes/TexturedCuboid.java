@@ -1,9 +1,7 @@
 package com.terminalvelocitycabbage.client.renderer.shapes;
 
-import com.terminalvelocitycabbage.client.renderer.model.Vertex;
 import com.terminalvelocitycabbage.client.renderer.model.TexturedMesh;
-import com.terminalvelocitycabbage.client.resources.Identifier;
-import com.terminalvelocitycabbage.client.resources.ResourceManager;
+import com.terminalvelocitycabbage.client.renderer.model.Vertex;
 
 public class TexturedCuboid extends TexturedMesh {
 	public TexturedCuboid(Vertex frontTL, Vertex frontBL, Vertex frontBR, Vertex frontTR,
@@ -11,9 +9,7 @@ public class TexturedCuboid extends TexturedMesh {
 						  Vertex backTL, Vertex backBL, Vertex backBR, Vertex backTR,
 						  Vertex leftTL, Vertex leftBL, Vertex leftBR, Vertex leftTR,
 						  Vertex topTL, Vertex topBL, Vertex topBR, Vertex topTR,
-						  Vertex bottomTL, Vertex bottomBL, Vertex bottomBR, Vertex bottomTR,
-						  ResourceManager resourceManager, Identifier texture) {
-		super(resourceManager, texture);
+						  Vertex bottomTL, Vertex bottomBL, Vertex bottomBR, Vertex bottomTR) {
 		vertices = new Vertex[]{
 				frontTL, frontBL, frontBR, frontTR,
 				rightTL, rightBL, rightBR, rightTR,
