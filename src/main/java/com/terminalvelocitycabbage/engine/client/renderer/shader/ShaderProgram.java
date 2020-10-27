@@ -70,7 +70,7 @@ public class ShaderProgram {
 	public void createPointLightUniform(String name) {
 		//createUniform(name + ".color");
 		createUniform(name + ".position");
-		//createUniform(name + ".intensity");
+		createUniform(name + ".intensity");
 		createUniform(name + ".attenuation.constant");
 		createUniform(name + ".attenuation.linear");
 		createUniform(name + ".attenuation.exponential");
@@ -109,7 +109,7 @@ public class ShaderProgram {
 		test();
 		//setUniform(name + ".color", pointLight.getColor());
 		setUniform(name + ".position", pointLight.getPosition());
-		//setUniform(name + ".intensity", pointLight.getIntensity());
+		setUniform(name + ".intensity", pointLight.getIntensity());
 		Attenuation att = pointLight.getAttenuation();
 		setUniform(name + ".attenuation.constant", att.getConstant());
 		setUniform(name + ".attenuation.linear", att.getLinear());

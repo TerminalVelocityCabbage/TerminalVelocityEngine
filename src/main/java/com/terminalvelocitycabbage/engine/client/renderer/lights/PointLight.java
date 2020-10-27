@@ -1,6 +1,7 @@
 package com.terminalvelocitycabbage.engine.client.renderer.lights;
 
 import com.terminalvelocitycabbage.engine.client.renderer.lights.components.Attenuation;
+import com.terminalvelocitycabbage.engine.debug.Log;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
@@ -14,6 +15,10 @@ public class PointLight {
 	public PointLight(Vector3f position, Vector3f color, float intensity, Attenuation attenuation) {
 		this.position = position;
 		this.color = color;
+		if (intensity > 1 || intensity < 0) {
+			Log.warn("Intensity of a light should be from 0 to 1, one or more light has been capped.");
+			intensity = intensity > 1 ? 1 : 0;
+		}
 		this.intensity = intensity;
 		this.attenuation = attenuation;
 	}
