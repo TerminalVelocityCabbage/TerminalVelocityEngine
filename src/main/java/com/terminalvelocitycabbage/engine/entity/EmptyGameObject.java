@@ -9,7 +9,7 @@ public abstract class EmptyGameObject {
 	Vector3f rotation;
 	Vector3f scale;
 
-	Matrix4f modelViewMatrix;
+	Matrix4f transformationMatrix;
 
 	boolean needsUpdate = true;
 
@@ -45,12 +45,16 @@ public abstract class EmptyGameObject {
 	}
 
 	public Matrix4f getModelViewMatrix(Matrix4f viewMatrix) {
-		modelViewMatrix.identity().translate(position).
+		return viewMatrix.mul(transformationMatrix, new Matrix4f());
+	}
+
+	public Matrix4f getTransformationMatrix() {
+		transformationMatrix.identity().translate(position).
 				rotateX((float)Math.toRadians(-rotation.x)).
 				rotateY((float)Math.toRadians(-rotation.y)).
 				rotateZ((float)Math.toRadians(-rotation.z)).
 				scale(scale);
-		return viewMatrix.mul(modelViewMatrix, new Matrix4f());
+		return transformationMatrix;
 	}
 
 	public static abstract class Builder {

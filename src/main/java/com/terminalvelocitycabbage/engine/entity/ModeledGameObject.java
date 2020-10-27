@@ -11,7 +11,7 @@ public class ModeledGameObject extends EmptyGameObject {
 	private ModeledGameObject(Vector3f position, Vector3f rotation, Vector3f scale, Model model) {
 		super(position, rotation, scale);
 		this.model = model;
-		modelViewMatrix = new Matrix4f();
+		transformationMatrix = new Matrix4f();
 	}
 
 	public void bind() {
