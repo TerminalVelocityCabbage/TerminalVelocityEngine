@@ -50,8 +50,7 @@ public abstract class EmptyGameObject {
 				rotateY((float)Math.toRadians(-rotation.y)).
 				rotateZ((float)Math.toRadians(-rotation.z)).
 				scale(scale);
-		Matrix4f viewCurr = new Matrix4f(viewMatrix);
-		return viewCurr.mul(modelViewMatrix);
+		return viewMatrix.mul(modelViewMatrix, new Matrix4f());
 	}
 
 	public static abstract class Builder {
