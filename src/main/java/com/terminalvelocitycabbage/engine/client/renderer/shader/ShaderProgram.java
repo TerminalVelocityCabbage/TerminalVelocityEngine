@@ -68,7 +68,7 @@ public class ShaderProgram {
 	}
 
 	public void createPointLightUniform(String name) {
-		//createUniform(name + ".color");
+		createUniform(name + ".color");
 		createUniform(name + ".position");
 		createUniform(name + ".intensity");
 		createUniform(name + ".attenuation.constant");
@@ -106,8 +106,7 @@ public class ShaderProgram {
 	}
 
 	public void setUniform(String name, PointLight pointLight) {
-		test();
-		//setUniform(name + ".color", pointLight.getColor());
+		setUniform(name + ".color", pointLight.getColor());
 		setUniform(name + ".position", pointLight.getPosition());
 		setUniform(name + ".intensity", pointLight.getIntensity());
 		Attenuation att = pointLight.getAttenuation();
@@ -117,7 +116,6 @@ public class ShaderProgram {
 	}
 
 	public void setUniform(String name, Material material) {
-		test();
 		setUniform(name + ".ambient", material.getAmbientColor());
 		//setUniform(name + ".diffuse", material.getDiffuseColor());
 		//setUniform(name + ".specular", material.getSpecularColor());

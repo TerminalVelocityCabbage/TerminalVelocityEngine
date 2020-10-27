@@ -8,13 +8,13 @@ import org.joml.Vector4f;
 public class PointLight {
 
 	private Vector3f position;
-	private Vector3f color;
+	private Vector4f color;
 	protected float intensity;
 	private Attenuation attenuation;
 
 	public PointLight(Vector3f position, Vector3f color, float intensity, Attenuation attenuation) {
 		this.position = position;
-		this.color = color;
+		this.color = new Vector4f(color, 1.0f);
 		if (intensity > 1 || intensity < 0) {
 			Log.warn("Intensity of a light should be from 0 to 1, one or more light has been capped.");
 			intensity = intensity > 1 ? 1 : 0;
@@ -27,11 +27,6 @@ public class PointLight {
 		this(position, color, intensity, new Attenuation(1, 0, 0));
 	}
 
-	//Used for copying a point light
-	public PointLight(PointLight pointLight, Vector4f position) {
-		this(new Vector3f(pointLight.color), new Vector3f(position.x, position.y, position.z), pointLight.intensity, pointLight.attenuation);
-	}
-
 	public Vector3f getPosition() {
 		return position;
 	}
@@ -40,12 +35,12 @@ public class PointLight {
 		this.position = position;
 	}
 
-	public Vector3f getColor() {
+	public Vector4f getColor() {
 		return color;
 	}
 
 	public void setColor(Vector3f color) {
-		this.color = color;
+		this.color = new Vector4f(color, 1.0f);
 	}
 
 	public float getIntensity() {
