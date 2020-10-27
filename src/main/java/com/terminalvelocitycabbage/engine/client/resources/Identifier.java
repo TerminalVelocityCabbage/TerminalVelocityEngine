@@ -1,4 +1,4 @@
-package com.terminalvelocitycabbage.client.resources;
+package com.terminalvelocitycabbage.engine.client.resources;
 
 import java.util.Objects;
 

@@ -1,4 +1,4 @@
-package com.terminalvelocitycabbage.command;
+package com.terminalvelocitycabbage.engine.command;
 
 public class CommandResult {
 

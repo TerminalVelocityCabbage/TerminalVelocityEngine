@@ -1,7 +1,7 @@
-package com.terminalvelocitycabbage.events.client;
+package com.terminalvelocitycabbage.engine.events.client;
 
 import com.github.simplenet.Client;
-import com.terminalvelocitycabbage.events.Event;
+import com.terminalvelocitycabbage.engine.events.Event;
 
 public class ClientConnectionEvent extends Event {
 

@@ -1,4 +1,4 @@
-package com.terminalvelocitycabbage.client.renderer.model;
+package com.terminalvelocitycabbage.engine.client.renderer.model;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;

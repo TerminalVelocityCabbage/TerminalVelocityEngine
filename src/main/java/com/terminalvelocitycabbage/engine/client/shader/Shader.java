@@ -1,8 +1,8 @@
-package com.terminalvelocitycabbage.client.shader;
+package com.terminalvelocitycabbage.engine.client.shader;
 
-import com.terminalvelocitycabbage.client.resources.Identifier;
-import com.terminalvelocitycabbage.client.resources.Resource;
-import com.terminalvelocitycabbage.client.resources.ResourceManager;
+import com.terminalvelocitycabbage.engine.client.resources.Identifier;
+import com.terminalvelocitycabbage.engine.client.resources.Resource;
+import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
 
 import java.util.Optional;
 

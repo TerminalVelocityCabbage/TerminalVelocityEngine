@@ -1,9 +1,9 @@
-package com.terminalvelocitycabbage.client;
+package com.terminalvelocitycabbage.engine.client;
 
-import com.terminalvelocitycabbage.client.networking.PingClient;
-import com.terminalvelocitycabbage.events.EventDispatcher;
-import com.terminalvelocitycabbage.events.client.ClientConnectionEvent;
-import com.terminalvelocitycabbage.events.client.ClientStartEvent;
+import com.terminalvelocitycabbage.engine.client.networking.PingClient;
+import com.terminalvelocitycabbage.engine.events.EventDispatcher;
+import com.terminalvelocitycabbage.engine.events.client.ClientConnectionEvent;
+import com.terminalvelocitycabbage.engine.events.client.ClientStartEvent;
 import com.github.simplenet.Client;
 
 import java.util.concurrent.CountDownLatch;

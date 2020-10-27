@@ -1,10 +1,10 @@
-package com.terminalvelocitycabbage.client.renderer.model;
+package com.terminalvelocitycabbage.engine.client.renderer.model;
 
-import com.terminalvelocitycabbage.client.resources.ResourceManager;
-import com.terminalvelocitycabbage.client.util.PNGDecoder;
-import com.terminalvelocitycabbage.debug.Log;
-import com.terminalvelocitycabbage.client.resources.Identifier;
-import com.terminalvelocitycabbage.client.resources.Resource;
+import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
+import com.terminalvelocitycabbage.engine.client.util.PNGDecoder;
+import com.terminalvelocitycabbage.engine.debug.Log;
+import com.terminalvelocitycabbage.engine.client.resources.Identifier;
+import com.terminalvelocitycabbage.engine.client.resources.Resource;
 
 import java.io.IOException;
 import java.io.InputStream;

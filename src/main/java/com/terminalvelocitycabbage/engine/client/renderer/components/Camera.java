@@ -1,6 +1,6 @@
-package com.terminalvelocitycabbage.client.renderer.components;
+package com.terminalvelocitycabbage.engine.client.renderer.components;
 
-import com.terminalvelocitycabbage.client.renderer.Renderer;
+import com.terminalvelocitycabbage.engine.client.renderer.Renderer;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 

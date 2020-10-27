@@ -1,6 +1,6 @@
-package com.terminalvelocitycabbage.client.input;
+package com.terminalvelocitycabbage.engine.client.input;
 
-import com.terminalvelocitycabbage.client.renderer.components.Window;
+import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
 import org.joml.Vector2d;
 import org.joml.Vector2f;
 

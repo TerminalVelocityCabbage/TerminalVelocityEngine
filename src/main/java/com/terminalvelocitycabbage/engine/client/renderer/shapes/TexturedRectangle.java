@@ -1,7 +1,7 @@
-package com.terminalvelocitycabbage.client.renderer.shapes;
+package com.terminalvelocitycabbage.engine.client.renderer.shapes;
 
-import com.terminalvelocitycabbage.client.renderer.model.TexturedMesh;
-import com.terminalvelocitycabbage.client.renderer.model.Vertex;
+import com.terminalvelocitycabbage.engine.client.renderer.model.TexturedMesh;
+import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
 
 public class TexturedRectangle extends TexturedMesh {
 

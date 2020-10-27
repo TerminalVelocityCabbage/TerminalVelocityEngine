@@ -1,7 +1,7 @@
-package com.terminalvelocitycabbage.client.renderer;
+package com.terminalvelocitycabbage.engine.client.renderer;
 
-import com.terminalvelocitycabbage.client.input.InputHandler;
-import com.terminalvelocitycabbage.client.renderer.components.Window;
+import com.terminalvelocitycabbage.engine.client.input.InputHandler;
+import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 
