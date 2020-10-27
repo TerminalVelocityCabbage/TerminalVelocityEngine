@@ -1,4 +1,4 @@
-package com.terminalvelocitycabbage.entity;
+package com.terminalvelocitycabbage.engine.entity;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;

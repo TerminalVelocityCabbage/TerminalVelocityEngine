@@ -1,4 +1,4 @@
-package com.terminalvelocitycabbage;
+package com.terminalvelocitycabbage.engine;
 
 public class Engine {
 

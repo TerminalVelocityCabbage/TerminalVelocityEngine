@@ -1,8 +1,8 @@
-package com.terminalvelocitycabbage.server;
+package com.terminalvelocitycabbage.engine.server;
 
 import com.github.simplenet.Server;
-import com.terminalvelocitycabbage.events.EventDispatcher;
-import com.terminalvelocitycabbage.events.server.*;
+import com.terminalvelocitycabbage.engine.events.EventDispatcher;
+import com.terminalvelocitycabbage.engine.events.server.*;
 
 public abstract class ServerBase extends EventDispatcher {
 

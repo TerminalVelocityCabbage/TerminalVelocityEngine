@@ -1,6 +1,6 @@
-package com.terminalvelocitycabbage.entity;
+package com.terminalvelocitycabbage.engine.entity;
 
-import com.terminalvelocitycabbage.client.renderer.model.Model;
+import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 

@@ -1,4 +1,4 @@
-package com.terminalvelocitycabbage.events;
+package com.terminalvelocitycabbage.engine.events;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
