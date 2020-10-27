@@ -1,8 +1,8 @@
 package com.terminalvelocitycabbage.engine.client.shader;
 
+import com.terminalvelocitycabbage.engine.debug.Log;
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
-import com.terminalvelocitycabbage.engine.debug.Log;
 import org.joml.Matrix4f;
 import org.lwjgl.system.MemoryStack;
 

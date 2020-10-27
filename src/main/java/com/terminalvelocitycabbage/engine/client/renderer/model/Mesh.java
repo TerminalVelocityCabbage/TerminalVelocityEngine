@@ -4,11 +4,12 @@ import org.joml.Matrix4f;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL15;
+import org.lwjgl.opengl.GL20;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
-import static com.terminalvelocitycabbage.engine.client.renderer.model.Vertex.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
@@ -39,9 +40,9 @@ public abstract class Mesh {
 		glBufferData(GL_ARRAY_BUFFER, getCombinedVertices(), GL_STATIC_DRAW);
 
 		//Define vertex data for shader
-		glVertexAttribPointer(0, POSITION_ELEMENT_COUNT, GL11.GL_FLOAT, false, STRIDE, POSITION_OFFSET);
-		glVertexAttribPointer(1, COLOR_ELEMENT_COUNT, GL11.GL_FLOAT, false, STRIDE, COLOR_OFFSET);
-		glVertexAttribPointer(2, TEXTURE_ELEMENT_COUNT, GL11.GL_FLOAT, false, STRIDE, TEXTURE_OFFSET);
+		GL20.glVertexAttribPointer(0, Vertex.POSITION_ELEMENT_COUNT, GL11.GL_FLOAT, false, Vertex.STRIDE, Vertex.POSITION_OFFSET);
+		GL20.glVertexAttribPointer(1, Vertex.COLOR_ELEMENT_COUNT, GL11.GL_FLOAT, false, Vertex.STRIDE, Vertex.COLOR_OFFSET);
+		GL20.glVertexAttribPointer(2, Vertex.TEXTURE_ELEMENT_COUNT, GL11.GL_FLOAT, false, Vertex.STRIDE, Vertex.TEXTURE_OFFSET);
 
 		//Create EBO for connected tris
 		eboID = glGenBuffers();
@@ -93,7 +94,7 @@ public abstract class Mesh {
 
 			//Pass new data to OpenGL
 			glBindBuffer(GL_ARRAY_BUFFER, vboID);
-			glBufferSubData(GL_ARRAY_BUFFER, i * STRIDE, vertexFloatBuffer);
+			GL15.glBufferSubData(GL_ARRAY_BUFFER, i * Vertex.STRIDE, vertexFloatBuffer);
 		}
 	}
 

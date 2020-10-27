@@ -1,10 +1,10 @@
 package com.terminalvelocitycabbage.engine.client.renderer.model;
 
-import com.terminalvelocitycabbage.engine.client.resources.Identifier;
-import com.terminalvelocitycabbage.engine.client.resources.Resource;
 import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
 import com.terminalvelocitycabbage.engine.client.util.PNGDecoder;
 import com.terminalvelocitycabbage.engine.debug.Log;
+import com.terminalvelocitycabbage.engine.client.resources.Identifier;
+import com.terminalvelocitycabbage.engine.client.resources.Resource;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,7 +23,7 @@ public abstract class TexturedMesh extends Mesh {
 
 	private int textureID;
 
-	public TexturedMesh(ResourceManager resourceManager, Identifier texture) {
+	public void setTexture(ResourceManager resourceManager, Identifier texture) {
 		this.resourceManager = resourceManager;
 		this.texture = texture;
 	}
@@ -48,6 +48,10 @@ public abstract class TexturedMesh extends Mesh {
 		ByteBuffer buf = null;
 		int tWidth = 0;
 		int tHeight = 0;
+
+		if (resourceManager == null || identifier == null) {
+			throw new RuntimeException("Can't bind Textured Mesh before it's had a texture set.");
+		}
 
 		try {
 			// Open the PNG file as an InputStream
