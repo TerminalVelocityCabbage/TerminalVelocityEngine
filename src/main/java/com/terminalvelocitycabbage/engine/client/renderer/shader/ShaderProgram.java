@@ -1,5 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.renderer.shader;
 
+import com.terminalvelocitycabbage.engine.client.renderer.lights.DirectionalLight;
 import com.terminalvelocitycabbage.engine.client.renderer.lights.PointLight;
 import com.terminalvelocitycabbage.engine.client.renderer.lights.components.Attenuation;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Material;
@@ -76,6 +77,12 @@ public class ShaderProgram {
 		createUniform(name + ".attenuation.exponential");
 	}
 
+	public void createDirectionalLightUniform(String name) {
+		createUniform(name + ".direction");
+		createUniform(name + ".color");
+		createUniform(name + ".intensity");
+	}
+
 	public void setUniform(String name, int value) {
 		test();
 		glUniform1i(uniforms.get(name), value);
@@ -121,6 +128,12 @@ public class ShaderProgram {
 		setUniform(name + ".specular", material.getSpecularColor());
 		setUniform(name + ".hasTexture", material.hasTexture() ? 1 : 0);
 		setUniform(name + ".reflectivity", material.getReflectivity());
+	}
+
+	public void setUniform(String name, DirectionalLight directionalLight) {
+		setUniform(name + ".direction", directionalLight.getDirection());
+		setUniform(name + ".color", directionalLight.getColor());
+		setUniform(name + ".intensity", directionalLight.getIntensity());
 	}
 
 	private void test() {
