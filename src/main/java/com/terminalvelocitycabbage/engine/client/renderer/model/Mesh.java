@@ -4,6 +4,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL15;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -110,7 +111,7 @@ public abstract class Mesh {
 
 			//Pass new data to OpenGL
 			glBindBuffer(GL_ARRAY_BUFFER, vboID);
-			glBufferSubData(GL_ARRAY_BUFFER, i * STRIDE, vertexFloatBuffer);
+			GL15.glBufferSubData(GL_ARRAY_BUFFER, i * Vertex.STRIDE, vertexFloatBuffer);
 		}
 	}
 
@@ -132,5 +133,9 @@ public abstract class Mesh {
 
 	public Material getMaterial() {
 		return material;
+	}
+
+	public void setMaterial(Material material) {
+		this.material = material;
 	}
 }

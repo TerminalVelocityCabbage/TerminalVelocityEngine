@@ -53,7 +53,7 @@ public abstract class Model {
 
 	public static class Part {
 
-		private Mesh mesh;
+		public Mesh mesh;
 		public List<Model.Part> children;
 
 		public Vector3f offset;

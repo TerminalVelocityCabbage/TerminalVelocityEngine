@@ -1,7 +1,7 @@
 package com.terminalvelocitycabbage.engine.client.renderer.shapes;
 
-import com.terminalvelocitycabbage.engine.client.renderer.model.Mesh;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
+import com.terminalvelocitycabbage.engine.client.renderer.model.Mesh;
 
 public class ColoredCuboid extends Mesh {
 	public ColoredCuboid(Vertex topLeftF, Vertex bottomLeftF, Vertex bottomRightF, Vertex topRightF,
