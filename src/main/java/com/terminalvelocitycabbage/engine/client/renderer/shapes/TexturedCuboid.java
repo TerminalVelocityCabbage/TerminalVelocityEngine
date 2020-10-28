@@ -1,6 +1,5 @@
 package com.terminalvelocitycabbage.engine.client.renderer.shapes;
 
-import com.terminalvelocitycabbage.engine.client.renderer.model.Material;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Mesh;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
 
@@ -10,9 +9,7 @@ public class TexturedCuboid extends Mesh {
 						  Vertex backTL, Vertex backBL, Vertex backBR, Vertex backTR,
 						  Vertex leftTL, Vertex leftBL, Vertex leftBR, Vertex leftTR,
 						  Vertex topTL, Vertex topBL, Vertex topBR, Vertex topTR,
-						  Vertex bottomTL, Vertex bottomBL, Vertex bottomBR, Vertex bottomTR,
-						  Material material) {
-		this.material = material;
+						  Vertex bottomTL, Vertex bottomBL, Vertex bottomBR, Vertex bottomTR) {
 		this.vertices = new Vertex[]{
 				frontTL, frontBL, frontBR, frontTR,
 				rightTL, rightBL, rightBR, rightTR,
