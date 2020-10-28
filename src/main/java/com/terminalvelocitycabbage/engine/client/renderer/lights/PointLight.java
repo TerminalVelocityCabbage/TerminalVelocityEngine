@@ -2,6 +2,7 @@ package com.terminalvelocitycabbage.engine.client.renderer.lights;
 
 import com.terminalvelocitycabbage.engine.client.renderer.lights.components.Attenuation;
 import com.terminalvelocitycabbage.engine.debug.Log;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
@@ -53,6 +54,11 @@ public class PointLight {
 
 	public Attenuation getAttenuation() {
 		return attenuation;
+	}
+
+	public void update(Matrix4f viewMatrix) {
+		Vector4f newPos = new Vector4f(position, 1.0f);
+		newPos.mul(viewMatrix);
 	}
 
 	public void setAttenuation(Attenuation attenuation) {

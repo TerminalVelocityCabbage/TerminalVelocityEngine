@@ -2,6 +2,7 @@ package com.terminalvelocitycabbage.engine.client.renderer.shader;
 
 import com.terminalvelocitycabbage.engine.client.renderer.lights.DirectionalLight;
 import com.terminalvelocitycabbage.engine.client.renderer.lights.PointLight;
+import com.terminalvelocitycabbage.engine.client.renderer.lights.SpotLight;
 import com.terminalvelocitycabbage.engine.client.renderer.lights.components.Attenuation;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Material;
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
@@ -77,6 +78,12 @@ public class ShaderProgram {
 		createUniform(name + ".attenuation.exponential");
 	}
 
+	public void createSpotLightUniform(String name) {
+		createPointLightUniform(name + ".pointLight");
+		createUniform(name + ".coneDirection");
+		createUniform(name + ".cutoff");
+	}
+
 	public void createDirectionalLightUniform(String name) {
 		createUniform(name + ".direction");
 		createUniform(name + ".color");
@@ -122,18 +129,24 @@ public class ShaderProgram {
 		setUniform(name + ".attenuation.exponential", att.getExponential());
 	}
 
-	public void setUniform(String name, Material material) {
-		setUniform(name + ".ambient", material.getAmbientColor());
-		setUniform(name + ".diffuse", material.getDiffuseColor());
-		setUniform(name + ".specular", material.getSpecularColor());
-		setUniform(name + ".hasTexture", material.hasTexture() ? 1 : 0);
-		setUniform(name + ".reflectivity", material.getReflectivity());
+	public void setUniform(String name, SpotLight spotLight) {
+		setUniform(name + ".pointLight", (PointLight)spotLight);
+		setUniform(name + ".coneDirection", spotLight.getConeDirection());
+		setUniform(name + ".cutoff", spotLight.getCutoff());
 	}
 
 	public void setUniform(String name, DirectionalLight directionalLight) {
 		setUniform(name + ".direction", directionalLight.getDirection());
 		setUniform(name + ".color", directionalLight.getColor());
 		setUniform(name + ".intensity", directionalLight.getIntensity());
+	}
+
+	public void setUniform(String name, Material material) {
+		setUniform(name + ".ambient", material.getAmbientColor());
+		setUniform(name + ".diffuse", material.getDiffuseColor());
+		setUniform(name + ".specular", material.getSpecularColor());
+		setUniform(name + ".hasTexture", material.hasTexture() ? 1 : 0);
+		setUniform(name + ".reflectivity", material.getReflectivity());
 	}
 
 	private void test() {
