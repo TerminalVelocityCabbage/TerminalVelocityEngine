@@ -28,6 +28,9 @@ public class ShaderProgram {
 	private static final List<Shader> shaderQueue = new ArrayList<>();
 	private final Map<String, Integer> uniforms;
 
+	public static final int MAX_POINT_LIGHTS = 256;
+	public static final int MAX_SPOT_LIGHTS = 256;
+
 	public ShaderProgram() {
 		this.id = glCreateProgram();
 		if (this.id == 0) {
@@ -69,7 +72,7 @@ public class ShaderProgram {
 		createUniform(name + ".reflectivity");
 	}
 
-	public void createPointLightUniform(String name) {
+	private void createPointLightUniform(String name) {
 		createUniform(name + ".color");
 		createUniform(name + ".position");
 		createUniform(name + ".intensity");
@@ -78,10 +81,28 @@ public class ShaderProgram {
 		createUniform(name + ".attenuation.exponential");
 	}
 
-	public void createSpotLightUniform(String name) {
+	public void createPointLightUniforms(String name, int numPointLights) {
+		if (numPointLights > MAX_POINT_LIGHTS) {
+			throw new RuntimeException(numPointLights + " is greater than the maximum allowed number of point lights in TVE of " + MAX_POINT_LIGHTS);
+		}
+		for (int i = 0; i < numPointLights; i++) {
+			createPointLightUniform(name + "[" + i + "]");
+		}
+	}
+
+	private void createSpotLightUniform(String name) {
 		createPointLightUniform(name + ".pointLight");
 		createUniform(name + ".coneDirection");
 		createUniform(name + ".cutoff");
+	}
+
+	public void createSpotLightUniforms(String name, int numSpotLights) {
+		if (numSpotLights > MAX_SPOT_LIGHTS) {
+			throw new RuntimeException(numSpotLights + " is greater than the maximum allowed number of spot lights in TVE of " + MAX_SPOT_LIGHTS);
+		}
+		for (int i = 0; i < numSpotLights; i++) {
+			createSpotLightUniform(name + "[" + i + "]");
+		}
 	}
 
 	public void createDirectionalLightUniform(String name) {
@@ -119,7 +140,8 @@ public class ShaderProgram {
 		}
 	}
 
-	public void setUniform(String name, PointLight pointLight) {
+	//Should only be used by spot light setting point light unforms or by the actual point light setter that accounts for position
+	private void setUniform(String name, PointLight pointLight) {
 		setUniform(name + ".color", pointLight.getColor());
 		setUniform(name + ".position", pointLight.getPosition());
 		setUniform(name + ".intensity", pointLight.getIntensity());
@@ -129,10 +151,30 @@ public class ShaderProgram {
 		setUniform(name + ".attenuation.exponential", att.getExponential());
 	}
 
-	public void setUniform(String name, SpotLight spotLight) {
+	public void setUniform(String name, PointLight pointLight, int position) {
+		setUniform(name + "[" + position + "]", pointLight);
+	}
+
+	public void setUniforms(String name, PointLight[] pointLights) {
+		for (int i = 0; i < (pointLights != null ? pointLights.length : 0); i++) {
+			setUniform(name, pointLights[i], i);
+		}
+	}
+
+	private void setUniform(String name, SpotLight spotLight) {
 		setUniform(name + ".pointLight", (PointLight)spotLight);
 		setUniform(name + ".coneDirection", spotLight.getConeDirection());
 		setUniform(name + ".cutoff", spotLight.getCutoff());
+	}
+
+	public void setUniform(String name, SpotLight spotLight, int position) {
+		setUniform(name + "[" + position + "]", spotLight);
+	}
+
+	public void setUniform(String name, SpotLight[] spotLights) {
+		for (int i = 0; i < (spotLights != null ? spotLights.length : 0); i++) {
+			setUniform(name, spotLights[i], i);
+		}
 	}
 
 	public void setUniform(String name, DirectionalLight directionalLight) {
