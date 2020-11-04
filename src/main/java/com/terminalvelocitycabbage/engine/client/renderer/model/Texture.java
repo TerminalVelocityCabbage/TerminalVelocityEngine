@@ -23,6 +23,9 @@ public class Texture {
 
 	private int textureID;
 
+	public int width;
+	public int height;
+
 	public Texture(ResourceManager resourceManager, Identifier identifier) {
 		this.resourceManager = resourceManager;
 		this.identifier = identifier;
@@ -38,10 +41,8 @@ public class Texture {
 		glDeleteTextures(textureID);
 	}
 
-	private static int loadPNGTexture(ResourceManager resourceManager, Identifier identifier, int textureUnit) {
+	private int loadPNGTexture(ResourceManager resourceManager, Identifier identifier, int textureUnit) {
 		ByteBuffer buf = null;
-		int tWidth = 0;
-		int tHeight = 0;
 
 		try {
 			// Open the PNG file as an InputStream
@@ -57,8 +58,8 @@ public class Texture {
 			PNGDecoder decoder = new PNGDecoder(in);
 
 			// Get the width and height of the texture
-			tWidth = decoder.getWidth();
-			tHeight = decoder.getHeight();
+			width = decoder.getWidth();
+			height = decoder.getHeight();
 
 			// Decode the PNG file in a ByteBuffer
 			buf = ByteBuffer.allocateDirect(Float.BYTES * decoder.getWidth() * decoder.getHeight());
@@ -79,7 +80,7 @@ public class Texture {
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 		// Upload the texture data and generate mip maps (for scaling)
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tWidth, tHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, buf);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buf);
 		glGenerateMipmap(GL_TEXTURE_2D);
 
 		// Setup the UV/ST coordinate system
