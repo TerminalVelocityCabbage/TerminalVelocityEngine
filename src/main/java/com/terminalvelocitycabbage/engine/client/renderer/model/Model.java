@@ -13,11 +13,15 @@ import java.util.List;
 public abstract class Model {
 
 	protected List<Part> modelParts;
+	private Material material;
 	//To avoid creating a new one every part render call
 	Matrix4f transformationMatrix;
 
 	public Model(List<Model.Part> modelParts) {
 		this.modelParts = modelParts;
+		for (Part part : modelParts) {
+			part.setModel(this);
+		}
 		this.transformationMatrix = new Matrix4f();
 	}
 
@@ -52,6 +56,8 @@ public abstract class Model {
 	}
 
 	public static class Part {
+
+		private Model model;
 
 		public Mesh mesh;
 		public List<Model.Part> children;
@@ -109,9 +115,20 @@ public abstract class Model {
 			mesh.update(transformationMatrix);
 		}
 
-		public Material getMaterial() {
-			return mesh.getMaterial();
+		public void setModel(Model model) {
+			this.model = model;
+			this.mesh.model = model;
+			for (Part part : children) {
+				part.setModel(this.model);
+			}
 		}
+	}
 
+	public void setMaterial(Material material) {
+		this.material = material;
+	}
+
+	public Material getMaterial() {
+		return material;
 	}
 }

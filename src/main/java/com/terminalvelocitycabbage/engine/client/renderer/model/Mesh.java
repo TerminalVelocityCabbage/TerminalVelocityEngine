@@ -24,7 +24,7 @@ public abstract class Mesh {
 	protected Vertex[] vertices;
 	protected byte[] vertexOrder;
 
-	protected Material material;
+	protected Model model;
 
 	//TODO note that these translations have to be done in a specific order so we should make it clear and make an API that dummi-proofs it
 	//1. Scale	- so that the axis stuff is scaled properly
@@ -53,8 +53,11 @@ public abstract class Mesh {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, getIndicesBuffer(), GL_STATIC_DRAW);
 
-		if (material.hasTexture()) {
-			material.getTexture().bind();
+		if (model.getMaterial().hasTexture()) {
+			model.getMaterial().getTexture().bind();
+		}
+		if (model.getMaterial().hasReflectivityTexture()) {
+			model.getMaterial().getReflectivityTexture().bind();
 		}
 	}
 
@@ -84,8 +87,11 @@ public abstract class Mesh {
 		glDeleteBuffers(vboID);
 		glDeleteBuffers(eboID);
 		glDeleteVertexArrays(vaoID);
-		if (material.hasTexture()) {
-			material.getTexture().destroy();
+		if (model.getMaterial().hasTexture()) {
+			model.getMaterial().getTexture().destroy();
+		}
+		if (model.getMaterial().hasReflectivityTexture()) {
+			model.getMaterial().getReflectivityTexture().destroy();
 		}
 	}
 
@@ -130,13 +136,5 @@ public abstract class Mesh {
 
 	private ByteBuffer getIndicesBuffer() {
 		return BufferUtils.createByteBuffer(vertexOrder.length).put(vertexOrder).flip();
-	}
-
-	public Material getMaterial() {
-		return material;
-	}
-
-	public void setMaterial(Material material) {
-		this.material = material;
 	}
 }
