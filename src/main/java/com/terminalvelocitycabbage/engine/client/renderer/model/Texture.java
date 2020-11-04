@@ -1,10 +1,10 @@
 package com.terminalvelocitycabbage.engine.client.renderer.model;
 
+import com.terminalvelocitycabbage.engine.client.resources.Identifier;
+import com.terminalvelocitycabbage.engine.client.resources.Resource;
 import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
 import com.terminalvelocitycabbage.engine.client.util.PNGDecoder;
 import com.terminalvelocitycabbage.engine.debug.Log;
-import com.terminalvelocitycabbage.engine.client.resources.Identifier;
-import com.terminalvelocitycabbage.engine.client.resources.Resource;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,42 +16,32 @@ import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
-public abstract class TexturedMesh extends Mesh {
+public class Texture {
 
-	private ResourceManager resourceManager;
-	private Identifier texture;
+	private final ResourceManager resourceManager;
+	private final Identifier identifier;
 
 	private int textureID;
 
-	public void setTexture(ResourceManager resourceManager, Identifier texture) {
+	public Texture(ResourceManager resourceManager, Identifier identifier) {
 		this.resourceManager = resourceManager;
-		this.texture = texture;
+		this.identifier = identifier;
 	}
 
-	@Override
 	public void bind() {
-		super.bind();
-		//Load texture
-		textureID = loadPNGTexture(resourceManager, texture, GL_TEXTURE0);
-		// Bind the texture
+		textureID = loadPNGTexture(resourceManager, identifier, GL_TEXTURE0);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, textureID);
 	}
 
-	@Override
 	public void destroy() {
-		super.destroy();
 		glDeleteTextures(textureID);
 	}
 
-	protected static int loadPNGTexture(ResourceManager resourceManager, Identifier identifier, int textureUnit) {
+	private static int loadPNGTexture(ResourceManager resourceManager, Identifier identifier, int textureUnit) {
 		ByteBuffer buf = null;
 		int tWidth = 0;
 		int tHeight = 0;
-
-		if (resourceManager == null || identifier == null) {
-			throw new RuntimeException("Can't bind Textured Mesh before it's had a texture set.");
-		}
 
 		try {
 			// Open the PNG file as an InputStream

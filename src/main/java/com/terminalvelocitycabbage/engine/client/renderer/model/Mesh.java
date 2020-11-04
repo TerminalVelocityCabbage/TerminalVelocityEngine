@@ -1,15 +1,16 @@
 package com.terminalvelocitycabbage.engine.client.renderer.model;
 
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
-import org.lwjgl.opengl.GL20;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
+import static com.terminalvelocitycabbage.engine.client.renderer.model.Vertex.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
@@ -22,6 +23,8 @@ public abstract class Mesh {
 
 	protected Vertex[] vertices;
 	protected byte[] vertexOrder;
+
+	protected Material material;
 
 	//TODO note that these translations have to be done in a specific order so we should make it clear and make an API that dummi-proofs it
 	//1. Scale	- so that the axis stuff is scaled properly
@@ -40,14 +43,19 @@ public abstract class Mesh {
 		glBufferData(GL_ARRAY_BUFFER, getCombinedVertices(), GL_STATIC_DRAW);
 
 		//Define vertex data for shader
-		GL20.glVertexAttribPointer(0, Vertex.POSITION_ELEMENT_COUNT, GL11.GL_FLOAT, false, Vertex.STRIDE, Vertex.POSITION_OFFSET);
-		GL20.glVertexAttribPointer(1, Vertex.COLOR_ELEMENT_COUNT, GL11.GL_FLOAT, false, Vertex.STRIDE, Vertex.COLOR_OFFSET);
-		GL20.glVertexAttribPointer(2, Vertex.TEXTURE_ELEMENT_COUNT, GL11.GL_FLOAT, false, Vertex.STRIDE, Vertex.TEXTURE_OFFSET);
+		glVertexAttribPointer(0, POSITION_ELEMENT_COUNT, GL11.GL_FLOAT, false, STRIDE, POSITION_OFFSET);
+		glVertexAttribPointer(1, COLOR_ELEMENT_COUNT, GL11.GL_FLOAT, false, STRIDE, COLOR_OFFSET);
+		glVertexAttribPointer(2, TEXTURE_ELEMENT_COUNT, GL11.GL_FLOAT, false, STRIDE, TEXTURE_OFFSET);
+		glVertexAttribPointer(3, NORMAL_ELEMENT_COUNT, GL11.GL_FLOAT, false, STRIDE, NORMAL_OFFSET);
 
 		//Create EBO for connected tris
 		eboID = glGenBuffers();
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, getIndicesBuffer(), GL_STATIC_DRAW);
+
+		if (material.hasTexture()) {
+			material.getTexture().bind();
+		}
 	}
 
 	public void render() {
@@ -56,6 +64,7 @@ public abstract class Mesh {
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 		glEnableVertexAttribArray(2);
+		glEnableVertexAttribArray(3);
 
 		// Bind to the index VBO/EBO that has all the information about the order of the vertices
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
@@ -68,28 +77,37 @@ public abstract class Mesh {
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(2);
+		glDisableVertexAttribArray(3);
 	}
 
 	public void destroy() {
 		glDeleteBuffers(vboID);
 		glDeleteBuffers(eboID);
 		glDeleteVertexArrays(vaoID);
+		if (material.hasTexture()) {
+			material.getTexture().destroy();
+		}
 	}
 
 	public void update(Matrix4f translationMatrix) {
 		//Update the vertex positions
 		Vector4f positions = new Vector4f();
+		Vector4f normals = new Vector4f();
 		Vertex currentVertex;
 		FloatBuffer vertexFloatBuffer = getCombinedVertices();
 		float[] currentXYZ;
+		float[] currentNormal;
 		for (int i = 0; i < vertices.length; i++) {
 			currentVertex = getVertex(i);
 			currentXYZ = currentVertex.getXYZ();
 			positions.set(currentXYZ[0], currentXYZ[1], currentXYZ[2], 1f).mul(translationMatrix);
+			currentNormal = currentVertex.getNormals();
+			normals.set(currentNormal[0], currentNormal[1], currentNormal[2], 1f).rotate(translationMatrix.getNormalizedRotation(new Quaternionf()));
 
 			// Put the new data in a ByteBuffer (in the view of a FloatBuffer)
 			vertexFloatBuffer.rewind();
-			vertexFloatBuffer.put(Vertex.getElements( new float[] { positions.x, positions.y, positions.z, positions.w },  currentVertex.getRGBA(), currentVertex.getUV() ));
+			//vertexFloatBuffer.put(Vertex.getElements( new float[] { positions.x, positions.y, positions.z },  currentVertex.getRGBA(), currentVertex.getUV(), currentVertex.getNormals() ));
+			vertexFloatBuffer.put(Vertex.getElements( new float[] { positions.x, positions.y, positions.z },  currentVertex.getRGBA(), currentVertex.getUV(), new float[] { normals.x, normals.y, normals.z } ));
 			vertexFloatBuffer.flip();
 
 			//Pass new data to OpenGL
@@ -105,12 +123,20 @@ public abstract class Mesh {
 	public FloatBuffer getCombinedVertices() {
 		FloatBuffer verticesBuffer = BufferUtils.createFloatBuffer(vertices.length * Vertex.ELEMENT_COUNT);
 		for (Vertex vertex : vertices) {
-			verticesBuffer.put(Vertex.getElements(vertex.getXYZ(), vertex.getRGBA(), vertex.getUV()));
+			verticesBuffer.put(Vertex.getElements(vertex.getXYZ(), vertex.getRGBA(), vertex.getUV(), vertex.getNormals()));
 		}
 		return verticesBuffer.flip();
 	}
 
 	private ByteBuffer getIndicesBuffer() {
 		return BufferUtils.createByteBuffer(vertexOrder.length).put(vertexOrder).flip();
+	}
+
+	public Material getMaterial() {
+		return material;
+	}
+
+	public void setMaterial(Material material) {
+		this.material = material;
 	}
 }

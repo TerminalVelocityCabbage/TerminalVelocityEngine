@@ -22,17 +22,19 @@ public class Window {
 	private boolean vSync;
 	private InputHandler inputHandler;
 	private boolean center;
+	private boolean lockAndHideCursor;
 
 	private int monitorWidth;
 	private int monitorHeight;
 
-	public Window(int width, int height, String title, boolean vSync, InputHandler inputHandler, boolean center) {
+	public Window(int width, int height, String title, boolean vSync, InputHandler inputHandler, boolean center, boolean lockAndHideCursor) {
 		this.windowWidth = width;
 		this.windowHeight = height;
 		this.title = title;
 		this.vSync = vSync;
 		this.inputHandler = inputHandler;
 		this.center = center;
+		this.lockAndHideCursor = lockAndHideCursor;
 	}
 
 	public void create() {
@@ -74,6 +76,10 @@ public class Window {
 			// Center the window
 			if (center) {
 				glfwSetWindowPos(windowID, (videoMode.width() - pWidth.get(0))/2, (videoMode.height() - pHeight.get(0))/2);
+			}
+
+			if (lockAndHideCursor) {
+				glfwSetInputMode(windowID, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 			}
 
 			//init the input handler
