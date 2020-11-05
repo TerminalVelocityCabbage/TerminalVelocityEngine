@@ -44,9 +44,8 @@ public abstract class Mesh {
 
 		//Define vertex data for shader
 		glVertexAttribPointer(0, POSITION_ELEMENT_COUNT, GL11.GL_FLOAT, false, STRIDE, POSITION_OFFSET);
-		glVertexAttribPointer(1, COLOR_ELEMENT_COUNT, GL11.GL_FLOAT, false, STRIDE, COLOR_OFFSET);
-		glVertexAttribPointer(2, TEXTURE_ELEMENT_COUNT, GL11.GL_FLOAT, false, STRIDE, TEXTURE_OFFSET);
-		glVertexAttribPointer(3, NORMAL_ELEMENT_COUNT, GL11.GL_FLOAT, false, STRIDE, NORMAL_OFFSET);
+		glVertexAttribPointer(1, TEXTURE_ELEMENT_COUNT, GL11.GL_FLOAT, false, STRIDE, TEXTURE_OFFSET);
+		glVertexAttribPointer(2, NORMAL_ELEMENT_COUNT, GL11.GL_FLOAT, false, STRIDE, NORMAL_OFFSET);
 
 		//Create EBO for connected tris
 		eboID = glGenBuffers();
@@ -80,7 +79,6 @@ public abstract class Mesh {
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(2);
-		glDisableVertexAttribArray(3);
 	}
 
 	public void destroy() {
@@ -112,8 +110,7 @@ public abstract class Mesh {
 
 			// Put the new data in a ByteBuffer (in the view of a FloatBuffer)
 			vertexFloatBuffer.rewind();
-			//vertexFloatBuffer.put(Vertex.getElements( new float[] { positions.x, positions.y, positions.z },  currentVertex.getRGBA(), currentVertex.getUV(), currentVertex.getNormals() ));
-			vertexFloatBuffer.put(Vertex.getElements( new float[] { positions.x, positions.y, positions.z },  currentVertex.getRGBA(), currentVertex.getUV(), new float[] { normals.x, normals.y, normals.z } ));
+			vertexFloatBuffer.put(Vertex.getElements( new float[] { positions.x, positions.y, positions.z }, currentVertex.getUV(), new float[] { normals.x, normals.y, normals.z } ));
 			vertexFloatBuffer.flip();
 
 			//Pass new data to OpenGL
@@ -129,7 +126,7 @@ public abstract class Mesh {
 	public FloatBuffer getCombinedVertices() {
 		FloatBuffer verticesBuffer = BufferUtils.createFloatBuffer(vertices.length * Vertex.ELEMENT_COUNT);
 		for (Vertex vertex : vertices) {
-			verticesBuffer.put(Vertex.getElements(vertex.getXYZ(), vertex.getRGBA(), vertex.getUV(), vertex.getNormals()));
+			verticesBuffer.put(Vertex.getElements(vertex.getXYZ(), vertex.getUV(), vertex.getNormals()));
 		}
 		return verticesBuffer.flip();
 	}
