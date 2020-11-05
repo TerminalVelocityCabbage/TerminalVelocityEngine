@@ -86,8 +86,8 @@ public class Texture {
 			height = decoder.getHeight();
 
 			// Decode the PNG file in a ByteBuffer
-			buf = ByteBuffer.allocateDirect(Float.BYTES * decoder.getWidth() * decoder.getHeight());
-			decoder.decode(buf, decoder.getWidth() * Float.BYTES, PNGDecoder.Format.RGBA);
+			buf = ByteBuffer.allocateDirect(Float.BYTES * width * height);
+			decoder.decode(buf, width * Float.BYTES, PNGDecoder.Format.RGBA);
 			buf.flip();
 			in.close();
 		} catch (IOException e) {
