@@ -32,7 +32,7 @@ public class Texture {
 	}
 
 	public void bind(int texture) {
-		textureID = loadPNGTexture(resourceManager, identifier, texture);
+		textureID = loadPNGTexture(texture);
 		glActiveTexture(texture);
 		glBindTexture(GL_TEXTURE_2D, textureID);
 	}
@@ -41,7 +41,7 @@ public class Texture {
 		glDeleteTextures(textureID);
 	}
 
-	private int loadPNGTexture(ResourceManager resourceManager, Identifier identifier, int textureUnit) {
+	private int loadPNGTexture(int textureUnit) {
 
 		// Create a new texture object in memory and bind it
 		int texId = glGenTextures();
