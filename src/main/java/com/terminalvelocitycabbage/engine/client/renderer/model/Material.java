@@ -83,6 +83,9 @@ public class Material {
 			if (ambientColor == null) ambientColor = DEFAULT_ALBEDO_COLOR;
 			if (diffuseColor == null) diffuseColor = ambientColor;
 			if (specularColor == null) specularColor = ambientColor;
+			if (reflectivityTexture != null && albedoTexture != null && !(reflectivityTexture.height % albedoTexture.height == 0) && !(reflectivityTexture.width % albedoTexture.width == 0)) {
+				throw new RuntimeException("The reflectivity texture must be the same size or a multiple of the albedo texture to be used.");
+			}
 			return new Material(albedoTexture, ambientColor, diffuseColor, specularColor, reflectivity, reflectivityTexture);
 		}
 	}

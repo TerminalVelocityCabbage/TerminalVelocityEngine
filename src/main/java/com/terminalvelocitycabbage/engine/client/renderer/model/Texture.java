@@ -4,7 +4,6 @@ import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 import com.terminalvelocitycabbage.engine.client.resources.Resource;
 import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
 import com.terminalvelocitycabbage.engine.client.util.PNGDecoder;
-import com.terminalvelocitycabbage.engine.debug.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,6 +19,7 @@ public class Texture {
 	private final ResourceManager resourceManager;
 	private final Identifier identifier;
 
+	private ByteBuffer textureBuffer;
 	private int textureID;
 
 	public int width;
@@ -28,6 +28,7 @@ public class Texture {
 	public Texture(ResourceManager resourceManager, Identifier identifier) {
 		this.resourceManager = resourceManager;
 		this.identifier = identifier;
+		this.textureBuffer = load();
 	}
 
 	public void bind(int texture) {
@@ -41,6 +42,31 @@ public class Texture {
 	}
 
 	private int loadPNGTexture(ResourceManager resourceManager, Identifier identifier, int textureUnit) {
+
+		// Create a new texture object in memory and bind it
+		int texId = glGenTextures();
+		glActiveTexture(textureUnit);
+		glBindTexture(GL_TEXTURE_2D, texId);
+
+		// All RGB bytes are aligned to each other and each component is 1 byte
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+		// Upload the texture data and generate mip maps (for scaling)
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureBuffer);
+		glGenerateMipmap(GL_TEXTURE_2D);
+
+		// Setup the UV/ST coordinate system
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+		// Setup what to do when the texture has to be scaled
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+		return texId;
+	}
+
+	private ByteBuffer load() {
 		ByteBuffer buf = null;
 
 		try {
@@ -50,8 +76,7 @@ public class Texture {
 			if (file.isPresent()) {
 				in = file.get().openStream();
 			} else {
-				Log.error("Count not find resource " + identifier.toString());
-				return -1;
+				throw new RuntimeException("Count not find resource " + identifier.toString());
 			}
 			// Link the PNG decoder to this stream
 			PNGDecoder decoder = new PNGDecoder(in);
@@ -70,26 +95,6 @@ public class Texture {
 			System.exit(-1);
 		}
 
-		// Create a new texture object in memory and bind it
-		int texId = glGenTextures();
-		glActiveTexture(textureUnit);
-		glBindTexture(GL_TEXTURE_2D, texId);
-
-		// All RGB bytes are aligned to each other and each component is 1 byte
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-		// Upload the texture data and generate mip maps (for scaling)
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buf);
-		glGenerateMipmap(GL_TEXTURE_2D);
-
-		// Setup the UV/ST coordinate system
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-		// Setup what to do when the texture has to be scaled
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-
-		return texId;
+		return buf;
 	}
 }
