@@ -16,7 +16,7 @@ vec4 calcLightColor(vec4 lightColor, float lightIntensity, vec3 position, vec3 t
     //Specular
     vec4 specularColor = vec4(0, 0, 0, 0);
     float specularFactor = pow(max(dot(cameraDirection, reflectedLight), 0.0), specularPower);
-    specularColor = materialSpecularColor * lightIntensity * specularFactor * material.reflectivity * lightColor;
+    specularColor = materialSpecularColor * lightIntensity * specularFactor * materialReflectivity * lightColor;
 
     return (diffuseColor + specularColor);
 }

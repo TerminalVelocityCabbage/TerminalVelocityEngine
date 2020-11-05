@@ -54,10 +54,10 @@ public abstract class Mesh {
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, getIndicesBuffer(), GL_STATIC_DRAW);
 
 		if (model.getMaterial().hasTexture()) {
-			model.getMaterial().getTexture().bind();
+			model.getMaterial().getTexture().bind(GL_TEXTURE0);
 		}
 		if (model.getMaterial().hasReflectivityTexture()) {
-			model.getMaterial().getReflectivityTexture().bind();
+			model.getMaterial().getReflectivityTexture().bind(GL_TEXTURE1);
 		}
 	}
 
