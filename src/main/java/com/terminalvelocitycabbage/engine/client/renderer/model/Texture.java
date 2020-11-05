@@ -4,7 +4,6 @@ import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 import com.terminalvelocitycabbage.engine.client.resources.Resource;
 import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
 import com.terminalvelocitycabbage.engine.client.util.PNGDecoder;
-import com.terminalvelocitycabbage.engine.debug.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,7 +11,6 @@ import java.nio.ByteBuffer;
 import java.util.Optional;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
@@ -21,16 +19,21 @@ public class Texture {
 	private final ResourceManager resourceManager;
 	private final Identifier identifier;
 
+	private ByteBuffer textureBuffer;
 	private int textureID;
+
+	public int width;
+	public int height;
 
 	public Texture(ResourceManager resourceManager, Identifier identifier) {
 		this.resourceManager = resourceManager;
 		this.identifier = identifier;
+		this.textureBuffer = load();
 	}
 
-	public void bind() {
-		textureID = loadPNGTexture(resourceManager, identifier, GL_TEXTURE0);
-		glActiveTexture(GL_TEXTURE0);
+	public void bind(int texture) {
+		textureID = loadPNGTexture(resourceManager, identifier, texture);
+		glActiveTexture(texture);
 		glBindTexture(GL_TEXTURE_2D, textureID);
 	}
 
@@ -38,37 +41,7 @@ public class Texture {
 		glDeleteTextures(textureID);
 	}
 
-	private static int loadPNGTexture(ResourceManager resourceManager, Identifier identifier, int textureUnit) {
-		ByteBuffer buf = null;
-		int tWidth = 0;
-		int tHeight = 0;
-
-		try {
-			// Open the PNG file as an InputStream
-			InputStream in;
-			Optional<Resource> file = resourceManager.getResource(identifier);
-			if (file.isPresent()) {
-				in = file.get().openStream();
-			} else {
-				Log.error("Count not find resource " + identifier.toString());
-				return -1;
-			}
-			// Link the PNG decoder to this stream
-			PNGDecoder decoder = new PNGDecoder(in);
-
-			// Get the width and height of the texture
-			tWidth = decoder.getWidth();
-			tHeight = decoder.getHeight();
-
-			// Decode the PNG file in a ByteBuffer
-			buf = ByteBuffer.allocateDirect(Float.BYTES * decoder.getWidth() * decoder.getHeight());
-			decoder.decode(buf, decoder.getWidth() * Float.BYTES, PNGDecoder.Format.RGBA);
-			buf.flip();
-			in.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(-1);
-		}
+	private int loadPNGTexture(ResourceManager resourceManager, Identifier identifier, int textureUnit) {
 
 		// Create a new texture object in memory and bind it
 		int texId = glGenTextures();
@@ -79,7 +52,7 @@ public class Texture {
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 		// Upload the texture data and generate mip maps (for scaling)
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tWidth, tHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, buf);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureBuffer);
 		glGenerateMipmap(GL_TEXTURE_2D);
 
 		// Setup the UV/ST coordinate system
@@ -91,5 +64,37 @@ public class Texture {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
 		return texId;
+	}
+
+	private ByteBuffer load() {
+		ByteBuffer buf = null;
+
+		try {
+			// Open the PNG file as an InputStream
+			InputStream in;
+			Optional<Resource> file = resourceManager.getResource(identifier);
+			if (file.isPresent()) {
+				in = file.get().openStream();
+			} else {
+				throw new RuntimeException("Count not find resource " + identifier.toString());
+			}
+			// Link the PNG decoder to this stream
+			PNGDecoder decoder = new PNGDecoder(in);
+
+			// Get the width and height of the texture
+			width = decoder.getWidth();
+			height = decoder.getHeight();
+
+			// Decode the PNG file in a ByteBuffer
+			buf = ByteBuffer.allocateDirect(Float.BYTES * decoder.getWidth() * decoder.getHeight());
+			decoder.decode(buf, decoder.getWidth() * Float.BYTES, PNGDecoder.Format.RGBA);
+			buf.flip();
+			in.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+
+		return buf;
 	}
 }

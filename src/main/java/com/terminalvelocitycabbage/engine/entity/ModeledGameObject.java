@@ -32,6 +32,10 @@ public class ModeledGameObject extends EmptyGameObject {
 		model.destroy();
 	}
 
+	public Model getModel() {
+		return model;
+	}
+
 	public static ModeledGameObject.Builder builder() {
 		return new ModeledGameObject.Builder();
 	}
