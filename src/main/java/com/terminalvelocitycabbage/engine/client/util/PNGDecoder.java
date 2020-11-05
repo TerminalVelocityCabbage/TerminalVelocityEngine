@@ -39,6 +39,7 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 
 /**
+ * Modified by NeusFear
  * @author Matthias Mann
  */
 public class PNGDecoder {
@@ -55,17 +56,9 @@ public class PNGDecoder {
 		final int numComponents;
 		final boolean hasAlpha;
 
-		private Format(int numComponents, boolean hasAlpha) {
+		Format(int numComponents, boolean hasAlpha) {
 			this.numComponents = numComponents;
 			this.hasAlpha = hasAlpha;
-		}
-
-		public int getNumComponents() {
-			return numComponents;
-		}
-
-		public boolean isHasAlpha() {
-			return hasAlpha;
 		}
 	}
 
@@ -73,15 +66,14 @@ public class PNGDecoder {
 
 	private static final int IHDR = 0x49484452;
 	private static final int PLTE = 0x504C5445;
-	private static final int tRNS = 0x74524E53;
+	private static final int TRNS = 0x74524E53;
 	private static final int IDAT = 0x49444154;
-	private static final int IEND = 0x49454E44;
 
 	private static final byte COLOR_GREYSCALE = 0;
-	private static final byte COLOR_TRUECOLOR = 2;
+	private static final byte COLOR_TRUE_COLOR = 2;
 	private static final byte COLOR_INDEXED = 3;
-	private static final byte COLOR_GREYALPHA = 4;
-	private static final byte COLOR_TRUEALPHA = 6;
+	private static final byte COLOR_GREY_ALPHA = 4;
+	private static final byte COLOR_TRUE_ALPHA = 6;
 
 	private final InputStream input;
 	private final CRC32 crc;
@@ -93,7 +85,7 @@ public class PNGDecoder {
 
 	private int width;
 	private int height;
-	private int bitdepth;
+	private int bitDepth;
 	private int colorType;
 	private int bytesPerPixel;
 	private byte[] palette;
@@ -122,7 +114,7 @@ public class PNGDecoder {
 				case PLTE:
 					readPLTE();
 					break;
-				case tRNS:
+				case TRNS:
 					readtRNS();
 					break;
 			}
@@ -143,109 +135,6 @@ public class PNGDecoder {
 	}
 
 	/**
-	 * Checks if the image has a real alpha channel.
-	 * This method does not check for the presence of a tRNS chunk.
-	 *
-	 * @return true if the image has an alpha channel
-	 * @see #hasAlpha()
-	 */
-	public boolean hasAlphaChannel() {
-		return colorType == COLOR_TRUEALPHA || colorType == COLOR_GREYALPHA;
-	}
-
-	/**
-	 * Checks if the image has transparency information either from
-	 * an alpha channel or from a tRNS chunk.
-	 *
-	 * @return true if the image has transparency
-	 * @see #hasAlphaChannel()
-	 * @see #overwriteTRNS(byte, byte, byte)
-	 */
-	public boolean hasAlpha() {
-		return hasAlphaChannel() ||
-				paletteA != null || transPixel != null;
-	}
-
-	public boolean isRGB() {
-		return colorType == COLOR_TRUEALPHA ||
-				colorType == COLOR_TRUECOLOR ||
-				colorType == COLOR_INDEXED;
-	}
-
-	/**
-	 * Overwrites the tRNS chunk entry to make a selected color transparent.
-	 * <p>This can only be invoked when the image has no alpha channel.</p>
-	 * <p>Calling this method causes {@link #hasAlpha()} to return true.</p>
-	 *
-	 * @param r the red component of the color to make transparent
-	 * @param g the green component of the color to make transparent
-	 * @param b the blue component of the color to make transparent
-	 * @throws UnsupportedOperationException if the tRNS chunk data can't be set
-	 * @see #hasAlphaChannel()
-	 */
-	public void overwriteTRNS(byte r, byte g, byte b) {
-		if(hasAlphaChannel()) {
-			throw new UnsupportedOperationException("image has an alpha channel");
-		}
-		byte[] pal = this.palette;
-		if(pal == null) {
-			transPixel = new byte[] { 0, r, 0, g, 0, b };
-		} else {
-			paletteA = new byte[pal.length/3];
-			for(int i=0,j=0 ; i<pal.length ; i+=3,j++) {
-				if(pal[i] != r || pal[i+1] != g || pal[i+2] != b) {
-					paletteA[j] = (byte)0xFF;
-				}
-			}
-		}
-	}
-
-	/**
-	 * Computes the implemented format conversion for the desired format.
-	 *
-	 * @param fmt the desired format
-	 * @return format which best matches the desired format
-	 * @throws UnsupportedOperationException if this PNG file can't be decoded
-	 */
-	public Format decideTextureFormat(Format fmt) {
-		switch (colorType) {
-			case COLOR_TRUECOLOR:
-				switch (fmt) {
-					case ABGR:
-					case RGBA:
-					case BGRA:
-					case RGB: return fmt;
-					default: return Format.RGB;
-				}
-			case COLOR_TRUEALPHA:
-				switch (fmt) {
-					case ABGR:
-					case RGBA:
-					case BGRA:
-					case RGB: return fmt;
-					default: return Format.RGBA;
-				}
-			case COLOR_GREYSCALE:
-				switch (fmt) {
-					case LUMINANCE:
-					case ALPHA: return fmt;
-					default: return Format.LUMINANCE;
-				}
-			case COLOR_GREYALPHA:
-				return Format.LUMINANCE_ALPHA;
-			case COLOR_INDEXED:
-				switch (fmt) {
-					case ABGR:
-					case RGBA:
-					case BGRA: return fmt;
-					default: return Format.RGBA;
-				}
-			default:
-				throw new UnsupportedOperationException("Not yet implemented");
-		}
-	}
-
-	/**
 	 * Decodes the image into the specified buffer. The first line is placed at
 	 * the current position. After decode the buffer position is at the end of
 	 * the last line.
@@ -259,10 +148,10 @@ public class PNGDecoder {
 	 */
 	public void decode(ByteBuffer buffer, int stride, Format fmt) throws IOException {
 		final int offset = buffer.position();
-		final int lineSize = ((width * bitdepth + 7) / 8) * bytesPerPixel;
+		final int lineSize = ((width * bitDepth + 7) / 8) * bytesPerPixel;
 		byte[] curLine = new byte[lineSize+1];
 		byte[] prevLine = new byte[lineSize+1];
-		byte[] palLine = (bitdepth < 8) ? new byte[width+1] : null;
+		byte[] palLine = (bitDepth < 8) ? new byte[width+1] : null;
 
 		final Inflater inflater = new Inflater();
 		try {
@@ -273,7 +162,7 @@ public class PNGDecoder {
 				buffer.position(offset + y*stride);
 
 				switch (colorType) {
-					case COLOR_TRUECOLOR:
+					case COLOR_TRUE_COLOR:
 						switch (fmt) {
 							case ABGR: copyRGBtoABGR(buffer, curLine); break;
 							case RGBA: copyRGBtoRGBA(buffer, curLine); break;
@@ -282,7 +171,7 @@ public class PNGDecoder {
 							default: throw new UnsupportedOperationException("Unsupported format for this image");
 						}
 						break;
-					case COLOR_TRUEALPHA:
+					case COLOR_TRUE_ALPHA:
 						switch (fmt) {
 							case ABGR: copyRGBAtoABGR(buffer, curLine); break;
 							case RGBA: copy(buffer, curLine); break;
@@ -298,14 +187,14 @@ public class PNGDecoder {
 							default: throw new UnsupportedOperationException("Unsupported format for this image");
 						}
 						break;
-					case COLOR_GREYALPHA:
+					case COLOR_GREY_ALPHA:
 						switch (fmt) {
 							case LUMINANCE_ALPHA: copy(buffer, curLine); break;
 							default: throw new UnsupportedOperationException("Unsupported format for this image");
 						}
 						break;
 					case COLOR_INDEXED:
-						switch(bitdepth) {
+						switch(bitDepth) {
 							case 8: palLine = curLine; break;
 							case 4: expand4(curLine, palLine); break;
 							case 2: expand2(curLine, palLine); break;
@@ -330,29 +219,6 @@ public class PNGDecoder {
 		} finally {
 			inflater.end();
 		}
-	}
-
-	/**
-	 * Decodes the image into the specified buffer. The last line is placed at
-	 * the current position. After decode the buffer position is at the end of
-	 * the first line.
-	 *
-	 * @param buffer the buffer
-	 * @param stride the stride in bytes from start of a line to start of the next line, must be positive.
-	 * @param fmt the target format into which the image should be decoded.
-	 * @throws IOException if a read or data error occurred
-	 * @throws IllegalArgumentException if the start position of a line falls outside the buffer
-	 * @throws UnsupportedOperationException if the image can't be decoded into the desired format
-	 */
-	public void decodeFlipped(ByteBuffer buffer, int stride, Format fmt) throws IOException {
-		if(stride <= 0) {
-			throw new IllegalArgumentException("stride");
-		}
-		int pos = buffer.position();
-		int posDelta = (height-1) * stride;
-		buffer.position(pos + posDelta);
-		decode(buffer, -stride, fmt);
-		buffer.position(buffer.position() + posDelta);
 	}
 
 	private void copy(ByteBuffer buffer, byte[] curLine) {
@@ -447,7 +313,7 @@ public class PNGDecoder {
 		if(paletteA != null) {
 			for(int i=1,n=curLine.length ; i<n ; i+=1) {
 				int idx = curLine[i] & 255;
-				byte r = palette[idx*3 + 0];
+				byte r = palette[idx*3];
 				byte g = palette[idx*3 + 1];
 				byte b = palette[idx*3 + 2];
 				byte a = paletteA[idx];
@@ -456,7 +322,7 @@ public class PNGDecoder {
 		} else {
 			for(int i=1,n=curLine.length ; i<n ; i+=1) {
 				int idx = curLine[i] & 255;
-				byte r = palette[idx*3 + 0];
+				byte r = palette[idx*3];
 				byte g = palette[idx*3 + 1];
 				byte b = palette[idx*3 + 2];
 				byte a = (byte)0xFF;
@@ -469,7 +335,7 @@ public class PNGDecoder {
 		if(paletteA != null) {
 			for(int i=1,n=curLine.length ; i<n ; i+=1) {
 				int idx = curLine[i] & 255;
-				byte r = palette[idx*3 + 0];
+				byte r = palette[idx*3];
 				byte g = palette[idx*3 + 1];
 				byte b = palette[idx*3 + 2];
 				byte a = paletteA[idx];
@@ -478,7 +344,7 @@ public class PNGDecoder {
 		} else {
 			for(int i=1,n=curLine.length ; i<n ; i+=1) {
 				int idx = curLine[i] & 255;
-				byte r = palette[idx*3 + 0];
+				byte r = palette[idx*3];
 				byte g = palette[idx*3 + 1];
 				byte b = palette[idx*3 + 2];
 				byte a = (byte)0xFF;
@@ -491,7 +357,7 @@ public class PNGDecoder {
 		if(paletteA != null) {
 			for(int i=1,n=curLine.length ; i<n ; i+=1) {
 				int idx = curLine[i] & 255;
-				byte r = palette[idx*3 + 0];
+				byte r = palette[idx*3];
 				byte g = palette[idx*3 + 1];
 				byte b = palette[idx*3 + 2];
 				byte a = paletteA[idx];
@@ -500,7 +366,7 @@ public class PNGDecoder {
 		} else {
 			for(int i=1,n=curLine.length ; i<n ; i+=1) {
 				int idx = curLine[i] & 255;
-				byte r = palette[idx*3 + 0];
+				byte r = palette[idx*3];
 				byte g = palette[idx*3 + 1];
 				byte b = palette[idx*3 + 2];
 				byte a = (byte)0xFF;
@@ -576,7 +442,6 @@ public class PNGDecoder {
 	}
 
 	private void unfilterUp(byte[] curLine, byte[] prevLine) {
-		final int bpp = this.bytesPerPixel;
 		for(int i=1,n=curLine.length ; i<n ; ++i) {
 			curLine[i] += prevLine[i];
 		}
@@ -622,36 +487,36 @@ public class PNGDecoder {
 		readChunk(buffer, 0, 13);
 		width = readInt(buffer, 0);
 		height = readInt(buffer, 4);
-		bitdepth = buffer[8] & 255;
+		bitDepth = buffer[8] & 255;
 		colorType = buffer[9] & 255;
 
 		switch (colorType) {
 			case COLOR_GREYSCALE:
-				if(bitdepth != 8) {
-					throw new IOException("Unsupported bit depth: " + bitdepth);
+				if(bitDepth != 8) {
+					throw new IOException("Unsupported bit depth: " + bitDepth);
 				}
 				bytesPerPixel = 1;
 				break;
-			case COLOR_GREYALPHA:
-				if(bitdepth != 8) {
-					throw new IOException("Unsupported bit depth: " + bitdepth);
+			case COLOR_GREY_ALPHA:
+				if(bitDepth != 8) {
+					throw new IOException("Unsupported bit depth: " + bitDepth);
 				}
 				bytesPerPixel = 2;
 				break;
-			case COLOR_TRUECOLOR:
-				if(bitdepth != 8) {
-					throw new IOException("Unsupported bit depth: " + bitdepth);
+			case COLOR_TRUE_COLOR:
+				if(bitDepth != 8) {
+					throw new IOException("Unsupported bit depth: " + bitDepth);
 				}
 				bytesPerPixel = 3;
 				break;
-			case COLOR_TRUEALPHA:
-				if(bitdepth != 8) {
-					throw new IOException("Unsupported bit depth: " + bitdepth);
+			case COLOR_TRUE_ALPHA:
+				if(bitDepth != 8) {
+					throw new IOException("Unsupported bit depth: " + bitDepth);
 				}
 				bytesPerPixel = 4;
 				break;
 			case COLOR_INDEXED:
-				switch(bitdepth) {
+				switch(bitDepth) {
 					case 8:
 					case 4:
 					case 2:
@@ -659,7 +524,7 @@ public class PNGDecoder {
 						bytesPerPixel = 1;
 						break;
 					default:
-						throw new IOException("Unsupported bit depth: " + bitdepth);
+						throw new IOException("Unsupported bit depth: " + bitDepth);
 				}
 				break;
 			default:
@@ -693,7 +558,7 @@ public class PNGDecoder {
 				transPixel = new byte[2];
 				readChunk(transPixel, 0, 2);
 				break;
-			case COLOR_TRUECOLOR:
+			case COLOR_TRUE_COLOR:
 				checkChunkLength(6);
 				transPixel = new byte[6];
 				readChunk(transPixel, 0, 6);
@@ -789,7 +654,7 @@ public class PNGDecoder {
 				}
 			} while(length > 0);
 		} catch (DataFormatException ex) {
-			throw (IOException)(new IOException("inflate error").initCause(ex));
+			throw new IOException("inflate error", ex);
 		}
 	}
 
