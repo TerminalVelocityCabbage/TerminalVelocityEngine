@@ -25,15 +25,25 @@ public class Texture {
 	public int width;
 	public int height;
 
+	public Texture(ByteBuffer textureBuffer, int width, int height) {
+		resourceManager = null;
+		identifier = null;
+		this.textureBuffer = textureBuffer;
+		this.width = width;
+		this.height = height;
+		this.textureID = glGenTextures();
+	}
+
 	public Texture(ResourceManager resourceManager, Identifier identifier) {
 		this.resourceManager = resourceManager;
 		this.identifier = identifier;
 		this.textureBuffer = load();
+		this.textureID = glGenTextures();
 	}
 
 	public void bind(int texture) {
-		textureID = loadPNGTexture(texture);
 		glActiveTexture(texture);
+		loadPNGTexture();
 		glBindTexture(GL_TEXTURE_2D, textureID);
 	}
 
@@ -41,12 +51,7 @@ public class Texture {
 		glDeleteTextures(textureID);
 	}
 
-	private int loadPNGTexture(int textureUnit) {
-
-		// Create a new texture object in memory and bind it
-		int texId = glGenTextures();
-		glActiveTexture(textureUnit);
-		glBindTexture(GL_TEXTURE_2D, texId);
+	private void loadPNGTexture() {
 
 		// All RGB bytes are aligned to each other and each component is 1 byte
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -62,8 +67,6 @@ public class Texture {
 		// Setup what to do when the texture has to be scaled
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-
-		return texId;
 	}
 
 	private ByteBuffer load() {
@@ -96,5 +99,9 @@ public class Texture {
 		}
 
 		return buf;
+	}
+
+	public Material toMaterial() {
+		return Material.builder().texture(this).build();
 	}
 }

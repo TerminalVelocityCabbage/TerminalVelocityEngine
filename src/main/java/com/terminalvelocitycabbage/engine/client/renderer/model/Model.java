@@ -4,6 +4,7 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -11,7 +12,7 @@ import java.util.List;
  * This class also handles passing calls from the game object down to the model parts who handle meshes
  * Models have no point in space however model parts do contain translations
  */
-public abstract class Model {
+public class Model {
 
 	protected List<Part> modelParts;
 	private Material material;
@@ -68,6 +69,17 @@ public abstract class Model {
 		public Vector3f rotation;
 		public Vector3f scale;
 
+		public Part(Mesh mesh) {
+			this.mesh = mesh;
+
+			this.offset = new Vector3f();
+			this.position = new Vector3f();
+			this.rotation = new Vector3f();
+			this.scale = new Vector3f(1);
+
+			this.children = Collections.emptyList();
+		}
+
 		public Part(Mesh mesh, Vector3f offset, Vector3f position, Vector3f rotation, Vector3f scale, List<Model.Part> children) {
 			this.mesh = mesh;
 
@@ -80,21 +92,21 @@ public abstract class Model {
 		}
 
 		public void bind() {
-			mesh.bind();
+			if (mesh != null) mesh.bind();
 			for (Model.Part child : children) {
 				child.bind();
 			}
 		}
 
 		public void render() {
-			mesh.render();
+			if (mesh != null) mesh.render();
 			for (Model.Part child : children) {
 				child.render();
 			}
 		}
 
 		public void destroy() {
-			mesh.destroy();
+			if (mesh != null) mesh.destroy();
 			for (Model.Part child : children) {
 				child.destroy();
 			}
@@ -122,6 +134,14 @@ public abstract class Model {
 			for (Part part : children) {
 				part.setModel(this.model);
 			}
+		}
+
+		public void setPosition(float x, float y, float z) {
+			this.position = position.add(x, y, z);
+		}
+
+		public void addChild(Model.Part child) {
+			children.add(child);
 		}
 	}
 

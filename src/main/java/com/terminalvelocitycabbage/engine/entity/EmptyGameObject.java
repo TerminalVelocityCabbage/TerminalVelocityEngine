@@ -14,6 +14,12 @@ public abstract class EmptyGameObject {
 
 	boolean needsUpdate = true;
 
+	public EmptyGameObject() {
+		position = new Vector3f();
+		rotation = new Quaternionf();
+		scale = new Vector3f(1);
+	}
+
 	public EmptyGameObject(Vector3f position, Quaternionf rotation, Vector3f scale) {
 		this.position = position;
 		this.rotation = rotation;
