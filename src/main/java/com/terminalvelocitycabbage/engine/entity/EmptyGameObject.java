@@ -1,19 +1,20 @@
 package com.terminalvelocitycabbage.engine.entity;
 
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 public abstract class EmptyGameObject {
 
 	Vector3f position;
-	Vector3f rotation;
+	Quaternionf rotation;
 	Vector3f scale;
 
 	Matrix4f transformationMatrix;
 
 	boolean needsUpdate = true;
 
-	public EmptyGameObject(Vector3f position, Vector3f rotation, Vector3f scale) {
+	public EmptyGameObject(Vector3f position, Quaternionf rotation, Vector3f scale) {
 		this.position = position;
 		this.rotation = rotation;
 		this.scale = scale;
@@ -21,17 +22,17 @@ public abstract class EmptyGameObject {
 
 	public void move(float x, float y, float z) {
 		position.add(x, y, z);
-		needsUpdate = true;
+		queueUpdate();
 	}
 
 	public void rotate(float x, float y, float z) {
-		rotation.sub(x, y, z);
-		needsUpdate = true;
+		rotation.add(-x, -y, -z, rotation.w, rotation);
+		queueUpdate();
 	}
 
 	public void scale(float x, float y, float z) {
 		scale.add(x, y, z);
-		needsUpdate = true;
+		queueUpdate();
 	}
 
 	public void queueUpdate() {
@@ -59,7 +60,7 @@ public abstract class EmptyGameObject {
 
 	public static abstract class Builder {
 		Vector3f position = null;
-		Vector3f rotation = null;
+		Quaternionf rotation = null;
 		Vector3f scale = null;
 
 		public EmptyGameObject.Builder setPosition(Vector3f position) {
@@ -67,7 +68,7 @@ public abstract class EmptyGameObject {
 			return this;
 		}
 
-		public EmptyGameObject.Builder setRotation(Vector3f rotation) {
+		public EmptyGameObject.Builder setRotation(Quaternionf rotation) {
 			this.rotation = rotation;
 			return this;
 		}

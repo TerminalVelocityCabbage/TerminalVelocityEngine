@@ -1,6 +1,7 @@
 package com.terminalvelocitycabbage.engine.client.renderer.model;
 
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public abstract class Model {
 		this.transformationMatrix = new Matrix4f();
 	}
 
-	public void update(Vector3f position, Vector3f rotation, Vector3f scale) {
+	public void update(Vector3f position, Quaternionf rotation, Vector3f scale) {
 		transformationMatrix.identity().translate(position).
 			rotateX((float)Math.toRadians(-rotation.x)).
 			rotateY((float)Math.toRadians(-rotation.y)).
