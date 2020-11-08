@@ -135,14 +135,6 @@ public class Model {
 				part.setModel(this.model);
 			}
 		}
-
-		public void setPosition(float x, float y, float z) {
-			this.position = position.add(x, y, z);
-		}
-
-		public void addChild(Model.Part child) {
-			children.add(child);
-		}
 	}
 
 	public void setMaterial(Material material) {

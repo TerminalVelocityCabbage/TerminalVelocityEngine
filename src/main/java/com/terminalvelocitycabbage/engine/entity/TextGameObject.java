@@ -47,12 +47,13 @@ public class TextGameObject extends EmptyGameObject {
 
 			if (startNewWord) {
 				word = new Model.Part(buildCharacterMesh(character));
+				word.children = new ArrayList<>();
 				//TODO set the position of the words
 			} else {
 				//Create a mesh from the character and create a letter out of it
 				Model.Part letter = new Model.Part(buildCharacterMesh(character));
-				letter.setPosition(previousWidth, 0, 0);
-				word.addChild(letter);
+				letter.position.set(previousWidth, 0, 0);
+				word.children.add(letter);
 			}
 			startNewWord = false;
 
