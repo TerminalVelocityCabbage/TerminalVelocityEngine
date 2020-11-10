@@ -3,75 +3,76 @@ package com.terminalvelocitycabbage.engine.client.renderer.model;
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 import com.terminalvelocitycabbage.engine.client.resources.Resource;
 import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
-import com.terminalvelocitycabbage.engine.client.util.PNGDecoder;
+import org.lwjgl.system.MemoryStack;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 import java.util.Optional;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
+import static org.lwjgl.stb.STBImage.*;
 
 public class Texture {
 
-	private final ResourceManager resourceManager;
-	private final Identifier identifier;
-
-	private ByteBuffer textureBuffer;
 	private int textureID;
 
-	public int width;
-	public int height;
-
-	public Texture(ByteBuffer textureBuffer, int width, int height) {
-		resourceManager = null;
-		identifier = null;
-		this.textureBuffer = textureBuffer;
-		this.width = width;
-		this.height = height;
-		this.textureID = glGenTextures();
-	}
+	public final int width;
+	public final int height;
 
 	public Texture(ResourceManager resourceManager, Identifier identifier) {
-		this.resourceManager = resourceManager;
-		this.identifier = identifier;
-		this.textureBuffer = load();
-		this.textureID = glGenTextures();
+		this(load(resourceManager, identifier));
 	}
 
-	public void bind(int texture) {
-		glActiveTexture(texture);
-		loadPNGTexture();
-		glBindTexture(GL_TEXTURE_2D, textureID);
+	public Texture(ByteBuffer imageBuffer) {
+		ByteBuffer buffer;
+		try (MemoryStack stack = MemoryStack.stackPush()) {
+			IntBuffer w = stack.mallocInt(1);
+			IntBuffer h = stack.mallocInt(1);
+			IntBuffer channels = stack.mallocInt(1);
+
+			buffer = stbi_load_from_memory(imageBuffer, w, h, channels, 4);
+			if (buffer == null) {
+				throw new RuntimeException("Image file not loaded: " + stbi_failure_reason());
+			}
+
+			this.height = h.get();
+			this.width = w.get();
+		}
+
+		this.textureID = createTexture(buffer);
+		stbi_image_free(buffer);
 	}
 
-	public void destroy() {
-		glDeleteTextures(textureID);
-	}
+	private int createTexture(ByteBuffer buf) {
 
-	private void loadPNGTexture() {
+		//Create a new OpenGL texture
+		int textureId = glGenTextures();
+		// Bind the texture
+		glBindTexture(GL_TEXTURE_2D, textureId);
 
-		// All RGB bytes are aligned to each other and each component is 1 byte
+		//Tell OpenGL how to unpack the RGBA bytes. Each component is 1 byte size
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-		// Upload the texture data and generate mip maps (for scaling)
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureBuffer);
-		glGenerateMipmap(GL_TEXTURE_2D);
-
-		// Setup the UV/ST coordinate system
+		//Setup the UV/ST coordinate system
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-		// Setup what to do when the texture has to be scaled
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+		//Upload the texture data
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buf);
+		//Generate Mip Map
+		glGenerateMipmap(GL_TEXTURE_2D);
+
+		return textureId;
 	}
 
-	private ByteBuffer load() {
+	private static ByteBuffer load(ResourceManager resourceManager, Identifier identifier) {
 		ByteBuffer buf = null;
-
 		try {
 			// Open the PNG file as an InputStream
 			InputStream in;
@@ -81,24 +82,22 @@ public class Texture {
 			} else {
 				throw new RuntimeException("Count not find resource " + identifier.toString());
 			}
-			// Link the PNG decoder to this stream
-			PNGDecoder decoder = new PNGDecoder(in);
-
-			// Get the width and height of the texture
-			width = decoder.getWidth();
-			height = decoder.getHeight();
-
-			// Decode the PNG file in a ByteBuffer
-			buf = ByteBuffer.allocateDirect(Float.BYTES * width * height);
-			decoder.decode(buf, width * Float.BYTES, PNGDecoder.Format.RGBA);
-			buf.flip();
+			byte[] bytes = in.readAllBytes();
+			buf = ByteBuffer.wrap(bytes);
 			in.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(-1);
 		}
-
 		return buf;
+	}
+
+	public void bind() {
+		glBindTexture(GL_TEXTURE_2D, textureID);
+	}
+
+	public void destroy() {
+		glDeleteTextures(textureID);
 	}
 
 	public Material toMaterial() {
