@@ -14,8 +14,8 @@ import java.util.List;
  */
 public class Model {
 
-	protected List<Part> modelParts;
-	private Material material;
+	public List<Part> modelParts;
+	public Material material;
 	//To avoid creating a new one every part render call
 	Matrix4f transformationMatrix;
 

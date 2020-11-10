@@ -15,7 +15,7 @@ public class TextGameObject extends EmptyGameObject {
 	private String text;
 	private Model model;
 
-	public TextGameObject(String text, FontTexture texture) throws Exception {
+	public TextGameObject(String text, FontTexture texture) {
 		super();
 		this.text = text;
 		this.fontTexture = texture;
@@ -71,11 +71,16 @@ public class TextGameObject extends EmptyGameObject {
 			FontTexture.CharInfo charInfo = fontTexture.getCharInfo(character);
 			previousWidth = charInfo.getWidth();
 		}
+		//Make sure the last word gets added;
+		if (word.mesh != null) {
+			words.add(word);
+		}
 
 		//Create a TextModel from the Words as children
 		Model model = new Model(words);
 		//Set the model's texture to the font's
 		model.setMaterial(fontTexture.getTexture().toMaterial());
+
 		return model;
 	}
 
