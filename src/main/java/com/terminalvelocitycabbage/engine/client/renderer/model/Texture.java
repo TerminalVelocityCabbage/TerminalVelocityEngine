@@ -3,6 +3,7 @@ package com.terminalvelocitycabbage.engine.client.renderer.model;
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 import com.terminalvelocitycabbage.engine.client.resources.Resource;
 import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
+import com.terminalvelocitycabbage.engine.client.util.PNGDecoder;
 import org.lwjgl.system.MemoryStack;
 
 import java.io.IOException;
@@ -19,8 +20,12 @@ public class Texture {
 
 	private int textureID;
 
-	public final int width;
-	public final int height;
+	public int width;
+	public int height;
+
+	public Texture(ByteBuffer buffer) {
+		this.createTexture(buffer);
+	}
 
 	public Texture(ResourceManager resourceManager, Identifier identifier) {
 		ByteBuffer buf = this.load(resourceManager, identifier);
