@@ -1,14 +1,14 @@
 package com.terminalvelocitycabbage.engine.client.renderer.font;
 
 import com.terminalvelocitycabbage.engine.client.renderer.model.Texture;
+import com.terminalvelocitycabbage.engine.client.util.PNGDecoder;
 import com.terminalvelocitycabbage.engine.debug.Log;
 
 import javax.imageio.ImageIO;
+import javax.imageio.stream.ImageInputStream;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
@@ -103,19 +103,16 @@ public class FontTexture {
 		}
 		g2D.dispose();
 
-		ByteBuffer buf = null;
+		InputStream inputStream = null;
 		try ( ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 			ImageIO.write(img, IMAGE_FORMAT, out);
-			buf = ByteBuffer.wrap(out.toByteArray());
-			buf.flip();
+			out.flush();
+			inputStream = new ByteArrayInputStream(out.toByteArray());
 		} catch (IOException e) {
 			Log.error("Could not convert image to ByteBuffer " + e.getMessage());
 		}
-		if (buf == null) {
-			Log.error("Null image byte buffer");
-		}
 		//ImageIO.write(img, IMAGE_FORMAT, new File("Temp.png"));
-		texture = new Texture(buf);
+		texture = new Texture(inputStream);
 	}
 
 	public static class CharInfo {

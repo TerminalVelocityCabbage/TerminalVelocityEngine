@@ -4,6 +4,7 @@ import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 import com.terminalvelocitycabbage.engine.client.resources.Resource;
 import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
 import com.terminalvelocitycabbage.engine.client.util.PNGDecoder;
+import com.terminalvelocitycabbage.engine.debug.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,13 +21,12 @@ public class Texture {
 	public int width;
 	public int height;
 
-	public Texture(ByteBuffer buffer) {
-		this.createTexture(buffer);
+	public Texture(InputStream inputStream) {
+		this.createTexture(this.load(inputStream));
 	}
 
 	public Texture(ResourceManager resourceManager, Identifier identifier) {
-		ByteBuffer buf = this.load(resourceManager, identifier);
-		this.createTexture(buf);
+		this.createTexture(this.load(resourceManager, identifier));
 	}
 
 	private void createTexture(ByteBuffer buf) {
@@ -44,13 +44,14 @@ public class Texture {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 		//Upload the texture data
+		Log.info(width + " " + height);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buf);
+		Log.info("test2");
 		//Generate Mip Map
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 
 	private ByteBuffer load(ResourceManager resourceManager, Identifier identifier) {
-		ByteBuffer buf = null;
 		try {
 			// Open the PNG file as an InputStream
 			InputStream in;
@@ -60,9 +61,19 @@ public class Texture {
 			} else {
 				throw new RuntimeException("Count not find resource " + identifier.toString());
 			}
+			return load(in);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(-1);
+			return null;
+		}
+	}
+
+	private ByteBuffer load(InputStream in) {
+		ByteBuffer buf = null;
+		try {
 			// Link the PNG decoder to this stream
 			PNGDecoder decoder = new PNGDecoder(in);
-
 			// Get the width and height of the texture
 			this.width = decoder.getWidth();
 			this.height = decoder.getHeight();
@@ -74,7 +85,6 @@ public class Texture {
 			in.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.exit(-1);
 		}
 		return buf;
 	}
