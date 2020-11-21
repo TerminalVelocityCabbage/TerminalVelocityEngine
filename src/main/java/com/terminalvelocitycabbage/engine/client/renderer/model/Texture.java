@@ -44,9 +44,7 @@ public class Texture {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 		//Upload the texture data
-		Log.info(width + " " + height);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buf);
-		Log.info("test2");
 		//Generate Mip Map
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
