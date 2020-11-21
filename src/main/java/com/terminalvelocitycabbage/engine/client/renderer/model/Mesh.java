@@ -51,13 +51,6 @@ public abstract class Mesh {
 		eboID = glGenBuffers();
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, getIndicesBuffer(), GL_STATIC_DRAW);
-
-		if (model.getMaterial().hasTexture()) {
-			model.getMaterial().getTexture().bind(GL_TEXTURE0);
-		}
-		if (model.getMaterial().hasReflectivityTexture()) {
-			model.getMaterial().getReflectivityTexture().bind(GL_TEXTURE1);
-		}
 	}
 
 	public void render() {
@@ -67,6 +60,11 @@ public abstract class Mesh {
 		glEnableVertexAttribArray(1);
 		glEnableVertexAttribArray(2);
 		glEnableVertexAttribArray(3);
+
+		//Bind Textures
+		if (model.getMaterial().hasTexture()) {
+			model.getMaterial().getTexture().bind();
+		}
 
 		// Bind to the index VBO/EBO that has all the information about the order of the vertices
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
