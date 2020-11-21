@@ -23,35 +23,13 @@ public class Texture {
 	public final int height;
 
 	public Texture(ResourceManager resourceManager, Identifier identifier) {
-		this(load(resourceManager, identifier));
+		ByteBuffer buf = this.load(resourceManager, identifier);
+		this.createTexture(buf);
 	}
 
-	public Texture(ByteBuffer imageBuffer) {
-		ByteBuffer buffer;
-		try (MemoryStack stack = MemoryStack.stackPush()) {
-			IntBuffer w = stack.mallocInt(1);
-			IntBuffer h = stack.mallocInt(1);
-			IntBuffer channels = stack.mallocInt(1);
-
-			buffer = stbi_load_from_memory(imageBuffer, w, h, channels, 4);
-			if (buffer == null) {
-				throw new RuntimeException("Image file not loaded: " + stbi_failure_reason());
-			}
-
-			this.height = h.get();
-			this.width = w.get();
-		}
-
-		this.textureID = createTexture(buffer);
-		stbi_image_free(buffer);
-	}
-
-	private int createTexture(ByteBuffer buf) {
-
-		//Create a new OpenGL texture
-		int textureId = glGenTextures();
-		// Bind the texture
-		glBindTexture(GL_TEXTURE_2D, textureId);
+	private void createTexture(ByteBuffer buf) {
+		textureID = glGenTextures();
+		glBindTexture(GL_TEXTURE_2D, textureID);
 
 		//Tell OpenGL how to unpack the RGBA bytes. Each component is 1 byte size
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -61,17 +39,15 @@ public class Texture {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 		//Upload the texture data
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buf);
 		//Generate Mip Map
 		glGenerateMipmap(GL_TEXTURE_2D);
-
-		return textureId;
 	}
 
-	private static ByteBuffer load(ResourceManager resourceManager, Identifier identifier) {
+	private ByteBuffer load(ResourceManager resourceManager, Identifier identifier) {
 		ByteBuffer buf = null;
 		try {
 			// Open the PNG file as an InputStream
@@ -82,8 +58,17 @@ public class Texture {
 			} else {
 				throw new RuntimeException("Count not find resource " + identifier.toString());
 			}
-			byte[] bytes = in.readAllBytes();
-			buf = ByteBuffer.wrap(bytes);
+			// Link the PNG decoder to this stream
+			PNGDecoder decoder = new PNGDecoder(in);
+
+			// Get the width and height of the texture
+			this.width = decoder.getWidth();
+			this.height = decoder.getHeight();
+
+			// Decode the PNG file in a ByteBuffer
+			buf = ByteBuffer.allocateDirect(Float.BYTES * width * height);
+			decoder.decode(buf, width * Float.BYTES, PNGDecoder.Format.RGBA);
+			buf.flip();
 			in.close();
 		} catch (IOException e) {
 			e.printStackTrace();
