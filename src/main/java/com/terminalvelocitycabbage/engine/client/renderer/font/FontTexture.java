@@ -1,14 +1,18 @@
 package com.terminalvelocitycabbage.engine.client.renderer.font;
 
 import com.terminalvelocitycabbage.engine.client.renderer.model.Texture;
+import com.terminalvelocitycabbage.engine.debug.Log;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -67,7 +71,7 @@ public class FontTexture {
 
 	private void buildTexture() throws Exception {
 		// Get the font metrics for each character for the selected font by using image
-		BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_4BYTE_ABGR);
 		Graphics2D g2D = img.createGraphics();
 		g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g2D.setFont(font);
@@ -85,7 +89,7 @@ public class FontTexture {
 		g2D.dispose();
 
 		// Create the image associated to the charset
-		img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		img = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
 		g2D = img.createGraphics();
 		g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g2D.setFont(font);
@@ -102,12 +106,15 @@ public class FontTexture {
 		ByteBuffer buf = null;
 		try ( ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 			ImageIO.write(img, IMAGE_FORMAT, out);
-			out.flush();
-			byte[] data = out.toByteArray();
-			buf = ByteBuffer.allocateDirect(data.length);
-			buf.put(data, 0, data.length);
+			buf = ByteBuffer.wrap(out.toByteArray());
 			buf.flip();
+		} catch (IOException e) {
+			Log.error("Could not convert image to ByteBuffer " + e.getMessage());
 		}
+		if (buf == null) {
+			Log.error("Null image byte buffer");
+		}
+		//ImageIO.write(img, IMAGE_FORMAT, new File("Temp.png"));
 		texture = new Texture(buf);
 	}
 
