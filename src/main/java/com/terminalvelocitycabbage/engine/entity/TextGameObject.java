@@ -5,6 +5,7 @@ import com.terminalvelocitycabbage.engine.client.renderer.model.Mesh;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
 import com.terminalvelocitycabbage.engine.client.renderer.shapes.TexturedRectangle;
+import com.terminalvelocitycabbage.engine.debug.Log;
 
 import java.util.ArrayList;
 
@@ -22,64 +23,31 @@ public class TextGameObject extends EmptyGameObject {
 		this.model = createTextModel();
 	}
 
-	/**
-	 * A Text Model has children of all the "words" of a text, which can be defined as
-	 * any character sequence between two whitespace characters.
-	 *
-	 * A word is the first letter of the word with children as the successive letters of the word if any.
-	 *
-	 * @return A Model with the above format
-	 */
 	private Model createTextModel() {
 
-		//Create an empty list to store the words
-		//These will be the children of the Text model in the future
-		ArrayList<Model.Part> words = new ArrayList<>();
-
-		//Create a word to start the Text
-		Model.Part word = null;
-		//Store the width of the previous character so we can offset the position of the next (so they're next to one another)
-		float previousWidth = 0;
-		//A boolean representing weather a new word should be started.
-		boolean startNewWord = true;
-		//Start the loop with a single offset character since we initialize the list with the first
+		//Create a Mesh for each character
+		var characterMeshes = new ArrayList<Mesh>();
 		for (char character : text.toCharArray()) {
-
-			if (startNewWord) {
-				word = new Model.Part(buildCharacterMesh(character));
-				word.children = new ArrayList<>();
-				//TODO set the position of the words
-			} else {
-				//Create a mesh from the character and create a letter out of it
-				Model.Part letter = new Model.Part(buildCharacterMesh(character));
-				letter.position.set(previousWidth, 0, 0);
-				word.children.add(letter);
-			}
-			startNewWord = false;
-
-			//If the character is a whitespace character that marks a new word to be created
-			if (Character.isWhitespace(character)) {
-				//Finish the current word and add it to the text
-				words.add(word);
-				//Mark the loop as needing a new word
-				startNewWord = true;
-				//No need to add a whitespace character to the beginning of the next
-				continue;
-			}
-
-			//Save the width of this character so that the next one can be offset by that amount
-			FontTexture.CharInfo charInfo = fontTexture.getCharInfo(character);
-			previousWidth = charInfo.getWidth();
-		}
-		//Make sure the last word gets added;
-		if (word.mesh != null) {
-			words.add(word);
+			characterMeshes.add(buildCharacterMesh(character));
 		}
 
-		//Create a TextModel from the Words as children
-		Model model = new Model(words);
+		//Create a Model.Part for each character mesh
+		var characterModelParts = new ArrayList<Model.Part>();
+		for (Mesh mesh : characterMeshes) {
+			Model.Part part = new Model.Part(mesh);
+			characterModelParts.add(part);
+		}
+
+		//Create a text model from the model parts
+		Model model = new Model(characterModelParts);
+		Log.info(model.modelParts.size());
 		//Set the model's texture to the font's
 		model.setMaterial(fontTexture.getTexture().toMaterial());
+
+		//Make sure the part knows it's parent
+		for (Model.Part part : model.modelParts) {
+			part.setModel(model);
+		}
 
 		return model;
 	}
@@ -132,8 +100,10 @@ public class TextGameObject extends EmptyGameObject {
 
 	@Override
 	public void update() {
-		super.update();
-		model.update(position, rotation, scale);
+		if (needsUpdate) {
+			model.update(position, rotation, scale);
+			needsUpdate = false;
+		}
 	}
 
 	public void destroy() {

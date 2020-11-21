@@ -49,11 +49,7 @@ public abstract class EmptyGameObject {
 		needsUpdate = true;
 	}
 
-	public void update() {
-		if(needsUpdate) {
-			needsUpdate = false;
-		}
-	}
+	public abstract void update();
 
 	public Matrix4f getModelViewMatrix(Matrix4f viewMatrix) {
 		return viewMatrix.mul(transformationMatrix, new Matrix4f());
