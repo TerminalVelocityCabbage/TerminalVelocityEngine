@@ -59,7 +59,6 @@ public abstract class Mesh {
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 		glEnableVertexAttribArray(2);
-		glEnableVertexAttribArray(3);
 
 		//Bind Textures
 		if (model.getMaterial().hasTexture()) {
@@ -86,9 +85,11 @@ public abstract class Mesh {
 		if (model.getMaterial().hasTexture()) {
 			model.getMaterial().getTexture().destroy();
 		}
+		/*
 		if (model.getMaterial().hasReflectivityTexture()) {
 			model.getMaterial().getReflectivityTexture().destroy();
 		}
+		 */
 	}
 
 	public void update(Matrix4f translationMatrix) {

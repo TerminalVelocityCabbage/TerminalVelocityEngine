@@ -14,10 +14,20 @@ public abstract class EmptyGameObject {
 
 	boolean needsUpdate = true;
 
+	public EmptyGameObject() {
+		position = new Vector3f();
+		rotation = new Quaternionf();
+		scale = new Vector3f(1);
+	}
+
 	public EmptyGameObject(Vector3f position, Quaternionf rotation, Vector3f scale) {
 		this.position = position;
 		this.rotation = rotation;
 		this.scale = scale;
+	}
+
+	public void setPosition(float x, float y, float z) {
+		this.position = this.position.set(x, y, z);
 	}
 
 	public void move(float x, float y, float z) {
@@ -39,11 +49,7 @@ public abstract class EmptyGameObject {
 		needsUpdate = true;
 	}
 
-	public void update() {
-		if(needsUpdate) {
-			needsUpdate = false;
-		}
-	}
+	public abstract void update();
 
 	public Matrix4f getModelViewMatrix(Matrix4f viewMatrix) {
 		return viewMatrix.mul(transformationMatrix, new Matrix4f());
@@ -56,6 +62,18 @@ public abstract class EmptyGameObject {
 				rotateZ((float)Math.toRadians(-rotation.z)).
 				scale(scale);
 		return transformationMatrix;
+	}
+
+	public Matrix4f getOrthoProjModelMatrix(Matrix4f orthoMatrix) {
+		Matrix4f modelMatrix = new Matrix4f();
+		modelMatrix.identity().translate(position).
+				rotateX((float)Math.toRadians(-rotation.x)).
+				rotateY((float)Math.toRadians(-rotation.y)).
+				rotateZ((float)Math.toRadians(-rotation.z)).
+				scale(scale);
+		Matrix4f orthoMatrixCurr = new Matrix4f(orthoMatrix);
+		orthoMatrixCurr.mul(modelMatrix);
+		return orthoMatrixCurr;
 	}
 
 	public static abstract class Builder {

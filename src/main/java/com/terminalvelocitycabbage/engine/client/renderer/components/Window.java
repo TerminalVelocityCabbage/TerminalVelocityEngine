@@ -2,6 +2,7 @@ package com.terminalvelocitycabbage.engine.client.renderer.components;
 
 import com.terminalvelocitycabbage.engine.client.input.InputHandler;
 import com.terminalvelocitycabbage.engine.debug.Log;
+import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.MemoryStack;
 
@@ -27,6 +28,8 @@ public class Window {
 	private int monitorWidth;
 	private int monitorHeight;
 
+	Matrix4f orthoProjectionMatrix;
+
 	public Window(int width, int height, String title, boolean vSync, InputHandler inputHandler, boolean center, boolean lockAndHideCursor) {
 		this.windowWidth = width;
 		this.windowHeight = height;
@@ -35,6 +38,7 @@ public class Window {
 		this.inputHandler = inputHandler;
 		this.center = center;
 		this.lockAndHideCursor = lockAndHideCursor;
+		orthoProjectionMatrix = new Matrix4f();
 	}
 
 	public void create() {
@@ -122,5 +126,11 @@ public class Window {
 
 	public InputHandler getInputHandler() {
 		return inputHandler;
+	}
+
+	public Matrix4f getOrthoProjectionMatrix() {
+		orthoProjectionMatrix.identity();
+		orthoProjectionMatrix.setOrtho2D(0, windowWidth, windowHeight, 0);
+		return orthoProjectionMatrix;
 	}
 }

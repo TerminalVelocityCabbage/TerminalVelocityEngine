@@ -25,8 +25,10 @@ public class ModeledGameObject extends EmptyGameObject {
 
 	@Override
 	public void update() {
-		super.update();
-		model.update(position, rotation, scale);
+		if (needsUpdate) {
+			model.update(position, rotation, scale);
+			needsUpdate = false;
+		}
 	}
 
 	public void destroy() {
