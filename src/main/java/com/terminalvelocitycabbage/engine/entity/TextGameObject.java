@@ -20,11 +20,11 @@ public class TextGameObject extends EmptyGameObject {
 		super();
 		this.text = text;
 		this.fontTexture = texture;
-		this.model = createTextModel();
+		createTextModel(true);
 		this.transformationMatrix = new Matrix4f();
 	}
 
-	private Model createTextModel() {
+	private void createTextModel(boolean createNew) {
 
 		//Create a Mesh for each character
 		var characterModelParts = new ArrayList<Model.Part>();
@@ -42,12 +42,15 @@ public class TextGameObject extends EmptyGameObject {
 			part.setModel(model);
 		}
 
-		//Create a text model from the model parts
-		Model model = new Model(characterModelParts);
-		//Set the model's texture to the font's
-		model.setMaterial(fontTexture.getTexture().toMaterial());
-
-		return model;
+		if (createNew) {
+			//Create a text model from the model parts
+			Model model = new Model(characterModelParts);
+			//Set the model's texture to the font's
+			model.setMaterial(fontTexture.getTexture().toMaterial());
+			this.model = model;
+		} else {
+			this.model.modelParts = characterModelParts;
+		}
 	}
 
 	private Mesh buildCharacterMesh(char character) {
@@ -84,8 +87,8 @@ public class TextGameObject extends EmptyGameObject {
 
 	public void setText(String text) {
 		this.text = text;
-		this.model.destroy();
-		this.model = createTextModel();
+		createTextModel(false);
+		this.model.bind();
 	}
 
 	public void bind() {

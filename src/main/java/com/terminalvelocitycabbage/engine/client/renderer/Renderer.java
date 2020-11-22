@@ -8,6 +8,7 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.GL_TRUE;
@@ -18,7 +19,9 @@ public abstract class Renderer {
 	private static Window window;
 	protected static Camera camera;
 	protected Matrix4f viewMatrix = new Matrix4f();
-	private static float[] frameTimes = new float[10];
+	private static float[] frameTimes = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0,};
+	private static long startFrameTime = 0;
+	private static long endFrameTime = 0;
 
 	public Renderer(int width, int height, String title, InputHandler inputHandler) {
 		window = new Window(width, height, title, true, inputHandler, true, true);
@@ -56,8 +59,32 @@ public abstract class Renderer {
 
 	private void start() {
 		while (!glfwWindowShouldClose(getWindow().getID())) {
+			startFrameTime = System.nanoTime();
 			loop();
+			endFrameTime = System.nanoTime();
+			calcFrameTime();
 		}
+	}
+
+	private void calcFrameTime() {
+		long deltaTime = endFrameTime - startFrameTime;
+		float timeMillis = TimeUnit.MILLISECONDS.convert(deltaTime, TimeUnit.NANOSECONDS);
+		for (int i = 0; i < frameTimes.length - 1; i++) {
+			frameTimes[i] = frameTimes[i + 1];
+		}
+		frameTimes[frameTimes.length - 1] = timeMillis;
+	}
+
+	public float getFrameTimeAverageMillis() {
+		float total = 0;
+		for (int i = 0; i < frameTimes.length; i++) {
+			total += frameTimes[i];
+		}
+		return total / frameTimes.length;
+	}
+
+	public float getFramerate() {
+		return 1 / getFrameTimeAverageMillis() * 1000;
 	}
 
 	public void destroy() {
