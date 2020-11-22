@@ -5,7 +5,7 @@ import com.terminalvelocitycabbage.engine.client.renderer.model.Mesh;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
 import com.terminalvelocitycabbage.engine.client.renderer.shapes.TexturedRectangle;
-import com.terminalvelocitycabbage.engine.debug.Log;
+import org.joml.Matrix4f;
 
 import java.util.ArrayList;
 
@@ -21,33 +21,31 @@ public class TextGameObject extends EmptyGameObject {
 		this.text = text;
 		this.fontTexture = texture;
 		this.model = createTextModel();
+		this.transformationMatrix = new Matrix4f();
 	}
 
 	private Model createTextModel() {
 
 		//Create a Mesh for each character
-		var characterMeshes = new ArrayList<Mesh>();
-		for (char character : text.toCharArray()) {
-			characterMeshes.add(buildCharacterMesh(character));
-		}
-
-		//Create a Model.Part for each character mesh
 		var characterModelParts = new ArrayList<Model.Part>();
-		for (Mesh mesh : characterMeshes) {
-			Model.Part part = new Model.Part(mesh);
+		int previousWidth = 0;
+		for (char character : text.toCharArray()) {
+			//Create a mesh with the correct UV coordinated from the texture atlas
+			Model.Part part = new Model.Part(buildCharacterMesh(character));
+			//Offset the character to be next to the previous by the previous character's width
+			part.position.set(previousWidth, 0, 0);
+			//Add the character model part to the model
 			characterModelParts.add(part);
+			//Update the next character's offset
+			previousWidth = fontTexture.getCharInfo(character).getWidth();
+			//Make sure the model part knows of it's parent
+			part.setModel(model);
 		}
 
 		//Create a text model from the model parts
 		Model model = new Model(characterModelParts);
-		Log.info(model.modelParts.size());
 		//Set the model's texture to the font's
 		model.setMaterial(fontTexture.getTexture().toMaterial());
-
-		//Make sure the part knows it's parent
-		for (Model.Part part : model.modelParts) {
-			part.setModel(model);
-		}
 
 		return model;
 	}
