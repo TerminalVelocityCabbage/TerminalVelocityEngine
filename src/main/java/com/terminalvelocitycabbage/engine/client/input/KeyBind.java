@@ -2,8 +2,7 @@ package com.terminalvelocitycabbage.engine.client.input;
 
 import com.terminalvelocitycabbage.engine.client.renderer.Renderer;
 
-import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
-import static org.lwjgl.glfw.GLFW.glfwGetKey;
+import static org.lwjgl.glfw.GLFW.*;
 
 public class KeyBind {
 
@@ -34,6 +33,14 @@ public class KeyBind {
 
 	public boolean isKeyPressed(KeyBind keyBind) {
 		return glfwGetKey(window, keyBind.getKeyCode()) == GLFW_PRESS;
+	}
+
+	public boolean isKeyReleased(KeyBind keyBind) {
+		return glfwGetKey(window, keyBind.getKeyCode()) == GLFW_RELEASE;
+	}
+
+	public boolean isKeyRepeated(KeyBind keyBind) {
+		return glfwGetKey(window, keyBind.getKeyCode()) == GLFW_REPEAT;
 	}
 
 	public long getWindow() {

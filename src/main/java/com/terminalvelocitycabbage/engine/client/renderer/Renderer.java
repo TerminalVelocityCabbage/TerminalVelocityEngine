@@ -1,7 +1,9 @@
 package com.terminalvelocitycabbage.engine.client.renderer;
 
 import com.terminalvelocitycabbage.engine.client.input.InputHandler;
+import com.terminalvelocitycabbage.engine.client.renderer.components.Camera;
 import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
+import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 
@@ -14,16 +16,16 @@ public abstract class Renderer {
 
 	// The window handle
 	private static Window window;
+	protected static Camera camera;
+	protected Matrix4f viewMatrix = new Matrix4f();
+	private static float[] frameTimes = new float[10];
 
 	public Renderer(int width, int height, String title, InputHandler inputHandler) {
 		window = new Window(width, height, title, true, inputHandler, true, true);
 	}
 
 	public void run() {
-		window.show();
-		// creates the GLCapabilities instance and makes the OpenGL bindings available for use.
-		GL.createCapabilities();
-		loop();
+		start();
 		destroy();
 	}
 
@@ -47,9 +49,18 @@ public abstract class Renderer {
 
 		window.create();
 		window.init();
+		window.show();
+		// creates the GLCapabilities instance and makes the OpenGL bindings available for use.
+		GL.createCapabilities();
 	}
 
-	private void destroy() {
+	private void start() {
+		while (!glfwWindowShouldClose(getWindow().getID())) {
+			loop();
+		}
+	}
+
+	public void destroy() {
 		// Free the window callbacks and destroy the window
 		window.destroy();
 

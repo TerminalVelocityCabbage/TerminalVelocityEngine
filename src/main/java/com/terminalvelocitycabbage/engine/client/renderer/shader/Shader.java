@@ -9,6 +9,9 @@ import java.util.Optional;
 
 import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
+import static org.lwjgl.opengl.GL40.GL_TESS_CONTROL_SHADER;
+import static org.lwjgl.opengl.GL40.GL_TESS_EVALUATION_SHADER;
 
 public class Shader {
 
@@ -63,5 +66,23 @@ public class Shader {
 
 		//Attempt to insert the included shader source in place of the requested.
 		return source.replace("#include \"" + importName + "\";", resource.flatMap(Resource::asString).orElseThrow());
+	}
+
+	public enum Type {
+		VERTEX(GL_VERTEX_SHADER),
+		FRAGMENT(GL_FRAGMENT_SHADER),
+		GEOMETRY(GL_GEOMETRY_SHADER),
+		TESS_CONTROL(GL_TESS_CONTROL_SHADER),
+		TESS_EVAL(GL_TESS_EVALUATION_SHADER);
+
+		private final int glCode;
+
+		private Type(int glCode) {
+			this.glCode = glCode;
+		}
+
+		public int getGLType() {
+			return this.glCode;
+		}
 	}
 }
