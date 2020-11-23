@@ -1,6 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.renderer.util;
 
-import com.terminalvelocitycabbage.engine.entity.EmptyGameObject;
+import com.terminalvelocitycabbage.engine.client.renderer.gameobjects.EmptyGameObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;

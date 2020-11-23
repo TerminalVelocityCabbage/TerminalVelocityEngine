@@ -1,4 +1,4 @@
-package com.terminalvelocitycabbage.engine.entity;
+package com.terminalvelocitycabbage.engine.client.renderer.gameobjects;
 
 import com.terminalvelocitycabbage.engine.client.renderer.font.FontTexture;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Mesh;

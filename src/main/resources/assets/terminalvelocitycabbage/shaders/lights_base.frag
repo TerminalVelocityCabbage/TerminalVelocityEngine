@@ -1,6 +1,12 @@
 uniform vec3 ambientLight;
 uniform float specularPower;
 
+struct Attenuation {
+    float constant;
+    float linear;
+    float exponential;
+};
+
 vec4 calcLightColor(vec4 lightColor, float lightIntensity, vec3 position, vec3 toLightDirection, vec3 normal) {
 
     //Setup

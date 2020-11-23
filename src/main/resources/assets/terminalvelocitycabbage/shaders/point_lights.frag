@@ -1,9 +1,3 @@
-struct Attenuation {
-    float constant;
-    float linear;
-    float exponential;
-};
-
 struct PointLight {
     vec4 color;
     vec3 position;
