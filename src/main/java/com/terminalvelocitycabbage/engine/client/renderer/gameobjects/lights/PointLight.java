@@ -1,14 +1,14 @@
-package com.terminalvelocitycabbage.engine.client.renderer.lights;
+package com.terminalvelocitycabbage.engine.client.renderer.gameobjects.lights;
 
-import com.terminalvelocitycabbage.engine.client.renderer.lights.components.Attenuation;
+import com.terminalvelocitycabbage.engine.client.renderer.gameobjects.EmptyGameObject;
+import com.terminalvelocitycabbage.engine.client.renderer.lights.Attenuation;
 import com.terminalvelocitycabbage.engine.debug.Log;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
-public class PointLight {
+public class PointLight extends EmptyGameObject {
 
-	private Vector3f position;
 	private Vector4f color;
 	protected float intensity;
 	private Attenuation attenuation;
@@ -63,5 +63,9 @@ public class PointLight {
 
 	public void setAttenuation(Attenuation attenuation) {
 		this.attenuation = attenuation;
+	}
+
+	@Override
+	public void update() {
 	}
 }
