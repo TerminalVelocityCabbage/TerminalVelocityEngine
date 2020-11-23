@@ -30,7 +30,7 @@ public abstract class InputHandler {
 		glfwSetCursorPosCallback(window.getID(), (windowHandle, xpos, ypos) -> {
 			currentPos.x = xpos;
 			currentPos.y = ypos;
-			mouseInput(window);
+			mouseInput();
 			previousPos.x = currentPos.x;
 			previousPos.y = currentPos.y;
 		});
@@ -49,7 +49,7 @@ public abstract class InputHandler {
 		return displayVector;
 	}
 
-	public void mouseInput(Window window) {
+	public void mouseInput() {
 		displayVector.x = 0;
 		displayVector.y = 0;
 		if (previousPos.x > 0 && previousPos.y > 0 && focused) {

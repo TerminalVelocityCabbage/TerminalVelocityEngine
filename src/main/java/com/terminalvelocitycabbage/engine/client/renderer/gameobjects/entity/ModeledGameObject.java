@@ -1,5 +1,6 @@
-package com.terminalvelocitycabbage.engine.entity;
+package com.terminalvelocitycabbage.engine.client.renderer.gameobjects.entity;
 
+import com.terminalvelocitycabbage.engine.client.renderer.gameobjects.EmptyGameObject;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -13,6 +14,7 @@ public class ModeledGameObject extends EmptyGameObject {
 		super(position, rotation, scale);
 		this.model = model;
 		transformationMatrix = new Matrix4f();
+		enable();
 	}
 
 	public void bind() {
@@ -20,7 +22,9 @@ public class ModeledGameObject extends EmptyGameObject {
 	}
 
 	public void render() {
-		model.render();
+		if (render) {
+			model.render();
+		}
 	}
 
 	@Override

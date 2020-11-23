@@ -1,4 +1,4 @@
-package com.terminalvelocitycabbage.engine.entity;
+package com.terminalvelocitycabbage.engine.client.renderer.gameobjects;
 
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -6,13 +6,14 @@ import org.joml.Vector3f;
 
 public abstract class EmptyGameObject {
 
-	Vector3f position;
-	Quaternionf rotation;
-	Vector3f scale;
+	protected Vector3f position;
+	protected Quaternionf rotation;
+	protected Vector3f scale;
 
-	Matrix4f transformationMatrix;
+	protected Matrix4f transformationMatrix;
 
-	boolean needsUpdate = true;
+	protected boolean needsUpdate = true;
+	protected boolean render = false;
 
 	public EmptyGameObject() {
 		position = new Vector3f();
@@ -43,6 +44,14 @@ public abstract class EmptyGameObject {
 	public void scale(float x, float y, float z) {
 		scale.add(x, y, z);
 		queueUpdate();
+	}
+
+	public void disable() {
+		render = false;
+	}
+
+	public void enable() {
+		render = true;
 	}
 
 	public void queueUpdate() {
@@ -77,9 +86,9 @@ public abstract class EmptyGameObject {
 	}
 
 	public static abstract class Builder {
-		Vector3f position = null;
-		Quaternionf rotation = null;
-		Vector3f scale = null;
+		protected Vector3f position = null;
+		protected Quaternionf rotation = null;
+		protected Vector3f scale = null;
 
 		public EmptyGameObject.Builder setPosition(Vector3f position) {
 			this.position = position;

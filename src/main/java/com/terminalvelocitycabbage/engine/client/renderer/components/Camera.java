@@ -2,6 +2,8 @@ package com.terminalvelocitycabbage.engine.client.renderer.components;
 
 import com.terminalvelocitycabbage.engine.client.renderer.Renderer;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 public class Camera {
@@ -14,7 +16,7 @@ public class Camera {
 	private Matrix4f viewMatrix;
 
 	private final Vector3f position;
-	private final Vector3f rotation;
+	private final Quaternionf rotation;
 
 	public Camera(int fov, float clippingPlane, float farPlane) {
 		this.fov = (float)Math.toRadians(fov);
@@ -25,7 +27,7 @@ public class Camera {
 		viewMatrix = new Matrix4f();
 
 		position = new Vector3f(0, 0, 0);
-		rotation = new Vector3f(0, 0, 0);
+		rotation = new Quaternionf();
 	}
 
 	public Vector3f getPosition() {
@@ -50,7 +52,11 @@ public class Camera {
 		position.y += offsetY;
 	}
 
-	public Vector3f getRotation() {
+	public void move(Vector3f offset, float sensitivity) {
+		move(offset.x * sensitivity, offset.y * sensitivity, offset.z * sensitivity);
+	}
+
+	public Quaternionf getRotation() {
 		return rotation;
 	}
 
@@ -64,6 +70,11 @@ public class Camera {
 		rotation.x += roll;
 		rotation.y += pitch;
 		rotation.z += yaw;
+	}
+
+	public void rotate(Vector2f rotation, float roll) {
+		//TODO roll needs to be applied on the local z axis not the global axis
+		rotate(rotation.x, rotation.y, 0);
 	}
 
 	public Matrix4f updateProjectionMatrix(int width, int height) {

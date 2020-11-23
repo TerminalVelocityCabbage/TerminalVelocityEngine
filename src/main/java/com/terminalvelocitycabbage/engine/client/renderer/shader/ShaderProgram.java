@@ -1,9 +1,9 @@
 package com.terminalvelocitycabbage.engine.client.renderer.shader;
 
-import com.terminalvelocitycabbage.engine.client.renderer.lights.DirectionalLight;
-import com.terminalvelocitycabbage.engine.client.renderer.lights.PointLight;
-import com.terminalvelocitycabbage.engine.client.renderer.lights.SpotLight;
-import com.terminalvelocitycabbage.engine.client.renderer.lights.components.Attenuation;
+import com.terminalvelocitycabbage.engine.client.renderer.gameobjects.lights.DirectionalLight;
+import com.terminalvelocitycabbage.engine.client.renderer.gameobjects.lights.PointLight;
+import com.terminalvelocitycabbage.engine.client.renderer.gameobjects.lights.SpotLight;
+import com.terminalvelocitycabbage.engine.client.renderer.lights.Attenuation;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Material;
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
@@ -92,7 +92,12 @@ public class ShaderProgram {
 	}
 
 	private void createSpotLightUniform(String name) {
-		createPointLightUniform(name + ".pointLight");
+		createUniform(name + ".color");
+		createUniform(name + ".position");
+		createUniform(name + ".intensity");
+		createUniform(name + ".attenuation.constant");
+		createUniform(name + ".attenuation.linear");
+		createUniform(name + ".attenuation.exponential");
 		createUniform(name + ".coneDirection");
 		createUniform(name + ".cutoff");
 	}
@@ -163,7 +168,13 @@ public class ShaderProgram {
 	}
 
 	private void setUniform(String name, SpotLight spotLight) {
-		setUniform(name + ".pointLight", (PointLight)spotLight);
+		setUniform(name + ".color", spotLight.getColor());
+		setUniform(name + ".position", spotLight.getPosition());
+		setUniform(name + ".intensity", spotLight.getIntensity());
+		Attenuation att = spotLight.getAttenuation();
+		setUniform(name + ".attenuation.constant", att.getConstant());
+		setUniform(name + ".attenuation.linear", att.getLinear());
+		setUniform(name + ".attenuation.exponential", att.getExponential());
 		setUniform(name + ".coneDirection", spotLight.getConeDirection());
 		setUniform(name + ".cutoff", spotLight.getCutoff());
 	}
