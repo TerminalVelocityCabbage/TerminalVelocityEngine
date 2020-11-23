@@ -13,6 +13,7 @@ public abstract class EmptyGameObject {
 	Matrix4f transformationMatrix;
 
 	boolean needsUpdate = true;
+	boolean render = false;
 
 	public EmptyGameObject() {
 		position = new Vector3f();
@@ -43,6 +44,14 @@ public abstract class EmptyGameObject {
 	public void scale(float x, float y, float z) {
 		scale.add(x, y, z);
 		queueUpdate();
+	}
+
+	public void disable() {
+		render = false;
+	}
+
+	public void enable() {
+		render = true;
 	}
 
 	public void queueUpdate() {

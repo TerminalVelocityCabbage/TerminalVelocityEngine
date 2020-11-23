@@ -96,7 +96,9 @@ public class TextGameObject extends EmptyGameObject {
 	}
 
 	public void render() {
-		model.render();
+		if (render) {
+			model.render();
+		}
 	}
 
 	@Override

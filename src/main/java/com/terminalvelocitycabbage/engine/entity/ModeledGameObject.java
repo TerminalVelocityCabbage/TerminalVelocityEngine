@@ -13,6 +13,7 @@ public class ModeledGameObject extends EmptyGameObject {
 		super(position, rotation, scale);
 		this.model = model;
 		transformationMatrix = new Matrix4f();
+		enable();
 	}
 
 	public void bind() {
@@ -20,7 +21,9 @@ public class ModeledGameObject extends EmptyGameObject {
 	}
 
 	public void render() {
-		model.render();
+		if (render) {
+			model.render();
+		}
 	}
 
 	@Override
