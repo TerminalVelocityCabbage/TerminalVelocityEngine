@@ -22,6 +22,7 @@ public class TextGameObject extends EmptyGameObject {
 		this.fontTexture = texture;
 		createTextModel(true);
 		this.transformationMatrix = new Matrix4f();
+		enable();
 	}
 
 	private void createTextModel(boolean createNew) {
