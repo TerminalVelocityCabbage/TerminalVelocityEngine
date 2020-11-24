@@ -4,12 +4,14 @@ import com.terminalvelocitycabbage.engine.client.input.InputHandler;
 import com.terminalvelocitycabbage.engine.debug.Log;
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.glfw.GLFWWindowSizeCallback;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.IntBuffer;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
@@ -24,6 +26,9 @@ public class Window {
 	private InputHandler inputHandler;
 	private boolean center;
 	private boolean lockAndHideCursor;
+
+	private boolean isResized;
+	private GLFWWindowSizeCallback sizeCallback;
 
 	private int monitorWidth;
 	private int monitorHeight;
@@ -50,9 +55,6 @@ public class Window {
 	}
 
 	public void init() {
-		// Setup a key callback. It will be called every time a key is pressed, repeated or released.
-		inputHandler.init(this);
-
 		// Get the thread stack and push a new frame
 		try (MemoryStack stack = stackPush()) {
 			IntBuffer pWidth = stack.mallocInt(1); // int*
@@ -86,9 +88,27 @@ public class Window {
 				glfwSetInputMode(windowID, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 			}
 
+			sizeCallback = GLFWWindowSizeCallback.create(this::windowSizeCallback);
+			glfwSetWindowSizeCallback(windowID, sizeCallback);
+
 			//init the input handler
 			inputHandler.init(this);
 		}
+	}
+
+	public boolean isResized() {
+		return isResized;
+	}
+
+	public void updateDisplay() {
+		glViewport(0, 0, this.windowWidth, this.windowHeight);
+		isResized = false;
+	}
+
+	private void windowSizeCallback(long window, int w, int h) {
+		this.windowWidth = w;
+		this.windowHeight = h;
+		isResized = true;
 	}
 
 	public void destroy() {

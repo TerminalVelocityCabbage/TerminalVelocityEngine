@@ -23,7 +23,7 @@ public class Camera {
 		this.clippingPlane = clippingPlane;
 		this.farPlane = farPlane;
 
-		projectionMatrix = updateProjectionMatrix(Renderer.getWindow().width(), Renderer.getWindow().height());
+		projectionMatrix = createProjectionMatrix(Renderer.getWindow().width(), Renderer.getWindow().height());
 		viewMatrix = new Matrix4f();
 
 		position = new Vector3f(0, 0, 0);
@@ -77,8 +77,12 @@ public class Camera {
 		rotate(rotation.x, rotation.y, 0);
 	}
 
-	public Matrix4f updateProjectionMatrix(int width, int height) {
+	private Matrix4f createProjectionMatrix(int width, int height) {
 		return new Matrix4f().perspective(fov, (float)width/height, clippingPlane, farPlane);
+	}
+
+	public void updateProjectionMatrix(int width, int height) {
+		this.projectionMatrix = projectionMatrix.identity().perspective(fov, (float)width/ height, clippingPlane, farPlane);
 	}
 
 	public Matrix4f getProjectionMatrix() {

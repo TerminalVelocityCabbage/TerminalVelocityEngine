@@ -103,7 +103,12 @@ public abstract class Renderer {
 		return window;
 	}
 
-	public abstract void loop();
+	public void loop() {
+		if (window.isResized()) {
+			window.updateDisplay();
+			camera.updateProjectionMatrix(window.width(), window.height());
+		}
+	}
 
 	public void push() {
 		glfwSwapBuffers(window.getID());
