@@ -3,8 +3,7 @@ package com.terminalvelocitycabbage.engine.client.renderer.model;
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 import com.terminalvelocitycabbage.engine.client.resources.Resource;
 import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
-import com.terminalvelocitycabbage.engine.client.util.PNGDecoder;
-import com.terminalvelocitycabbage.engine.debug.Log;
+import com.terminalvelocitycabbage.engine.client.renderer.util.PNGDecoder;
 
 import java.io.IOException;
 import java.io.InputStream;
