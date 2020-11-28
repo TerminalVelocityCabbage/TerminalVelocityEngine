@@ -1,14 +1,13 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui.components;
 
-import com.terminalvelocitycabbage.engine.client.renderer.model.Material;
-import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
-import com.terminalvelocitycabbage.engine.client.renderer.model.ModelVertex;
-import com.terminalvelocitycabbage.engine.client.renderer.shapes.TexturedRectangle;
+import com.terminalvelocitycabbage.engine.client.renderer.model.Mesh;
+import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
+import com.terminalvelocitycabbage.engine.client.renderer.shapes.Rectangle;
 import com.terminalvelocitycabbage.engine.debug.Log;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 public abstract class UIElement {
 
@@ -35,10 +34,11 @@ public abstract class UIElement {
 
 	public boolean isShown;
 
+	public Vector3f position;
+	public Mesh mesh;
 	public UIElement parent;
 	ArrayList<UIConstraint> constraints;
 	ArrayList<UIElement> children;
-	Model model;
 
 	public UIElement() {
 		built = false;
@@ -55,6 +55,7 @@ public abstract class UIElement {
 		borderColor = new Vector3f(0);
 		borderWidth = 0;
 		isShown = false;
+		position = new Vector3f(0);
 		constraints = new ArrayList<>();
 		children = new ArrayList<>();
 	}
@@ -69,21 +70,12 @@ public abstract class UIElement {
 			constraint.apply();
 		}
 		//TODO don't use models here at all, add a low level mesh draw API the reason I can't do it right now is the material system is only read through the model will need to implement this in the gui shader
-		model = new Model(new ArrayList<>(Collections.singletonList(
-				new Model.Part(
-						new TexturedRectangle(
-								new ModelVertex().setXYZ(marginLeft, marginTop, 1f),
-								new ModelVertex().setXYZ(marginLeft, 1f - marginBottom, 1f),
-								new ModelVertex().setXYZ(1f - marginRight, 1f - marginBottom, 1f),
-								new ModelVertex().setXYZ(1f - marginRight, marginTop, 1f)),
-						new Vector3f(0),
-						new Vector3f(0),
-						new Vector3f(0),
-						new Vector3f(1),
-						new ArrayList<>()
-				))));
-		model.setMaterial(Material.builder().color(color.x, color.y, color.z, backgroundOpacity).build());
-		model.bind();
+		mesh = new Rectangle(
+				new Vertex().setXYZ(-1f + marginLeft, 1f - marginTop, 0f),
+				new Vertex().setXYZ(-1f + marginLeft, -1f + marginBottom, 0f),
+				new Vertex().setXYZ(1f - marginRight, -1f + marginBottom, 0f),
+				new Vertex().setXYZ(1f - marginRight, 1f- marginTop, 0f));
+		mesh.bind();
 		built = true;
 		Log.info("build");
 		return (T)this;
@@ -91,7 +83,7 @@ public abstract class UIElement {
 
 	public void render() {
 		if (isShown) {
-			model.render();
+			mesh.render();
 		}
 		for (UIElement element : children) {
 			element.render();
@@ -99,11 +91,17 @@ public abstract class UIElement {
 	}
 
 	public void update() {
-		//do something
+		if (isShown) {
+			mesh.update(new Matrix4f());
+			mesh.vertices[0].setXYZ(-1f + marginLeft, 1f - marginTop, 0f);
+			mesh.vertices[1].setXYZ(-1f + marginLeft, -1f + marginBottom, 0f);
+			mesh.vertices[2].setXYZ(1f - marginRight, -1f + marginBottom, 0f);
+			mesh.vertices[3].setXYZ(1f - marginRight, 1f- marginTop, 0f);
+			Log.error("Implement me!");
+		}
 		for (UIElement element : children) {
 			element.update();
 		}
-		Log.error("Implement me!");
 	}
 
 	public void show() {
@@ -126,15 +124,7 @@ public abstract class UIElement {
 	}
 
 	public UIElement getCanvas() {
-		UIElement element = this;
-		do {
-			element = element.parent;
-		} while (!element.isRoot);
-		return element;
-	}
-
-	public Model getModel() {
-		return model;
+		return parent.getCanvas();
 	}
 
 	//This is private on purpose as to not allow creation of elements outside the addChild method.

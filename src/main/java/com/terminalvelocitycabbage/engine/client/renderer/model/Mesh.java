@@ -20,8 +20,8 @@ public abstract class Mesh {
 	private int vboID;
 	private int eboID;
 
-	protected Vertex[] vertices;
-	protected byte[] vertexOrder;
+	public Vertex[] vertices;
+	public byte[] vertexOrder;
 
 	//TODO note that these translations have to be done in a specific order so we should make it clear and make an API that dummi-proofs it
 	//1. Scale	- so that the axis stuff is scaled properly
@@ -77,7 +77,7 @@ public abstract class Mesh {
 		FloatBuffer vertexFloatBuffer = getCombinedVertices();
 		float[] currentXYZ;
 		for (int i = 0; i < vertices.length; i++) {
-			currentVertex = getVertex(i);
+			currentVertex = vertices[i];
 			currentXYZ = currentVertex.getXYZ();
 			positions.set(currentXYZ[0], currentXYZ[1], currentXYZ[2], 1f).mul(translationMatrix);
 
@@ -90,10 +90,6 @@ public abstract class Mesh {
 			glBindBuffer(GL_ARRAY_BUFFER, vboID);
 			GL15.glBufferSubData(GL_ARRAY_BUFFER, i * Vertex.STRIDE, vertexFloatBuffer);
 		}
-	}
-
-	public Vertex getVertex(int index) {
-		return vertices[index];
 	}
 
 	public FloatBuffer getCombinedVertices() {
