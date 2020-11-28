@@ -61,7 +61,7 @@ public class Model {
 
 		private Model model;
 
-		public Mesh mesh;
+		public ModelMesh mesh;
 		public List<Model.Part> children;
 
 		public Vector3f offset;
@@ -69,7 +69,7 @@ public class Model {
 		public Vector3f rotation;
 		public Vector3f scale;
 
-		public Part(Mesh mesh) {
+		public Part(ModelMesh mesh) {
 			this.mesh = mesh;
 
 			this.offset = new Vector3f();
@@ -80,7 +80,7 @@ public class Model {
 			this.children = Collections.emptyList();
 		}
 
-		public Part(Mesh mesh, Vector3f offset, Vector3f position, Vector3f rotation, Vector3f scale, List<Model.Part> children) {
+		public Part(ModelMesh mesh, Vector3f offset, Vector3f position, Vector3f rotation, Vector3f scale, List<Model.Part> children) {
 			this.mesh = mesh;
 
 			this.offset = offset;

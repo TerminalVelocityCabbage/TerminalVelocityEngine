@@ -2,7 +2,7 @@ package com.terminalvelocitycabbage.engine.client.renderer.ui.components;
 
 import com.terminalvelocitycabbage.engine.client.renderer.model.Material;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
-import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
+import com.terminalvelocitycabbage.engine.client.renderer.model.ModelVertex;
 import com.terminalvelocitycabbage.engine.client.renderer.shapes.TexturedRectangle;
 import com.terminalvelocitycabbage.engine.debug.Log;
 import org.joml.Vector3f;
@@ -72,10 +72,10 @@ public abstract class UIElement {
 		model = new Model(new ArrayList<>(Collections.singletonList(
 				new Model.Part(
 						new TexturedRectangle(
-								new Vertex().setXYZ(marginLeft, marginTop, 1f),
-								new Vertex().setXYZ(marginLeft, 1f - marginBottom, 1f),
-								new Vertex().setXYZ(1f - marginRight, 1f - marginBottom, 1f),
-								new Vertex().setXYZ(1f - marginRight, marginTop, 1f)),
+								new ModelVertex().setXYZ(marginLeft, marginTop, 1f),
+								new ModelVertex().setXYZ(marginLeft, 1f - marginBottom, 1f),
+								new ModelVertex().setXYZ(1f - marginRight, 1f - marginBottom, 1f),
+								new ModelVertex().setXYZ(1f - marginRight, marginTop, 1f)),
 						new Vector3f(0),
 						new Vector3f(0),
 						new Vector3f(0),
@@ -131,6 +131,10 @@ public abstract class UIElement {
 			element = element.parent;
 		} while (!element.isRoot);
 		return element;
+	}
+
+	public Model getModel() {
+		return model;
 	}
 
 	//This is private on purpose as to not allow creation of elements outside the addChild method.

@@ -3,7 +3,7 @@ package com.terminalvelocitycabbage.engine.client.renderer.ui;
 import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.elements.UICanvas;
 
-import java.util.HashMap;
+import java.util.*;
 
 public abstract class UISceneHandler {
 
@@ -19,6 +19,10 @@ public abstract class UISceneHandler {
 			throw new RuntimeException("Canvas with name " + name + " already exists in this UI Scene Handler.");
 		}
 		scenes.put(name, canvas.build());
+	}
+
+	public Collection<UICanvas> getScenes() {
+		return scenes.values();
 	}
 
 	public void update() {
