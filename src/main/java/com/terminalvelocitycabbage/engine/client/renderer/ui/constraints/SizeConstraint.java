@@ -18,16 +18,16 @@ public class SizeConstraint extends UIConstraint {
 	public void apply() {
 		if (unit.equals(Unit.PERCENT)) {
 			if (type.equals(Type.WIDTH)) {
-				element.width = value / 100f;
+				element.width = value * 2 / 100f;
 			} else if (type.equals(Type.HEIGHT)) {
-				element.height = value / 100f;
+				element.height = value * 2 / 100f;
 			}
 		}
 		if (unit.equals(Unit.PIXELS)) {
 			if (type.equals(Type.WIDTH)) {
-				element.width = value / element.getCanvas().width;
+				element.width = value * 2 / element.getCanvas().width;
 			} else if (type.equals(Type.HEIGHT)) {
-				element.height = value / element.getCanvas().height;
+				element.height = value * 2 / element.getCanvas().height;
 			}
 		}
 	}

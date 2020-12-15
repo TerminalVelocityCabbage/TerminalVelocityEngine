@@ -6,7 +6,7 @@ import org.joml.Vector3f;
 public class BoxElement extends UIElement {
 
 	public BoxElement(Vector3f color) {
-		this.color = color;
+		this.color.set(color);
 	}
 
 }

@@ -12,7 +12,6 @@ import java.util.ArrayList;
 public abstract class UIElement {
 
 	public boolean built;
-	public boolean isRoot;
 
 	public boolean itemsLeftAligned;
 	public boolean itemsTopStart;
@@ -42,7 +41,6 @@ public abstract class UIElement {
 
 	public UIElement() {
 		built = false;
-		isRoot = false;
 		itemsLeftAligned = true;
 		itemsTopStart = true;
 		marginLeft = 0f;
@@ -50,7 +48,7 @@ public abstract class UIElement {
 		marginTop = 0f;
 		marginBottom = 0f;
 		color = new Vector3f(0);
-		backgroundOpacity = 0f;
+		backgroundOpacity = 1f;
 		borderRadius = 0;
 		borderColor = new Vector3f(0);
 		borderWidth = 0;
@@ -63,13 +61,9 @@ public abstract class UIElement {
 	@SuppressWarnings("unchecked")
 	public <T extends UIElement>T build(UIElement parent) {
 		this.parent = parent;
-		for (UIElement child : children) {
-			child.build(this);
-		}
 		for (UIConstraint constraint : constraints) {
 			constraint.apply();
 		}
-		//TODO don't use models here at all, add a low level mesh draw API the reason I can't do it right now is the material system is only read through the model will need to implement this in the gui shader
 		mesh = new Rectangle(
 				new Vertex().setXYZ(-1f + marginLeft, 1f - marginTop, 0f),
 				new Vertex().setXYZ(-1f + marginLeft, -1f + marginBottom, 0f),
@@ -77,16 +71,26 @@ public abstract class UIElement {
 				new Vertex().setXYZ(1f - marginRight, 1f- marginTop, 0f));
 		mesh.bind();
 		built = true;
+		for (UIElement child : children) {
+			child.build(this);
+		}
 		Log.info("build");
 		return (T)this;
 	}
 
 	public void render() {
+		render(0);
+	}
+
+	public void render(int order) {
 		if (isShown) {
+			position.setComponent(2, order);
 			mesh.render();
 		}
+		Log.warn(order);
+		Log.info(marginLeft + " " + marginRight + " " + marginTop + " " + marginBottom + " " + color);
 		for (UIElement element : children) {
-			element.render();
+			element.render(order + 1);
 		}
 	}
 
@@ -97,7 +101,7 @@ public abstract class UIElement {
 			mesh.vertices[1].setXYZ(-1f + marginLeft, -1f + marginBottom, 0f);
 			mesh.vertices[2].setXYZ(1f - marginRight, -1f + marginBottom, 0f);
 			mesh.vertices[3].setXYZ(1f - marginRight, 1f- marginTop, 0f);
-			Log.error("Implement me!");
+			Log.error("Implement me! update");
 		}
 		for (UIElement element : children) {
 			element.update();
@@ -147,6 +151,6 @@ public abstract class UIElement {
 	}
 
 	public void destroy() {
-		Log.error("implement me!");
+		Log.error("implement me! destroy");
 	}
 }
