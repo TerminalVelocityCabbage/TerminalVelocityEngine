@@ -113,6 +113,7 @@ public class Model {
 		public void updateTransforms(Matrix4f transformationMatrix) {
 			transformationMatrix
 				.translate(position)
+					//TODO Wyn fixes this in the studio so that we dont use this order
 				.rotateZ(rotation.z)
 				.rotateY(rotation.y)
 				.rotateX(rotation.x);

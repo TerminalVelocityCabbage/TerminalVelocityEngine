@@ -105,7 +105,8 @@ public abstract class Mesh {
 			currentXYZ = currentVertex.getXYZ();
 			positions.set(currentXYZ[0], currentXYZ[1], currentXYZ[2], 1f).mul(translationMatrix);
 			currentNormal = currentVertex.getNormals();
-			normals.set(currentNormal[0], currentNormal[1], currentNormal[2], 1f).rotate(translationMatrix.getNormalizedRotation(new Quaternionf()));
+			normals.set(currentNormal[0], currentNormal[1], currentNormal[2], 1f);
+			normals.rotate(translationMatrix.getUnnormalizedRotation(new Quaternionf()));
 
 			// Put the new data in a ByteBuffer (in the view of a FloatBuffer)
 			vertexFloatBuffer.rewind();
