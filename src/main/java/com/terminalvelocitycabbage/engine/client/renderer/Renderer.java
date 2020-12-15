@@ -22,6 +22,7 @@ public abstract class Renderer {
 	private static float[] frameTimes = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0,};
 	private static long startFrameTime = 0;
 	private static long endFrameTime = 0;
+	private static long previousFrameTime;
 
 	public Renderer(int width, int height, String title, InputHandler inputHandler) {
 		window = new Window(width, height, title, true, inputHandler, true, true);
@@ -62,6 +63,7 @@ public abstract class Renderer {
 
 	private void start() {
 		while (!glfwWindowShouldClose(getWindow().getID())) {
+			previousFrameTime = startFrameTime;
 			startFrameTime = System.nanoTime();
 			loop();
 			endFrameTime = System.nanoTime();
@@ -88,6 +90,10 @@ public abstract class Renderer {
 
 	public float getFramerate() {
 		return 1 / getFrameTimeAverageMillis() * 1000;
+	}
+
+	public float getDeltaTime() {
+		return (startFrameTime - previousFrameTime) / 1e9f * 20;
 	}
 
 	public void destroy() {

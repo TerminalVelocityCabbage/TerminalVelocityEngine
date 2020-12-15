@@ -33,9 +33,8 @@ public class Model {
 			rotateY((float)Math.toRadians(-rotation.y)).
 			rotateZ((float)Math.toRadians(-rotation.z)).
 			scale(scale);
-		var mat = new Matrix4f(transformationMatrix);
 		for (Model.Part part : modelParts) {
-			part.updateTransforms(mat);
+			part.updateTransforms(new Matrix4f(transformationMatrix));
 		}
 	}
 
@@ -58,7 +57,6 @@ public class Model {
 	}
 
 	public static class Part {
-
 		private Model model;
 
 		public Mesh mesh;
@@ -115,9 +113,9 @@ public class Model {
 		public void updateTransforms(Matrix4f transformationMatrix) {
 			transformationMatrix
 				.translate(position)
-				.rotateX((float) Math.toRadians(rotation.x))
-				.rotateY((float) Math.toRadians(rotation.y))
-				.rotateZ((float) Math.toRadians(rotation.z));
+				.rotateZ(rotation.z)
+				.rotateY(rotation.y)
+				.rotateX(rotation.x);
 			var mat = new Matrix4f();
 			for (Model.Part child : children) {
 				child.updateTransforms(mat.set(transformationMatrix));
