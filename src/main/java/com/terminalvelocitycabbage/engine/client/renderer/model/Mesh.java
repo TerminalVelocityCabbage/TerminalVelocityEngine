@@ -103,9 +103,4 @@ public abstract class Mesh {
 	private ByteBuffer getIndicesBuffer() {
 		return BufferUtils.createByteBuffer(vertexOrder.length).put(vertexOrder).flip();
 	}
-
-	public Mesh setModel(Model model) {
-		this.model = model;
-		return this;
-	}
 }

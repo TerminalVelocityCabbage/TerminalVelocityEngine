@@ -49,22 +49,4 @@ public class Vertex {
 
 		return out;
 	}
-
-	public static float[] getElements(float x, float y, float z, float[] uv, float nx, float ny, float nz) {
-		float[] out = new float[ELEMENT_COUNT];
-		int i = 0;
-
-		out[i++] = x;
-		out[i++] = y;
-		out[i++] = z;
-
-		out[i++] = uv[0];
-		out[i++] = uv[1];
-
-		out[i++] = nx;
-		out[i++] = ny;
-		out[i++] = nz;
-
-		return out;
-	}
 }
