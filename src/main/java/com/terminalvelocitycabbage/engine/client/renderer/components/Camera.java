@@ -82,7 +82,7 @@ public class Camera {
 	}
 
 	public void updateProjectionMatrix(int width, int height) {
-		this.projectionMatrix = projectionMatrix.identity().perspective(fov, (float)width/ height, clippingPlane, farPlane);
+		this.projectionMatrix = projectionMatrix.setPerspective(fov, (float)width/ height, clippingPlane, farPlane);
 	}
 
 	public Matrix4f getProjectionMatrix() {

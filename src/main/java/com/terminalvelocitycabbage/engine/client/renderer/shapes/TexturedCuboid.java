@@ -1,16 +1,16 @@
 package com.terminalvelocitycabbage.engine.client.renderer.shapes;
 
-import com.terminalvelocitycabbage.engine.client.renderer.model.Mesh;
-import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
+import com.terminalvelocitycabbage.engine.client.renderer.model.ModelMesh;
+import com.terminalvelocitycabbage.engine.client.renderer.model.ModelVertex;
 
-public class TexturedCuboid extends Mesh {
-	public TexturedCuboid(Vertex frontTL, Vertex frontBL, Vertex frontBR, Vertex frontTR,
-						  Vertex rightTL, Vertex rightBL, Vertex rightBR, Vertex rightTR,
-						  Vertex backTL, Vertex backBL, Vertex backBR, Vertex backTR,
-						  Vertex leftTL, Vertex leftBL, Vertex leftBR, Vertex leftTR,
-						  Vertex topTL, Vertex topBL, Vertex topBR, Vertex topTR,
-						  Vertex bottomTL, Vertex bottomBL, Vertex bottomBR, Vertex bottomTR) {
-		this.vertices = new Vertex[]{
+public class TexturedCuboid extends ModelMesh {
+	public TexturedCuboid(ModelVertex frontTL, ModelVertex frontBL, ModelVertex frontBR, ModelVertex frontTR,
+						  ModelVertex rightTL, ModelVertex rightBL, ModelVertex rightBR, ModelVertex rightTR,
+						  ModelVertex backTL, ModelVertex backBL, ModelVertex backBR, ModelVertex backTR,
+						  ModelVertex leftTL, ModelVertex leftBL, ModelVertex leftBR, ModelVertex leftTR,
+						  ModelVertex topTL, ModelVertex topBL, ModelVertex topBR, ModelVertex topTR,
+						  ModelVertex bottomTL, ModelVertex bottomBL, ModelVertex bottomBR, ModelVertex bottomTR) {
+		this.vertices = new ModelVertex[]{
 				frontTL, frontBL, frontBR, frontTR,
 				rightTL, rightBL, rightBR, rightTR,
 				backTL, backBL, backBR, backTR,

@@ -19,12 +19,14 @@ public abstract class EmptyGameObject {
 		position = new Vector3f();
 		rotation = new Quaternionf();
 		scale = new Vector3f(1);
+		transformationMatrix = new Matrix4f();
 	}
 
 	public EmptyGameObject(Vector3f position, Quaternionf rotation, Vector3f scale) {
 		this.position = position;
 		this.rotation = rotation;
 		this.scale = scale;
+		this.transformationMatrix = new Matrix4f();
 	}
 
 	public void setPosition(float x, float y, float z) {
@@ -74,15 +76,7 @@ public abstract class EmptyGameObject {
 	}
 
 	public Matrix4f getOrthoProjModelMatrix(Matrix4f orthoMatrix) {
-		Matrix4f modelMatrix = new Matrix4f();
-		modelMatrix.identity().translate(position).
-				rotateX((float)Math.toRadians(-rotation.x)).
-				rotateY((float)Math.toRadians(-rotation.y)).
-				rotateZ((float)Math.toRadians(-rotation.z)).
-				scale(scale);
-		Matrix4f orthoMatrixCurr = new Matrix4f(orthoMatrix);
-		orthoMatrixCurr.mul(modelMatrix);
-		return orthoMatrixCurr;
+		return orthoMatrix.mulLocal(getTransformationMatrix());
 	}
 
 	public static abstract class Builder {
