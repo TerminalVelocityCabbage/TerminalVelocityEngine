@@ -61,7 +61,7 @@ public abstract class Mesh {
 		glEnableVertexAttribArray(2);
 
 		//Bind Textures
-		if (model.getMaterial().hasTexture()) {
+		if (model != null && model.getMaterial().hasTexture()) {
 			model.getMaterial().getTexture().bind();
 		}
 
@@ -110,7 +110,7 @@ public abstract class Mesh {
 
 			// Put the new data in a ByteBuffer (in the view of a FloatBuffer)
 			vertexFloatBuffer.rewind();
-			vertexFloatBuffer.put(Vertex.getElements( new float[] { positions.x, positions.y, positions.z }, currentVertex.getUV(), new float[] { normals.x, normals.y, normals.z } ));
+			vertexFloatBuffer.put(Vertex.getElements(positions.x, positions.y, positions.z, currentVertex.getUV(), normals.x, normals.y, normals.z));
 			vertexFloatBuffer.flip();
 
 			//Pass new data to OpenGL
@@ -133,5 +133,10 @@ public abstract class Mesh {
 
 	private ByteBuffer getIndicesBuffer() {
 		return BufferUtils.createByteBuffer(vertexOrder.length).put(vertexOrder).flip();
+	}
+
+	public Mesh setModel(Model model) {
+		this.model = model;
+		return this;
 	}
 }

@@ -21,8 +21,10 @@ public class Model {
 
 	public Model(List<Model.Part> modelParts) {
 		this.modelParts = modelParts;
-		for (Part part : modelParts) {
-			part.setModel(this);
+		if (modelParts != null) {
+			for (Part part : modelParts) {
+				part.setModel(this);
+			}
 		}
 		this.transformationMatrix = new Matrix4f();
 	}
@@ -113,7 +115,6 @@ public class Model {
 		public void updateTransforms(Matrix4f transformationMatrix) {
 			transformationMatrix
 				.translate(position)
-					//TODO Wyn fixes this in the studio so that we dont use this order
 				.rotateX(rotation.x)
 				.rotateY(rotation.y)
 				.rotateZ(rotation.z);
@@ -127,12 +128,13 @@ public class Model {
 			mesh.update(transformationMatrix);
 		}
 
-		public void setModel(Model model) {
+		public Model.Part setModel(Model model) {
 			this.model = model;
 			this.mesh.model = model;
 			for (Part part : children) {
 				part.setModel(this.model);
 			}
+			return this;
 		}
 	}
 

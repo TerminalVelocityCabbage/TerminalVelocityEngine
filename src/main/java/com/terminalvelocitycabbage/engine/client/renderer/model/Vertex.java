@@ -30,21 +30,29 @@ public class Vertex {
 	public static final int STRIDE = POSITION_BYTES + TEXTURE_BYTES + NORMAL_BYTES;
 
 	public Vertex setXYZ(float x, float y, float z) {
-		this.xyz = new float[] {x, y, z};
+		xyz[0] = x;
+		xyz[1] = y;
+		xyz[2] = z;
 		return this;
 	}
 
 	public Vertex addXYZ(float x, float y, float z) {
-		return setXYZ(xyz[0] + x, xyz[1] + y, xyz[2] + z);
+		xyz[0] += x;
+		xyz[1] += y;
+		xyz[2] += z;
+		return this;
 	}
 
 	public Vertex setUv(float u, float v) {
-		uv = new float[] {u, v};
+		uv[0] = u;
+		uv[1] = v;
 		return this;
 	}
 
 	public Vertex setNormal(float x, float y, float z) {
-		normal = new float[] {x, y, z};
+		normal[0] = x;
+		normal[1] = y;
+		normal[2] = z;
 		return this;
 	}
 
@@ -74,6 +82,24 @@ public class Vertex {
 		out[i++] = normals[0];
 		out[i++] = normals[1];
 		out[i++] = normals[2];
+
+		return out;
+	}
+
+	public static float[] getElements(float x, float y, float z, float[] uv, float nx, float ny, float nz) {
+		float[] out = new float[ELEMENT_COUNT];
+		int i = 0;
+
+		out[i++] = x;
+		out[i++] = y;
+		out[i++] = z;
+
+		out[i++] = uv[0];
+		out[i++] = uv[1];
+
+		out[i++] = nx;
+		out[i++] = ny;
+		out[i++] = nz;
 
 		return out;
 	}

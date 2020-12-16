@@ -25,7 +25,7 @@ public abstract class Renderer {
 	private static long previousFrameTime;
 
 	public Renderer(int width, int height, String title, InputHandler inputHandler) {
-		window = new Window(width, height, title, true, inputHandler, true, true);
+		window = new Window(width, height, title, false, inputHandler, true, true);
 	}
 
 	public void run() {
@@ -72,12 +72,8 @@ public abstract class Renderer {
 	}
 
 	private void calcFrameTime() {
-		long deltaTime = endFrameTime - startFrameTime;
-		float timeMillis = TimeUnit.MILLISECONDS.convert(deltaTime, TimeUnit.NANOSECONDS);
-		for (int i = 0; i < frameTimes.length - 1; i++) {
-			frameTimes[i] = frameTimes[i + 1];
-		}
-		frameTimes[frameTimes.length - 1] = timeMillis;
+		if (frameTimes.length - 1 >= 0) System.arraycopy(frameTimes, 1, frameTimes, 0, frameTimes.length - 1);
+		frameTimes[frameTimes.length - 1] = TimeUnit.MILLISECONDS.convert(endFrameTime - startFrameTime, TimeUnit.NANOSECONDS);
 	}
 
 	public float getFrameTimeAverageMillis() {
@@ -92,6 +88,7 @@ public abstract class Renderer {
 		return 1 / getFrameTimeAverageMillis() * 1000;
 	}
 
+	//TODO animation smoothness (don't hard code in 20)
 	public float getDeltaTime() {
 		return (startFrameTime - previousFrameTime) / 1e9f * 20;
 	}
