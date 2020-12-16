@@ -114,9 +114,9 @@ public class Model {
 			transformationMatrix
 				.translate(position)
 					//TODO Wyn fixes this in the studio so that we dont use this order
-				.rotateZ(rotation.z)
+				.rotateX(rotation.x)
 				.rotateY(rotation.y)
-				.rotateX(rotation.x);
+				.rotateZ(rotation.z);
 			var mat = new Matrix4f();
 			for (Model.Part child : children) {
 				child.updateTransforms(mat.set(transformationMatrix));
