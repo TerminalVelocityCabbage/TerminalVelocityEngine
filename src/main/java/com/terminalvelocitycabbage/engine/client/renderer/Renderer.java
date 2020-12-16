@@ -58,6 +58,7 @@ public abstract class Renderer {
 		GL.createCapabilities();
 		//Transparent stuff
 		glEnable(GL_BLEND);
+		//TODO make ways to swap between blend functions like render layers
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 

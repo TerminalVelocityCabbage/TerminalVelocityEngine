@@ -1,9 +1,9 @@
 package com.terminalvelocitycabbage.engine.client.renderer.gameobjects;
 
 import com.terminalvelocitycabbage.engine.client.renderer.font.FontTexture;
-import com.terminalvelocitycabbage.engine.client.renderer.model.Mesh;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
-import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
+import com.terminalvelocitycabbage.engine.client.renderer.model.ModelMesh;
+import com.terminalvelocitycabbage.engine.client.renderer.model.ModelVertex;
 import com.terminalvelocitycabbage.engine.client.renderer.shapes.TexturedRectangle;
 import org.joml.Matrix4f;
 
@@ -54,27 +54,27 @@ public class TextGameObject extends EmptyGameObject {
 		}
 	}
 
-	private Mesh buildCharacterMesh(char character) {
+	private ModelMesh buildCharacterMesh(char character) {
 
 		FontTexture.CharInfo charInfo = fontTexture.getCharInfo(character);
 
 		//Top Left vertex
-		Vertex topLeft = new Vertex()
+		ModelVertex topLeft = new ModelVertex()
 				.setXYZ(0, 0, Z_POS)
 				.setNormal(0, 1, 0)
 				.setUv((float) charInfo.getStartX() / (float) fontTexture.getWidth(), 0);
 		//Bottom Left vertex
-		Vertex bottomLeft = new Vertex()
+		ModelVertex bottomLeft = new ModelVertex()
 				.setXYZ(0, (float) fontTexture.getHeight(), Z_POS)
 				.setNormal(0, 1, 0)
 				.setUv((float) charInfo.getStartX() / (float) fontTexture.getWidth(), 1);
 		//Bottom Right vertex
-		Vertex bottomRight = new Vertex()
+		ModelVertex bottomRight = new ModelVertex()
 				.setXYZ(charInfo.getWidth(), (float) fontTexture.getHeight(), Z_POS)
 				.setNormal(0, 1, 0)
 				.setUv((float) (charInfo.getStartX() + charInfo.getWidth()) / (float) fontTexture.getWidth(), 1);
 		//Top Right vertex
-		Vertex topRight = new Vertex()
+		ModelVertex topRight = new ModelVertex()
 				.setXYZ(charInfo.getWidth(), 0, Z_POS)
 				.setNormal(0, 1, 0)
 				.setUv((float) (charInfo.getStartX() + charInfo.getWidth()) / (float) fontTexture.getWidth(), 0);
