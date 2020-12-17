@@ -10,7 +10,7 @@ import java.util.List;
 public class UICanvas extends UIRenderableElement {
 
 	Window window;
-	UIStyle style;
+	public UIStyle style;
 	float marginLeft;
 	float marginRight;
 	float marginTop;

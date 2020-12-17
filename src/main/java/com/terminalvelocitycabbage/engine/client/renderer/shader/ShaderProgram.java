@@ -8,9 +8,7 @@ import com.terminalvelocitycabbage.engine.client.renderer.model.Material;
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
 import com.terminalvelocitycabbage.engine.debug.Log;
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
+import org.joml.*;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.FloatBuffer;
@@ -127,6 +125,11 @@ public class ShaderProgram {
 		glUniform1f(uniforms.get(name), value);
 	}
 
+	public void setUniform(String name, Vector2f value) {
+		test();
+		glUniform2f(uniforms.get(name), value.x, value.y);
+	}
+
 	public void setUniform(String name, Vector3f value) {
 		test();
 		glUniform3f(uniforms.get(name), value.x, value.y, value.z);
@@ -135,6 +138,15 @@ public class ShaderProgram {
 	public void setUniform(String name, Vector4f value) {
 		test();
 		glUniform4f(uniforms.get(name), value.x, value.y, value.z, value.w);
+	}
+
+	public void setUniform(String name, Matrix3f value) {
+		test();
+		try (MemoryStack stack = MemoryStack.stackPush()) {
+			FloatBuffer fb = stack.mallocFloat(9);
+			value.get(fb);
+			glUniformMatrix3fv(uniforms.get(name), false, fb);
+		}
 	}
 
 	public void setUniform(String name, Matrix4f value) {
