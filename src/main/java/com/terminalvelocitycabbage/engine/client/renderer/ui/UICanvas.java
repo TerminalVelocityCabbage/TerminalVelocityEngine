@@ -34,10 +34,10 @@ public class UICanvas extends UIRenderableElement {
 	@Override
 	public void update() {
 		if (needsUpdate) {
-			rectangle.vertices[0].setXYZ(-1 + marginLeft, 1 - marginTop, zIndex);
-			rectangle.vertices[1].setXYZ(-1 + marginLeft, -1 + marginBottom, zIndex);
-			rectangle.vertices[2].setXYZ(1 - marginRight, -1 + marginBottom, zIndex);
-			rectangle.vertices[3].setXYZ(1 - marginRight, 1 - marginTop, zIndex);
+			rectangle.vertices[0].setXYZ(-1 + marginLeft - (style.borderThickness / window.width()), 1 - marginTop + (style.borderThickness / window.height()), zIndex);
+			rectangle.vertices[1].setXYZ(-1 + marginLeft - (style.borderThickness / window.width()), -1 + marginBottom - (style.borderThickness / window.height()), zIndex);
+			rectangle.vertices[2].setXYZ(1 - marginRight + (style.borderThickness / window.width()), -1 + marginBottom - (style.borderThickness / window.height()), zIndex);
+			rectangle.vertices[3].setXYZ(1 - marginRight + (style.borderThickness / window.width()), 1 - marginTop + (style.borderThickness / window.height()), zIndex);
 			rectangle.update(translationMatrix.identity());
 			this.needsUpdate = false;
 		}
