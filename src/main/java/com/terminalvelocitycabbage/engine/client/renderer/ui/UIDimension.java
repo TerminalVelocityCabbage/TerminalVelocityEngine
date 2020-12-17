@@ -10,6 +10,15 @@ public class UIDimension {
 		this.unit = unit;
 	}
 
+	public int getPixelValue(int screenDimension) {
+		if (unit.equals(Unit.PIXELS)) {
+			return value;
+		} else if (unit.equals(Unit.PERCENT)) {
+			return value * screenDimension;
+		}
+		throw new RuntimeException("Unknown unit for UIDimension");
+	}
+
 	public float getUnitizedValue(int screenDimension) {
 		if (unit.equals(Unit.PERCENT)) {
 			return value / 50f;

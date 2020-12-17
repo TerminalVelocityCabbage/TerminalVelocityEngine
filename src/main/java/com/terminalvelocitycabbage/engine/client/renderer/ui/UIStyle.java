@@ -7,87 +7,90 @@ public class UIStyle {
 	Vector4f backgroundColor;
 	Vector4f borderColor;
 	int borderRadius;
-	float borderThickness;
+	int borderThickness;
+	Margin margin;
 
-	private UIStyle(Vector4f backgroundColor, Vector4f borderColor, int borderRadius, float borderThickness) {
-		this.backgroundColor = backgroundColor;
-		this.borderColor = borderColor;
-		this.borderRadius = borderRadius;
-		this.borderThickness = borderThickness;
+	public UIStyle() {
+		this.backgroundColor = new Vector4f(1);
+		this.borderColor = new Vector4f(0);
+		this.borderRadius = 0;
+		this.borderThickness = 0;
+		this.margin = new Margin();
 	}
 
 	public Vector4f getBackgroundColor() {
 		return backgroundColor;
 	}
 
-	public void setBackgroundColor(float r, float g, float b, float a) {
+	public UIStyle setBackgroundColor(float r, float g, float b, float a) {
 		this.backgroundColor.set(r, g, b, a);
+		return this;
 	}
 
 	public Vector4f getBorderColor() {
 		return borderColor;
 	}
 
-	public void setBorderColor(float r, float g, float b, float a) {
+	public UIStyle setBorderColor(float r, float g, float b, float a) {
 		this.borderColor.set(r, g, b, a);
+		return this;
 	}
 
 	public int getBorderRadius() {
 		return borderRadius;
 	}
 
-	public void setBorderRadius(int borderRadius) {
+	public UIStyle setBorderRadius(int borderRadius) {
 		this.borderRadius = borderRadius;
+		return this;
 	}
 
-	public float getBorderThickness() {
+	public int getBorderThickness() {
 		return borderThickness;
 	}
 
-	public void setBorderThickness(float borderThickness) {
+	public UIStyle setBorderThickness(int borderThickness) {
 		this.borderThickness = borderThickness;
+		return this;
 	}
 
-	public static Builder builder() {
-		return new Builder();
+	public UIStyle setMargins(int left, int right, int top, int bottom) {
+		this.margin.left.value = left;
+		this.margin.right.value = right;
+		this.margin.top.value = top;
+		this.margin.bottom.value = bottom;
+		return this;
 	}
 
-	public static class Builder {
+	public UIStyle setMarginUnits(UIDimension.Unit left, UIDimension.Unit right, UIDimension.Unit top, UIDimension.Unit bottom) {
+		this.margin.left.unit = left;
+		this.margin.right.unit = right;
+		this.margin.top.unit = top;
+		this.margin.bottom.unit = bottom;
+		return this;
+	}
 
-		Vector4f backgroundColor;
-		Vector4f borderColor;
-		int borderRadius;
-		float borderThickness;
+	public UIStyle marginLeft(int value, UIDimension.Unit unit) {
+		this.margin.left.value = value;
+		this.margin.left.unit = unit;
+		return this;
+	}
 
-		public Builder() {
-			this.backgroundColor = new Vector4f(1);
-			this.borderColor = new Vector4f(0);
-			this.borderRadius = 0;
-			this.borderThickness = 0f;
-		}
+	public UIStyle marginRight(int value, UIDimension.Unit unit) {
+		this.margin.right.value = value;
+		this.margin.right.unit = unit;
+		return this;
+	}
 
-		public Builder backgroundColor(float r, float g, float b, float opacity) {
-			this.backgroundColor.set(r, g, b, opacity);
-			return this;
-		}
+	public UIStyle marginTop(int value, UIDimension.Unit unit) {
+		this.margin.top.value = value;
+		this.margin.top.unit = unit;
+		return this;
+	}
 
-		public Builder borderColor(float r, float g, float b, float opacity) {
-			this.borderColor.set(r, g, b, opacity);
-			return this;
-		}
-
-		public Builder borderRadius(int radius) {
-			this.borderRadius = radius;
-			return this;
-		}
-
-		public Builder borderThickness(float borderThickness) {
-			this.borderThickness = borderThickness;
-			return this;
-		}
-
-		public UIStyle build() {
-			return new UIStyle(backgroundColor, borderColor, borderRadius, borderThickness);
-		}
+	public UIStyle marginBottom(int value, UIDimension.Unit unit) {
+		this.margin.bottom.value = value;
+		this.margin.bottom.unit = unit;
+		return this;
 	}
 }
