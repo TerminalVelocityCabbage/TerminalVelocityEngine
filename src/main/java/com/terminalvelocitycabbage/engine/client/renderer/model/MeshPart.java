@@ -52,18 +52,17 @@ public class MeshPart {
         //Update the vertex positions
         Vector4f positions = new Vector4f();
         Vector4f normals = new Vector4f();
-        ModelVertex currentVertex;
         float[] currentXYZ;
         float[] currentNormal;
-        for (int i = 0; i < vertices.length; i++) {
-            currentVertex = vertices[i];
+        buffer.position(this.vertexOffset * ModelVertex.ELEMENT_COUNT);
+        for (ModelVertex currentVertex : vertices) {
             currentXYZ = currentVertex.getXYZ();
             positions.set(currentXYZ[0], currentXYZ[1], currentXYZ[2], 1f).mul(translationMatrix);
             currentNormal = currentVertex.getNormals();
             normals.set(currentNormal[0], currentNormal[1], currentNormal[2], 1f).rotate(translationMatrix.getUnnormalizedRotation(new Quaternionf()));
 
             // Put the new data in a ByteBuffer (in the view of a FloatBuffer)
-            buffer.put((this.vertexOffset + i) * ModelVertex.ELEMENT_COUNT, ModelVertex.getElements(positions.x, positions.y, positions.z, currentVertex.getUV(), normals.x, normals.y, normals.z));
+            buffer.put(ModelVertex.getElements(positions.x, positions.y, positions.z, currentVertex.getUV(), normals.x, normals.y, normals.z));
         }
     }
 
