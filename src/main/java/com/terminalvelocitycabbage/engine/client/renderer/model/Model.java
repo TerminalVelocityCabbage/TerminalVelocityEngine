@@ -165,8 +165,9 @@ public class Model {
 		private int vertexCount;
 
 		public int getVertexIndex(int count) {
+			int ret = this.vertexCount;
 			this.vertexCount += count;
-			return this.vertexCount;
+			return ret;
 		}
 	}
 }
