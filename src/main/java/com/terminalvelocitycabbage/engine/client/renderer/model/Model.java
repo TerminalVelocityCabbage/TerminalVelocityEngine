@@ -17,12 +17,13 @@ public class Model {
 
 	public List<Part> modelParts;
 	private Material material;
-	public ModelMesh mesh = new ModelMesh();
+	public ModelMesh mesh;
 	//To avoid creating a new one every part render call
 	Matrix4f transformationMatrix;
 
 	public Model(List<Model.Part> modelParts) {
 		this.modelParts = modelParts;
+		this.mesh = new ModelMesh();
 		this.transformationMatrix = new Matrix4f();
 	}
 
@@ -45,7 +46,6 @@ public class Model {
 		}
 
 		this.mesh.updateVertexIndexData();
-
 	}
 
 	public void update(Vector3f position, Quaternionf rotation, Vector3f scale) {
@@ -61,12 +61,6 @@ public class Model {
 		for (Model.Part part : modelParts) {
 			part.updateMeshes(new Matrix4f(transformationMatrix), this.mesh.vertexBuffer);
 		}
-
-//		float[] arr = new float[this.mesh.vertexBuffer.capacity()];
-//		this.mesh.vertexBuffer.rewind();
-//		this.mesh.vertexBuffer.get(arr);
-//		System.out.println(Arrays.toString(arr));
-//		this.mesh.vertexBuffer.rewind();
 
 		this.mesh.updateVertexData();
 	}
@@ -168,9 +162,8 @@ public class Model {
 		private int vertexCount;
 
 		public int getVertexIndex(int count) {
-			int ret = this.vertexCount;
 			this.vertexCount += count;
-			return ret;
+			return this.vertexCount;
 		}
 	}
 }
