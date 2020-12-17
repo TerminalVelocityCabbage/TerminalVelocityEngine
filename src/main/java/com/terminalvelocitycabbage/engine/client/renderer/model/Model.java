@@ -137,8 +137,9 @@ public class Model {
 		}
 	}
 
-	public void setMaterial(Material material) {
+	public Model setMaterial(Material material) {
 		this.material = material;
+		return this;
 	}
 
 	public Material getMaterial() {

@@ -32,6 +32,10 @@ public class UIStyle {
 		return borderThickness;
 	}
 
+	public static Builder builder() {
+		return new Builder();
+	}
+
 	public static class Builder {
 
 		Vector4f backgroundColor;
