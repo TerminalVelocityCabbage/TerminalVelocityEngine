@@ -116,11 +116,14 @@ public class Window {
 		glfwDestroyWindow(windowID);
 	}
 
+	public void setvSync(boolean vSync) {
+		this.vSync = vSync;
+		glfwSwapInterval(this.vSync ? 1 : 0);
+	}
+
 	public void show() {
 		glfwMakeContextCurrent(windowID);
-		if (vSync) {
-			glfwSwapInterval(1);
-		}
+		setvSync(vSync);
 		glfwShowWindow(windowID);
 	}
 
