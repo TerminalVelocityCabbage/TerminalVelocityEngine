@@ -108,7 +108,7 @@ public class ModelMesh {
 		glBufferData(GL_ARRAY_BUFFER, vertexBuffer, GL_STATIC_DRAW);
 	}
 
-	public void updateVertexIndexData() {
+	public void updateIndexData() {
 		indexBuffer.position(indexCount);
 		indexBuffer.flip();
 

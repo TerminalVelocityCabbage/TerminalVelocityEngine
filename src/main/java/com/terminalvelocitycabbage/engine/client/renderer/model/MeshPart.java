@@ -5,6 +5,7 @@ import org.joml.Quaternionf;
 import org.joml.Vector4f;
 
 import java.nio.FloatBuffer;
+import java.nio.ShortBuffer;
 
 public class MeshPart {
 
@@ -26,14 +27,24 @@ public class MeshPart {
         return this.vertexOrder.length;
     }
 
-    public void allocate(ModelMesh mesh, Model.VertexCounter counter) {
+    /**
+     * Allocates this part in the mesh. Sets {@link #vertexOffset} to be the next vertex index.
+     * @param indexBuffer The index buffer to add to.
+     * @param counter The vertex counter.
+     */
+    public void allocate(ShortBuffer indexBuffer, Model.VertexCounter counter) {
         short vertexOffset = (short) counter.getVertexIndex(this.verticesCount());
         this.vertexOffset = vertexOffset;
         for (short s : this.vertexOrder) {
-            mesh.indexBuffer.put((short) (vertexOffset + s));
+            indexBuffer.put((short) (vertexOffset + s));
         }
     }
 
+    /**
+     * Updates the floatbuffer with this objects vertices. Uses {@link #vertexOffset}
+     * @param translationMatrix The current translation matrix
+     * @param buffer the buffer to update into.
+     */
     public void update(Matrix4f translationMatrix, FloatBuffer buffer) {
         if(this.vertexOffset == -1) {
             throw new IllegalStateException("Vertex not allocated");

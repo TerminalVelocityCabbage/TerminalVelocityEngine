@@ -5,6 +5,7 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import java.nio.FloatBuffer;
+import java.nio.ShortBuffer;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,6 +27,9 @@ public class Model {
 		this.transformationMatrix = new Matrix4f();
 	}
 
+	/**
+	 * To be called whenever `modelParts` changes.
+	 */
 	public void resizeBuffer() {
 		int vertexCount = 0;
 		for (Part part : this.modelParts) {
@@ -41,10 +45,10 @@ public class Model {
 
 		VertexCounter counter = new VertexCounter();
 		for (Part part : this.modelParts) {
-			part.allocateMesh(this.mesh, counter);
+			part.allocateMesh(this.mesh.indexBuffer, counter);
 		}
 
-		this.mesh.updateVertexIndexData();
+		this.mesh.updateIndexData();
 
 	}
 
@@ -140,11 +144,11 @@ public class Model {
 			return vertexCount;
 		}
 
-		public void allocateMesh(ModelMesh mesh, VertexCounter counter) {
+		public void allocateMesh(ShortBuffer indexBuffer, VertexCounter counter) {
 			for (Part child : this.children) {
-				child.allocateMesh(mesh, counter);
+				child.allocateMesh(indexBuffer, counter);
 			}
-			this.meshPart.allocate(mesh, counter);
+			this.meshPart.allocate(indexBuffer, counter);
 		}
 	}
 
