@@ -2,19 +2,23 @@ package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
 import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
 import com.terminalvelocitycabbage.engine.client.renderer.shapes.Rectangle;
+import com.terminalvelocitycabbage.engine.events.HandleEvent;
+import com.terminalvelocitycabbage.engine.events.client.WindowResizeEvent;
 import org.joml.Matrix4f;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.terminalvelocitycabbage.engine.client.renderer.ui.UIDimension.Unit.PIXELS;
+
 public class UICanvas extends UIRenderableElement {
 
 	Window window;
 	public UIStyle style;
-	float marginLeft;
-	float marginRight;
-	float marginTop;
-	float marginBottom;
+	UIDimension marginLeft;
+	UIDimension marginRight;
+	UIDimension marginTop;
+	UIDimension marginBottom;
 	List<UIContainer> containers;
 	Matrix4f translationMatrix;
 
@@ -22,7 +26,10 @@ public class UICanvas extends UIRenderableElement {
 		super();
 		this.window = window;
 		this.style = UIStyle.builder().build();
-		this.setMargins(0, 0, 0, 0);
+		marginLeft = new UIDimension(0, PIXELS);
+		marginRight = new UIDimension(0, PIXELS);
+		marginTop = new UIDimension(0, PIXELS);
+		marginBottom = new UIDimension(0, PIXELS);
 		this.containers = new ArrayList<>();
 		this.translationMatrix = new Matrix4f();
 	}
@@ -31,13 +38,18 @@ public class UICanvas extends UIRenderableElement {
 		return rectangle;
 	}
 
+	@HandleEvent(WindowResizeEvent.EVENT)
+	public void onWindowResize(WindowResizeEvent event) {
+		this.needsUpdate = true;
+	}
+
 	@Override
 	public void update() {
 		if (needsUpdate) {
-			rectangle.vertices[0].setXYZ(-1 + marginLeft - (style.borderThickness / window.width()), 1 - marginTop + (style.borderThickness / window.height()), zIndex);
-			rectangle.vertices[1].setXYZ(-1 + marginLeft - (style.borderThickness / window.width()), -1 + marginBottom - (style.borderThickness / window.height()), zIndex);
-			rectangle.vertices[2].setXYZ(1 - marginRight + (style.borderThickness / window.width()), -1 + marginBottom - (style.borderThickness / window.height()), zIndex);
-			rectangle.vertices[3].setXYZ(1 - marginRight + (style.borderThickness / window.width()), 1 - marginTop + (style.borderThickness / window.height()), zIndex);
+			rectangle.vertices[0].setXYZ(-1 + marginLeft.getUnitizedValue(window.width()) - (style.borderThickness / window.width()), 1 - marginTop.getUnitizedValue(window.height()) + (style.borderThickness / window.height()), zIndex);
+			rectangle.vertices[1].setXYZ(-1 + marginLeft.getUnitizedValue(window.width()) - (style.borderThickness / window.width()), -1 + marginBottom.getUnitizedValue(window.height()) - (style.borderThickness / window.height()), zIndex);
+			rectangle.vertices[2].setXYZ(1 - marginRight.getUnitizedValue(window.width()) + (style.borderThickness / window.width()), -1 + marginBottom.getUnitizedValue(window.height()) - (style.borderThickness / window.height()), zIndex);
+			rectangle.vertices[3].setXYZ(1 - marginRight.getUnitizedValue(window.width()) + (style.borderThickness / window.width()), 1 - marginTop.getUnitizedValue(window.height()) + (style.borderThickness / window.height()), zIndex);
 			rectangle.update(translationMatrix.identity());
 			this.needsUpdate = false;
 		}
@@ -51,47 +63,58 @@ public class UICanvas extends UIRenderableElement {
 		return style;
 	}
 
-	public void setColor(float r, float g, float b, float opacity) {
-		this.style.backgroundColor.set(r, g, b, opacity);
-	}
-
-	public void setMarginLeft(float marginLeft) {
-		this.marginLeft = marginLeft;
-	}
-
-	public void setMarginRight(float marginRight) {
-		this.marginRight = marginRight;
-	}
-
-	public void setMarginTop(float marginTop) {
-		this.marginTop = marginTop;
-	}
-
-	public void setMarginBottom(float marginBottom) {
-		this.marginBottom = marginBottom;
-	}
-
-	public float getMarginLeft() {
+	public UIDimension getMarginLeft() {
 		return marginLeft;
 	}
 
-	public float getMarginRight() {
+	public void setMarginLeft(UIDimension marginLeft) {
+		this.marginLeft = marginLeft;
+	}
+
+	public UIDimension getMarginRight() {
 		return marginRight;
 	}
 
-	public float getMarginTop() {
+	public void setMarginRight(UIDimension marginRight) {
+		this.marginRight = marginRight;
+	}
+
+	public UIDimension getMarginTop() {
 		return marginTop;
 	}
 
-	public float getMarginBottom() {
+	public void setMarginTop(UIDimension marginTop) {
+		this.marginTop = marginTop;
+	}
+
+	public UIDimension getMarginBottom() {
 		return marginBottom;
 	}
 
-	public void setMargins(float left, float right, float top, float bottom) {
-		this.marginLeft = left;
-		this.marginRight = right;
-		this.marginTop = top;
-		this.marginBottom = bottom;
+	public void setMarginBottom(UIDimension marginBottom) {
+		this.marginBottom = marginBottom;
+	}
+
+	public void setMarginUnit(UIDimension.Unit unit) {
+		setMarginUnits(unit, unit, unit, unit);
+	}
+
+	public void setMarginUnits(UIDimension.Unit left, UIDimension.Unit right, UIDimension.Unit top, UIDimension.Unit bottom) {
+		this.marginLeft.unit = left;
+		this.marginRight.unit = right;
+		this.marginTop.unit = top;
+		this.marginBottom.unit = bottom;
+	}
+
+	public void setMargins(int value) {
+		setMargins(value, value, value, value);
+	}
+
+	public void setMargins(int left, int right, int top, int bottom) {
+		this.marginLeft.value = left;
+		this.marginRight.value = right;
+		this.marginTop.value = top;
+		this.marginBottom.value = bottom;
 	}
 
 	public List<UIContainer> getContainers() {

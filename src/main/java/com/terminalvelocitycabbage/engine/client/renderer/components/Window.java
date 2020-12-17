@@ -1,7 +1,9 @@
 package com.terminalvelocitycabbage.engine.client.renderer.components;
 
+import com.terminalvelocitycabbage.engine.client.ClientBase;
 import com.terminalvelocitycabbage.engine.client.input.InputHandler;
 import com.terminalvelocitycabbage.engine.debug.Log;
+import com.terminalvelocitycabbage.engine.events.client.WindowResizeEvent;
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
@@ -109,6 +111,7 @@ public class Window {
 		this.windowWidth = w;
 		this.windowHeight = h;
 		isResized = true;
+		ClientBase.instance.dispatchEvent(new WindowResizeEvent(WindowResizeEvent.EVENT));
 	}
 
 	public void destroy() {

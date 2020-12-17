@@ -14,6 +14,7 @@ public abstract class ClientBase extends EventDispatcher {
 	String id;
 	Client client;
 	boolean shouldDisconnect;
+	public static ClientBase instance;
 
 	public ClientBase() {}
 

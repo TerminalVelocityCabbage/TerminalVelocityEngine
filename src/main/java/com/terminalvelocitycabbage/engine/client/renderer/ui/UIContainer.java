@@ -1,6 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
-public class UIContainer {
+public class UIContainer extends UIRenderableElement {
 
 	public float width;
 	public float height;
@@ -28,5 +28,10 @@ public class UIContainer {
 
 	public UIStyle getStyle() {
 		return style;
+	}
+
+	@Override
+	public void update() {
+
 	}
 }
