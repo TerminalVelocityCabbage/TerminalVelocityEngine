@@ -20,11 +20,12 @@ public abstract class Renderer {
 	protected static Camera camera;
 	protected Matrix4f viewMatrix = new Matrix4f();
 	private static float[] frameTimes = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0,};
-	private static long startFrameTime = 0;
 	private static long endFrameTime = 0;
+	private static long previousFrameTime = 0;
+	private static long deltaTime = 0;
 
 	public Renderer(int width, int height, String title, InputHandler inputHandler) {
-		window = new Window(width, height, title, true, inputHandler, true, true);
+		window = new Window(width, height, title, false, inputHandler, true, true);
 	}
 
 	public void run() {
@@ -63,7 +64,7 @@ public abstract class Renderer {
 
 	private void start() {
 		while (!glfwWindowShouldClose(getWindow().getID())) {
-			startFrameTime = System.nanoTime();
+			previousFrameTime = endFrameTime;
 			loop();
 			endFrameTime = System.nanoTime();
 			calcFrameTime();
@@ -71,12 +72,9 @@ public abstract class Renderer {
 	}
 
 	private void calcFrameTime() {
-		long deltaTime = endFrameTime - startFrameTime;
-		float timeMillis = TimeUnit.MILLISECONDS.convert(deltaTime, TimeUnit.NANOSECONDS);
-		for (int i = 0; i < frameTimes.length - 1; i++) {
-			frameTimes[i] = frameTimes[i + 1];
-		}
-		frameTimes[frameTimes.length - 1] = timeMillis;
+		deltaTime = endFrameTime - previousFrameTime;
+		if (frameTimes.length - 1 >= 0) System.arraycopy(frameTimes, 1, frameTimes, 0, frameTimes.length - 1);
+		frameTimes[frameTimes.length - 1] = TimeUnit.MILLISECONDS.convert(deltaTime, TimeUnit.NANOSECONDS);
 	}
 
 	public float getFrameTimeAverageMillis() {
@@ -89,6 +87,11 @@ public abstract class Renderer {
 
 	public float getFramerate() {
 		return 1 / getFrameTimeAverageMillis() * 1000;
+	}
+
+	//TODO animation smoothness (don't hard code in 20)
+	public float getAnimationDeltaTime() {
+		return deltaTime / 1e9f * 20;
 	}
 
 	public void destroy() {

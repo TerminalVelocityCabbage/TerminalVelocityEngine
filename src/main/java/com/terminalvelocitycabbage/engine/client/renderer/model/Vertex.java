@@ -22,12 +22,17 @@ public class Vertex {
 	public static final int STRIDE = POSITION_BYTES;
 
 	public Vertex setXYZ(float x, float y, float z) {
-		this.xyz = new float[] {x, y, z};
+		xyz[0] = x;
+		xyz[1] = y;
+		xyz[2] = z;
 		return this;
 	}
 
 	public Vertex addXYZ(float x, float y, float z) {
-		return setXYZ(xyz[0] + x, xyz[1] + y, xyz[2] + z);
+		xyz[0] += x;
+		xyz[1] += y;
+		xyz[2] += z;
+		return this;
 	}
 
 	public float[] getXYZ() {
