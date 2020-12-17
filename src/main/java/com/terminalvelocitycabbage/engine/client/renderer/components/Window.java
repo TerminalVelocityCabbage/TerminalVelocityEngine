@@ -153,4 +153,9 @@ public class Window {
 		orthoProjectionMatrix.setOrtho2D(0, windowWidth, windowHeight, 0);
 		return orthoProjectionMatrix;
 	}
+
+	public void setTitle(String title) {
+		this.title = title;
+		glfwSetWindowTitle(windowID, title);
+	}
 }

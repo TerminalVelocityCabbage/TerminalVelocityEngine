@@ -21,8 +21,10 @@ public class Model {
 
 	public Model(List<Model.Part> modelParts) {
 		this.modelParts = modelParts;
-		for (Part part : modelParts) {
-			part.setModel(this);
+		if (modelParts != null) {
+			for (Part part : modelParts) {
+				part.setModel(this);
+			}
 		}
 		this.transformationMatrix = new Matrix4f();
 	}
@@ -33,9 +35,8 @@ public class Model {
 			rotateY((float)Math.toRadians(-rotation.y)).
 			rotateZ((float)Math.toRadians(-rotation.z)).
 			scale(scale);
-		var mat = new Matrix4f(transformationMatrix);
 		for (Model.Part part : modelParts) {
-			part.updateTransforms(mat);
+			part.updateTransforms(new Matrix4f(transformationMatrix));
 		}
 	}
 
@@ -58,7 +59,6 @@ public class Model {
 	}
 
 	public static class Part {
-
 		private Model model;
 
 		public ModelMesh mesh;
@@ -115,9 +115,9 @@ public class Model {
 		public void updateTransforms(Matrix4f transformationMatrix) {
 			transformationMatrix
 				.translate(position)
-				.rotateX((float) Math.toRadians(rotation.x))
-				.rotateY((float) Math.toRadians(rotation.y))
-				.rotateZ((float) Math.toRadians(rotation.z));
+				.rotateX(rotation.x)
+				.rotateY(rotation.y)
+				.rotateZ(rotation.z);
 			var mat = new Matrix4f();
 			for (Model.Part child : children) {
 				child.updateTransforms(mat.set(transformationMatrix));
@@ -128,12 +128,13 @@ public class Model {
 			mesh.update(transformationMatrix);
 		}
 
-		public void setModel(Model model) {
+		public Model.Part setModel(Model model) {
 			this.model = model;
 			this.mesh.model = model;
 			for (Part part : children) {
 				part.setModel(this.model);
 			}
+			return this;
 		}
 	}
 
