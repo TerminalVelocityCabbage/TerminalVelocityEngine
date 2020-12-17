@@ -35,7 +35,6 @@ public class ModelMesh {
 	public void createBuffers(int vertexCount, int indexCount) {
 		this.vertexBuffer = BufferUtils.createFloatBuffer(vertexCount * ModelVertex.ELEMENT_COUNT);
 		this.indexBuffer = BufferUtils.createShortBuffer(indexCount);
-
 		this.indexCount = indexCount;
 		this.vertexCount = vertexCount;
 	}
@@ -48,7 +47,6 @@ public class ModelMesh {
 		//Create the VBO and bind it
 		vboID = glGenBuffers();
 		glBindBuffer(GL_ARRAY_BUFFER, vboID);
-//		glBufferData(GL_ARRAY_BUFFER, vertexBuffer, GL_STATIC_DRAW);
 
 		//Define vertex data for shader
 		glVertexAttribPointer(0, POSITION_ELEMENT_COUNT, GL11.GL_FLOAT, false, STRIDE, POSITION_OFFSET);
@@ -57,8 +55,6 @@ public class ModelMesh {
 
 		//Create EBO for connected tris
 		eboID = glGenBuffers();
-//		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
-//		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexBuffer, GL_STATIC_DRAW);
 	}
 
 	public void render() {
@@ -87,17 +83,14 @@ public class ModelMesh {
 	}
 
 	public void destroy() {
+
 		glDeleteBuffers(vboID);
 		glDeleteBuffers(eboID);
 		glDeleteVertexArrays(vaoID);
+
 		if (material.hasTexture()) {
 			material.getTexture().destroy();
 		}
-		/*
-		if (model.getMaterial().hasReflectivityTexture()) {
-			model.getMaterial().getReflectivityTexture().destroy();
-		}
-		 */
 	}
 
 	public void updateVertexData() {
