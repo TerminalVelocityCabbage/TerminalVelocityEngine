@@ -2,6 +2,7 @@ package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
 import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
 import com.terminalvelocitycabbage.engine.client.renderer.shapes.Rectangle;
+import org.joml.Matrix4f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ public class UICanvas extends UIRenderableElement {
 	float marginTop;
 	float marginBottom;
 	List<UIContainer> containers;
+	Matrix4f translationMatrix;
 
 	public UICanvas(Window window) {
 		super();
@@ -22,6 +24,7 @@ public class UICanvas extends UIRenderableElement {
 		this.style = UIStyle.builder().build();
 		this.setMargins(0, 0, 0, 0);
 		this.containers = new ArrayList<>();
+		this.translationMatrix = new Matrix4f();
 	}
 
 	public Rectangle getRectangle() {
@@ -35,6 +38,7 @@ public class UICanvas extends UIRenderableElement {
 			rectangle.vertices[1].setXYZ(-1 + marginLeft, -1 + marginBottom, zIndex);
 			rectangle.vertices[2].setXYZ(1 - marginRight, -1 + marginBottom, zIndex);
 			rectangle.vertices[3].setXYZ(1 - marginRight, 1 - marginTop, zIndex);
+			rectangle.update(translationMatrix.identity());
 			this.needsUpdate = false;
 		}
 	}
