@@ -56,17 +56,10 @@ public class Model {
 			scale(scale);
 
 		this.mesh.vertexBuffer.rewind();
-		this.mesh.vertexBuffer.limit(this.mesh.vertexBuffer.capacity());
 
 		for (Model.Part part : modelParts) {
 			part.updateMeshes(new Matrix4f(transformationMatrix), this.mesh.vertexBuffer);
 		}
-
-//		float[] arr = new float[this.mesh.vertexBuffer.capacity()];
-//		this.mesh.vertexBuffer.rewind();
-//		this.mesh.vertexBuffer.get(arr);
-//		System.out.println(Arrays.toString(arr));
-//		this.mesh.vertexBuffer.rewind();
 
 		this.mesh.updateVertexData();
 	}

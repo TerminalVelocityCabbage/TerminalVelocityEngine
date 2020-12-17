@@ -20,6 +20,7 @@ public class ModelMesh {
 	private int eboID;
 
 	private int indexCount;
+	private int vertexCount;
 
 	protected FloatBuffer vertexBuffer;
 	protected ShortBuffer indexBuffer;
@@ -36,6 +37,7 @@ public class ModelMesh {
 		this.indexBuffer = BufferUtils.createShortBuffer(indexCount);
 
 		this.indexCount = indexCount;
+		this.vertexCount = vertexCount;
 	}
 
 	public void bind() {
@@ -99,6 +101,7 @@ public class ModelMesh {
 	}
 
 	public void updateVertexData() {
+		vertexBuffer.position(vertexCount * ModelVertex.ELEMENT_COUNT);
 		vertexBuffer.flip();
 
 		glBindBuffer(GL_ARRAY_BUFFER, vboID);
@@ -106,6 +109,7 @@ public class ModelMesh {
 	}
 
 	public void updateVertexIndexData() {
+		indexBuffer.position(indexCount);
 		indexBuffer.flip();
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
