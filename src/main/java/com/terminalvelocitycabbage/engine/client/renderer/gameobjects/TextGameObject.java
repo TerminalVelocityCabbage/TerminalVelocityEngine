@@ -1,6 +1,7 @@
 package com.terminalvelocitycabbage.engine.client.renderer.gameobjects;
 
 import com.terminalvelocitycabbage.engine.client.renderer.font.FontTexture;
+import com.terminalvelocitycabbage.engine.client.renderer.model.MeshPart;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
 import com.terminalvelocitycabbage.engine.client.renderer.model.ModelMesh;
 import com.terminalvelocitycabbage.engine.client.renderer.model.ModelVertex;
@@ -39,8 +40,6 @@ public class TextGameObject extends EmptyGameObject {
 			characterModelParts.add(part);
 			//Update the next character's offset
 			previousWidth = fontTexture.getCharInfo(character).getWidth();
-			//Make sure the model part knows of it's parent
-			part.setModel(model);
 		}
 
 		if (createNew) {
@@ -54,7 +53,7 @@ public class TextGameObject extends EmptyGameObject {
 		}
 	}
 
-	private ModelMesh buildCharacterMesh(char character) {
+	private MeshPart buildCharacterMesh(char character) {
 
 		FontTexture.CharInfo charInfo = fontTexture.getCharInfo(character);
 
@@ -79,7 +78,7 @@ public class TextGameObject extends EmptyGameObject {
 				.setNormal(0, 1, 0)
 				.setUv((float) (charInfo.getStartX() + charInfo.getWidth()) / (float) fontTexture.getWidth(), 0);
 
-		return new TexturedRectangle(topLeft, bottomLeft, bottomRight, topRight);
+		return TexturedRectangle.createTexturedRectangle(topLeft, bottomLeft, bottomRight, topRight);
 	}
 
 	public String getText() {
