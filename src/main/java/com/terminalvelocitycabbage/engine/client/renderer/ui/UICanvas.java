@@ -1,6 +1,7 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
 import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
+import com.terminalvelocitycabbage.engine.client.renderer.shapes.Rectangle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,16 +24,17 @@ public class UICanvas extends UIRenderableElement {
 		this.containers = new ArrayList<>();
 	}
 
+	public Rectangle getRectangle() {
+		return rectangle;
+	}
+
 	@Override
 	public void update() {
 		if (needsUpdate) {
-			this.rectangle.modelParts.forEach(part -> {
-				part.mesh.getVertex(0).setXYZ(-1 + marginLeft, 1 - marginTop, zIndex);
-				part.mesh.getVertex(1).setXYZ(-1 + marginLeft, -1 + marginBottom, zIndex);
-				part.mesh.getVertex(2).setXYZ(1 - marginRight, -1 + marginBottom, zIndex);
-				part.mesh.getVertex(3).setXYZ(1 - marginRight, 1 - marginTop, zIndex);
-			});
-			this.rectangle.material.setColor(style.getBackgroundColor().x, style.getBackgroundColor().y, style.getBackgroundColor().z, style.getBackgroundColor().w);
+			rectangle.vertices[0].setXYZ(-1 + marginLeft, 1 - marginTop, zIndex);
+			rectangle.vertices[1].setXYZ(-1 + marginLeft, -1 + marginBottom, zIndex);
+			rectangle.vertices[2].setXYZ(1 - marginRight, -1 + marginBottom, zIndex);
+			rectangle.vertices[3].setXYZ(1 - marginRight, 1 - marginTop, zIndex);
 			this.needsUpdate = false;
 		}
 	}
