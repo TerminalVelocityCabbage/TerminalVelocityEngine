@@ -15,9 +15,8 @@ public class UICanvas extends UIRenderableElement {
 	List<UIContainer> containers;
 
 	public UICanvas(Window window) {
-		super();
+		super(new UIStyle());
 		this.window = window;
-		this.style = new UIStyle();
 		this.containers = new ArrayList<>();
 		ClientBase.instance.addEventHandler(this);
 	}

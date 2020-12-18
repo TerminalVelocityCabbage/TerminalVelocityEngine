@@ -4,26 +4,26 @@ import org.joml.Vector4f;
 
 public class UIStyle {
 
-	Vector4f backgroundColor;
+	Vector4f color;
 	Vector4f borderColor;
 	int borderRadius;
 	int borderThickness;
 	Margin margin;
 
 	public UIStyle() {
-		this.backgroundColor = new Vector4f(1);
+		this.color = new Vector4f(1);
 		this.borderColor = new Vector4f(0);
 		this.borderRadius = 0;
 		this.borderThickness = 0;
 		this.margin = new Margin();
 	}
 
-	public Vector4f getBackgroundColor() {
-		return backgroundColor;
+	public Vector4f getColor() {
+		return color;
 	}
 
-	public UIStyle setBackgroundColor(float r, float g, float b, float a) {
-		this.backgroundColor.set(r, g, b, a);
+	public UIStyle setColor(float r, float g, float b, float a) {
+		this.color.set(r, g, b, a);
 		return this;
 	}
 

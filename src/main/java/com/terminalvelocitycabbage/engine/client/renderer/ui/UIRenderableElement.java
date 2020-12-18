@@ -14,10 +14,10 @@ public abstract class UIRenderableElement {
 	int height;
 	Matrix4f translationMatrix;
 
-	public UIRenderableElement() {
+	public UIRenderableElement(UIStyle style) {
 		this.needsUpdate = false;
 		this.rectangle = new Rectangle(new Vertex().setXYZ(0, 0, 0), new Vertex().setXYZ(0, 0, 0), new Vertex().setXYZ(0, 0, 0), new Vertex().setXYZ(0, 0, 0));
-		this.style = new UIStyle();
+		this.style = style;
 		this.zIndex = 0;
 		this.width = 0;
 		this.height = 0;

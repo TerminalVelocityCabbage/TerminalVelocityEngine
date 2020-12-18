@@ -1,23 +1,17 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
-import com.terminalvelocitycabbage.engine.debug.Log;
-
-import java.util.Arrays;
-
 public class UIContainer extends UIRenderableElement {
 
 	public UIDimension width;
 	public UIDimension height;
 	public UIAnchor anchorPoint;
-	public UIStyle style;
 	public UIRenderableElement parent;
 
 	public UIContainer(UIDimension width, UIDimension height, UIAnchor anchorPoint, UIStyle style) {
-		super();
+		super(style);
 		this.width = width;
 		this.height = height;
 		this.anchorPoint = anchorPoint;
-		this.style = style;
 	}
 
 	public UICanvas getCanvas() {
@@ -32,10 +26,6 @@ public class UIContainer extends UIRenderableElement {
 		this.parent = canvas;
 	}
 
-	public UIAnchor getAnchorPoint() {
-		return anchorPoint;
-	}
-
 	public UIStyle getStyle() {
 		return style;
 	}
@@ -43,10 +33,6 @@ public class UIContainer extends UIRenderableElement {
 	@Override
 	public void update() {
 		if (needsUpdate) {
-
-			//Get parent's pixel dimensions
-			int containerWidth = parent.getWidth();
-			int containerHeight = parent.getHeight();
 
 			//Get boundaries of parent
 			float originXMin = parent.rectangle.vertices[0].getX();
@@ -58,48 +44,55 @@ public class UIContainer extends UIRenderableElement {
 			int windowWidth = getCanvas().window.width();
 			int windowHeight = getCanvas().window.height();
 
+			//Get parent's unit dimensions
+			float uContainerWidth = (float)parent.getWidth() / windowWidth;
+			float uContainerHeight = (float)parent.getHeight() / windowHeight;
+
+			//Container center
+			float containerCenterX = (originXMin + originXMax) / 2;
+			float containerCenterY = (originYMin + originYMax) / 2;
+
+			//Store offsets for anchorPosition center
+			float xOffset = anchorPoint.anchorPoint.xPos * (uContainerWidth);
+			float yOffset = anchorPoint.anchorPoint.yPos * (uContainerHeight);
+
 			//Unit dimensions
 			float uWidth = width.getUnitizedValue(windowWidth);
 			float uHeight = height.getUnitizedValue(windowHeight);
 
-			//Store potential locations
-			float leftX = 0;
-			float rightX = 0;
-			float topY = 0;
-			float bottomY = 0;
+			//Place all vertices at the center of the parent
+			float leftX = containerCenterX;
+			float rightX = containerCenterX;
+			float topY = containerCenterY;
+			float bottomY = containerCenterY;
 
-			//TODO these 6 if statements just implement the default anchor directions, implement those too
-			//TODO account for margins
-			//If it's x alignment is left
-			if (anchorPoint.anchorPoint.xPos == -1) {
-				leftX = originXMin;
-				rightX = originXMin + uWidth;
-			}
-			//If the x alignment is centered
-			if (anchorPoint.anchorPoint.xPos == 0) {
-				leftX = ((originXMax + originXMin) / 2) - (uWidth / 2);
-				rightX = ((originXMax + originXMin) / 2) + (uWidth / 2);
-			}
-			//If the x alignment is right
-			if (anchorPoint.anchorPoint.xPos == 1) {
-				leftX = originXMax - uWidth;
-				rightX = originXMax;
-			}
-			//If the y alignment is bottom
-			if (anchorPoint.anchorPoint.yPos == - 1) {
-				bottomY = originYMin;
-				topY = originYMin + uHeight;
-			}
-			//If the y alignment is centered
-			if (anchorPoint.anchorPoint.yPos == 0) {
-				bottomY = ((originYMax + originYMin) / 2) - (uHeight / 2);
-				topY = ((originYMax + originYMin) / 2) + (uHeight / 2);
-			}
-			//If the y alignment is top
-			if (anchorPoint.anchorPoint.yPos == 1) {
-				bottomY = originYMax - uHeight;
-				topY = originYMax;
-			}
+			//Store offsets for anchor direction
+			float xDirOffset = anchorPoint.anchorDirection.xDirection * (uWidth / 2);
+			float yDirOffset = anchorPoint.anchorDirection.yDirection * (uHeight / 2);
+
+			//Give the container dimensions
+			leftX -= uWidth / 2;
+			rightX += uWidth / 2;
+			bottomY -= uHeight / 2;
+			topY += uHeight / 2;
+
+			//Apply margins
+			leftX += style.margin.left.getUnitizedValue(windowWidth);
+			rightX -= style.margin.right.getUnitizedValue(windowWidth);
+			bottomY += style.margin.bottom.getUnitizedValue(windowHeight);
+			topY -= style.margin.top.getUnitizedValue(windowHeight);
+
+			//Move this box to be centered on the anchor point
+			leftX += xOffset;
+			rightX += xOffset;
+			bottomY += yOffset;
+			topY += yOffset;
+
+			//Move this box to go in it's anchor direction
+			leftX += xDirOffset;
+			rightX += xDirOffset;
+			bottomY += yDirOffset;
+			topY += yDirOffset;
 
 			//Set the vertexes based on the calculated positions
 			rectangle.vertices[0].setXYZ(leftX, topY, zIndex);
