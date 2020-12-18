@@ -5,7 +5,6 @@ import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
 import com.terminalvelocitycabbage.engine.client.renderer.shapes.Rectangle;
 import com.terminalvelocitycabbage.engine.events.HandleEvent;
 import com.terminalvelocitycabbage.engine.events.client.WindowResizeEvent;
-import org.joml.Matrix4f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,20 +13,20 @@ public class UICanvas extends UIRenderableElement {
 
 	Window window;
 	List<UIContainer> containers;
-	Matrix4f translationMatrix;
 
 	public UICanvas(Window window) {
 		super();
 		this.window = window;
 		this.style = new UIStyle();
 		this.containers = new ArrayList<>();
-		this.translationMatrix = new Matrix4f();
 		ClientBase.instance.addEventHandler(this);
 	}
 
 	public void addContainer(UIContainer container) {
 		container.setParent(this);
+		container.zIndex = -1;
 		containers.add(container);
+		container.bind();
 	}
 
 	public Rectangle getRectangle() {
@@ -36,7 +35,7 @@ public class UICanvas extends UIRenderableElement {
 
 	@HandleEvent(WindowResizeEvent.EVENT)
 	public void onWindowResize(WindowResizeEvent event) {
-		this.needsUpdate = true;
+		queueUpdate();
 	}
 
 	@Override
@@ -49,10 +48,10 @@ public class UICanvas extends UIRenderableElement {
 			this.width = (int)((rectangle.vertices[3].getXYZ()[0] - rectangle.vertices[0].getXYZ()[0]) / 2 * window.width()) - (style.borderThickness * 2);
 			this.height = (int)((rectangle.vertices[3].getXYZ()[1] - rectangle.vertices[2].getXYZ()[1]) / 2 * window.height()) - (style.borderThickness * 2);
 			rectangle.update(translationMatrix.identity());
-			this.needsUpdate = false;
 			for (UIContainer container : containers) {
 				container.update();
 			}
+			this.needsUpdate = false;
 		}
 	}
 
@@ -69,10 +68,6 @@ public class UICanvas extends UIRenderableElement {
 
 	public Window getWindow() {
 		return window;
-	}
-
-	public UIStyle getStyle() {
-		return style;
 	}
 
 	public List<UIContainer> getContainers() {

@@ -2,6 +2,7 @@ package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
 import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
 import com.terminalvelocitycabbage.engine.client.renderer.shapes.Rectangle;
+import org.joml.Matrix4f;
 
 public abstract class UIRenderableElement {
 
@@ -11,13 +12,16 @@ public abstract class UIRenderableElement {
 	int zIndex;
 	int width;
 	int height;
+	Matrix4f translationMatrix;
 
 	public UIRenderableElement() {
-		this.zIndex = 0;
 		this.needsUpdate = false;
 		this.rectangle = new Rectangle(new Vertex().setXYZ(0, 0, 0), new Vertex().setXYZ(0, 0, 0), new Vertex().setXYZ(0, 0, 0), new Vertex().setXYZ(0, 0, 0));
+		this.style = new UIStyle();
+		this.zIndex = 0;
 		this.width = 0;
 		this.height = 0;
+		this.translationMatrix = new Matrix4f();
 	}
 
 	public int getWidth() {
@@ -50,4 +54,7 @@ public abstract class UIRenderableElement {
 		this.needsUpdate = true;
 	}
 
+	public Rectangle getRectangle() {
+		return rectangle;
+	}
 }

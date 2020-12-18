@@ -7,9 +7,9 @@ public enum AnchorPoint {
 	TOP_RIGHT("top_right", 1, 1, AnchorDirection.LEFT_DOWN),
 	LEFT_MIDDLE("left_middle", -1, 0, AnchorDirection.RIGHT),
 	MIDDLE_MIDDLE("middle_middle", 0, 0, AnchorDirection.CENTER),
-	RIGHT_MIDDLE("right_middle", 0, 1, AnchorDirection.LEFT),
+	RIGHT_MIDDLE("right_middle", 1, 0, AnchorDirection.LEFT),
 	BOTTOM_LEFT("bottom_left", -1, -1, AnchorDirection.RIGHT_UP),
-	BOTTOM_MIDDLE("bottom_middle", -1, 0, AnchorDirection.UP),
+	BOTTOM_MIDDLE("bottom_middle", 0, -1, AnchorDirection.UP),
 	BOTTOM_RIGHT("bottom_right", 1, -1, AnchorDirection.LEFT_UP);
 
 	public String name;
