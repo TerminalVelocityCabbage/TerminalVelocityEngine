@@ -9,6 +9,8 @@ public class ModeledGameObject extends EmptyGameObject {
 
 	Model model;
 
+	protected ModeledGameObject() {}
+
 	private ModeledGameObject(Vector3f position, Quaternionf rotation, Vector3f scale, Model model) {
 		super(position, rotation, scale);
 		this.model = model;

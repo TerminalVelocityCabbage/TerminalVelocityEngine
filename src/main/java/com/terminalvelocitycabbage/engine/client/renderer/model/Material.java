@@ -121,4 +121,10 @@ public class Material {
 	public boolean hasReflectivityTexture() {
 		return reflectivityTexture != null;
 	}
+
+	public void setColor(float r, float g, float b, float opacity) {
+		this.ambientColor.set(r, g, b, opacity);
+		this.specularColor.set(r, g, b, opacity);
+		this.diffuseColor.set(r, g, b, opacity);
+	}
 }

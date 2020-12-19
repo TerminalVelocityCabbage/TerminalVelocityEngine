@@ -152,9 +152,10 @@ public class Model {
 		}
 	}
 
-	public void setMaterial(Material material) {
+	public Model setMaterial(Material material) {
 		this.material = material;
 		this.mesh.setMaterial(material);
+		return this;
 	}
 
 	public Material getMaterial() {

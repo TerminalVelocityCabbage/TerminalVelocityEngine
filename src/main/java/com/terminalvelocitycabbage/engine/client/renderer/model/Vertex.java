@@ -39,6 +39,18 @@ public class Vertex {
 		return xyz;
 	}
 
+	public float getX() {
+		return xyz[0];
+	}
+
+	public float getY() {
+		return xyz[1];
+	}
+
+	public float getZ() {
+		return xyz[2];
+	}
+
 	public static float[] getElements(float[] xyz) {
 		float[] out = new float[ELEMENT_COUNT];
 		int i = 0;
