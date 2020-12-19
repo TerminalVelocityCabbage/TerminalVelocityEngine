@@ -85,13 +85,12 @@ public abstract class Renderer {
 		return total / frameTimes.length;
 	}
 
-	public float getFramerate() {
-		return 1 / getFrameTimeAverageMillis() * 1000;
+	public long getDeltaTime() {
+		return deltaTime;
 	}
 
-	//TODO animation smoothness (don't hard code in 20)
-	public float getAnimationDeltaTime() {
-		return deltaTime / 1e9f * 20;
+	public float getFramerate() {
+		return 1 / getFrameTimeAverageMillis() * 1000;
 	}
 
 	public void destroy() {

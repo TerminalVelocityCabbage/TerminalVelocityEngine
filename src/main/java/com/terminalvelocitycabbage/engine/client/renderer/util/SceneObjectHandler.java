@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GameObjectHandler {
+public class SceneObjectHandler {
 
 	Map<String, EmptyGameObject> gameObjects = new HashMap<>();
 
