@@ -53,6 +53,11 @@ public class ModelMesh {
 		glVertexAttribPointer(1, TEXTURE_ELEMENT_COUNT, GL11.GL_FLOAT, false, STRIDE, TEXTURE_OFFSET);
 		glVertexAttribPointer(2, NORMAL_ELEMENT_COUNT, GL11.GL_FLOAT, false, STRIDE, NORMAL_OFFSET);
 
+		//Enable the attrib pointers
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glEnableVertexAttribArray(2);
+
 		//Create EBO for connected tris
 		eboID = glGenBuffers();
 	}
@@ -60,9 +65,6 @@ public class ModelMesh {
 	public void render() {
 		// Bind to the VAO that has all the information about the vertices
 		glBindVertexArray(vaoID);
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-		glEnableVertexAttribArray(2);
 
 		//Bind Textures
 		if (material.hasTexture()) {
@@ -77,12 +79,13 @@ public class ModelMesh {
 
 		// Put everything back to default (deselect)
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		glDisableVertexAttribArray(0);
-		glDisableVertexAttribArray(1);
-		glDisableVertexAttribArray(2);
 	}
 
 	public void destroy() {
+
+		glDisableVertexAttribArray(0);
+		glDisableVertexAttribArray(1);
+		glDisableVertexAttribArray(2);
 
 		glDeleteBuffers(vboID);
 		glDeleteBuffers(eboID);
