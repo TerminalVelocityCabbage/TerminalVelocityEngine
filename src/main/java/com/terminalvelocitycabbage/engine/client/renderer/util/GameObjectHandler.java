@@ -11,11 +11,12 @@ public class GameObjectHandler {
 
 	Map<String, EmptyGameObject> gameObjects = new HashMap<>();
 
-	public <T extends EmptyGameObject>void add(String key, T object) {
+	public <T extends EmptyGameObject>T add(String key, T object) {
 		if (gameObjects.containsKey(key)) {
 			throw new RuntimeException("Added gameObject with same key to map is not allowed " + key);
 		} else {
 			gameObjects.put(key, object);
+			return object;
 		}
 	}
 
