@@ -9,10 +9,7 @@ import net.dumbcode.studio.animation.instance.ModelAnimationHandler;
 import net.dumbcode.studio.model.ModelInfo;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -20,11 +17,13 @@ public class AnimatedModel extends Model {
 
     public Map<String, AnimationInfo> animations;
     public final ModelAnimationHandler handler;
+    private Map<String, UUID> activeAnimations;
 
     public AnimatedModel(ModelInfo model) {
         super(model.getRoots().stream().map(AnimatedModelLoader.Part::createPart).collect(Collectors.toList()));
 
         this.animations = new HashMap<>();
+        this.activeAnimations = new HashMap<>();
 
         List<AnimatedModelLoader.Part> partMap = new ArrayList<>();
         recursiveOnPart(modelParts, partMap::add);
@@ -35,6 +34,29 @@ public class AnimatedModel extends Model {
         for (Model.Part part : modelParts) {
             consumer.accept((AnimatedModelLoader.Part) part);
             recursiveOnPart(part.children, consumer);
+        }
+    }
+
+    public void startAnimation(String name) {
+        startAnimation(name, false);
+    }
+
+    public void startAnimation(String name, boolean loop) {
+        if (animations.containsKey(name)) {
+            handler.startAnimation(animations.get(name), loop);
+        } else {
+            throw new RuntimeException("Animation not found " + name);
+        }
+    }
+
+    public void stopAnimation(String name) {
+        if (animations.containsKey(name)) {
+            if (activeAnimations.containsKey(name)) {
+                handler.markRemoved(activeAnimations.get(name));
+                activeAnimations.remove(name);
+            }
+        } else {
+            throw new RuntimeException("Animation not found " + name);
         }
     }
 
