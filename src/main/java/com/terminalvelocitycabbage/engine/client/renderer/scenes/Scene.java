@@ -1,4 +1,4 @@
-package com.terminalvelocitycabbage.engine.client.renderer;
+package com.terminalvelocitycabbage.engine.client.renderer.scenes;
 
 import com.terminalvelocitycabbage.engine.client.renderer.gameobjects.EmptyGameObject;
 import com.terminalvelocitycabbage.engine.client.renderer.util.SceneObjectHandler;
