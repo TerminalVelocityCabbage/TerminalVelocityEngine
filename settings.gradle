@@ -1,1 +1,2 @@
+include 'Studio-Jar'
 rootProject.name = 'TerminalVelocityEngine2'
