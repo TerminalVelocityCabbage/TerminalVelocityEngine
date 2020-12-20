@@ -1,24 +1,24 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
-public class UIContainer extends UIRenderableElement {
+public class Container extends UIRenderableElement {
 
 	public UIDimension width;
 	public UIDimension height;
-	public UIAnchor anchorPoint;
+	public Anchor anchorPoint;
 	public UIRenderableElement parent;
 
-	public UIContainer(UIDimension width, UIDimension height, UIAnchor anchorPoint, UIStyle style) {
+	public Container(UIDimension width, UIDimension height, Anchor anchorPoint, Style style) {
 		super(style);
 		this.width = width;
 		this.height = height;
 		this.anchorPoint = anchorPoint;
 	}
 
-	public UICanvas getCanvas() {
+	public Canvas getCanvas() {
 		if (parent.isRoot()) {
-			return (UICanvas)parent;
+			return (Canvas)parent;
 		} else {
-			return ((UIContainer)parent).getCanvas();
+			return ((Container)parent).getCanvas();
 		}
 	}
 
@@ -26,7 +26,7 @@ public class UIContainer extends UIRenderableElement {
 		this.parent = canvas;
 	}
 
-	public UIStyle getStyle() {
+	public Style getStyle() {
 		return style;
 	}
 

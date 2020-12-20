@@ -8,13 +8,13 @@ public abstract class UIRenderableElement {
 
 	boolean needsUpdate;
 	Rectangle rectangle;
-	public UIStyle style;
+	public Style style;
 	int zIndex;
 	int width;
 	int height;
 	Matrix4f translationMatrix;
 
-	public UIRenderableElement(UIStyle style) {
+	public UIRenderableElement(Style style) {
 		this.needsUpdate = false;
 		this.rectangle = new Rectangle(new Vertex().setXYZ(0, 0, 0), new Vertex().setXYZ(0, 0, 0), new Vertex().setXYZ(0, 0, 0), new Vertex().setXYZ(0, 0, 0));
 		this.style = style;

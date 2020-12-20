@@ -9,19 +9,19 @@ import com.terminalvelocitycabbage.engine.events.client.WindowResizeEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UICanvas extends UIRenderableElement {
+public class Canvas extends UIRenderableElement {
 
 	Window window;
-	List<UIContainer> containers;
+	List<Container> containers;
 
-	public UICanvas(Window window) {
-		super(new UIStyle());
+	public Canvas(Window window) {
+		super(new Style());
 		this.window = window;
 		this.containers = new ArrayList<>();
 		ClientBase.instance.addEventHandler(this);
 	}
 
-	public void addContainer(UIContainer container) {
+	public void addContainer(Container container) {
 		container.setParent(this);
 		container.zIndex = -1;
 		containers.add(container);
@@ -47,7 +47,7 @@ public class UICanvas extends UIRenderableElement {
 			this.width = (int)((rectangle.vertices[3].getXYZ()[0] - rectangle.vertices[0].getXYZ()[0]) / 2 * window.width()) - (style.borderThickness * 2);
 			this.height = (int)((rectangle.vertices[3].getXYZ()[1] - rectangle.vertices[2].getXYZ()[1]) / 2 * window.height()) - (style.borderThickness * 2);
 			rectangle.update(translationMatrix.identity());
-			for (UIContainer container : containers) {
+			for (Container container : containers) {
 				container.update();
 			}
 			this.needsUpdate = false;
@@ -69,7 +69,15 @@ public class UICanvas extends UIRenderableElement {
 		return window;
 	}
 
-	public List<UIContainer> getContainers() {
+	public List<Container> getContainers() {
 		return containers;
+	}
+
+	@Override
+	public void destroy() {
+		super.destroy();
+		for (UIRenderableElement element : containers) {
+			element.destroy();
+		}
 	}
 }

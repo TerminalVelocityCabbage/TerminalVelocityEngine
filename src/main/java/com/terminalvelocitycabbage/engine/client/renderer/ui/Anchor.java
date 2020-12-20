@@ -1,15 +1,15 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
-public class UIAnchor {
+public class Anchor {
 
 	AnchorPoint anchorPoint;
 	AnchorDirection anchorDirection;
 
-	public UIAnchor(AnchorPoint anchorPoint) {
+	public Anchor(AnchorPoint anchorPoint) {
 		this(anchorPoint, anchorPoint.defaultAnchorDirection);
 	}
 
-	public UIAnchor(AnchorPoint anchorPoint, AnchorDirection anchorDirection) {
+	public Anchor(AnchorPoint anchorPoint, AnchorDirection anchorDirection) {
 		this.anchorPoint = anchorPoint;
 		this.anchorDirection = anchorDirection;
 	}
