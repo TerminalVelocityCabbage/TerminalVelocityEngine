@@ -33,6 +33,8 @@ public abstract class InputHandler {
 			mouseInput();
 			previousPos.x = currentPos.x;
 			previousPos.y = currentPos.y;
+			window.cursorX = currentPos.x;
+			window.cursorY = currentPos.y;
 		});
 		glfwSetCursorEnterCallback(window.getID(), (windowHandle, entered) -> focused = entered);
 		glfwSetMouseButtonCallback(window.getID(), (windowHandle, button, action, mode) -> {
