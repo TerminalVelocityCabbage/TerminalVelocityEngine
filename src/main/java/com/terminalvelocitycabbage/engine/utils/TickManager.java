@@ -5,7 +5,7 @@ public class TickManager {
     private final float msPerTick;
 
     private float compoundTime;
-    private long ticks;
+    private short ticks;
 
     public TickManager(float ticksPerSecond) {
         this.msPerTick = 1000F / ticksPerSecond;
