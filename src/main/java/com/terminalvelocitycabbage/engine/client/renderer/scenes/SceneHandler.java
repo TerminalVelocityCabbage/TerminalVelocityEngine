@@ -33,7 +33,7 @@ public class SceneHandler {
 		}
 	}
 
-	public void update(long deltaTime) {
+	public void update(float deltaTime) {
 		sceneHandler.get(activeScene).update(deltaTime);
 	}
 

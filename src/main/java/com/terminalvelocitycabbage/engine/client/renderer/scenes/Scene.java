@@ -15,7 +15,7 @@ public abstract class Scene {
 
 	public abstract void init();
 
-	public abstract void update(long deltaTime);
+	public abstract void update(float deltaTime);
 
 	public abstract void destroy();
 

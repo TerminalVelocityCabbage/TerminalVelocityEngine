@@ -86,8 +86,8 @@ public abstract class Renderer {
 		return total / frameTimes.length;
 	}
 
-	public long getDeltaTime() {
-		return deltaTime;
+	public float getDeltaTime() {
+		return deltaTime / 1e6f;
 	}
 
 	public float getFramerate() {
