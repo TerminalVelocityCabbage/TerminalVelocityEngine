@@ -43,7 +43,7 @@ public class AnimatedModel extends Model {
 
     public void startAnimation(String name, boolean loop) {
         if (animations.containsKey(name)) {
-            handler.startAnimation(animations.get(name), loop);
+            handler.startAnimation(animations.get(name).data().loop(loop));
         } else {
             throw new RuntimeException("Animation not found " + name);
         }
