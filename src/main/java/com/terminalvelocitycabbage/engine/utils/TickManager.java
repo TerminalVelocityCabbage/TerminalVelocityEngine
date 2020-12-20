@@ -5,13 +5,13 @@ public class TickManager {
     private final float msPerTick;
 
     private float compoundTime;
-    private int ticks;
+    private long ticks;
 
     public TickManager(float ticksPerSecond) {
         this.msPerTick = 1000F / ticksPerSecond;
     }
 
-    public void onTimeDelta(float deltaTime) {
+    public void apply(float deltaTime) {
         this.compoundTime += deltaTime;
         while (this.compoundTime >= this.msPerTick) {
             this.ticks++;
