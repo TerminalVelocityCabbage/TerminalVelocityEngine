@@ -63,8 +63,9 @@ public abstract class Renderer {
 	}
 
 	private void start() {
+		endFrameTime = System.nanoTime();
 		while (!glfwWindowShouldClose(getWindow().getID())) {
-			previousFrameTime = System.nanoTime();
+			previousFrameTime = endFrameTime;
 			loop();
 			endFrameTime = System.nanoTime();
 			calcFrameTime();
