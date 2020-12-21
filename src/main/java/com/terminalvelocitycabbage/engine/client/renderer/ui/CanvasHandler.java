@@ -53,13 +53,14 @@ public class CanvasHandler {
 		}
 	}
 
-	public void tick(double posX, double posY, boolean leftClick, boolean rightClick) {
+	public void tick(double posX, double posY, boolean leftClick, boolean rightClick, short timeSinceLastClick) {
 
 		//Call hoverable events if the element is being hovered over
 		for (UIRenderableElement element : getCanvasesAt(posX, posY)) {
 			element.callHoverable();
 			if (leftClick) {
 				element.callClick();
+				element.callDoubleCLick(timeSinceLastClick);
 			}
 			if (rightClick) {
 				element.callRightClick();

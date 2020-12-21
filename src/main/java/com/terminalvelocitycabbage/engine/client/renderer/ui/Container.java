@@ -122,4 +122,9 @@ public class Container extends UIRenderableElement {
 	public Container onRightClick(Runnable runnable) {
 		return (Container) super.onRightClick(runnable);
 	}
+
+	@Override
+	public Container onDoubleClick(short tickTime, Runnable runnable) {
+		return (Container) super.onDoubleClick(tickTime, runnable);
+	}
 }

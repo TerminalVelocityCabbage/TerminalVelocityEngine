@@ -2,6 +2,7 @@ package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
 import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
 import com.terminalvelocitycabbage.engine.client.renderer.shapes.Rectangle;
+import com.terminalvelocitycabbage.engine.debug.Log;
 import org.joml.Matrix4f;
 
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ public abstract class UIRenderableElement {
 	List<Runnable> hoverConsumers;
 	List<Runnable> leftClickConsumers;
 	List<Runnable> rightClickConsumers;
+	List<DoubleClickRunnable> doubleClickConsumers;
 
 	public UIRenderableElement(Style style) {
 		this.needsUpdate = false;
@@ -32,6 +34,7 @@ public abstract class UIRenderableElement {
 		hoverConsumers = new ArrayList<>();
 		leftClickConsumers = new ArrayList<>();
 		rightClickConsumers = new ArrayList<>();
+		doubleClickConsumers = new ArrayList<>();
 	}
 
 	public int getWidth() {
@@ -99,5 +102,29 @@ public abstract class UIRenderableElement {
 	public UIRenderableElement onRightClick(Runnable runnable) {
 		rightClickConsumers.add(runnable);
 		return this;
+	}
+
+	public void callDoubleCLick(short time) {
+		for (DoubleClickRunnable runnable : doubleClickConsumers) {
+			if (runnable.tickTime >= time && time > 0) {
+				runnable.runnable.run();
+			}
+		}
+	}
+
+	public UIRenderableElement onDoubleClick(short tickTime, Runnable runnable) {
+		doubleClickConsumers.add(new DoubleClickRunnable(tickTime, runnable));
+		return this;
+	}
+
+	private static class DoubleClickRunnable {
+
+		short tickTime;
+		Runnable runnable;
+
+		public DoubleClickRunnable(short tickTime, Runnable runnable) {
+			this.tickTime = tickTime;
+			this.runnable = runnable;
+		}
 	}
 }

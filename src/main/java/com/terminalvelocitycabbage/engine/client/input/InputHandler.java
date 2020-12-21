@@ -21,6 +21,8 @@ public abstract class InputHandler {
 	private boolean lastRightButtonPressed = false;
 	private boolean rightButtonPressed = false;
 
+	private short ticksSinceLastClick = -1;
+
 	public InputHandler() {
 		previousPos = new Vector2d(0, 0);
 		currentPos = new Vector2d(0, 0);
@@ -74,8 +76,23 @@ public abstract class InputHandler {
 	}
 
 	public void updateMouseButtons() {
+		if (lastLeftButtonPressed && !leftButtonPressed) {
+			ticksSinceLastClick = -1;
+		}
 		lastLeftButtonPressed = leftButtonPressed;
 		lastRightButtonPressed = rightButtonPressed;
+		//Make sure this doesnt explode
+		if (ticksSinceLastClick >= Short.MAX_VALUE) {
+			ticksSinceLastClick = -2;
+		}
+		//If there was not a recent click dont increment
+		if (ticksSinceLastClick >= -1) {
+			ticksSinceLastClick++;
+		}
+	}
+
+	public short getTicksSinceLastClick() {
+		return ticksSinceLastClick;
 	}
 
 	public boolean isRightButtonPressed() {

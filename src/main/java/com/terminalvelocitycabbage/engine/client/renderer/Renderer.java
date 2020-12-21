@@ -123,7 +123,7 @@ public abstract class Renderer {
 		//tick as many time as needed
 		while (tickManager.hasTick()) {
 			sceneHandler.update(deltaTime / 1e6f);
-			canvasHandler.tick(getWindow().getCursorX(), getWindow().getCursorY(), getWindow().isLeftMouseJustReleased(), getWindow().isRightMouseJustReleased());
+			canvasHandler.tick(getWindow().getCursorX(), getWindow().getCursorY(), getWindow().isLeftMouseJustReleased(), getWindow().isRightMouseJustReleased(), getWindow().getInputHandler().getTicksSinceLastClick());
 			//Update input handler last state
 			window.getInputHandler().updateMouseButtons();
 		}
