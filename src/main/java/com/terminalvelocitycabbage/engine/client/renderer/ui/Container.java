@@ -112,4 +112,14 @@ public class Container extends UIRenderableElement {
 	public Container onHover(Runnable runnable) {
 		return (Container) super.onHover(runnable);
 	}
+
+	@Override
+	public Container onClick(Runnable runnable) {
+		return (Container) super.onClick(runnable);
+	}
+
+	@Override
+	public Container onRightClick(Runnable runnable) {
+		return (Container) super.onRightClick(runnable);
+	}
 }

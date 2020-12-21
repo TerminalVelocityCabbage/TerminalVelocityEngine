@@ -30,7 +30,7 @@ public class CanvasHandler {
 
 	public void enableCanvas(String name) {
 		if (!activeCanvases.contains(name)) {
-			if (canvases.containsKey(name)) {
+			if (isEnabled(name)) {
 				activeCanvases.add(name);
 			} else {
 				Log.warn("Tried to enable unregistered canvas " + name);
@@ -39,24 +39,31 @@ public class CanvasHandler {
 	}
 
 	public void hideCanvas(String name) {
-		if (activeCanvases.contains(name)) {
+		Log.info("hide");
+		if (isEnabled(name)) {
 			activeCanvases.remove(name);
 		}
 	}
 
 	public Canvas getCanvas(String name) {
-		if (canvases.containsKey(name)) {
+		if (isEnabled(name)) {
 			return canvases.get(name);
 		} else {
 			throw new RuntimeException("could not get canvas for name " + name);
 		}
 	}
 
-	public void tick(double posX, double posY) {
+	public void tick(double posX, double posY, boolean leftClick, boolean rightClick) {
 
 		//Call hoverable events if the element is being hovered over
 		for (UIRenderableElement element : getCanvasesAt(posX, posY)) {
 			element.callHoverable();
+			if (leftClick) {
+				element.callClick();
+			}
+			if (rightClick) {
+				element.callRightClick();
+			}
 		}
 	}
 

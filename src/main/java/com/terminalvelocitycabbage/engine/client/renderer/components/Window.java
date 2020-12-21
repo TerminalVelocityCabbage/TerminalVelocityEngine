@@ -155,6 +155,22 @@ public class Window {
 		return ((-cursorY / height()) * 2) + 1;
 	}
 
+	public boolean isLeftMouseJustReleased() {
+		return inputHandler.isLeftButtonReleased();
+	}
+
+	public boolean isLeftMouseDown() {
+		return inputHandler.isLeftButtonPressed();
+	}
+
+	public boolean isRightMouseJustReleased() {
+		return inputHandler.isRightButtonReleased();
+	}
+
+	public boolean isRightMouseDown() {
+		return inputHandler.isRightButtonPressed();
+	}
+
 	public long getID() {
 		return windowID;
 	}

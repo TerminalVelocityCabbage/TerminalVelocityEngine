@@ -16,7 +16,9 @@ public abstract class InputHandler {
 
 	private boolean focused = false;
 
+	private boolean lastLeftButtonPressed = false;
 	private boolean leftButtonPressed = false;
+	private boolean lastRightButtonPressed = false;
 	private boolean rightButtonPressed = false;
 
 	public InputHandler() {
@@ -38,8 +40,8 @@ public abstract class InputHandler {
 		});
 		glfwSetCursorEnterCallback(window.getID(), (windowHandle, entered) -> focused = entered);
 		glfwSetMouseButtonCallback(window.getID(), (windowHandle, button, action, mode) -> {
-			leftButtonPressed = button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS;
-			rightButtonPressed = button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS;
+			leftButtonPressed = button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS;
+			rightButtonPressed = button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS;
 		});
 		glfwSetKeyCallback(window.getID(), (win, key, scancode, action, mods) -> processInput(new KeyBind(key, scancode, action, mods)));
 	}
@@ -71,12 +73,25 @@ public abstract class InputHandler {
 		displayVector.y = 0;
 	}
 
+	public void updateMouseButtons() {
+		lastLeftButtonPressed = leftButtonPressed;
+		lastRightButtonPressed = rightButtonPressed;
+	}
+
 	public boolean isRightButtonPressed() {
 		return rightButtonPressed;
 	}
 
+	public boolean isRightButtonReleased() {
+		return !rightButtonPressed && lastRightButtonPressed;
+	}
+
 	public boolean isLeftButtonPressed() {
 		return leftButtonPressed;
+	}
+
+	public boolean isLeftButtonReleased() {
+		return !leftButtonPressed && lastLeftButtonPressed;
 	}
 
 	public void setFocus(boolean focused) {

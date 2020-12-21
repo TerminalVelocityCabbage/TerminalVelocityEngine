@@ -18,6 +18,8 @@ public abstract class UIRenderableElement {
 	Matrix4f translationMatrix;
 
 	List<Runnable> hoverConsumers;
+	List<Runnable> leftClickConsumers;
+	List<Runnable> rightClickConsumers;
 
 	public UIRenderableElement(Style style) {
 		this.needsUpdate = false;
@@ -28,6 +30,8 @@ public abstract class UIRenderableElement {
 		this.height = 0;
 		this.translationMatrix = new Matrix4f();
 		hoverConsumers = new ArrayList<>();
+		leftClickConsumers = new ArrayList<>();
+		rightClickConsumers = new ArrayList<>();
 	}
 
 	public int getWidth() {
@@ -72,6 +76,28 @@ public abstract class UIRenderableElement {
 
 	public UIRenderableElement onHover(Runnable runnable) {
 		hoverConsumers.add(runnable);
+		return this;
+	}
+
+	public void callClick() {
+		for (Runnable runnable : leftClickConsumers) {
+			runnable.run();
+		}
+	}
+
+	public UIRenderableElement onClick(Runnable runnable) {
+		leftClickConsumers.add(runnable);
+		return this;
+	}
+
+	public void callRightClick() {
+		for (Runnable runnable : rightClickConsumers) {
+			runnable.run();
+		}
+	}
+
+	public UIRenderableElement onRightClick(Runnable runnable) {
+		rightClickConsumers.add(runnable);
 		return this;
 	}
 }
