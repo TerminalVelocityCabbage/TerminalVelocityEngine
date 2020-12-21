@@ -201,10 +201,18 @@ public class Container extends UIRenderableElement {
 		return height;
 	}
 
-	@Override
-	public void render() {
-		super.render();
-		childContainers.forEach(Container::render);
-		elements.forEach(UIRenderableElement::render);
+	public List<Container> getAllContainers() {
+		List<Container> child = new ArrayList<>();
+		child.addAll(childContainers);
+		childContainers.forEach(container -> child.addAll(container.getAllContainers()));
+		return child;
+	}
+
+	public List<Container> getChildContainers() {
+		return childContainers;
+	}
+
+	public List<Element> getElements() {
+		return elements;
 	}
 }

@@ -3,10 +3,7 @@ package com.terminalvelocitycabbage.engine.client.renderer.ui;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
 import com.terminalvelocitycabbage.engine.debug.Log;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class CanvasHandler {
@@ -109,6 +106,10 @@ public class CanvasHandler {
 			return true;
 		}
 		return false;
+	}
+
+	public Collection<Canvas> getCanvases() {
+		return canvases.values();
 	}
 
 }

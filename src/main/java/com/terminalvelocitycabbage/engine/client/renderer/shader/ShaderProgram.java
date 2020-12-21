@@ -81,6 +81,7 @@ public class ShaderProgram {
 	}
 
 	public void createPointLightUniforms(String name, int numPointLights) {
+		createUniform(name + "Num");
 		if (numPointLights > MAX_POINT_LIGHTS) {
 			throw new RuntimeException(numPointLights + " is greater than the maximum allowed number of point lights in TVE of " + MAX_POINT_LIGHTS);
 		}
@@ -101,6 +102,7 @@ public class ShaderProgram {
 	}
 
 	public void createSpotLightUniforms(String name, int numSpotLights) {
+		createUniform(name + "Num");
 		if (numSpotLights > MAX_SPOT_LIGHTS) {
 			throw new RuntimeException(numSpotLights + " is greater than the maximum allowed number of spot lights in TVE of " + MAX_SPOT_LIGHTS);
 		}

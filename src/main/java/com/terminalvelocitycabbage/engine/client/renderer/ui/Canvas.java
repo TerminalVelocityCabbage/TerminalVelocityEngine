@@ -113,9 +113,17 @@ public class Canvas extends UIRenderableElement {
 		return new UIDimension(height, UIDimension.Unit.PIXELS);
 	}
 
-	@Override
-	public void render() {
-		super.render();
-		containers.forEach(UIRenderableElement::render);
+	public List<UIRenderableElement> getAllChildren() {
+
+		//Add all of this canvas' containers to a list
+		List<Container> allContainers = new ArrayList<>(containers);
+		//For each of those containers recursively add all containers in that tree
+		containers.forEach(container -> allContainers.addAll(container.getAllContainers()));
+
+		//Add all of the containers in this canvas' tree
+		List<UIRenderableElement> elements = new ArrayList<>(allContainers);
+		//Add all elements of the containers to the list of children
+		allContainers.forEach(container -> elements.addAll(container.getElements()));
+		return elements;
 	}
 }
