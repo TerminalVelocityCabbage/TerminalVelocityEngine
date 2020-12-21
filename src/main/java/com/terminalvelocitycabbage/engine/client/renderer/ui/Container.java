@@ -1,17 +1,29 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Container extends UIRenderableElement {
 
 	public UIDimension width;
 	public UIDimension height;
 	public Anchor anchorPoint;
+	public Alignment.Horizontal horizontalAlignment;
+	public Alignment.Vertical verticalAlignment;
 	public UIRenderableElement parent;
+
+	public List<Container> childContainers;
+	public List<Element> elements;
 
 	public Container(UIDimension width, UIDimension height, Anchor anchorPoint, Style style) {
 		super(style);
 		this.width = width;
 		this.height = height;
 		this.anchorPoint = anchorPoint;
+		this.horizontalAlignment = Alignment.Horizontal.LEFT;
+		this.verticalAlignment = Alignment.Vertical.TOP;
+		this.childContainers = new ArrayList<>();
+		this.elements = new ArrayList<>();
 	}
 
 	public Canvas getCanvas() {
@@ -24,6 +36,16 @@ public class Container extends UIRenderableElement {
 
 	public void setParent(UIRenderableElement canvas) {
 		this.parent = canvas;
+	}
+
+	public Container horizontalAlignment(Alignment.Horizontal alignment) {
+		this.horizontalAlignment = alignment;
+		return this;
+	}
+
+	public Container verticalAlignment(Alignment.Vertical alignment) {
+		this.verticalAlignment = alignment;
+		return this;
 	}
 
 	public Style getStyle() {
@@ -45,8 +67,8 @@ public class Container extends UIRenderableElement {
 			int windowHeight = getCanvas().window.height();
 
 			//Get parent's unit dimensions
-			float uContainerWidth = (float)parent.getWidth() / windowWidth;
-			float uContainerHeight = (float)parent.getHeight() / windowHeight;
+			float uContainerWidth = (float)parent.getWidth().getPixelValue(windowWidth) / windowWidth;
+			float uContainerHeight = (float)parent.getHeight().getPixelValue(windowHeight) / windowHeight;
 
 			//Container center
 			float containerCenterX = (originXMin + originXMax) / 2;
@@ -103,9 +125,50 @@ public class Container extends UIRenderableElement {
 			//Update the data that gets passed to the gpu
 			rectangle.update(translationMatrix.identity());
 
+			for (Container container : childContainers) {
+				container.update();
+			}
+			for (Element element : elements) {
+				element.update();
+			}
+
 			//Complete this update
 			needsUpdate = false;
 		}
+	}
+
+	public Container addContainer(Container container) {
+		container.setParent(this);
+		container.zIndex = zIndex - 1;
+		childContainers.add(container);
+		container.bind();
+		return this;
+	}
+
+	public Container addElement(Element element) {
+		element.setParent(this);
+		element.zIndex = zIndex - 1;
+		elements.add(element);
+		element.bind();
+		return this;
+	}
+
+	public float getHeightOfElements(int beginIndex, int endIndex) {
+		float value = 0f;
+		for (Element element : elements.subList(beginIndex, endIndex)) {
+			//TODO accommodate for eventual margins
+			value += element.getHeight().getUnitizedValue(getCanvas().getWindow().height());
+		}
+		return value;
+	}
+
+	public float getWidthOfElements(int beginIndex, int endIndex) {
+		float value = 0f;
+		for (Element element : elements.subList(beginIndex, endIndex)) {
+			//TODO accommodate for eventual margins
+			value += element.getWidth().getUnitizedValue(getCanvas().getWindow().width());
+		}
+		return value;
 	}
 
 	@Override
@@ -126,5 +189,22 @@ public class Container extends UIRenderableElement {
 	@Override
 	public Container onDoubleClick(short tickTime, Runnable runnable) {
 		return (Container) super.onDoubleClick(tickTime, runnable);
+	}
+
+	@Override
+	public UIDimension getWidth() {
+		return width;
+	}
+
+	@Override
+	public UIDimension getHeight() {
+		return height;
+	}
+
+	@Override
+	public void render() {
+		super.render();
+		childContainers.forEach(Container::render);
+		elements.forEach(UIRenderableElement::render);
 	}
 }

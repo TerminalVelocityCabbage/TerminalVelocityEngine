@@ -2,7 +2,6 @@ package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
 import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
 import com.terminalvelocitycabbage.engine.client.renderer.shapes.Rectangle;
-import com.terminalvelocitycabbage.engine.debug.Log;
 import org.joml.Matrix4f;
 
 import java.util.ArrayList;
@@ -14,8 +13,6 @@ public abstract class UIRenderableElement {
 	Rectangle rectangle;
 	public Style style;
 	int zIndex;
-	int width;
-	int height;
 	Matrix4f translationMatrix;
 
 	List<Runnable> hoverConsumers;
@@ -28,21 +25,11 @@ public abstract class UIRenderableElement {
 		this.rectangle = new Rectangle(new Vertex().setXYZ(0, 0, 0), new Vertex().setXYZ(0, 0, 0), new Vertex().setXYZ(0, 0, 0), new Vertex().setXYZ(0, 0, 0));
 		this.style = style;
 		this.zIndex = 0;
-		this.width = 0;
-		this.height = 0;
 		this.translationMatrix = new Matrix4f();
 		hoverConsumers = new ArrayList<>();
 		leftClickConsumers = new ArrayList<>();
 		rightClickConsumers = new ArrayList<>();
 		doubleClickConsumers = new ArrayList<>();
-	}
-
-	public int getWidth() {
-		return width;
-	}
-
-	public int getHeight() {
-		return height;
 	}
 
 	public void bind() {
@@ -127,4 +114,8 @@ public abstract class UIRenderableElement {
 			this.runnable = runnable;
 		}
 	}
+
+	public abstract UIDimension getWidth();
+
+	public abstract UIDimension getHeight();
 }

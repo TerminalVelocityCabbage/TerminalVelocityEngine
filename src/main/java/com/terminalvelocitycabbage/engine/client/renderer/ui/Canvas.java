@@ -11,6 +11,8 @@ import java.util.List;
 
 public class Canvas extends UIRenderableElement {
 
+	int width;
+	int height;
 	Window window;
 	List<Container> containers;
 
@@ -23,7 +25,7 @@ public class Canvas extends UIRenderableElement {
 
 	public void addContainer(Container container) {
 		container.setParent(this);
-		container.zIndex = -1;
+		container.zIndex = zIndex - 1;
 		containers.add(container);
 		container.bind();
 	}
@@ -79,5 +81,41 @@ public class Canvas extends UIRenderableElement {
 		for (UIRenderableElement element : containers) {
 			element.destroy();
 		}
+	}
+
+	@Override
+	public Canvas onHover(Runnable runnable) {
+		return (Canvas) super.onHover(runnable);
+	}
+
+	@Override
+	public Canvas onClick(Runnable runnable) {
+		return (Canvas) super.onClick(runnable);
+	}
+
+	@Override
+	public Canvas onRightClick(Runnable runnable) {
+		return (Canvas) super.onRightClick(runnable);
+	}
+
+	@Override
+	public Canvas onDoubleClick(short tickTime, Runnable runnable) {
+		return (Canvas) super.onDoubleClick(tickTime, runnable);
+	}
+
+	@Override
+	public UIDimension getWidth() {
+		return new UIDimension(width, UIDimension.Unit.PIXELS);
+	}
+
+	@Override
+	public UIDimension getHeight() {
+		return new UIDimension(height, UIDimension.Unit.PIXELS);
+	}
+
+	@Override
+	public void render() {
+		super.render();
+		containers.forEach(UIRenderableElement::render);
 	}
 }
