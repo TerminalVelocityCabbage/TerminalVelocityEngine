@@ -82,6 +82,15 @@ public class AnimatedModelLoader {
 		public void setPosition(float x, float y, float z) {
 			this.position.set(x, y, z);
 		}
+
+		@Override
+		public void setCubeGrow(float x, float y, float z) {
+			float[] off = this.cube.getOffset();
+			this.offset.set(off[0]-x, off[1]-y, off[2]-z);
+
+			int[] dimension = this.cube.getDimensions();
+			this.scale.set(dimension[0]+2*x, dimension[1]+2*y, dimension[2]+2*z);
+		}
 	}
 
 	public static AnimatedModel load(ResourceManager resourceManager, Identifier model) {
