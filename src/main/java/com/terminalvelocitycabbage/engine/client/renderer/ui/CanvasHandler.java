@@ -52,6 +52,14 @@ public class CanvasHandler {
 		}
 	}
 
+	public void tick(double posX, double posY) {
+
+		//Call hoverable events if the element is being hovered over
+		for (UIRenderableElement element : getCanvasesAt(posX, posY)) {
+			element.callHoverable();
+		}
+	}
+
 	public boolean isEnabled(String name) {
 		return activeCanvases.contains(name);
 	}

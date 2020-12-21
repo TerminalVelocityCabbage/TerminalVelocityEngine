@@ -3,6 +3,9 @@ package com.terminalvelocitycabbage.engine.client.renderer;
 import com.terminalvelocitycabbage.engine.client.input.InputHandler;
 import com.terminalvelocitycabbage.engine.client.renderer.components.Camera;
 import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
+import com.terminalvelocitycabbage.engine.client.renderer.scenes.SceneHandler;
+import com.terminalvelocitycabbage.engine.client.renderer.ui.CanvasHandler;
+import com.terminalvelocitycabbage.engine.utils.TickManager;
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
@@ -24,8 +27,13 @@ public abstract class Renderer {
 	private static long previousFrameTime = 0;
 	private static long deltaTime = 0;
 
-	public Renderer(int width, int height, String title, InputHandler inputHandler) {
+	private final TickManager tickManager;
+	public SceneHandler sceneHandler = new SceneHandler();
+	public CanvasHandler canvasHandler = new CanvasHandler();
+
+	public Renderer(int width, int height, String title, InputHandler inputHandler, float tickRate) {
 		window = new Window(width, height, title, false, inputHandler, true, true);
+		tickManager = new TickManager(tickRate);
 	}
 
 	public void run() {
@@ -108,6 +116,16 @@ public abstract class Renderer {
 	}
 
 	public void loop() {
+
+		//Tell the tick manager the frame time change
+		tickManager.apply(deltaTime / 1e6f);
+
+		//tick as many time as needed
+		while (tickManager.hasTick()) {
+			sceneHandler.update(deltaTime / 1e6f);
+			canvasHandler.tick(getWindow().cursorX, getWindow().cursorY);
+		}
+
 		if (window.isResized()) {
 			window.updateDisplay();
 			camera.updateProjectionMatrix(window.width(), window.height());

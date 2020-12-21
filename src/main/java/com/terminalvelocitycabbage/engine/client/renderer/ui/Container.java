@@ -107,4 +107,9 @@ public class Container extends UIRenderableElement {
 			needsUpdate = false;
 		}
 	}
+
+	@Override
+	public Container onHover(Runnable runnable) {
+		return (Container) super.onHover(runnable);
+	}
 }

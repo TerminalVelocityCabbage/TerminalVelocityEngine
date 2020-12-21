@@ -3,6 +3,7 @@ package com.terminalvelocitycabbage.engine.client.renderer.ui;
 import com.terminalvelocitycabbage.engine.client.ClientBase;
 import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
 import com.terminalvelocitycabbage.engine.client.renderer.shapes.Rectangle;
+import com.terminalvelocitycabbage.engine.debug.Log;
 import com.terminalvelocitycabbage.engine.events.HandleEvent;
 import com.terminalvelocitycabbage.engine.events.client.WindowResizeEvent;
 
@@ -39,6 +40,9 @@ public class Canvas extends UIRenderableElement {
 
 	@Override
 	public void update() {
+		for (UIRenderableElement element : containers) {
+			Log.info(element.hoverConsumers.size());
+		}
 		if (needsUpdate) {
 			rectangle.vertices[0].setXYZ(-1 + style.margin.left.getUnitizedValue(window.width()) - ((float)style.borderThickness / window.width()), 1 - style.margin.top.getUnitizedValue(window.height()) + ((float)style.borderThickness / window.height()), zIndex);
 			rectangle.vertices[1].setXYZ(-1 + style.margin.left.getUnitizedValue(window.width()) - ((float)style.borderThickness / window.width()), -1 + style.margin.bottom.getUnitizedValue(window.height()) - ((float)style.borderThickness / window.height()), zIndex);
