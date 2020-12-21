@@ -2,7 +2,6 @@ package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
 import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
 import com.terminalvelocitycabbage.engine.client.renderer.shapes.Rectangle;
-import com.terminalvelocitycabbage.engine.debug.Log;
 import org.joml.Matrix4f;
 
 import java.util.ArrayList;
@@ -66,7 +65,6 @@ public abstract class UIRenderableElement {
 	}
 
 	public void callHoverable() {
-		Log.error("Call Hoverable");
 		for (Runnable runnable : hoverConsumers) {
 			runnable.run();
 		}

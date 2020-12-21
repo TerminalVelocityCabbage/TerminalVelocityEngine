@@ -123,7 +123,7 @@ public abstract class Renderer {
 		//tick as many time as needed
 		while (tickManager.hasTick()) {
 			sceneHandler.update(deltaTime / 1e6f);
-			canvasHandler.tick(getWindow().cursorX, getWindow().cursorY);
+			canvasHandler.tick(getWindow().getCursorX(), getWindow().getCursorY());
 		}
 
 		if (window.isResized()) {
