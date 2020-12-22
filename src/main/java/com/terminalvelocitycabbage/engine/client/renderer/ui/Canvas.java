@@ -11,8 +11,6 @@ import java.util.List;
 
 public class Canvas extends UIRenderableElement {
 
-	int width;
-	int height;
 	Window window;
 	List<Container> containers;
 
@@ -46,8 +44,6 @@ public class Canvas extends UIRenderableElement {
 			rectangle.vertices[1].setXYZ(-1 + style.margin.left.getUnitizedValue(window.width()) - ((float)style.borderThickness / window.width()), -1 + style.margin.bottom.getUnitizedValue(window.height()) - ((float)style.borderThickness / window.height()), zIndex);
 			rectangle.vertices[2].setXYZ(1 - style.margin.right.getUnitizedValue(window.width()) + ((float)style.borderThickness / window.width()), -1 + style.margin.bottom.getUnitizedValue(window.height()) - ((float)style.borderThickness / window.height()), zIndex);
 			rectangle.vertices[3].setXYZ(1 - style.margin.right.getUnitizedValue(window.width()) + ((float)style.borderThickness / window.width()), 1 - style.margin.top.getUnitizedValue(window.height()) + ((float)style.borderThickness / window.height()), zIndex);
-			this.width = (int)((rectangle.vertices[3].getXYZ()[0] - rectangle.vertices[0].getXYZ()[0]) / 2 * window.width()) - (style.borderThickness * 2);
-			this.height = (int)((rectangle.vertices[3].getXYZ()[1] - rectangle.vertices[2].getXYZ()[1]) / 2 * window.height()) - (style.borderThickness * 2);
 			rectangle.update(translationMatrix.identity());
 			for (Container container : containers) {
 				container.update();
@@ -101,16 +97,6 @@ public class Canvas extends UIRenderableElement {
 	@Override
 	public Canvas onDoubleClick(short tickTime, Runnable runnable) {
 		return (Canvas) super.onDoubleClick(tickTime, runnable);
-	}
-
-	@Override
-	public UIDimension getWidth() {
-		return new UIDimension(width, UIDimension.Unit.PIXELS);
-	}
-
-	@Override
-	public UIDimension getHeight() {
-		return new UIDimension(height, UIDimension.Unit.PIXELS);
 	}
 
 	public List<UIRenderableElement> getAllChildren() {

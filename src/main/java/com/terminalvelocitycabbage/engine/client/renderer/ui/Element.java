@@ -1,5 +1,9 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
+import com.terminalvelocitycabbage.engine.debug.Log;
+
+import static com.terminalvelocitycabbage.engine.client.renderer.ui.UIDimension.Unit.PERCENT;
+
 public class Element extends UIRenderableElement {
 
 	public UIDimension width;
@@ -19,62 +23,47 @@ public class Element extends UIRenderableElement {
 	@Override
 	public void update() {
 
-		//Get boundaries of parent
-		float originXMin = parent.rectangle.vertices[0].getX();
-		float originYMin = parent.rectangle.vertices[1].getY();
-		float originXMax = parent.rectangle.vertices[2].getX();
-		float originYMax = parent.rectangle.vertices[0].getY();
+		if (needsUpdate) {
+			//Get boundaries of parent
+			float originXMin = parent.rectangle.vertices[0].getX();
+			float originXMax = parent.rectangle.vertices[2].getX();
+			float originYMin = parent.rectangle.vertices[1].getY();
+			float originYMax = parent.rectangle.vertices[0].getY();
 
-		//Window dimensions
-		int windowWidth = getCanvas().window.width();
-		int windowHeight = getCanvas().window.height();
+			//Window dimensions
+			int windowWidth = getCanvas().window.width();
+			int windowHeight = getCanvas().window.height();
 
-		//Get parent's unit dimensions
-		float uContainerWidth = (float)parent.getWidth().getPixelValue(windowWidth) / windowWidth;
-		float uContainerHeight = (float)parent.getHeight().getPixelValue(windowHeight) / windowHeight;
+			//Container dimensions
+			float containerWidth = originXMax - originXMin;
+			float containerHeight = originYMax - originYMin;
 
-		//Get parent pixel dimensions
-		int pxContainerWidth = parent.getWidth().getPixelValue(windowWidth);
-		int pxContainerHeight = parent.getHeight().getPixelValue(windowHeight);
+			//Container center
+			float containerCenterX = (originXMin + originXMax) / 2f;
+			float containerCenterY = (originYMin + originYMax) / 2f;
 
-		//Create variables to store vertex Positions in
-		float leftX = originXMin;
-		float rightX = originXMax;
-		float topY = originYMax;
-		float bottomY = originYMin;
+			//Create variables to store vertex Positions in at the center of the parent
+			float leftX = containerCenterX;
+			float rightX = containerCenterX;
+			float topY = containerCenterY;
+			float bottomY = containerCenterY;
 
-		//Offsets
-		float xOffset = uContainerWidth - width.getUnitizedValue(pxContainerWidth);
-		float yOffset = uContainerHeight - height.getUnitizedValue(pxContainerHeight);
+			//Create temp width and height vars in case of a responsive layout
+			float xOffset = width.unit.equals(PERCENT) ? width.value / 100f * containerWidth : width.getUnitizedValue(windowWidth);
+			float yOffset = height.unit.equals(PERCENT) ? height.value / 100f * containerHeight : height.getUnitizedValue(windowHeight);
 
-		//Horizontal Opposite to start Positions
-		if (parent.horizontalAlignment.start == -1) rightX -= xOffset;
-		if (parent.horizontalAlignment.start == 1) leftX += xOffset;
-		if (parent.horizontalAlignment.start == 0) {
-			leftX += xOffset / 2;
-			rightX -= xOffset / 2;
+			//Give the element it's dimensions
+			leftX -= xOffset / 2f;
+			rightX += xOffset / 2f;
+			bottomY -= yOffset / 2f;
+			topY += yOffset / 2f;
+
+			//Set the vertexes based on the calculated positions
+			rectangle.vertices[0].setXYZ(leftX, topY, zIndex);
+			rectangle.vertices[1].setXYZ(leftX, bottomY, zIndex);
+			rectangle.vertices[2].setXYZ(rightX, bottomY, zIndex);
+			rectangle.vertices[3].setXYZ(rightX, topY, zIndex);
 		}
-
-		//Vertical Opposite to start Positions
-		if (parent.verticalAlignment.start == -1) topY -= yOffset;
-		if (parent.verticalAlignment.start == 1) bottomY += yOffset;
-		if (parent.verticalAlignment.start == 0) {
-			bottomY += yOffset / 2;
-			topY -= yOffset / 2;
-		}
-
-		//Apply margins
-		leftX += style.margin.left.getUnitizedValue(windowWidth);
-		rightX -= style.margin.right.getUnitizedValue(windowWidth);
-
-		//Move the element based on display type
-		//TODO need to figure out display types needed
-
-		//Set the vertexes based on the calculated positions
-		rectangle.vertices[0].setXYZ(leftX, topY, zIndex);
-		rectangle.vertices[1].setXYZ(leftX, bottomY, zIndex);
-		rectangle.vertices[2].setXYZ(rightX, bottomY, zIndex);
-		rectangle.vertices[3].setXYZ(rightX, topY, zIndex);
 
 		//Update the data that gets passed to the gpu
 		rectangle.update(translationMatrix.identity());
@@ -85,16 +74,6 @@ public class Element extends UIRenderableElement {
 
 	public int getPosition() {
 		return parent.elements.indexOf(this);
-	}
-
-	@Override
-	public UIDimension getWidth() {
-		return width;
-	}
-
-	@Override
-	public UIDimension getHeight() {
-		return height;
 	}
 
 	public Canvas getCanvas() {
@@ -123,5 +102,17 @@ public class Element extends UIRenderableElement {
 	@Override
 	public Element onDoubleClick(short tickTime, Runnable runnable) {
 		return (Element) super.onDoubleClick(tickTime, runnable);
+	}
+
+	@Override
+	public void render() {
+		super.render();
+		if (false) {
+			Log.warn("------------------------");
+			Log.info(rectangle.vertices[0].getX() + " " + rectangle.vertices[0].getY());
+			Log.info(rectangle.vertices[1].getX() + " " + rectangle.vertices[1].getY());
+			Log.info(rectangle.vertices[2].getX() + " " + rectangle.vertices[2].getY());
+			Log.info(rectangle.vertices[3].getX() + " " + rectangle.vertices[3].getY());
+		}
 	}
 }

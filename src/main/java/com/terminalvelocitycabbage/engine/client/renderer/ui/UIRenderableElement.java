@@ -115,7 +115,11 @@ public abstract class UIRenderableElement {
 		}
 	}
 
-	public abstract UIDimension getWidth();
+	public float getWidth() {
+		return rectangle.vertices[3].getX() - rectangle.vertices[0].getX();
+	}
 
-	public abstract UIDimension getHeight();
+	public float getHeight() {
+		return rectangle.vertices[0].getY() - rectangle.vertices[1].getY();
+	}
 }

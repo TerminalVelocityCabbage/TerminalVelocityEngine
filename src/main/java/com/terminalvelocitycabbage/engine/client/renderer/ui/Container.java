@@ -3,6 +3,8 @@ package com.terminalvelocitycabbage.engine.client.renderer.ui;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.terminalvelocitycabbage.engine.client.renderer.ui.UIDimension.Unit.PERCENT;
+
 public class Container extends UIRenderableElement {
 
 	public UIDimension width;
@@ -63,24 +65,25 @@ public class Container extends UIRenderableElement {
 			float originYMax = parent.rectangle.vertices[0].getY();
 
 			//Window dimensions
-			int windowWidth = getCanvas().window.width();
-			int windowHeight = getCanvas().window.height();
+			int windowWidth = getCanvas().getWindow().width();
+			int windowHeight = getCanvas().getWindow().height();
 
 			//Get parent's unit dimensions
-			float uContainerWidth = (float)parent.getWidth().getPixelValue(windowWidth) / windowWidth;
-			float uContainerHeight = (float)parent.getHeight().getPixelValue(windowHeight) / windowHeight;
+			float uContainerWidth = parent.getWidth();
+			float uContainerHeight = parent.getHeight();
 
 			//Container center
 			float containerCenterX = (originXMin + originXMax) / 2;
 			float containerCenterY = (originYMin + originYMax) / 2;
 
 			//Store offsets for anchorPosition center
-			float xOffset = anchorPoint.anchorPoint.xPos * (uContainerWidth);
-			float yOffset = anchorPoint.anchorPoint.yPos * (uContainerHeight);
+			float xOffset = anchorPoint.anchorPoint.xPos * (uContainerWidth / 2);
+			float yOffset = anchorPoint.anchorPoint.yPos * (uContainerHeight / 2);
 
 			//Unit dimensions
-			float uWidth = width.getUnitizedValue(windowWidth);
-			float uHeight = height.getUnitizedValue(windowHeight);
+			//Create temp width and height vars in case of a responsive layout
+			float uWidth = width.unit.equals(PERCENT) ? width.value / 100f * uContainerWidth : width.getUnitizedValue(windowWidth);
+			float uHeight = height.unit.equals(PERCENT) ? height.value / 100f * uContainerHeight : height.getUnitizedValue(windowHeight);
 
 			//Place all vertices at the center of the parent
 			float leftX = containerCenterX;
@@ -142,6 +145,7 @@ public class Container extends UIRenderableElement {
 		container.zIndex = zIndex - 1;
 		childContainers.add(container);
 		container.bind();
+		container.queueUpdate();
 		return this;
 	}
 
@@ -150,6 +154,7 @@ public class Container extends UIRenderableElement {
 		element.zIndex = zIndex - 1;
 		elements.add(element);
 		element.bind();
+		element.queueUpdate();
 		return this;
 	}
 
@@ -157,7 +162,7 @@ public class Container extends UIRenderableElement {
 		float value = 0f;
 		for (Element element : elements.subList(beginIndex, endIndex)) {
 			//TODO accommodate for eventual margins
-			value += element.getHeight().getUnitizedValue(getCanvas().getWindow().height());
+			value += element.getHeight();
 		}
 		return value;
 	}
@@ -166,7 +171,7 @@ public class Container extends UIRenderableElement {
 		float value = 0f;
 		for (Element element : elements.subList(beginIndex, endIndex)) {
 			//TODO accommodate for eventual margins
-			value += element.getWidth().getUnitizedValue(getCanvas().getWindow().width());
+			value += element.getWidth();
 		}
 		return value;
 	}
@@ -189,16 +194,6 @@ public class Container extends UIRenderableElement {
 	@Override
 	public Container onDoubleClick(short tickTime, Runnable runnable) {
 		return (Container) super.onDoubleClick(tickTime, runnable);
-	}
-
-	@Override
-	public UIDimension getWidth() {
-		return width;
-	}
-
-	@Override
-	public UIDimension getHeight() {
-		return height;
 	}
 
 	public List<Container> getAllContainers() {
