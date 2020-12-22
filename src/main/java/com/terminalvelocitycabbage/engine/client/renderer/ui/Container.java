@@ -58,19 +58,19 @@ public class Container extends UIRenderableElement {
 	public void update() {
 		if (needsUpdate) {
 
-			//Get boundaries of parent
-			float originXMin = parent.rectangle.vertices[0].getX();
-			float originYMin = parent.rectangle.vertices[1].getY();
-			float originXMax = parent.rectangle.vertices[2].getX();
-			float originYMax = parent.rectangle.vertices[0].getY();
-
 			//Window dimensions
 			int windowWidth = getCanvas().getWindow().width();
 			int windowHeight = getCanvas().getWindow().height();
 
+			//Get boundaries of parent
+			float originXMin = parent.rectangle.vertices[0].getX() + ((float)parent.style.borderThickness / windowWidth * 2);
+			float originYMin = parent.rectangle.vertices[1].getY() + ((float)parent.style.borderThickness / windowHeight * 2);
+			float originXMax = parent.rectangle.vertices[2].getX() - ((float)parent.style.borderThickness / windowWidth * 2);
+			float originYMax = parent.rectangle.vertices[0].getY() - ((float)parent.style.borderThickness / windowHeight * 2);
+
 			//Get parent's unit dimensions
-			float uContainerWidth = parent.getWidth();
-			float uContainerHeight = parent.getHeight();
+			float uContainerWidth = originXMax - originXMin;
+			float uContainerHeight = originYMax - originYMin;
 
 			//Container center
 			float containerCenterX = (originXMin + originXMax) / 2;
@@ -129,10 +129,10 @@ public class Container extends UIRenderableElement {
 			rectangle.update(translationMatrix.identity());
 
 			for (Container container : childContainers) {
-				container.update();
+				container.queueUpdate();
 			}
 			for (Element element : elements) {
-				element.update();
+				element.queueUpdate();
 			}
 
 			//Complete this update

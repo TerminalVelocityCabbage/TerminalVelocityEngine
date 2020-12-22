@@ -24,15 +24,16 @@ public class Element extends UIRenderableElement {
 	public void update() {
 
 		if (needsUpdate) {
-			//Get boundaries of parent
-			float originXMin = parent.rectangle.vertices[0].getX();
-			float originXMax = parent.rectangle.vertices[2].getX();
-			float originYMin = parent.rectangle.vertices[1].getY();
-			float originYMax = parent.rectangle.vertices[0].getY();
 
 			//Window dimensions
 			int windowWidth = getCanvas().window.width();
 			int windowHeight = getCanvas().window.height();
+
+			//Get boundaries of parent
+			float originXMin = parent.rectangle.vertices[0].getX() + ((float)parent.style.borderThickness / windowWidth * 2);
+			float originXMax = parent.rectangle.vertices[2].getX() - ((float)parent.style.borderThickness / windowWidth * 2);
+			float originYMin = parent.rectangle.vertices[1].getY() + ((float)parent.style.borderThickness / windowHeight * 2);
+			float originYMax = parent.rectangle.vertices[0].getY() - ((float)parent.style.borderThickness / windowHeight * 2);
 
 			//Container dimensions
 			float containerWidth = originXMax - originXMin;
