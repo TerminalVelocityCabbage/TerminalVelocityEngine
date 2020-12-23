@@ -46,7 +46,7 @@ public class Canvas extends UIRenderableElement {
 			rectangle.vertices[3].setXYZ(1 - style.margin.right.getUnitizedValue(window.width()) + ((float)style.borderThickness / window.width()), 1 - style.margin.top.getUnitizedValue(window.height()) + ((float)style.borderThickness / window.height()), zIndex);
 			rectangle.update(translationMatrix.identity());
 			for (Container container : containers) {
-				container.update();
+				container.queueUpdate();
 			}
 			this.needsUpdate = false;
 		}

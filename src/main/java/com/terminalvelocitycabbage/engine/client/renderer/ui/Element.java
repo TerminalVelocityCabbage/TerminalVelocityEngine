@@ -59,6 +59,18 @@ public class Element extends UIRenderableElement {
 			bottomY -= yOffset / 2f;
 			topY += yOffset / 2f;
 
+			//Translate the element to it's start point
+			leftX += parent.horizontalAlignment.start * containerWidth / 2;
+			rightX += parent.horizontalAlignment.start * containerWidth / 2;
+			topY += parent.verticalAlignment.start * containerHeight / 2;
+			bottomY += parent.verticalAlignment.start * containerHeight / 2;
+
+			//Offset them in the opposite of the start to make them position with their corner/edge in the right spot
+			leftX += (xOffset / 2) * (parent.horizontalAlignment.start * -1);
+			rightX += (xOffset / 2) * (parent.horizontalAlignment.start * -1);
+			topY += (yOffset / 2) * (parent.verticalAlignment.start * -1);
+			bottomY += (yOffset / 2) * (parent.verticalAlignment.start * -1);
+
 			//Set the vertexes based on the calculated positions
 			rectangle.vertices[0].setXYZ(leftX, topY, zIndex);
 			rectangle.vertices[1].setXYZ(leftX, bottomY, zIndex);
