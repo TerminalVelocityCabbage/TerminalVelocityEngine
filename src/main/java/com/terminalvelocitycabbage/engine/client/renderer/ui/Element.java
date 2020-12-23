@@ -84,6 +84,16 @@ public class Element extends UIRenderable {
 			topY += parent.alignmentDirection.equals(Alignment.Direction.VERTICAL) ? prevElementHeights * -parent.verticalAlignment.getStart() : 0;
 			bottomY += parent.alignmentDirection.equals(Alignment.Direction.VERTICAL) ? prevElementHeights * -parent.verticalAlignment.getStart() : 0;
 
+			//Hide overflow if needed
+			if (parent.overflow.hideX()) {
+				if (leftX < originXMin) leftX = originXMin;
+				if (rightX > originXMax) rightX = originXMax;
+			}
+			if (parent.overflow.hideY()) {
+				if (bottomY < originYMin) bottomY = originYMin;
+				if (topY > originYMax) topY = originYMax;
+			}
+
 			//Set the vertexes based on the calculated positions
 			rectangle.vertices[0].setXYZ(leftX, topY, zIndex);
 			rectangle.vertices[1].setXYZ(leftX, bottomY, zIndex);

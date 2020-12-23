@@ -1,9 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
-import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment;
-import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Anchor;
-import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Style;
-import com.terminalvelocitycabbage.engine.client.renderer.ui.components.UIDimension;
+import com.terminalvelocitycabbage.engine.client.renderer.ui.components.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +16,7 @@ public class Container extends UIRenderable {
 	public Alignment.Vertical verticalAlignment;
 	public Alignment.Direction alignmentDirection;
 	public UIRenderable parent;
+	public Overflow overflow;
 
 	public List<Container> childContainers;
 	public List<Element> elements;
@@ -31,6 +29,7 @@ public class Container extends UIRenderable {
 		this.horizontalAlignment = Alignment.Horizontal.LEFT;
 		this.verticalAlignment = Alignment.Vertical.TOP;
 		this.alignmentDirection = Alignment.Direction.HORIZONTAL;
+		this.overflow = Overflow.SHOWN;
 		this.childContainers = new ArrayList<>();
 		this.elements = new ArrayList<>();
 	}
@@ -206,6 +205,11 @@ public class Container extends UIRenderable {
 	@Override
 	public Container onDoubleClick(short tickTime, Runnable runnable) {
 		return (Container) super.onDoubleClick(tickTime, runnable);
+	}
+
+	public Container overflow(Overflow overflow) {
+		this.overflow = overflow;
+		return this;
 	}
 
 	public List<Container> getAllContainers() {
