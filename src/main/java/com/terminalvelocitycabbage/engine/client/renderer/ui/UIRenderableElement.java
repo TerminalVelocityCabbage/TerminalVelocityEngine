@@ -2,6 +2,7 @@ package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
 import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
 import com.terminalvelocitycabbage.engine.client.renderer.shapes.Rectangle;
+import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Style;
 import org.joml.Matrix4f;
 
 import java.util.ArrayList;

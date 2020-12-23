@@ -1,9 +1,14 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
+import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment;
+import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Anchor;
+import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Style;
+import com.terminalvelocitycabbage.engine.client.renderer.ui.components.UIDimension;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.terminalvelocitycabbage.engine.client.renderer.ui.UIDimension.Unit.PERCENT;
+import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.UIDimension.Unit.PERCENT;
 
 public class Container extends UIRenderableElement {
 
@@ -70,10 +75,10 @@ public class Container extends UIRenderableElement {
 			int windowHeight = getCanvas().getWindow().height();
 
 			//Get boundaries of parent
-			float originXMin = parent.rectangle.vertices[0].getX() + ((float)parent.style.borderThickness / windowWidth * 2);
-			float originYMin = parent.rectangle.vertices[1].getY() + ((float)parent.style.borderThickness / windowHeight * 2);
-			float originXMax = parent.rectangle.vertices[2].getX() - ((float)parent.style.borderThickness / windowWidth * 2);
-			float originYMax = parent.rectangle.vertices[0].getY() - ((float)parent.style.borderThickness / windowHeight * 2);
+			float originXMin = parent.rectangle.vertices[0].getX() + ((float)parent.style.getBorderThickness() / windowWidth * 2);
+			float originYMin = parent.rectangle.vertices[1].getY() + ((float)parent.style.getBorderThickness() / windowHeight * 2);
+			float originXMax = parent.rectangle.vertices[2].getX() - ((float)parent.style.getBorderThickness() / windowWidth * 2);
+			float originYMax = parent.rectangle.vertices[0].getY() - ((float)parent.style.getBorderThickness() / windowHeight * 2);
 
 			//Get parent's unit dimensions
 			float uContainerWidth = originXMax - originXMin;
@@ -84,13 +89,13 @@ public class Container extends UIRenderableElement {
 			float containerCenterY = (originYMin + originYMax) / 2;
 
 			//Store offsets for anchorPosition center
-			float xOffset = anchorPoint.anchorPoint.xPos * (uContainerWidth / 2);
-			float yOffset = anchorPoint.anchorPoint.yPos * (uContainerHeight / 2);
+			float xOffset = anchorPoint.getAnchorPoint().xPos * (uContainerWidth / 2);
+			float yOffset = anchorPoint.getAnchorPoint().yPos * (uContainerHeight / 2);
 
 			//Unit dimensions
 			//Create temp width and height vars in case of a responsive layout
-			float uWidth = width.unit.equals(PERCENT) ? width.value / 100f * uContainerWidth : width.getUnitizedValue(windowWidth);
-			float uHeight = height.unit.equals(PERCENT) ? height.value / 100f * uContainerHeight : height.getUnitizedValue(windowHeight);
+			float uWidth = width.getUnitDirect().equals(PERCENT) ? width.getValueDirect() / 100f * uContainerWidth : width.getUnitizedValue(windowWidth);
+			float uHeight = height.getUnitDirect().equals(PERCENT) ? height.getValueDirect() / 100f * uContainerHeight : height.getUnitizedValue(windowHeight);
 
 			//Place all vertices at the center of the parent
 			float leftX = containerCenterX;
@@ -99,8 +104,8 @@ public class Container extends UIRenderableElement {
 			float bottomY = containerCenterY;
 
 			//Store offsets for anchor direction
-			float xDirOffset = anchorPoint.anchorDirection.xDirection * (uWidth / 2);
-			float yDirOffset = anchorPoint.anchorDirection.yDirection * (uHeight / 2);
+			float xDirOffset = anchorPoint.getAnchorDirection().xDirection * (uWidth / 2);
+			float yDirOffset = anchorPoint.getAnchorDirection().yDirection * (uHeight / 2);
 
 			//Give the container dimensions
 			leftX -= uWidth / 2;
@@ -109,10 +114,10 @@ public class Container extends UIRenderableElement {
 			topY += uHeight / 2;
 
 			//Apply margins
-			leftX += style.margin.left.getUnitizedValue(windowWidth);
-			rightX -= style.margin.right.getUnitizedValue(windowWidth);
-			bottomY += style.margin.bottom.getUnitizedValue(windowHeight);
-			topY -= style.margin.top.getUnitizedValue(windowHeight);
+			leftX += style.getMargin().left().getUnitizedValue(windowWidth);
+			rightX -= style.getMargin().right().getUnitizedValue(windowWidth);
+			bottomY += style.getMargin().bottom().getUnitizedValue(windowHeight);
+			topY -= style.getMargin().top().getUnitizedValue(windowHeight);
 
 			//Move this box to be centered on the anchor point
 			leftX += xOffset;

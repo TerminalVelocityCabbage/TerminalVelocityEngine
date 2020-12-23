@@ -3,6 +3,7 @@ package com.terminalvelocitycabbage.engine.client.renderer.ui;
 import com.terminalvelocitycabbage.engine.client.ClientBase;
 import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
 import com.terminalvelocitycabbage.engine.client.renderer.shapes.Rectangle;
+import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Style;
 import com.terminalvelocitycabbage.engine.events.HandleEvent;
 import com.terminalvelocitycabbage.engine.events.client.WindowResizeEvent;
 
@@ -40,10 +41,10 @@ public class Canvas extends UIRenderableElement {
 	@Override
 	public void update() {
 		if (needsUpdate) {
-			rectangle.vertices[0].setXYZ(-1 + style.margin.left.getUnitizedValue(window.width()) - ((float)style.borderThickness / window.width()), 1 - style.margin.top.getUnitizedValue(window.height()) + ((float)style.borderThickness / window.height()), zIndex);
-			rectangle.vertices[1].setXYZ(-1 + style.margin.left.getUnitizedValue(window.width()) - ((float)style.borderThickness / window.width()), -1 + style.margin.bottom.getUnitizedValue(window.height()) - ((float)style.borderThickness / window.height()), zIndex);
-			rectangle.vertices[2].setXYZ(1 - style.margin.right.getUnitizedValue(window.width()) + ((float)style.borderThickness / window.width()), -1 + style.margin.bottom.getUnitizedValue(window.height()) - ((float)style.borderThickness / window.height()), zIndex);
-			rectangle.vertices[3].setXYZ(1 - style.margin.right.getUnitizedValue(window.width()) + ((float)style.borderThickness / window.width()), 1 - style.margin.top.getUnitizedValue(window.height()) + ((float)style.borderThickness / window.height()), zIndex);
+			rectangle.vertices[0].setXYZ(-1 + style.getMargin().left().getUnitizedValue(window.width()) - ((float)style.getBorderThickness() / window.width()), 1 - style.getMargin().top().getUnitizedValue(window.height()) + ((float)style.getBorderThickness() / window.height()), zIndex);
+			rectangle.vertices[1].setXYZ(-1 + style.getMargin().left().getUnitizedValue(window.width()) - ((float)style.getBorderThickness() / window.width()), -1 + style.getMargin().bottom().getUnitizedValue(window.height()) - ((float)style.getBorderThickness() / window.height()), zIndex);
+			rectangle.vertices[2].setXYZ(1 - style.getMargin().right().getUnitizedValue(window.width()) + ((float)style.getBorderThickness() / window.width()), -1 + style.getMargin().bottom().getUnitizedValue(window.height()) - ((float)style.getBorderThickness() / window.height()), zIndex);
+			rectangle.vertices[3].setXYZ(1 - style.getMargin().right().getUnitizedValue(window.width()) + ((float)style.getBorderThickness() / window.width()), 1 - style.getMargin().top().getUnitizedValue(window.height()) + ((float)style.getBorderThickness() / window.height()), zIndex);
 			rectangle.update(translationMatrix.identity());
 			for (Container container : containers) {
 				container.queueUpdate();

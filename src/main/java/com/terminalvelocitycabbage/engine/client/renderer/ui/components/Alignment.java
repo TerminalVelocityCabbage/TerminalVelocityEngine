@@ -1,4 +1,4 @@
-package com.terminalvelocitycabbage.engine.client.renderer.ui;
+package com.terminalvelocitycabbage.engine.client.renderer.ui.components;
 
 public abstract class Alignment {
 
@@ -13,6 +13,14 @@ public abstract class Alignment {
 		Direction(int start, String name) {
 			this.start = start;
 			this.name = name;
+		}
+
+		public int getStart() {
+			return start;
+		}
+
+		public String getName() {
+			return name;
 		}
 	}
 
@@ -29,6 +37,14 @@ public abstract class Alignment {
 			this.start = start;
 			this.name = name;
 		}
+
+		public int getStart() {
+			return start;
+		}
+
+		public String getName() {
+			return name;
+		}
 	}
 
 	public enum Vertical {
@@ -43,6 +59,14 @@ public abstract class Alignment {
 		Vertical(int start, String name) {
 			this.start = start;
 			this.name = name;
+		}
+
+		public int getStart() {
+			return start;
+		}
+
+		public String getName() {
+			return name;
 		}
 	}
 }

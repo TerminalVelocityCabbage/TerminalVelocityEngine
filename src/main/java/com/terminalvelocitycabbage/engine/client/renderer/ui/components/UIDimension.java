@@ -1,4 +1,4 @@
-package com.terminalvelocitycabbage.engine.client.renderer.ui;
+package com.terminalvelocitycabbage.engine.client.renderer.ui.components;
 
 public class UIDimension {
 
@@ -39,4 +39,11 @@ public class UIDimension {
 		}
 	}
 
+	public int getValueDirect() {
+		return value;
+	}
+
+	public Unit getUnitDirect() {
+		return unit;
+	}
 }
