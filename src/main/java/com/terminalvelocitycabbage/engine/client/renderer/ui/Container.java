@@ -12,6 +12,7 @@ public class Container extends UIRenderableElement {
 	public Anchor anchorPoint;
 	public Alignment.Horizontal horizontalAlignment;
 	public Alignment.Vertical verticalAlignment;
+	public Alignment.Direction alignmentDirection;
 	public UIRenderableElement parent;
 
 	public List<Container> childContainers;
@@ -24,6 +25,7 @@ public class Container extends UIRenderableElement {
 		this.anchorPoint = anchorPoint;
 		this.horizontalAlignment = Alignment.Horizontal.LEFT;
 		this.verticalAlignment = Alignment.Vertical.TOP;
+		this.alignmentDirection = Alignment.Direction.HORIZONTAL;
 		this.childContainers = new ArrayList<>();
 		this.elements = new ArrayList<>();
 	}
@@ -47,6 +49,11 @@ public class Container extends UIRenderableElement {
 
 	public Container verticalAlignment(Alignment.Vertical alignment) {
 		this.verticalAlignment = alignment;
+		return this;
+	}
+
+	public Container alignmentDirection(Alignment.Direction alignment) {
+		this.alignmentDirection = alignment;
 		return this;
 	}
 

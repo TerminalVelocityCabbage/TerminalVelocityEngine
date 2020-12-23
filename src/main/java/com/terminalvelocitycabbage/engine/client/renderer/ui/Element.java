@@ -71,6 +71,16 @@ public class Element extends UIRenderableElement {
 			topY += (yOffset / 2) * (parent.verticalAlignment.start * -1);
 			bottomY += (yOffset / 2) * (parent.verticalAlignment.start * -1);
 
+			//Get dimensions of previous elements
+			float prevElementWidths = parent.getWidthOfElements(0, this.getPosition());
+			float prevElementHeights = parent.getHeightOfElements(0, this.getPosition());
+
+			//Move this element based on the dimensions of elements before this one
+			leftX += parent.alignmentDirection.equals(Alignment.Direction.HORIZONTAL) ? prevElementWidths : 0;
+			rightX += parent.alignmentDirection.equals(Alignment.Direction.HORIZONTAL) ? prevElementWidths : 0;
+			topY += parent.alignmentDirection.equals(Alignment.Direction.VERTICAL) ? prevElementHeights : 0;
+			bottomY += parent.alignmentDirection.equals(Alignment.Direction.VERTICAL) ? prevElementHeights : 0;
+
 			//Set the vertexes based on the calculated positions
 			rectangle.vertices[0].setXYZ(leftX, topY, zIndex);
 			rectangle.vertices[1].setXYZ(leftX, bottomY, zIndex);

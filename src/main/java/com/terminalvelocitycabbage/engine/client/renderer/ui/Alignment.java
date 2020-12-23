@@ -2,6 +2,20 @@ package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
 public abstract class Alignment {
 
+	public enum Direction {
+
+		HORIZONTAL(-1, "left"),
+		VERTICAL(0, "center");
+
+		int start;
+		String name;
+
+		Direction(int start, String name) {
+			this.start = start;
+			this.name = name;
+		}
+	}
+
 	public enum Horizontal {
 
 		LEFT(-1, "left"),
