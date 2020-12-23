@@ -10,7 +10,7 @@ import java.util.List;
 
 import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.UIDimension.Unit.PERCENT;
 
-public class Container extends UIRenderableElement {
+public class Container extends UIRenderable {
 
 	public UIDimension width;
 	public UIDimension height;
@@ -18,7 +18,7 @@ public class Container extends UIRenderableElement {
 	public Alignment.Horizontal horizontalAlignment;
 	public Alignment.Vertical verticalAlignment;
 	public Alignment.Direction alignmentDirection;
-	public UIRenderableElement parent;
+	public UIRenderable parent;
 
 	public List<Container> childContainers;
 	public List<Element> elements;
@@ -43,7 +43,7 @@ public class Container extends UIRenderableElement {
 		}
 	}
 
-	public void setParent(UIRenderableElement canvas) {
+	public void setParent(UIRenderable canvas) {
 		this.parent = canvas;
 	}
 

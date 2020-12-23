@@ -10,7 +10,7 @@ import com.terminalvelocitycabbage.engine.events.client.WindowResizeEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Canvas extends UIRenderableElement {
+public class Canvas extends UIRenderable {
 
 	Window window;
 	List<Container> containers;
@@ -61,7 +61,7 @@ public class Canvas extends UIRenderableElement {
 	@Override
 	public void queueUpdate() {
 		super.queueUpdate();
-		containers.forEach(UIRenderableElement::queueUpdate);
+		containers.forEach(UIRenderable::queueUpdate);
 	}
 
 	public Window getWindow() {
@@ -75,7 +75,7 @@ public class Canvas extends UIRenderableElement {
 	@Override
 	public void destroy() {
 		super.destroy();
-		for (UIRenderableElement element : containers) {
+		for (UIRenderable element : containers) {
 			element.destroy();
 		}
 	}
@@ -100,7 +100,7 @@ public class Canvas extends UIRenderableElement {
 		return (Canvas) super.onDoubleClick(tickTime, runnable);
 	}
 
-	public List<UIRenderableElement> getAllChildren() {
+	public List<UIRenderable> getAllChildren() {
 
 		//Add all of this canvas' containers to a list
 		List<Container> allContainers = new ArrayList<>(containers);
@@ -108,7 +108,7 @@ public class Canvas extends UIRenderableElement {
 		containers.forEach(container -> allContainers.addAll(container.getAllContainers()));
 
 		//Add all of the containers in this canvas' tree
-		List<UIRenderableElement> elements = new ArrayList<>(allContainers);
+		List<UIRenderable> elements = new ArrayList<>(allContainers);
 		//Add all elements of the containers to the list of children
 		allContainers.forEach(container -> elements.addAll(container.getElements()));
 		return elements;

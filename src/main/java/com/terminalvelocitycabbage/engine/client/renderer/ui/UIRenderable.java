@@ -8,7 +8,7 @@ import org.joml.Matrix4f;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class UIRenderableElement {
+public abstract class UIRenderable {
 
 	boolean needsUpdate;
 	Rectangle rectangle;
@@ -21,7 +21,7 @@ public abstract class UIRenderableElement {
 	List<Runnable> rightClickConsumers;
 	List<DoubleClickRunnable> doubleClickConsumers;
 
-	public UIRenderableElement(Style style) {
+	public UIRenderable(Style style) {
 		this.needsUpdate = false;
 		this.rectangle = new Rectangle(new Vertex().setXYZ(0, 0, 0), new Vertex().setXYZ(0, 0, 0), new Vertex().setXYZ(0, 0, 0), new Vertex().setXYZ(0, 0, 0));
 		this.style = style;
@@ -65,7 +65,7 @@ public abstract class UIRenderableElement {
 		}
 	}
 
-	public UIRenderableElement onHover(Runnable runnable) {
+	public UIRenderable onHover(Runnable runnable) {
 		hoverConsumers.add(runnable);
 		return this;
 	}
@@ -76,7 +76,7 @@ public abstract class UIRenderableElement {
 		}
 	}
 
-	public UIRenderableElement onClick(Runnable runnable) {
+	public UIRenderable onClick(Runnable runnable) {
 		leftClickConsumers.add(runnable);
 		return this;
 	}
@@ -87,7 +87,7 @@ public abstract class UIRenderableElement {
 		}
 	}
 
-	public UIRenderableElement onRightClick(Runnable runnable) {
+	public UIRenderable onRightClick(Runnable runnable) {
 		rightClickConsumers.add(runnable);
 		return this;
 	}
@@ -100,7 +100,7 @@ public abstract class UIRenderableElement {
 		}
 	}
 
-	public UIRenderableElement onDoubleClick(short tickTime, Runnable runnable) {
+	public UIRenderable onDoubleClick(short tickTime, Runnable runnable) {
 		doubleClickConsumers.add(new DoubleClickRunnable(tickTime, runnable));
 		return this;
 	}

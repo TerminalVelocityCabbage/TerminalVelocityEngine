@@ -78,27 +78,4 @@ public abstract class EmptyGameObject {
 	public Matrix4f getOrthoProjModelMatrix(Matrix4f orthoMatrix) {
 		return orthoMatrix.mulLocal(getTransformationMatrix());
 	}
-
-	public static abstract class Builder {
-		protected Vector3f position = null;
-		protected Quaternionf rotation = null;
-		protected Vector3f scale = null;
-
-		public EmptyGameObject.Builder setPosition(Vector3f position) {
-			this.position = position;
-			return this;
-		}
-
-		public EmptyGameObject.Builder setRotation(Quaternionf rotation) {
-			this.rotation = rotation;
-			return this;
-		}
-
-		public EmptyGameObject.Builder setScale(Vector3f scale) {
-			this.scale = scale;
-			return this;
-		}
-
-		public abstract EmptyGameObject build();
-	}
 }

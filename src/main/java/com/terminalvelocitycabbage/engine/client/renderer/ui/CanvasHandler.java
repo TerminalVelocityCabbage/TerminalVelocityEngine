@@ -20,6 +20,8 @@ public class CanvasHandler {
 		if (!canvases.containsKey(name)) {
 			this.canvases.put(name, canvas);
 			activeCanvases.add(name);
+			canvas.bind();
+			canvas.queueUpdate();
 		} else {
 			throw new RuntimeException("Could not add duplicate entry " + name + " to canvas handler.");
 		}
@@ -53,7 +55,7 @@ public class CanvasHandler {
 	public void tick(double posX, double posY, boolean leftClick, boolean rightClick, short timeSinceLastClick) {
 
 		//Call hoverable events if the element is being hovered over
-		for (UIRenderableElement element : getCanvasesAt(posX, posY)) {
+		for (UIRenderable element : getCanvasesAt(posX, posY)) {
 			element.callHoverable();
 			if (leftClick) {
 				element.callClick();
@@ -75,8 +77,8 @@ public class CanvasHandler {
 		}
 	}
 
-	public List<UIRenderableElement> getCanvasesAt(double x, double y) {
-		List<UIRenderableElement> inCanvases = new ArrayList<>();
+	public List<UIRenderable> getCanvasesAt(double x, double y) {
+		List<UIRenderable> inCanvases = new ArrayList<>();
 		Canvas currCanvas;
 		Vertex[] currVertices;
 		for (String currID : activeCanvases) {
@@ -97,7 +99,7 @@ public class CanvasHandler {
 		return inCanvases;
 	}
 
-	private void recursiveOnElement(List<Container> container, Consumer<UIRenderableElement> consumer) {
+	private void recursiveOnElement(List<Container> container, Consumer<UIRenderable> consumer) {
 		//TODO when containers have elements and other containers within them
 	}
 

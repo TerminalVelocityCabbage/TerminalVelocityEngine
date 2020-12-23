@@ -7,7 +7,7 @@ import com.terminalvelocitycabbage.engine.debug.Log;
 
 import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.UIDimension.Unit.PERCENT;
 
-public class Element extends UIRenderableElement {
+public class Element extends UIRenderable {
 
 	public UIDimension width;
 	public UIDimension height;
