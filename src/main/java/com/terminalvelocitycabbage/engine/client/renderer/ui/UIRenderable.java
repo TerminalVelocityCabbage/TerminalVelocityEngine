@@ -7,6 +7,7 @@ import org.joml.Matrix4f;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public abstract class UIRenderable {
 
@@ -16,9 +17,11 @@ public abstract class UIRenderable {
 	int zIndex;
 	Matrix4f translationMatrix;
 
-	List<Runnable> hoverConsumers;
-	List<Runnable> leftClickConsumers;
-	List<Runnable> rightClickConsumers;
+	List<Consumer<UIRenderable>> hoverConsumers;
+	boolean lastHover;
+	List<Consumer<UIRenderable>> unHoverConsumers;
+	List<Consumer<UIRenderable>> leftClickConsumers;
+	List<Consumer<UIRenderable>> rightClickConsumers;
 	List<DoubleClickRunnable> doubleClickConsumers;
 
 	public UIRenderable(Style style) {
@@ -28,6 +31,8 @@ public abstract class UIRenderable {
 		this.zIndex = 0;
 		this.translationMatrix = new Matrix4f();
 		hoverConsumers = new ArrayList<>();
+		lastHover = false;
+		unHoverConsumers = new ArrayList<>();
 		leftClickConsumers = new ArrayList<>();
 		rightClickConsumers = new ArrayList<>();
 		doubleClickConsumers = new ArrayList<>();
@@ -60,59 +65,71 @@ public abstract class UIRenderable {
 	}
 
 	public void callHoverable() {
-		for (Runnable runnable : hoverConsumers) {
-			runnable.run();
+		for (Consumer<UIRenderable> consumer : hoverConsumers) {
+			consumer.accept(this);
+		}
+		lastHover = true;
+	}
+
+	public UIRenderable onHover(Consumer<UIRenderable> consumer) {
+		hoverConsumers.add(consumer);
+		return this;
+	}
+
+	public void callUnHover() {
+		for (Consumer<UIRenderable> consumer : unHoverConsumers) {
+			consumer.accept(this);
 		}
 	}
 
-	public UIRenderable onHover(Runnable runnable) {
-		hoverConsumers.add(runnable);
+	public UIRenderable onUnHover(Consumer<UIRenderable> consumer) {
+		unHoverConsumers.add(consumer);
 		return this;
 	}
 
 	public void callClick() {
-		for (Runnable runnable : leftClickConsumers) {
-			runnable.run();
+		for (Consumer<UIRenderable> consumer : leftClickConsumers) {
+			consumer.accept(this);
 		}
 	}
 
-	public UIRenderable onClick(Runnable runnable) {
-		leftClickConsumers.add(runnable);
+	public UIRenderable onClick(Consumer<UIRenderable> consumer) {
+		leftClickConsumers.add(consumer);
 		return this;
 	}
 
 	public void callRightClick() {
-		for (Runnable runnable : rightClickConsumers) {
-			runnable.run();
+		for (Consumer<UIRenderable> consumer : rightClickConsumers) {
+			consumer.accept(this);
 		}
 	}
 
-	public UIRenderable onRightClick(Runnable runnable) {
-		rightClickConsumers.add(runnable);
+	public UIRenderable onRightClick(Consumer<UIRenderable> consumer) {
+		rightClickConsumers.add(consumer);
 		return this;
 	}
 
 	public void callDoubleCLick(short time) {
-		for (DoubleClickRunnable runnable : doubleClickConsumers) {
-			if (runnable.tickTime >= time && time > 0) {
-				runnable.runnable.run();
+		for (DoubleClickRunnable consumer : doubleClickConsumers) {
+			if (consumer.tickTime >= time && time > 0) {
+				consumer.consumer.accept(this);
 			}
 		}
 	}
 
-	public UIRenderable onDoubleClick(short tickTime, Runnable runnable) {
-		doubleClickConsumers.add(new DoubleClickRunnable(tickTime, runnable));
+	public UIRenderable onDoubleClick(short tickTime, Consumer<UIRenderable> consumer) {
+		doubleClickConsumers.add(new DoubleClickRunnable(tickTime, consumer));
 		return this;
 	}
 
 	private static class DoubleClickRunnable {
 
 		short tickTime;
-		Runnable runnable;
+		Consumer<UIRenderable> consumer;
 
-		public DoubleClickRunnable(short tickTime, Runnable runnable) {
+		public DoubleClickRunnable(short tickTime, Consumer<UIRenderable> consumer) {
 			this.tickTime = tickTime;
-			this.runnable = runnable;
+			this.consumer = consumer;
 		}
 	}
 

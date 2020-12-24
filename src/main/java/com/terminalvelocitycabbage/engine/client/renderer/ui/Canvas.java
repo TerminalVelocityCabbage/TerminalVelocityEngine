@@ -9,6 +9,7 @@ import com.terminalvelocitycabbage.engine.events.client.WindowResizeEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class Canvas extends UIRenderable {
 
@@ -40,6 +41,7 @@ public class Canvas extends UIRenderable {
 
 	@Override
 	public void update() {
+
 		if (needsUpdate) {
 			rectangle.vertices[0].setXYZ(-1 + style.getMargin().left().getUnitizedValue(window.width()) - ((float)style.getBorderThickness() / window.width()), 1 - style.getMargin().top().getUnitizedValue(window.height()) + ((float)style.getBorderThickness() / window.height()), zIndex);
 			rectangle.vertices[1].setXYZ(-1 + style.getMargin().left().getUnitizedValue(window.width()) - ((float)style.getBorderThickness() / window.width()), -1 + style.getMargin().bottom().getUnitizedValue(window.height()) - ((float)style.getBorderThickness() / window.height()), zIndex);
@@ -81,23 +83,28 @@ public class Canvas extends UIRenderable {
 	}
 
 	@Override
-	public Canvas onHover(Runnable runnable) {
-		return (Canvas) super.onHover(runnable);
+	public Canvas onHover(Consumer<UIRenderable> consumer) {
+		return (Canvas) super.onHover(consumer);
 	}
 
 	@Override
-	public Canvas onClick(Runnable runnable) {
-		return (Canvas) super.onClick(runnable);
+	public Canvas onUnHover(Consumer<UIRenderable> consumer) {
+		return (Canvas) super.onHover(consumer);
 	}
 
 	@Override
-	public Canvas onRightClick(Runnable runnable) {
-		return (Canvas) super.onRightClick(runnable);
+	public Canvas onClick(Consumer<UIRenderable> consumer) {
+		return (Canvas) super.onClick(consumer);
 	}
 
 	@Override
-	public Canvas onDoubleClick(short tickTime, Runnable runnable) {
-		return (Canvas) super.onDoubleClick(tickTime, runnable);
+	public Canvas onRightClick(Consumer<UIRenderable> consumer) {
+		return (Canvas) super.onRightClick(consumer);
+	}
+
+	@Override
+	public Canvas onDoubleClick(short tickTime, Consumer<UIRenderable> consumer) {
+		return (Canvas) super.onDoubleClick(tickTime, consumer);
 	}
 
 	public List<UIRenderable> getAllChildren() {

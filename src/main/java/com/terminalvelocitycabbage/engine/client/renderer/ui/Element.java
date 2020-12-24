@@ -3,7 +3,8 @@ package com.terminalvelocitycabbage.engine.client.renderer.ui;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Style;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.UIDimension;
-import com.terminalvelocitycabbage.engine.debug.Log;
+
+import java.util.function.Consumer;
 
 import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.UIDimension.Unit.PERCENT;
 
@@ -121,34 +122,32 @@ public class Element extends UIRenderable {
 	}
 
 	@Override
-	public Element onHover(Runnable runnable) {
-		return (Element) super.onHover(runnable);
+	public Element onHover(Consumer<UIRenderable> consumer) {
+		return (Element) super.onHover(consumer);
 	}
 
 	@Override
-	public Element onClick(Runnable runnable) {
-		return (Element) super.onClick(runnable);
+	public Element onUnHover(Consumer<UIRenderable> consumer) {
+		return (Element) super.onHover(consumer);
 	}
 
 	@Override
-	public Element onRightClick(Runnable runnable) {
-		return (Element) super.onRightClick(runnable);
+	public Element onClick(Consumer<UIRenderable> consumer) {
+		return (Element) super.onClick(consumer);
 	}
 
 	@Override
-	public Element onDoubleClick(short tickTime, Runnable runnable) {
-		return (Element) super.onDoubleClick(tickTime, runnable);
+	public Element onRightClick(Consumer<UIRenderable> consumer) {
+		return (Element) super.onRightClick(consumer);
+	}
+
+	@Override
+	public Element onDoubleClick(short tickTime, Consumer<UIRenderable> consumer) {
+		return (Element) super.onDoubleClick(tickTime, consumer);
 	}
 
 	@Override
 	public void render() {
 		super.render();
-		if (false) {
-			Log.warn("------------------------");
-			Log.info(rectangle.vertices[0].getX() + " " + rectangle.vertices[0].getY());
-			Log.info(rectangle.vertices[1].getX() + " " + rectangle.vertices[1].getY());
-			Log.info(rectangle.vertices[2].getX() + " " + rectangle.vertices[2].getY());
-			Log.info(rectangle.vertices[3].getX() + " " + rectangle.vertices[3].getY());
-		}
 	}
 }

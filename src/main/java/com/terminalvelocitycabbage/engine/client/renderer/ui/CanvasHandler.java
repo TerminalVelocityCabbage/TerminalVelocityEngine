@@ -54,17 +54,28 @@ public class CanvasHandler {
 
 	public void tick(double posX, double posY, boolean leftClick, boolean rightClick, short timeSinceLastClick) {
 
-		//Call hoverable events if the element is being hovered over
-		for (UIRenderable element : getCanvasesAt(posX, posY)) {
-			element.callHoverable();
-			if (leftClick) {
-				element.callClick();
-				element.callDoubleCLick(timeSinceLastClick);
+		Log.error("tick");
+
+		getCanvases().forEach(canvas -> canvas.getAllChildren().forEach(element -> {
+
+			element.lastHover = false;
+
+			if (testPosition(element.rectangle.vertices, posX, posY)) {
+				element.callHoverable();
+				if (leftClick) {
+					element.callClick();
+					element.callDoubleCLick(timeSinceLastClick);
+				}
+				if (rightClick) {
+					element.callRightClick();
+				}
+			} else {
+				if (element.lastHover) {
+					element.callUnHover();
+					element.lastHover = false;
+				}
 			}
-			if (rightClick) {
-				element.callRightClick();
-			}
-		}
+		}));
 	}
 
 	public boolean isEnabled(String name) {
@@ -77,7 +88,7 @@ public class CanvasHandler {
 		}
 	}
 
-	public List<UIRenderable> getCanvasesAt(double x, double y) {
+	public List<UIRenderable> getElementsAt(double x, double y) {
 		List<UIRenderable> inCanvases = new ArrayList<>();
 		Canvas currCanvas;
 		Vertex[] currVertices;
@@ -104,10 +115,7 @@ public class CanvasHandler {
 	}
 
 	private boolean testPosition(Vertex[] currVertices, double x, double y) {
-		if (currVertices[0].getX() < x && currVertices[2].getX() > x && currVertices[1].getY() < y && currVertices[0].getY() > y) {
-			return true;
-		}
-		return false;
+		return currVertices[0].getX() < x && currVertices[2].getX() > x && currVertices[1].getY() < y && currVertices[0].getY() > y;
 	}
 
 	public Collection<Canvas> getCanvases() {

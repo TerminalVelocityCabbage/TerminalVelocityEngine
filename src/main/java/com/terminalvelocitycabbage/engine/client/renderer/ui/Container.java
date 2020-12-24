@@ -4,6 +4,7 @@ import com.terminalvelocitycabbage.engine.client.renderer.ui.components.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.UIDimension.Unit.PERCENT;
 
@@ -67,6 +68,7 @@ public class Container extends UIRenderable {
 
 	@Override
 	public void update() {
+
 		if (needsUpdate) {
 
 			//Window dimensions
@@ -188,23 +190,28 @@ public class Container extends UIRenderable {
 	}
 
 	@Override
-	public Container onHover(Runnable runnable) {
-		return (Container) super.onHover(runnable);
+	public Container onHover(Consumer<UIRenderable> consumer) {
+		return (Container) super.onHover(consumer);
 	}
 
 	@Override
-	public Container onClick(Runnable runnable) {
-		return (Container) super.onClick(runnable);
+	public Container onUnHover(Consumer<UIRenderable> consumer) {
+		return (Container) super.onHover(consumer);
 	}
 
 	@Override
-	public Container onRightClick(Runnable runnable) {
-		return (Container) super.onRightClick(runnable);
+	public Container onClick(Consumer<UIRenderable> consumer) {
+		return (Container) super.onClick(consumer);
 	}
 
 	@Override
-	public Container onDoubleClick(short tickTime, Runnable runnable) {
-		return (Container) super.onDoubleClick(tickTime, runnable);
+	public Container onRightClick(Consumer<UIRenderable> consumer) {
+		return (Container) super.onRightClick(consumer);
+	}
+
+	@Override
+	public Container onDoubleClick(short tickTime, Consumer<UIRenderable> consumer) {
+		return (Container) super.onDoubleClick(tickTime, consumer);
 	}
 
 	public Container overflow(Overflow overflow) {
