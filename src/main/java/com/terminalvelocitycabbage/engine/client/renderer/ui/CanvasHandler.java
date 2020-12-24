@@ -54,11 +54,7 @@ public class CanvasHandler {
 
 	public void tick(double posX, double posY, boolean leftClick, boolean rightClick, short timeSinceLastClick) {
 
-		Log.error("tick");
-
 		getCanvases().forEach(canvas -> canvas.getAllChildren().forEach(element -> {
-
-			element.lastHover = false;
 
 			if (testPosition(element.rectangle.vertices, posX, posY)) {
 				element.callHoverable();

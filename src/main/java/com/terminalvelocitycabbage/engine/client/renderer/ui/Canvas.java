@@ -89,7 +89,7 @@ public class Canvas extends UIRenderable {
 
 	@Override
 	public Canvas onUnHover(Consumer<UIRenderable> consumer) {
-		return (Canvas) super.onHover(consumer);
+		return (Canvas) super.onUnHover(consumer);
 	}
 
 	@Override

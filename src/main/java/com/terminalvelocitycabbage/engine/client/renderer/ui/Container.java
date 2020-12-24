@@ -196,7 +196,7 @@ public class Container extends UIRenderable {
 
 	@Override
 	public Container onUnHover(Consumer<UIRenderable> consumer) {
-		return (Container) super.onHover(consumer);
+		return (Container) super.onUnHover(consumer);
 	}
 
 	@Override

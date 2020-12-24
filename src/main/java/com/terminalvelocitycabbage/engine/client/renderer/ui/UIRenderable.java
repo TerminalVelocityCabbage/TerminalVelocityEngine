@@ -80,6 +80,7 @@ public abstract class UIRenderable {
 		for (Consumer<UIRenderable> consumer : unHoverConsumers) {
 			consumer.accept(this);
 		}
+		lastHover = false;
 	}
 
 	public UIRenderable onUnHover(Consumer<UIRenderable> consumer) {

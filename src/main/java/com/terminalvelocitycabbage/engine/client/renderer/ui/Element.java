@@ -128,7 +128,7 @@ public class Element extends UIRenderable {
 
 	@Override
 	public Element onUnHover(Consumer<UIRenderable> consumer) {
-		return (Element) super.onHover(consumer);
+		return (Element) super.onUnHover(consumer);
 	}
 
 	@Override
