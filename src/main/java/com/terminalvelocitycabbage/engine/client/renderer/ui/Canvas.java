@@ -43,10 +43,32 @@ public class Canvas extends UIRenderable {
 	public void update() {
 
 		if (needsUpdate) {
-			rectangle.vertices[0].setXYZ(-1 + style.getMargin().left().getUnitizedValue(window.width()) - ((float)style.getBorderThickness() / window.width()), 1 - style.getMargin().top().getUnitizedValue(window.height()) + ((float)style.getBorderThickness() / window.height()), zIndex);
-			rectangle.vertices[1].setXYZ(-1 + style.getMargin().left().getUnitizedValue(window.width()) - ((float)style.getBorderThickness() / window.width()), -1 + style.getMargin().bottom().getUnitizedValue(window.height()) - ((float)style.getBorderThickness() / window.height()), zIndex);
-			rectangle.vertices[2].setXYZ(1 - style.getMargin().right().getUnitizedValue(window.width()) + ((float)style.getBorderThickness() / window.width()), -1 + style.getMargin().bottom().getUnitizedValue(window.height()) - ((float)style.getBorderThickness() / window.height()), zIndex);
-			rectangle.vertices[3].setXYZ(1 - style.getMargin().right().getUnitizedValue(window.width()) + ((float)style.getBorderThickness() / window.width()), 1 - style.getMargin().top().getUnitizedValue(window.height()) + ((float)style.getBorderThickness() / window.height()), zIndex);
+
+			float leftX = -1f;
+			float rightX = 1f;
+			float topY = 1f;
+			float bottomY = -1f;
+
+			//Window dimensions
+			int windowWidth = getWindow().width();
+			int windowHeight = getWindow().height();
+
+			//Screen dimensions
+			int screenWidth = getWindow().monitorWidth();
+			int screenHeight = getWindow().monitorHeight();
+
+			//Offset based on margins
+			leftX += style.getMargin().left().getUnitizedValue(screenWidth, windowWidth);
+			rightX -= style.getMargin().right().getUnitizedValue(screenWidth, windowWidth);
+			topY -= style.getMargin().top().getUnitizedValue(screenHeight, windowHeight);
+			bottomY += style.getMargin().bottom().getUnitizedValue(screenHeight, windowHeight);
+
+			//Set the vertexes based on the calculated positions
+			rectangle.vertices[0].setXYZ(leftX, topY, zIndex);
+			rectangle.vertices[1].setXYZ(leftX, bottomY, zIndex);
+			rectangle.vertices[2].setXYZ(rightX, bottomY, zIndex);
+			rectangle.vertices[3].setXYZ(rightX, topY, zIndex);
+
 			rectangle.update(translationMatrix.identity());
 			for (Container container : containers) {
 				container.queueUpdate();

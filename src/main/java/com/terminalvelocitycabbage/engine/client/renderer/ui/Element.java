@@ -33,6 +33,9 @@ public class Element extends UIRenderable {
 			int windowWidth = getCanvas().window.width();
 			int windowHeight = getCanvas().window.height();
 
+			int screenWidth = getCanvas().window.monitorWidth();
+			int screenHeight = getCanvas().window.monitorHeight();
+
 			//Get boundaries of parent
 			float originXMin = parent.rectangle.vertices[0].getX() + ((float)parent.style.getBorderThickness() / windowWidth * 2);
 			float originXMax = parent.rectangle.vertices[2].getX() - ((float)parent.style.getBorderThickness() / windowWidth * 2);
@@ -54,8 +57,8 @@ public class Element extends UIRenderable {
 			float bottomY = containerCenterY;
 
 			//Create temp width and height vars in case of a responsive layout
-			float xOffset = width.getUnitDirect().equals(PERCENT) ? width.getValueDirect() / 100f * containerWidth : width.getUnitizedValue(windowWidth);
-			float yOffset = height.getUnitDirect().equals(PERCENT) ? height.getValueDirect() / 100f * containerHeight : height.getUnitizedValue(windowHeight);
+			float xOffset = width.getUnitDirect().equals(PERCENT) ? width.getUnitizedValue(screenWidth, windowWidth)  : width.getUnitizedValue(screenWidth, windowWidth);
+			float yOffset = height.getUnitDirect().equals(PERCENT) ? width.getUnitizedValue(screenHeight, windowHeight) : height.getUnitizedValue(screenHeight, windowHeight);
 
 			//Give the element it's dimensions
 			leftX -= xOffset / 2f;
@@ -70,10 +73,10 @@ public class Element extends UIRenderable {
 			bottomY += parent.verticalAlignment.getStart() * containerHeight / 2;
 
 			//Offset them in the opposite of the start to make them position with their corner/edge in the right spot
-			leftX += (xOffset / 2) * (parent.horizontalAlignment.getStart() * -1);
-			rightX += (xOffset / 2) * (parent.horizontalAlignment.getStart() * -1);
-			topY += (yOffset / 2) * (parent.verticalAlignment.getStart() * -1);
-			bottomY += (yOffset / 2) * (parent.verticalAlignment.getStart() * -1);
+			leftX += (xOffset / 2) * -parent.horizontalAlignment.getStart();
+			rightX += (xOffset / 2) * -parent.horizontalAlignment.getStart();
+			topY += (yOffset / 2) * -parent.verticalAlignment.getStart();
+			bottomY += (yOffset / 2) * -parent.verticalAlignment.getStart();
 
 			//Get dimensions of previous elements
 			float prevElementWidths = parent.getWidthOfElements(0, this.getPosition());
@@ -84,6 +87,22 @@ public class Element extends UIRenderable {
 			rightX += parent.alignmentDirection.equals(Alignment.Direction.HORIZONTAL) ? prevElementWidths * -parent.horizontalAlignment.getStart() : 0;
 			topY += parent.alignmentDirection.equals(Alignment.Direction.VERTICAL) ? prevElementHeights * -parent.verticalAlignment.getStart() : 0;
 			bottomY += parent.alignmentDirection.equals(Alignment.Direction.VERTICAL) ? prevElementHeights * -parent.verticalAlignment.getStart() : 0;
+
+			//Determine if it should wrap here
+			if (parent.horizontalAlignment.getStart() == -1 && parent.verticalAlignment.getStart() == 1 && parent.alignmentDirection == Alignment.Direction.HORIZONTAL) {
+				//Needs wrap
+				if (rightX > originXMax) {
+					float lowestPoint = 1;
+					for (int i = getPosition() - 1; i >= 0; i--) {
+						lowestPoint = Math.min(parent.getElements().get(i).rectangle.vertices[1].getY(), lowestPoint);
+					}
+					//set positions
+					rightX = originXMin + (rightX - leftX);
+					leftX = originXMin;
+					bottomY = lowestPoint - (topY - bottomY);
+					topY = lowestPoint;
+				}
+			}
 
 			//Hide overflow if needed
 			if (parent.overflow.hideX()) {

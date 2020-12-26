@@ -75,6 +75,10 @@ public class Container extends UIRenderable {
 			int windowWidth = getCanvas().getWindow().width();
 			int windowHeight = getCanvas().getWindow().height();
 
+			//Screen dimensions
+			int screenWidth = getCanvas().getWindow().monitorWidth();
+			int screenHeight = getCanvas().getWindow().monitorHeight();
+
 			//Get boundaries of parent
 			float originXMin = parent.rectangle.vertices[0].getX() + ((float)parent.style.getBorderThickness() / windowWidth * 2);
 			float originYMin = parent.rectangle.vertices[1].getY() + ((float)parent.style.getBorderThickness() / windowHeight * 2);
@@ -95,8 +99,8 @@ public class Container extends UIRenderable {
 
 			//Unit dimensions
 			//Create temp width and height vars in case of a responsive layout
-			float uWidth = width.getUnitDirect().equals(PERCENT) ? width.getValueDirect() / 100f * uContainerWidth : width.getUnitizedValue(windowWidth);
-			float uHeight = height.getUnitDirect().equals(PERCENT) ? height.getValueDirect() / 100f * uContainerHeight : height.getUnitizedValue(windowHeight);
+			float uWidth = width.getUnitDirect().equals(PERCENT) ? width.getValueDirect() / 100f * uContainerWidth : width.getUnitizedValue(screenWidth, windowWidth);
+			float uHeight = height.getUnitDirect().equals(PERCENT) ? height.getValueDirect() / 100f * uContainerHeight : height.getUnitizedValue(screenHeight, windowHeight);
 
 			//Place all vertices at the center of the parent
 			float leftX = containerCenterX;
@@ -115,10 +119,10 @@ public class Container extends UIRenderable {
 			topY += uHeight / 2;
 
 			//Apply margins
-			leftX += style.getMargin().left().getUnitizedValue(windowWidth);
-			rightX -= style.getMargin().right().getUnitizedValue(windowWidth);
-			bottomY += style.getMargin().bottom().getUnitizedValue(windowHeight);
-			topY -= style.getMargin().top().getUnitizedValue(windowHeight);
+			leftX += style.getMargin().left().getUnitizedValue(screenWidth, windowWidth);
+			rightX -= style.getMargin().right().getUnitizedValue(screenWidth, windowWidth);
+			bottomY += style.getMargin().bottom().getUnitizedValue(screenHeight, windowHeight);
+			topY -= style.getMargin().top().getUnitizedValue(screenHeight, windowHeight);
 
 			//Move this box to be centered on the anchor point
 			leftX += xOffset;
