@@ -89,6 +89,7 @@ public class Element extends UIRenderable {
 			bottomY += parent.alignmentDirection.equals(Alignment.Direction.VERTICAL) ? prevElementHeights * -parent.verticalAlignment.getStart() : 0;
 
 			//Determine if it should wrap here
+			//Top Left start
 			if (parent.horizontalAlignment.getStart() == -1 && parent.verticalAlignment.getStart() == 1 && parent.alignmentDirection == Alignment.Direction.HORIZONTAL) {
 				//Needs wrap
 				if (rightX > originXMax) {
@@ -103,6 +104,7 @@ public class Element extends UIRenderable {
 					topY = lowestPoint;
 				}
 			}
+			//Top Right start
 			if (parent.horizontalAlignment.getStart() == 1 && parent.verticalAlignment.getStart() == 1 && parent.alignmentDirection == Alignment.Direction.HORIZONTAL) {
 				//Needs wrap
 				if (leftX < originXMin) {
@@ -115,6 +117,36 @@ public class Element extends UIRenderable {
 					rightX = originXMax;
 					bottomY = lowestPoint - (topY - bottomY);
 					topY = lowestPoint;
+				}
+			}
+			//Bottom Left start
+			if (parent.horizontalAlignment.getStart() == -1 && parent.verticalAlignment.getStart() == -1 && parent.alignmentDirection == Alignment.Direction.HORIZONTAL) {
+				//Needs wrap
+				if (rightX > originXMax) {
+					float highestPoint = -1;
+					for (int i = getPosition() - 1; i >= 0; i--) {
+						highestPoint = Math.max(parent.getElements().get(i).rectangle.vertices[0].getY(), highestPoint);
+					}
+					//set positions
+					rightX = originXMin + (rightX - leftX);
+					leftX = originXMin;
+					topY = highestPoint + (topY - bottomY);
+					bottomY = highestPoint;
+				}
+			}
+			//Bottom Right start
+			if (parent.horizontalAlignment.getStart() == 1 && parent.verticalAlignment.getStart() == -1 && parent.alignmentDirection == Alignment.Direction.HORIZONTAL) {
+				//Needs wrap
+				if (leftX < originXMin) {
+					float highestPoint = 1;
+					for (int i = getPosition() - 1; i >= 0; i--) {
+						highestPoint = Math.max(parent.getElements().get(i).rectangle.vertices[0].getY(), highestPoint);
+					}
+					//set positions
+					leftX = originXMax - (rightX - leftX);
+					rightX = originXMax;
+					topY = highestPoint + (topY - bottomY);
+					bottomY = highestPoint;
 				}
 			}
 
