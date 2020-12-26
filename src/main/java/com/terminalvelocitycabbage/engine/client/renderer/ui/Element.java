@@ -103,6 +103,20 @@ public class Element extends UIRenderable {
 					topY = lowestPoint;
 				}
 			}
+			if (parent.horizontalAlignment.getStart() == 1 && parent.verticalAlignment.getStart() == 1 && parent.alignmentDirection == Alignment.Direction.HORIZONTAL) {
+				//Needs wrap
+				if (leftX < originXMin) {
+					float lowestPoint = 1;
+					for (int i = getPosition() - 1; i >= 0; i--) {
+						lowestPoint = Math.min(parent.getElements().get(i).rectangle.vertices[1].getY(), lowestPoint);
+					}
+					//set positions
+					leftX = originXMax - (rightX - leftX);
+					rightX = originXMax;
+					bottomY = lowestPoint - (topY - bottomY);
+					topY = lowestPoint;
+				}
+			}
 
 			//Hide overflow if needed
 			if (parent.overflow.hideX()) {
