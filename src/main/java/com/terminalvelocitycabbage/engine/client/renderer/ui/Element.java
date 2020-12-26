@@ -88,65 +88,99 @@ public class Element extends UIRenderable {
 			topY += parent.alignmentDirection.equals(Alignment.Direction.VERTICAL) ? prevElementHeights * -parent.verticalAlignment.getStart() : 0;
 			bottomY += parent.alignmentDirection.equals(Alignment.Direction.VERTICAL) ? prevElementHeights * -parent.verticalAlignment.getStart() : 0;
 
-			//Determine if it should wrap here
-			//Top Left start
-			if (parent.horizontalAlignment.getStart() == -1 && parent.verticalAlignment.getStart() == 1 && parent.alignmentDirection == Alignment.Direction.HORIZONTAL) {
-				//Needs wrap
-				if (rightX > originXMax) {
-					float lowestPoint = 1;
-					for (int i = getPosition() - 1; i >= 0; i--) {
-						lowestPoint = Math.min(parent.getElements().get(i).rectangle.vertices[1].getY(), lowestPoint);
+			//Determine if it should wrap and how
+			if (parent.alignmentDirection.equals(Alignment.Direction.HORIZONTAL)) {
+				//Top Left start
+				if (parent.horizontalAlignment.getStart() == -1 && parent.verticalAlignment.getStart() == 1) {
+					//Needs wrap
+					if (rightX > originXMax) {
+						float lowestPoint = 1;
+						for (int i = getPosition() - 1; i >= 0; i--) {
+							lowestPoint = Math.min(parent.getElements().get(i).rectangle.vertices[1].getY(), lowestPoint);
+						}
+						//set positions
+						rightX = originXMin + (rightX - leftX);
+						leftX = originXMin;
+						bottomY = lowestPoint - (topY - bottomY);
+						topY = lowestPoint;
 					}
-					//set positions
-					rightX = originXMin + (rightX - leftX);
-					leftX = originXMin;
-					bottomY = lowestPoint - (topY - bottomY);
-					topY = lowestPoint;
+				}
+				//Top Right start
+				if (parent.horizontalAlignment.getStart() == 1 && parent.verticalAlignment.getStart() == 1) {
+					//Needs wrap
+					if (leftX < originXMin) {
+						float lowestPoint = 1;
+						for (int i = getPosition() - 1; i >= 0; i--) {
+							lowestPoint = Math.min(parent.getElements().get(i).rectangle.vertices[1].getY(), lowestPoint);
+						}
+						//set positions
+						leftX = originXMax - (rightX - leftX);
+						rightX = originXMax;
+						bottomY = lowestPoint - (topY - bottomY);
+						topY = lowestPoint;
+					}
+				}
+				//Bottom Left start
+				if (parent.horizontalAlignment.getStart() == -1 && parent.verticalAlignment.getStart() == -1) {
+					//Needs wrap
+					if (rightX > originXMax) {
+						float highestPoint = -1;
+						for (int i = getPosition() - 1; i >= 0; i--) {
+							highestPoint = Math.max(parent.getElements().get(i).rectangle.vertices[0].getY(), highestPoint);
+						}
+						//set positions
+						rightX = originXMin + (rightX - leftX);
+						leftX = originXMin;
+						topY = highestPoint + (topY - bottomY);
+						bottomY = highestPoint;
+					}
+				}
+				//Bottom Right start
+				if (parent.horizontalAlignment.getStart() == 1 && parent.verticalAlignment.getStart() == -1) {
+					//Needs wrap
+					if (leftX < originXMin) {
+						float highestPoint = 1;
+						for (int i = getPosition() - 1; i >= 0; i--) {
+							highestPoint = Math.max(parent.getElements().get(i).rectangle.vertices[0].getY(), highestPoint);
+						}
+						//set positions
+						leftX = originXMax - (rightX - leftX);
+						rightX = originXMax;
+						topY = highestPoint + (topY - bottomY);
+						bottomY = highestPoint;
+					}
 				}
 			}
-			//Top Right start
-			if (parent.horizontalAlignment.getStart() == 1 && parent.verticalAlignment.getStart() == 1 && parent.alignmentDirection == Alignment.Direction.HORIZONTAL) {
-				//Needs wrap
-				if (leftX < originXMin) {
-					float lowestPoint = 1;
-					for (int i = getPosition() - 1; i >= 0; i--) {
-						lowestPoint = Math.min(parent.getElements().get(i).rectangle.vertices[1].getY(), lowestPoint);
+			if (parent.alignmentDirection.equals(Alignment.Direction.VERTICAL)) {
+				//Top Left start
+				if (parent.horizontalAlignment.getStart() == -1 && parent.verticalAlignment.getStart() == 1) {
+					//Needs wrap
+					if (bottomY < originYMin) {
+						float rightmostPoint = -1;
+						for (int i = getPosition() - 1; i >= 0; i--) {
+							rightmostPoint = Math.max(parent.getElements().get(i).rectangle.vertices[2].getX(), rightmostPoint);
+						}
+						//set positions
+						rightX = rightmostPoint + (rightX - leftX);
+						leftX = rightmostPoint;
+						bottomY = originYMax - (topY - bottomY);
+						topY = originYMax;
 					}
-					//set positions
-					leftX = originXMax - (rightX - leftX);
-					rightX = originXMax;
-					bottomY = lowestPoint - (topY - bottomY);
-					topY = lowestPoint;
 				}
-			}
-			//Bottom Left start
-			if (parent.horizontalAlignment.getStart() == -1 && parent.verticalAlignment.getStart() == -1 && parent.alignmentDirection == Alignment.Direction.HORIZONTAL) {
-				//Needs wrap
-				if (rightX > originXMax) {
-					float highestPoint = -1;
-					for (int i = getPosition() - 1; i >= 0; i--) {
-						highestPoint = Math.max(parent.getElements().get(i).rectangle.vertices[0].getY(), highestPoint);
+				//Top Right start
+				if (parent.horizontalAlignment.getStart() == 1 && parent.verticalAlignment.getStart() == 1) {
+					//Needs wrap
+					if (bottomY < originYMin) {
+						float leftMostPoint = 1;
+						for (int i = getPosition() - 1; i >= 0; i--) {
+							leftMostPoint = Math.min(parent.getElements().get(i).rectangle.vertices[0].getX(), leftMostPoint);
+						}
+						//set positions
+						leftX = leftMostPoint - (rightX - leftX);
+						rightX = leftMostPoint;
+						bottomY = originYMax - (topY - bottomY);
+						topY = originYMax;
 					}
-					//set positions
-					rightX = originXMin + (rightX - leftX);
-					leftX = originXMin;
-					topY = highestPoint + (topY - bottomY);
-					bottomY = highestPoint;
-				}
-			}
-			//Bottom Right start
-			if (parent.horizontalAlignment.getStart() == 1 && parent.verticalAlignment.getStart() == -1 && parent.alignmentDirection == Alignment.Direction.HORIZONTAL) {
-				//Needs wrap
-				if (leftX < originXMin) {
-					float highestPoint = 1;
-					for (int i = getPosition() - 1; i >= 0; i--) {
-						highestPoint = Math.max(parent.getElements().get(i).rectangle.vertices[0].getY(), highestPoint);
-					}
-					//set positions
-					leftX = originXMax - (rightX - leftX);
-					rightX = originXMax;
-					topY = highestPoint + (topY - bottomY);
-					bottomY = highestPoint;
 				}
 			}
 
