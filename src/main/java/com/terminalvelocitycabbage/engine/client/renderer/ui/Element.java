@@ -182,6 +182,36 @@ public class Element extends UIRenderable {
 						topY = originYMax;
 					}
 				}
+				//Bottom Left start
+				if (parent.horizontalAlignment.getStart() == -1 && parent.verticalAlignment.getStart() == -1) {
+					//Needs wrap
+					if (topY > originYMax) {
+						float rightmostPoint = -1;
+						for (int i = getPosition() - 1; i >= 0; i--) {
+							rightmostPoint = Math.max(parent.getElements().get(i).rectangle.vertices[2].getX(), rightmostPoint);
+						}
+						//set positions
+						rightX = rightmostPoint + (rightX - leftX);
+						leftX = rightmostPoint;
+						topY = originYMin + (topY - bottomY);
+						bottomY = originYMin;
+					}
+				}
+				//Bottom Right start
+				if (parent.horizontalAlignment.getStart() == 1 && parent.verticalAlignment.getStart() == -1) {
+					//Needs wrap
+					if (topY > originYMax) {
+						float leftMostPoint = 1;
+						for (int i = getPosition() - 1; i >= 0; i--) {
+							leftMostPoint = Math.min(parent.getElements().get(i).rectangle.vertices[0].getX(), leftMostPoint);
+						}
+						//set positions
+						leftX = leftMostPoint - (rightX - leftX);
+						rightX = leftMostPoint;
+						topY = originYMin + (topY - bottomY);
+						bottomY = originYMin;
+					}
+				}
 			}
 
 			//Hide overflow if needed
