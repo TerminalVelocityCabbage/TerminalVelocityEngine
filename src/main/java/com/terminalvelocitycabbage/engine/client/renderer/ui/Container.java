@@ -18,6 +18,7 @@ public class Container extends UIRenderable {
 	public Alignment.Direction alignmentDirection;
 	public UIRenderable parent;
 	public Overflow overflow;
+	public Wrap wrap;
 
 	public List<Container> childContainers;
 	public List<Element> elements;
@@ -31,6 +32,7 @@ public class Container extends UIRenderable {
 		this.verticalAlignment = Alignment.Vertical.TOP;
 		this.alignmentDirection = Alignment.Direction.HORIZONTAL;
 		this.overflow = Overflow.SHOWN;
+		this.wrap = Wrap.WRAP;
 		this.childContainers = new ArrayList<>();
 		this.elements = new ArrayList<>();
 	}
@@ -193,6 +195,38 @@ public class Container extends UIRenderable {
 		return value;
 	}
 
+	public float getMinXOfElements(int beginIndex, int endIndex) {
+		float value = rectangle.vertices[2].getX();
+		for (Element element : elements.subList(beginIndex, endIndex)) {
+			value = Math.min(value, element.rectangle.vertices[0].getX());
+		}
+		return value;
+	}
+
+	public float getMaxXOfElements(int beginIndex, int endIndex) {
+		float value = rectangle.vertices[0].getX();
+		for (Element element : elements.subList(beginIndex, endIndex)) {
+			value = Math.max(value, element.rectangle.vertices[2].getX());
+		}
+		return value;
+	}
+
+	public float getMinYOfElements(int beginIndex, int endIndex) {
+		float value = rectangle.vertices[0].getY();
+		for (Element element : elements.subList(beginIndex, endIndex)) {
+			value = Math.min(value, element.rectangle.vertices[1].getY());
+		}
+		return value;
+	}
+
+	public float getMaxYOfElements(int beginIndex, int endIndex) {
+		float value = rectangle.vertices[2].getY();
+		for (Element element : elements.subList(beginIndex, endIndex)) {
+			value = Math.max(value, element.rectangle.vertices[0].getY());
+		}
+		return value;
+	}
+
 	@Override
 	public Container onHover(Consumer<UIRenderable> consumer) {
 		return (Container) super.onHover(consumer);
@@ -220,6 +254,11 @@ public class Container extends UIRenderable {
 
 	public Container overflow(Overflow overflow) {
 		this.overflow = overflow;
+		return this;
+	}
+
+	public Container wrap(Wrap wrap) {
+		this.wrap = wrap;
 		return this;
 	}
 

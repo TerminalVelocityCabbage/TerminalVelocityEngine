@@ -6,7 +6,10 @@ import com.terminalvelocitycabbage.engine.client.renderer.ui.components.UIDimens
 
 import java.util.function.Consumer;
 
-import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.UIDimension.Unit.PERCENT;
+import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment.Horizontal.LEFT;
+import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment.Horizontal.RIGHT;
+import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment.Vertical.BOTTOM;
+import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment.Vertical.TOP;
 
 public class Element extends UIRenderable {
 
@@ -33,8 +36,12 @@ public class Element extends UIRenderable {
 			int windowWidth = getCanvas().window.width();
 			int windowHeight = getCanvas().window.height();
 
+			//Screen dimensions (reference for px)
 			int screenWidth = getCanvas().window.monitorWidth();
 			int screenHeight = getCanvas().window.monitorHeight();
+
+			//Position this element is in it's parent's element list
+			int position = getPosition();
 
 			//Get boundaries of parent
 			float originXMin = parent.rectangle.vertices[0].getX() + ((float)parent.style.getBorderThickness() / windowWidth * 2);
@@ -42,179 +49,72 @@ public class Element extends UIRenderable {
 			float originYMin = parent.rectangle.vertices[1].getY() + ((float)parent.style.getBorderThickness() / windowHeight * 2);
 			float originYMax = parent.rectangle.vertices[0].getY() - ((float)parent.style.getBorderThickness() / windowHeight * 2);
 
-			//Container dimensions
-			float containerWidth = originXMax - originXMin;
-			float containerHeight = originYMax - originYMin;
-
-			//Container center
-			float containerCenterX = (originXMin + originXMax) / 2f;
-			float containerCenterY = (originYMin + originYMax) / 2f;
-
-			//Create variables to store vertex Positions in at the center of the parent
-			float leftX = containerCenterX;
-			float rightX = containerCenterX;
-			float topY = containerCenterY;
-			float bottomY = containerCenterY;
-
 			//Create temp width and height vars in case of a responsive layout
-			float xOffset = width.getUnitDirect().equals(PERCENT) ? width.getUnitizedValue(screenWidth, windowWidth)  : width.getUnitizedValue(screenWidth, windowWidth);
-			float yOffset = height.getUnitDirect().equals(PERCENT) ? width.getUnitizedValue(screenHeight, windowHeight) : height.getUnitizedValue(screenHeight, windowHeight);
+			float width = this.width.getUnitizedValue(screenWidth, windowWidth);
+			float height = this.height.getUnitizedValue(screenHeight, windowHeight);
+
+			//Get the start point of the element
+			float startX = parent.horizontalAlignment.equals(LEFT) ? originXMin : originXMax;
+			float startY = parent.verticalAlignment.equals(BOTTOM) ? originYMin : originYMax;
+			//If there is an element before this on in the parent's element list then use a start point relative to that instead.
+			if (position > 0) {
+				if (parent.alignmentDirection.equals(Alignment.Direction.HORIZONTAL)) {
+					if (parent.horizontalAlignment.equals(LEFT)) startX = parent.elements.get(position - 1).rectangle.vertices[2].getX();
+					if (parent.horizontalAlignment.equals(RIGHT)) startX = parent.elements.get(position - 1).rectangle.vertices[0].getX();
+					if (parent.verticalAlignment.equals(TOP)) startY = parent.elements.get(position - 1).rectangle.vertices[0].getY();
+					if (parent.verticalAlignment.equals(BOTTOM)) startY = parent.elements.get(position - 1).rectangle.vertices[1].getY();
+				}
+				if (parent.alignmentDirection.equals(Alignment.Direction.VERTICAL)) {
+					if (parent.horizontalAlignment.equals(LEFT)) startX = parent.elements.get(position - 1).rectangle.vertices[0].getX();
+					if (parent.horizontalAlignment.equals(RIGHT)) startX = parent.elements.get(position - 1).rectangle.vertices[2].getX();
+					if (parent.verticalAlignment.equals(TOP)) startY = parent.elements.get(position - 1).rectangle.vertices[1].getY();
+					if (parent.verticalAlignment.equals(BOTTOM)) startY = parent.elements.get(position - 1).rectangle.vertices[0].getY();
+				}
+			}
+
+			//if there is overflow move the element start as to not overflow, but only if the user wants it to wrap
+			if (parent.wrap.isWrap()) {
+				if (parent.alignmentDirection.equals(Alignment.Direction.HORIZONTAL)) {
+					if (parent.horizontalAlignment.equals(LEFT) && startX + width > originXMax) {
+						startX = originXMin;
+						startY = parent.verticalAlignment.equals(TOP) ? parent.getMinYOfElements(0, position) : parent.getMaxYOfElements(0, position);
+					}
+					if (parent.horizontalAlignment.equals(RIGHT) && startX - width < originXMin) {
+						startX = originXMax;
+						startY = parent.verticalAlignment.equals(TOP) ? parent.getMinYOfElements(0, position) : parent.getMaxYOfElements(0, position);
+					}
+				}
+				if (parent.alignmentDirection.equals(Alignment.Direction.VERTICAL)) {
+					if (parent.verticalAlignment.equals(BOTTOM) && startY + height > originYMax) {
+						startY = originYMin;
+						startX = parent.horizontalAlignment.equals(RIGHT) ? parent.getMinXOfElements(0, position) : parent.getMaxXOfElements(0, position);
+					}
+					if (parent.verticalAlignment.equals(TOP) && startY - height < originYMin) {
+						startY = originYMax;
+						startX = parent.horizontalAlignment.equals(RIGHT) ? parent.getMinXOfElements(0, position) : parent.getMaxXOfElements(0, position);
+					}
+				}
+			}
+
+			//Create the element position vars
+			float leftX = startX;
+			float rightX = startX;
+			float topY = startY;
+			float bottomY = startY;
 
 			//Give the element it's dimensions
-			leftX -= xOffset / 2f;
-			rightX += xOffset / 2f;
-			bottomY -= yOffset / 2f;
-			topY += yOffset / 2f;
-
-			//Translate the element to it's start point
-			leftX += parent.horizontalAlignment.getStart() * containerWidth / 2;
-			rightX += parent.horizontalAlignment.getStart() * containerWidth / 2;
-			topY += parent.verticalAlignment.getStart() * containerHeight / 2;
-			bottomY += parent.verticalAlignment.getStart() * containerHeight / 2;
+			leftX -= width / 2f;
+			rightX += width / 2f;
+			bottomY -= height / 2f;
+			topY += height / 2f;
 
 			//Offset them in the opposite of the start to make them position with their corner/edge in the right spot
-			leftX += (xOffset / 2) * -parent.horizontalAlignment.getStart();
-			rightX += (xOffset / 2) * -parent.horizontalAlignment.getStart();
-			topY += (yOffset / 2) * -parent.verticalAlignment.getStart();
-			bottomY += (yOffset / 2) * -parent.verticalAlignment.getStart();
+			leftX += (width / 2) * -parent.horizontalAlignment.getStart();
+			rightX += (width / 2) * -parent.horizontalAlignment.getStart();
+			topY += (height / 2) * -parent.verticalAlignment.getStart();
+			bottomY += (height / 2) * -parent.verticalAlignment.getStart();
 
-			//Get dimensions of previous elements
-			float prevElementWidths = parent.getWidthOfElements(0, this.getPosition());
-			float prevElementHeights = parent.getHeightOfElements(0, this.getPosition());
-
-			//Move this element based on the dimensions of elements before this one
-			leftX += parent.alignmentDirection.equals(Alignment.Direction.HORIZONTAL) ? prevElementWidths * -parent.horizontalAlignment.getStart() : 0;
-			rightX += parent.alignmentDirection.equals(Alignment.Direction.HORIZONTAL) ? prevElementWidths * -parent.horizontalAlignment.getStart() : 0;
-			topY += parent.alignmentDirection.equals(Alignment.Direction.VERTICAL) ? prevElementHeights * -parent.verticalAlignment.getStart() : 0;
-			bottomY += parent.alignmentDirection.equals(Alignment.Direction.VERTICAL) ? prevElementHeights * -parent.verticalAlignment.getStart() : 0;
-
-			//Determine if it should wrap and how
-			if (parent.alignmentDirection.equals(Alignment.Direction.HORIZONTAL)) {
-				//Top Left start
-				if (parent.horizontalAlignment.getStart() == -1 && parent.verticalAlignment.getStart() == 1) {
-					//Needs wrap
-					if (rightX > originXMax) {
-						float lowestPoint = 1;
-						for (int i = getPosition() - 1; i >= 0; i--) {
-							lowestPoint = Math.min(parent.getElements().get(i).rectangle.vertices[1].getY(), lowestPoint);
-						}
-						//set positions
-						rightX = originXMin + (rightX - leftX);
-						leftX = originXMin;
-						bottomY = lowestPoint - (topY - bottomY);
-						topY = lowestPoint;
-					}
-				}
-				//Top Right start
-				if (parent.horizontalAlignment.getStart() == 1 && parent.verticalAlignment.getStart() == 1) {
-					//Needs wrap
-					if (leftX < originXMin) {
-						float lowestPoint = 1;
-						for (int i = getPosition() - 1; i >= 0; i--) {
-							lowestPoint = Math.min(parent.getElements().get(i).rectangle.vertices[1].getY(), lowestPoint);
-						}
-						//set positions
-						leftX = originXMax - (rightX - leftX);
-						rightX = originXMax;
-						bottomY = lowestPoint - (topY - bottomY);
-						topY = lowestPoint;
-					}
-				}
-				//Bottom Left start
-				if (parent.horizontalAlignment.getStart() == -1 && parent.verticalAlignment.getStart() == -1) {
-					//Needs wrap
-					if (rightX > originXMax) {
-						float highestPoint = -1;
-						for (int i = getPosition() - 1; i >= 0; i--) {
-							highestPoint = Math.max(parent.getElements().get(i).rectangle.vertices[0].getY(), highestPoint);
-						}
-						//set positions
-						rightX = originXMin + (rightX - leftX);
-						leftX = originXMin;
-						topY = highestPoint + (topY - bottomY);
-						bottomY = highestPoint;
-					}
-				}
-				//Bottom Right start
-				if (parent.horizontalAlignment.getStart() == 1 && parent.verticalAlignment.getStart() == -1) {
-					//Needs wrap
-					if (leftX < originXMin) {
-						float highestPoint = 1;
-						for (int i = getPosition() - 1; i >= 0; i--) {
-							highestPoint = Math.max(parent.getElements().get(i).rectangle.vertices[0].getY(), highestPoint);
-						}
-						//set positions
-						leftX = originXMax - (rightX - leftX);
-						rightX = originXMax;
-						topY = highestPoint + (topY - bottomY);
-						bottomY = highestPoint;
-					}
-				}
-			}
-			if (parent.alignmentDirection.equals(Alignment.Direction.VERTICAL)) {
-				//Top Left start
-				if (parent.horizontalAlignment.getStart() == -1 && parent.verticalAlignment.getStart() == 1) {
-					//Needs wrap
-					if (bottomY < originYMin) {
-						float rightmostPoint = -1;
-						for (int i = getPosition() - 1; i >= 0; i--) {
-							rightmostPoint = Math.max(parent.getElements().get(i).rectangle.vertices[2].getX(), rightmostPoint);
-						}
-						//set positions
-						rightX = rightmostPoint + (rightX - leftX);
-						leftX = rightmostPoint;
-						bottomY = originYMax - (topY - bottomY);
-						topY = originYMax;
-					}
-				}
-				//Top Right start
-				if (parent.horizontalAlignment.getStart() == 1 && parent.verticalAlignment.getStart() == 1) {
-					//Needs wrap
-					if (bottomY < originYMin) {
-						float leftMostPoint = 1;
-						for (int i = getPosition() - 1; i >= 0; i--) {
-							leftMostPoint = Math.min(parent.getElements().get(i).rectangle.vertices[0].getX(), leftMostPoint);
-						}
-						//set positions
-						leftX = leftMostPoint - (rightX - leftX);
-						rightX = leftMostPoint;
-						bottomY = originYMax - (topY - bottomY);
-						topY = originYMax;
-					}
-				}
-				//Bottom Left start
-				if (parent.horizontalAlignment.getStart() == -1 && parent.verticalAlignment.getStart() == -1) {
-					//Needs wrap
-					if (topY > originYMax) {
-						float rightmostPoint = -1;
-						for (int i = getPosition() - 1; i >= 0; i--) {
-							rightmostPoint = Math.max(parent.getElements().get(i).rectangle.vertices[2].getX(), rightmostPoint);
-						}
-						//set positions
-						rightX = rightmostPoint + (rightX - leftX);
-						leftX = rightmostPoint;
-						topY = originYMin + (topY - bottomY);
-						bottomY = originYMin;
-					}
-				}
-				//Bottom Right start
-				if (parent.horizontalAlignment.getStart() == 1 && parent.verticalAlignment.getStart() == -1) {
-					//Needs wrap
-					if (topY > originYMax) {
-						float leftMostPoint = 1;
-						for (int i = getPosition() - 1; i >= 0; i--) {
-							leftMostPoint = Math.min(parent.getElements().get(i).rectangle.vertices[0].getX(), leftMostPoint);
-						}
-						//set positions
-						leftX = leftMostPoint - (rightX - leftX);
-						rightX = leftMostPoint;
-						topY = originYMin + (topY - bottomY);
-						bottomY = originYMin;
-					}
-				}
-			}
-
-			//Hide overflow if needed
+			//Hide overflow if requested
 			if (parent.overflow.hideX()) {
 				if (leftX < originXMin) leftX = originXMin;
 				if (rightX > originXMax) rightX = originXMax;
