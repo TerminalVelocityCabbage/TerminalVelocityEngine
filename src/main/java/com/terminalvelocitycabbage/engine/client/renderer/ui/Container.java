@@ -149,13 +149,79 @@ public class Container extends UIRenderable {
 
 			for (Container container : childContainers) {
 				container.queueUpdate();
+				container.update();
 			}
 			for (Element element : elements) {
 				element.queueUpdate();
+				element.update();
+			}
+
+			//Once we've updated all elements we need to center them if requested by the user
+			if (horizontalAlignment.equals(Alignment.Horizontal.CENTER)) {
+				//These temp vars save info about rows needed to update in index range
+				int tmpRowIndex = 0;
+				float tmpRowPos = elements.get(0).rectangle.vertices[0].getY();
+				for (int i = 0; i < elements.size(); i++) {
+					//This element is on the next row, so move them based on remainder space and update temp vals
+					if (elements.get(i).rectangle.vertices[3].getY() < tmpRowPos) {
+						moveElementsHorizontal(tmpRowIndex, i, rectangle.vertices[2].getX() - elements.get(i - 1).rectangle.vertices[2].getX());
+						tmpRowIndex = i;
+						tmpRowPos = elements.get(i).rectangle.vertices[3].getY();
+					}
+				}
+				//Update the last row
+				moveElementsHorizontal(tmpRowIndex, elements.size(), (rectangle.vertices[2].getX() - elements.get(elements.size() - 1).rectangle.vertices[2].getX()));
+			}
+			if (verticalAlignment.equals(Alignment.Vertical.CENTER)) {
+				//These temp vars save info about columns needed to update in index range
+				int tmpColIndex = 0;
+				float tmpColPos = elements.get(0).rectangle.vertices[0].getX();
+				for (int i = 0; i < elements.size(); i++) {
+					//This element is on the next column, so move them based on remainder space and update temp vals
+					if (elements.get(i).rectangle.vertices[3].getX() < tmpColPos) {
+						moveElementsVertical(tmpColIndex, i, rectangle.vertices[2].getY() - elements.get(i - 1).rectangle.vertices[2].getY());
+						tmpColIndex = i;
+						tmpColPos = elements.get(i).rectangle.vertices[3].getX();
+					}
+				}
+				//Update the last row
+				moveElementsVertical(tmpColIndex, elements.size(), (rectangle.vertices[2].getY() - elements.get(elements.size() - 1).rectangle.vertices[2].getY()));
 			}
 
 			//Complete this update
 			needsUpdate = false;
+		}
+	}
+
+	/**
+	 * @param beginIndex start index of the row being moved
+	 * @param endIndex end index of row being moved
+	 * @param distance distance between end of row element edge and edge of container
+	 */
+	private void moveElementsHorizontal(int beginIndex, int endIndex, float distance) {
+		distance /= 2f;
+		distance -= (float)style.getBorderThickness() / (float)getCanvas().window.monitorWidth();
+		for (Element element : elements.subList(beginIndex, endIndex)) {
+			element.rectangle.vertices[0].addXYZ(distance, 0, 0);
+			element.rectangle.vertices[1].addXYZ(distance, 0, 0);
+			element.rectangle.vertices[2].addXYZ(distance, 0, 0);
+			element.rectangle.vertices[3].addXYZ(distance, 0, 0);
+		}
+	}
+
+	/**
+	 * @param beginIndex start index of the row being moved
+	 * @param endIndex end index of row being moved
+	 * @param distance distance between end of row element edge and edge of container
+	 */
+	private void moveElementsVertical(int beginIndex, int endIndex, float distance) {
+		distance /= 2f;
+		distance -= (float)style.getBorderThickness() / (float)getCanvas().window.monitorHeight();
+		for (Element element : elements.subList(beginIndex, endIndex)) {
+			element.rectangle.vertices[0].addXYZ(0, distance, 0);
+			element.rectangle.vertices[1].addXYZ(0, distance, 0);
+			element.rectangle.vertices[2].addXYZ(0, distance, 0);
+			element.rectangle.vertices[3].addXYZ(0, distance, 0);
 		}
 	}
 
