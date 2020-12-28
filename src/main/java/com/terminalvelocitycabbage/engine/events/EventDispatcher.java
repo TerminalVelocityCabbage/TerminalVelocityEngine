@@ -1,9 +1,9 @@
 package com.terminalvelocitycabbage.engine.events;
 
+import com.terminalvelocitycabbage.engine.utils.ClassUtils;
+
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.*;
 
 public class EventDispatcher {
 	Collection<Object> handlers = new ArrayList<Object>();
@@ -43,7 +43,7 @@ public class EventDispatcher {
 	}
 
 	protected Collection<Method> findMatchingEventHandlerMethods(Object handler, String eventName) {
-		Method[] methods = handler.getClass().getDeclaredMethods();
+		Method[] methods = ClassUtils.getAllMethodsInHierarchy(handler.getClass());
 		Collection<Method> result = new ArrayList<Method>();
 		for (Method method : methods) {
 			if (canHandleEvent(method, eventName)) {

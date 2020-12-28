@@ -1,4 +1,4 @@
-package com.terminalvelocitycabbage.engine.client.renderer.ui;
+package com.terminalvelocitycabbage.engine.client.renderer.ui.components;
 
 public class UIDimension {
 
@@ -10,20 +10,20 @@ public class UIDimension {
 		this.unit = unit;
 	}
 
-	public int getPixelValue(int screenDimension) {
+	public int getPixelValue(int windowDimension) {
 		if (unit.equals(Unit.PIXELS)) {
 			return value;
 		} else if (unit.equals(Unit.PERCENT)) {
-			return value * screenDimension;
+			return value * windowDimension;
 		}
 		throw new RuntimeException("Unknown unit for UIDimension");
 	}
 
-	public float getUnitizedValue(int screenDimension) {
+	public float getUnitizedValue(int screenDimension, int windowDimension) {
 		if (unit.equals(Unit.PERCENT)) {
 			return value / 50f;
 		} else if (unit.equals(Unit.PIXELS)) {
-			return (value / (screenDimension / 2f));
+			return (((float)value / (float)screenDimension) * ((float)screenDimension / (float)windowDimension)) * 2f;
 		}
 		throw new RuntimeException("Unknown unit for UIDimension");
 	}
@@ -39,4 +39,11 @@ public class UIDimension {
 		}
 	}
 
+	public int getValueDirect() {
+		return value;
+	}
+
+	public Unit getUnitDirect() {
+		return unit;
+	}
 }

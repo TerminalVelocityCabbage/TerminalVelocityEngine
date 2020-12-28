@@ -1,4 +1,4 @@
-package com.terminalvelocitycabbage.engine.client.renderer.ui;
+package com.terminalvelocitycabbage.engine.client.renderer.ui.components;
 
 import org.joml.Vector4f;
 
@@ -92,5 +92,9 @@ public class Style {
 		this.margin.bottom.value = value;
 		this.margin.bottom.unit = unit;
 		return this;
+	}
+
+	public Margin getMargin() {
+		return margin;
 	}
 }

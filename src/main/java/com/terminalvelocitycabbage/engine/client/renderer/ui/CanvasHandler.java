@@ -1,11 +1,10 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
+import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
 import com.terminalvelocitycabbage.engine.debug.Log;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Consumer;
 
 public class CanvasHandler {
 
@@ -20,6 +19,9 @@ public class CanvasHandler {
 	public void addCanvas(String name, Canvas canvas) {
 		if (!canvases.containsKey(name)) {
 			this.canvases.put(name, canvas);
+			activeCanvases.add(name);
+			canvas.bind();
+			canvas.queueUpdate();
 		} else {
 			throw new RuntimeException("Could not add duplicate entry " + name + " to canvas handler.");
 		}
@@ -27,7 +29,7 @@ public class CanvasHandler {
 
 	public void enableCanvas(String name) {
 		if (!activeCanvases.contains(name)) {
-			if (canvases.containsKey(name)) {
+			if (isEnabled(name)) {
 				activeCanvases.add(name);
 			} else {
 				Log.warn("Tried to enable unregistered canvas " + name);
@@ -36,17 +38,40 @@ public class CanvasHandler {
 	}
 
 	public void hideCanvas(String name) {
-		if (activeCanvases.contains(name)) {
+		Log.info("hide");
+		if (isEnabled(name)) {
 			activeCanvases.remove(name);
 		}
 	}
 
 	public Canvas getCanvas(String name) {
-		if (canvases.containsKey(name)) {
+		if (isEnabled(name)) {
 			return canvases.get(name);
 		} else {
 			throw new RuntimeException("could not get canvas for name " + name);
 		}
+	}
+
+	public void tick(double posX, double posY, boolean leftClick, boolean rightClick, short timeSinceLastClick) {
+
+		getCanvases().forEach(canvas -> canvas.getAllChildren().forEach(element -> {
+
+			if (testPosition(element.rectangle.vertices, posX, posY)) {
+				element.callHoverable();
+				if (leftClick) {
+					element.callClick();
+					element.callDoubleCLick(timeSinceLastClick);
+				}
+				if (rightClick) {
+					element.callRightClick();
+				}
+			} else {
+				if (element.lastHover) {
+					element.callUnHover();
+					element.lastHover = false;
+				}
+			}
+		}));
 	}
 
 	public boolean isEnabled(String name) {
@@ -57,6 +82,40 @@ public class CanvasHandler {
 		for (Canvas canvas : canvases.values()) {
 			canvas.destroy();
 		}
+	}
+
+	public List<UIRenderable> getElementsAt(double x, double y) {
+		List<UIRenderable> inCanvases = new ArrayList<>();
+		Canvas currCanvas;
+		Vertex[] currVertices;
+		for (String currID : activeCanvases) {
+			currCanvas = canvases.get(currID);
+			currVertices = currCanvas.rectangle.vertices;
+			if (testPosition(currVertices, x, y)) {
+				inCanvases.add(currCanvas);
+			} else {
+				continue;
+			}
+			for (Container element : currCanvas.containers) {
+				currVertices = element.rectangle.vertices;
+				if (testPosition(currVertices, x, y)) {
+					inCanvases.add(element);
+				}
+			}
+		}
+		return inCanvases;
+	}
+
+	private void recursiveOnElement(List<Container> container, Consumer<UIRenderable> consumer) {
+		//TODO when containers have elements and other containers within them
+	}
+
+	private boolean testPosition(Vertex[] currVertices, double x, double y) {
+		return currVertices[0].getX() < x && currVertices[2].getX() > x && currVertices[1].getY() < y && currVertices[0].getY() > y;
+	}
+
+	public Collection<Canvas> getCanvases() {
+		return canvases.values();
 	}
 
 }

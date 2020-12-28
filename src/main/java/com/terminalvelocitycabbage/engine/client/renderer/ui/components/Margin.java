@@ -1,6 +1,6 @@
-package com.terminalvelocitycabbage.engine.client.renderer.ui;
+package com.terminalvelocitycabbage.engine.client.renderer.ui.components;
 
-import static com.terminalvelocitycabbage.engine.client.renderer.ui.UIDimension.Unit.PIXELS;
+import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.UIDimension.Unit.PIXELS;
 
 public class Margin {
 
@@ -38,5 +38,19 @@ public class Margin {
 		this.bottom.value = bottom;
 	}
 
+	public UIDimension left() {
+		return left;
+	}
 
+	public UIDimension right() {
+		return right;
+	}
+
+	public UIDimension top() {
+		return top;
+	}
+
+	public UIDimension bottom() {
+		return bottom;
+	}
 }

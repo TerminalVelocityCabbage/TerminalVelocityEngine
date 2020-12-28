@@ -35,6 +35,9 @@ public class Window {
 	private int monitorWidth;
 	private int monitorHeight;
 
+	public double cursorX;
+	public double cursorY;
+
 	Matrix4f orthoProjectionMatrix;
 
 	public Window(int width, int height, String title, boolean vSync, InputHandler inputHandler, boolean center, boolean lockAndHideCursor) {
@@ -128,6 +131,44 @@ public class Window {
 		glfwMakeContextCurrent(windowID);
 		setvSync(vSync);
 		glfwShowWindow(windowID);
+	}
+
+	public void showCursor() {
+		if (lockAndHideCursor) {
+			glfwSetInputMode(windowID, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			lockAndHideCursor = false;
+		}
+	}
+
+	public void hideCursor() {
+		if (!lockAndHideCursor) {
+			glfwSetInputMode(windowID, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+			lockAndHideCursor = true;
+		}
+	}
+
+	public double getCursorX() {
+		return ((cursorX / width()) * 2) - 1;
+	}
+
+	public double getCursorY() {
+		return ((-cursorY / height()) * 2) + 1;
+	}
+
+	public boolean isLeftMouseJustReleased() {
+		return inputHandler.isLeftButtonReleased();
+	}
+
+	public boolean isLeftMouseDown() {
+		return inputHandler.isLeftButtonPressed();
+	}
+
+	public boolean isRightMouseJustReleased() {
+		return inputHandler.isRightButtonReleased();
+	}
+
+	public boolean isRightMouseDown() {
+		return inputHandler.isRightButtonPressed();
 	}
 
 	public long getID() {

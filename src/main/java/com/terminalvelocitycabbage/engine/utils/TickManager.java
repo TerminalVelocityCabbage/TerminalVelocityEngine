@@ -9,6 +9,7 @@ public class TickManager {
 
     public TickManager(float ticksPerSecond) {
         this.msPerTick = 1000F / ticksPerSecond;
+        this.compoundTime = 0;
     }
 
     public void apply(float deltaTime) {
@@ -20,7 +21,7 @@ public class TickManager {
     }
 
     public boolean hasTick() {
-        if(this.ticks == 0) {
+        if (this.ticks == 0) {
             return false;
         }
         this.ticks--;

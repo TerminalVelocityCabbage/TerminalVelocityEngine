@@ -3,13 +3,15 @@ package com.terminalvelocitycabbage.engine.client.renderer.ui;
 import com.terminalvelocitycabbage.engine.client.ClientBase;
 import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
 import com.terminalvelocitycabbage.engine.client.renderer.shapes.Rectangle;
+import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Style;
 import com.terminalvelocitycabbage.engine.events.HandleEvent;
 import com.terminalvelocitycabbage.engine.events.client.WindowResizeEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
-public class Canvas extends UIRenderableElement {
+public class Canvas extends UIRenderable {
 
 	Window window;
 	List<Container> containers;
@@ -23,7 +25,7 @@ public class Canvas extends UIRenderableElement {
 
 	public void addContainer(Container container) {
 		container.setParent(this);
-		container.zIndex = -1;
+		container.zIndex = zIndex - 1;
 		containers.add(container);
 		container.bind();
 	}
@@ -39,16 +41,37 @@ public class Canvas extends UIRenderableElement {
 
 	@Override
 	public void update() {
+
 		if (needsUpdate) {
-			rectangle.vertices[0].setXYZ(-1 + style.margin.left.getUnitizedValue(window.width()) - ((float)style.borderThickness / window.width()), 1 - style.margin.top.getUnitizedValue(window.height()) + ((float)style.borderThickness / window.height()), zIndex);
-			rectangle.vertices[1].setXYZ(-1 + style.margin.left.getUnitizedValue(window.width()) - ((float)style.borderThickness / window.width()), -1 + style.margin.bottom.getUnitizedValue(window.height()) - ((float)style.borderThickness / window.height()), zIndex);
-			rectangle.vertices[2].setXYZ(1 - style.margin.right.getUnitizedValue(window.width()) + ((float)style.borderThickness / window.width()), -1 + style.margin.bottom.getUnitizedValue(window.height()) - ((float)style.borderThickness / window.height()), zIndex);
-			rectangle.vertices[3].setXYZ(1 - style.margin.right.getUnitizedValue(window.width()) + ((float)style.borderThickness / window.width()), 1 - style.margin.top.getUnitizedValue(window.height()) + ((float)style.borderThickness / window.height()), zIndex);
-			this.width = (int)((rectangle.vertices[3].getXYZ()[0] - rectangle.vertices[0].getXYZ()[0]) / 2 * window.width()) - (style.borderThickness * 2);
-			this.height = (int)((rectangle.vertices[3].getXYZ()[1] - rectangle.vertices[2].getXYZ()[1]) / 2 * window.height()) - (style.borderThickness * 2);
+
+			float leftX = -1f;
+			float rightX = 1f;
+			float topY = 1f;
+			float bottomY = -1f;
+
+			//Window dimensions
+			int windowWidth = getWindow().width();
+			int windowHeight = getWindow().height();
+
+			//Screen dimensions
+			int screenWidth = getWindow().monitorWidth();
+			int screenHeight = getWindow().monitorHeight();
+
+			//Offset based on margins
+			leftX += style.getMargin().left().getUnitizedValue(screenWidth, windowWidth);
+			rightX -= style.getMargin().right().getUnitizedValue(screenWidth, windowWidth);
+			topY -= style.getMargin().top().getUnitizedValue(screenHeight, windowHeight);
+			bottomY += style.getMargin().bottom().getUnitizedValue(screenHeight, windowHeight);
+
+			//Set the vertexes based on the calculated positions
+			rectangle.vertices[0].setXYZ(leftX, topY, zIndex);
+			rectangle.vertices[1].setXYZ(leftX, bottomY, zIndex);
+			rectangle.vertices[2].setXYZ(rightX, bottomY, zIndex);
+			rectangle.vertices[3].setXYZ(rightX, topY, zIndex);
+
 			rectangle.update(translationMatrix.identity());
 			for (Container container : containers) {
-				container.update();
+				container.queueUpdate();
 			}
 			this.needsUpdate = false;
 		}
@@ -62,7 +85,7 @@ public class Canvas extends UIRenderableElement {
 	@Override
 	public void queueUpdate() {
 		super.queueUpdate();
-		containers.forEach(UIRenderableElement::queueUpdate);
+		containers.forEach(UIRenderable::queueUpdate);
 	}
 
 	public Window getWindow() {
@@ -76,8 +99,47 @@ public class Canvas extends UIRenderableElement {
 	@Override
 	public void destroy() {
 		super.destroy();
-		for (UIRenderableElement element : containers) {
+		for (UIRenderable element : containers) {
 			element.destroy();
 		}
+	}
+
+	@Override
+	public Canvas onHover(Consumer<UIRenderable> consumer) {
+		return (Canvas) super.onHover(consumer);
+	}
+
+	@Override
+	public Canvas onUnHover(Consumer<UIRenderable> consumer) {
+		return (Canvas) super.onUnHover(consumer);
+	}
+
+	@Override
+	public Canvas onClick(Consumer<UIRenderable> consumer) {
+		return (Canvas) super.onClick(consumer);
+	}
+
+	@Override
+	public Canvas onRightClick(Consumer<UIRenderable> consumer) {
+		return (Canvas) super.onRightClick(consumer);
+	}
+
+	@Override
+	public Canvas onDoubleClick(short tickTime, Consumer<UIRenderable> consumer) {
+		return (Canvas) super.onDoubleClick(tickTime, consumer);
+	}
+
+	public List<UIRenderable> getAllChildren() {
+
+		//Add all of this canvas' containers to a list
+		List<Container> allContainers = new ArrayList<>(containers);
+		//For each of those containers recursively add all containers in that tree
+		containers.forEach(container -> allContainers.addAll(container.getAllContainers()));
+
+		//Add all of the containers in this canvas' tree
+		List<UIRenderable> elements = new ArrayList<>(allContainers);
+		//Add all elements of the containers to the list of children
+		allContainers.forEach(container -> elements.addAll(container.getElements()));
+		return elements;
 	}
 }
