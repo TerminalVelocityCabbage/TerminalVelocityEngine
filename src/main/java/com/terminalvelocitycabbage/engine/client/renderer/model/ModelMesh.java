@@ -115,4 +115,8 @@ public class ModelMesh {
 	public void setMaterial(Material material) {
 		this.material = material;
 	}
+
+	public Material getMaterial() {
+		return material;
+	}
 }

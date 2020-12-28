@@ -3,7 +3,6 @@ package com.terminalvelocitycabbage.engine.client.renderer.gameobjects;
 import com.terminalvelocitycabbage.engine.client.renderer.font.FontTexture;
 import com.terminalvelocitycabbage.engine.client.renderer.model.MeshPart;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
-import com.terminalvelocitycabbage.engine.client.renderer.model.ModelMesh;
 import com.terminalvelocitycabbage.engine.client.renderer.model.ModelVertex;
 import com.terminalvelocitycabbage.engine.client.renderer.shapes.TexturedRectangle;
 import org.joml.Matrix4f;

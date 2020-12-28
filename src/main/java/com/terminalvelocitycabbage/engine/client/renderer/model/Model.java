@@ -17,7 +17,6 @@ import java.util.List;
 public class Model {
 
 	public List<Part> modelParts;
-	private Material material;
 	public ModelMesh mesh;
 	//To avoid creating a new one every part render call
 	Matrix4f transformationMatrix;
@@ -153,22 +152,11 @@ public class Model {
 	}
 
 	public Model setMaterial(Material material) {
-		this.material = material;
 		this.mesh.setMaterial(material);
 		return this;
 	}
 
 	public Material getMaterial() {
-		return material;
-	}
-
-	protected static class VertexCounter {
-		private int vertexCount;
-
-		public int getVertexIndex(int count) {
-			int ret = this.vertexCount;
-			this.vertexCount += count;
-			return ret;
-		}
+		return this.mesh.getMaterial();
 	}
 }

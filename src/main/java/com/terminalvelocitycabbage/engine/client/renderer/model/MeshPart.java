@@ -32,7 +32,7 @@ public class MeshPart {
      * @param indexBuffer The index buffer to add to.
      * @param counter The vertex counter.
      */
-    public void allocate(ShortBuffer indexBuffer, Model.VertexCounter counter) {
+    public void allocate(ShortBuffer indexBuffer, VertexCounter counter) {
         short vertexOffset = (short) counter.getVertexIndex(this.verticesCount());
         this.vertexOffset = vertexOffset;
         for (short s : this.vertexOrder) {
