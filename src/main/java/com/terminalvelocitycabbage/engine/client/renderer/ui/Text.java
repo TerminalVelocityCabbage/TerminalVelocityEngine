@@ -3,7 +3,6 @@ package com.terminalvelocitycabbage.engine.client.renderer.ui;
 import com.terminalvelocitycabbage.engine.client.renderer.model.text.TextCharacter;
 import com.terminalvelocitycabbage.engine.client.renderer.model.text.TextModel;
 import com.terminalvelocitycabbage.engine.client.renderer.model.text.font.FontMeshPartStorage;
-import com.terminalvelocitycabbage.engine.client.renderer.model.text.font.FontTexture;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -15,14 +14,15 @@ public class Text {
 	boolean needsUpdate;
 
 	public float zIndex = 0.0f;
+	//This should be a constant that is created on init in the implementer's game and shared between texts.
 	private final FontMeshPartStorage fontMeshPartStorage;
 	private String text;
 	private TextModel model;
 
-	public Text(String text, FontTexture texture) {
+	public Text(String text, FontMeshPartStorage fontMeshPartStorage) {
 		this.needsUpdate = false;
 		this.text = text;
-		this.fontMeshPartStorage = new FontMeshPartStorage(texture);
+		this.fontMeshPartStorage = fontMeshPartStorage;
 		this.model = new TextModel(Collections.emptyList(), fontMeshPartStorage.getFontTexture());
 		buildCharacterMap();
 	}
