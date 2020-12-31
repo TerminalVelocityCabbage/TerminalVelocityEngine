@@ -1,4 +1,4 @@
-package com.terminalvelocitycabbage.engine.client.renderer.font;
+package com.terminalvelocitycabbage.engine.client.renderer.model.text.font;
 
 import com.terminalvelocitycabbage.engine.client.renderer.model.Texture;
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
@@ -32,7 +32,7 @@ public class FontTexture {
 
 	private Texture texture;
 	private int height;
-	private int width;
+	private int position;
 
 	public FontTexture(Font font, String charSetName) {
 		this.font = font;
@@ -62,8 +62,8 @@ public class FontTexture {
 		}
 	}
 
-	public int getWidth() {
-		return width;
+	public int getPosition() {
+		return position;
 	}
 
 	public int getHeight() {
@@ -98,18 +98,18 @@ public class FontTexture {
 		FontMetrics fontMetrics = g2D.getFontMetrics();
 
 		String allChars = getAllAvailableChars(charSetName);
-		this.width = 0;
+		this.position = 0;
 		this.height = fontMetrics.getHeight();
 		for (char c : allChars.toCharArray()) {
 			// Get the size for each character and update global image size
-			CharInfo charInfo = new CharInfo(width, fontMetrics.charWidth(c));
+			CharInfo charInfo = new CharInfo(position, fontMetrics.charWidth(c));
 			charMap.put(c, charInfo);
-			width += charInfo.getWidth() + CHAR_PADDING;
+			position += charInfo.getWidth() + CHAR_PADDING;
 		}
 		g2D.dispose();
 
 		// Create the image associated to the charset
-		img = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
+		img = new BufferedImage(position, height, BufferedImage.TYPE_4BYTE_ABGR);
 		g2D = img.createGraphics();
 		g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g2D.setFont(font);

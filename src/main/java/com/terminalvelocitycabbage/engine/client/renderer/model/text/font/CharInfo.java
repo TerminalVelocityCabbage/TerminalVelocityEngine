@@ -1,4 +1,4 @@
-package com.terminalvelocitycabbage.engine.client.renderer.font;
+package com.terminalvelocitycabbage.engine.client.renderer.model.text.font;
 
 public class CharInfo {
 
