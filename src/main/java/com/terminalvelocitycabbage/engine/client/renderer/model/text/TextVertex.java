@@ -1,4 +1,6 @@
-package com.terminalvelocitycabbage.engine.client.renderer.model;
+package com.terminalvelocitycabbage.engine.client.renderer.model.text;
+
+import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
 
 public class TextVertex extends Vertex {
 

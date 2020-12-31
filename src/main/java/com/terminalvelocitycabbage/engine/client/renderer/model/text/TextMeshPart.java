@@ -1,5 +1,8 @@
-package com.terminalvelocitycabbage.engine.client.renderer.model;
+package com.terminalvelocitycabbage.engine.client.renderer.model.text;
 
+import com.terminalvelocitycabbage.engine.client.renderer.model.MeshPart;
+import com.terminalvelocitycabbage.engine.client.renderer.model.ModelVertex;
+import com.terminalvelocitycabbage.engine.client.renderer.model.VertexCounter;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 

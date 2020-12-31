@@ -1,6 +1,7 @@
 package com.terminalvelocitycabbage.engine.client.renderer.shapes;
 
-import com.terminalvelocitycabbage.engine.client.renderer.model.*;
+import com.terminalvelocitycabbage.engine.client.renderer.model.text.TextMeshPart;
+import com.terminalvelocitycabbage.engine.client.renderer.model.text.TextVertex;
 
 public class TextRectangle {
 	public static TextMeshPart createTextRectangle(TextVertex topLeft, TextVertex bottomLeft, TextVertex bottomRight, TextVertex topRight) {

@@ -1,13 +1,13 @@
-package com.terminalvelocitycabbage.engine.client.renderer.model;
+package com.terminalvelocitycabbage.engine.client.renderer.model.text;
 
-import com.terminalvelocitycabbage.engine.client.renderer.font.FontTexture;
+import com.terminalvelocitycabbage.engine.client.renderer.model.text.font.FontTexture;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
-import static com.terminalvelocitycabbage.engine.client.renderer.model.TextVertex.*;
+import static com.terminalvelocitycabbage.engine.client.renderer.model.text.TextVertex.*;
 import static com.terminalvelocitycabbage.engine.client.renderer.model.Vertex.POSITION_ELEMENT_COUNT;
 import static com.terminalvelocitycabbage.engine.client.renderer.model.Vertex.POSITION_OFFSET;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
@@ -30,7 +30,12 @@ public class TextMesh {
 
 	protected FloatBuffer vertexBuffer;
 	protected ShortBuffer indexBuffer;
+
 	protected FontTexture fontTexture;
+
+	public TextMesh(FontTexture fontTexture) {
+		this.fontTexture = fontTexture;
+	}
 
 	//TODO note that these translations have to be done in a specific order so we should make it clear and make an API that dummi-proofs it
 	//1. Scale	- so that the axis stuff is scaled properly

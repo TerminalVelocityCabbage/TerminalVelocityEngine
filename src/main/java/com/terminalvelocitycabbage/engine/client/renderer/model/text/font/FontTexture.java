@@ -134,24 +134,4 @@ public class FontTexture {
 		//ImageIO.write(img, IMAGE_FORMAT, new File("Temp.png"));
 		texture = new Texture(inputStream);
 	}
-
-	public static class CharInfo {
-
-		private final int startX;
-
-		private final int width;
-
-		public CharInfo(int startX, int width) {
-			this.startX = startX;
-			this.width = width;
-		}
-
-		public int getStartX() {
-			return startX;
-		}
-
-		public int getWidth() {
-			return width;
-		}
-	}
 }
