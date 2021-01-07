@@ -10,14 +10,16 @@ import java.util.List;
 
 public class TextModel {
 
-	public List<TextCharacter> characters;
+	public List<TextLine> textLines;
 	public TextMesh mesh;
 	Matrix4f transformationMatrix;
+	public int width;
 
-	public TextModel(List<TextCharacter> characters, FontTexture fontTexture) {
-		this.characters = characters;
+	public TextModel(List<TextLine> textLines, FontTexture fontTexture, int width) {
+		this.textLines = textLines;
 		this.mesh = new TextMesh(fontTexture);
 		this.transformationMatrix = new Matrix4f();
+		this.width = width;
 	}
 
 	/**
@@ -26,16 +28,20 @@ public class TextModel {
 	public void resizeBuffer() {
 		int vertexCount = 0;
 		int indexCount = 0;
-		for (TextCharacter character : this.characters) {
-			vertexCount += character.getTotalVertexCount();
-			indexCount += character.getTotalIndexCount();
+		for (TextLine textLine : this.textLines) {
+			for (TextCharacter character : textLine.characters) {
+				vertexCount += character.getTotalVertexCount();
+				indexCount += character.getTotalIndexCount();
+			}
 		}
 
 		this.mesh.createBuffers(vertexCount, indexCount);
 
 		VertexCounter counter = new VertexCounter();
-		for (TextCharacter character : this.characters) {
-			character.allocateMesh(this.mesh.indexBuffer, counter);
+		for (TextLine textLine : this.textLines) {
+			for (TextCharacter character : textLine.characters) {
+				character.allocateMesh(this.mesh.indexBuffer, counter);
+			}
 		}
 
 		this.mesh.updateIndexData();
@@ -51,8 +57,10 @@ public class TextModel {
 
 		this.mesh.vertexBuffer.rewind();
 
-		for (TextCharacter character : characters) {
-			character.updateMeshPart(new Matrix4f(transformationMatrix), this.mesh.vertexBuffer);
+		for (TextLine textLine : this.textLines) {
+			for (TextCharacter character : textLine.characters) {
+				character.updateMeshPart(new Matrix4f(transformationMatrix), this.mesh.vertexBuffer);
+			}
 		}
 
 		this.mesh.updateVertexData();
@@ -69,5 +77,10 @@ public class TextModel {
 
 	public void destroy() {
 		this.mesh.destroy();
+	}
+
+	public void setWidth(int width) {
+		this.width = width;
+		//TODO re-sort lines
 	}
 }
