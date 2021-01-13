@@ -1,6 +1,7 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
 import com.terminalvelocitycabbage.engine.client.renderer.model.text.TextCharacter;
+import com.terminalvelocitycabbage.engine.client.renderer.model.text.TextLine;
 import com.terminalvelocitycabbage.engine.client.renderer.model.text.TextModel;
 import com.terminalvelocitycabbage.engine.client.renderer.model.text.font.FontMeshPartStorage;
 import org.joml.Quaternionf;
@@ -23,7 +24,7 @@ public class Text {
 		this.needsUpdate = false;
 		this.text = text;
 		this.fontMeshPartStorage = fontMeshPartStorage;
-		this.model = new TextModel(Collections.emptyList(), fontMeshPartStorage.getFontTexture());
+		this.model = new TextModel(Collections.emptyList(), fontMeshPartStorage.getFontTexture(), 1000);
 		buildCharacterMap();
 	}
 
@@ -42,7 +43,7 @@ public class Text {
 			//TODO if this causes issues it's because charWidth is returned in pixels
 			previousWidth = fontMeshPartStorage.getCharInfo(character).getWidth();
 		}
-		this.model.characters = characterModelParts;
+		this.model.textLines = Collections.singletonList(new TextLine(characterModelParts));
 	}
 
 	public String getText() {

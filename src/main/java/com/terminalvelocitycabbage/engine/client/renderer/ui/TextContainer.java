@@ -10,7 +10,6 @@ public class TextContainer {
 	public TextContainer(int width, int height) {
 		this.width = width;
 		this.height = height;
-		this.text = new Text();
 	}
 
 	public int getWidth() {
