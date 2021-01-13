@@ -17,13 +17,12 @@ public class Element extends UIRenderable {
 	public Container parent;
 
 	//TODO make this a stylable text
-	public String innerText;
+	public Text innerText;
 
-	public Element(String text, UIDimension width, UIDimension height, Style style) {
+	public Element(UIDimension width, UIDimension height, Style style) {
 		super(style);
 		this.width = width;
 		this.height = height;
-		this.innerText = text;
 	}
 
 	@Override
@@ -156,6 +155,15 @@ public class Element extends UIRenderable {
 
 	public void setParent(Container parent) {
 		this.parent = parent;
+	}
+
+	public Element setInnerText(Text text) {
+		this.innerText = text;
+		return this;
+	}
+
+	public Text getInnerText() {
+		return innerText;
 	}
 
 	@Override

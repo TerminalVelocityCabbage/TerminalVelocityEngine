@@ -15,6 +15,7 @@ public class FontMeshPartStorage {
 	public FontMeshPartStorage(FontTexture fontTexture) {
 		this.fontTexture = fontTexture;
 		this.characterMeshParts = new HashMap<>();
+		fontTexture.getCharMap().forEach((character, charInfo) -> characterMeshParts.put(character, buildCharacterMesh(charInfo)));
 	}
 
 	public TextMeshPart getMesh(char character) {
@@ -35,9 +36,7 @@ public class FontMeshPartStorage {
 		return fontTexture;
 	}
 
-	private TextMeshPart buildCharacterMesh(char character) {
-
-		CharInfo charInfo = fontTexture.getCharInfo(character);
+	private TextMeshPart buildCharacterMesh(CharInfo charInfo) {
 
 		//Top Left vertex
 		TextVertex topLeft = new TextVertex()

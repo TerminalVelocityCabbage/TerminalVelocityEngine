@@ -26,9 +26,9 @@ public class FontTexture {
 	private static final int CHAR_PADDING = 2;
 	private static final float DEFAULT_SIZE = 32f;
 
-	private final Font font;
-	private final String charSetName;
-	private final Map<Character, CharInfo> charMap;
+	private Font font;
+	private String charSetName;
+	private Map<Character, CharInfo> charMap;
 
 	private Texture texture;
 	private int height;
@@ -42,21 +42,26 @@ public class FontTexture {
 		buildTexture();
 	}
 
-	public FontTexture(ResourceManager resourceManager, Identifier identifier) throws IOException, FontFormatException {
+	public FontTexture(ResourceManager resourceManager, Identifier identifier) {
 		this(resourceManager, identifier, DEFAULT_CHARSET, DEFAULT_SIZE);
 	}
 
-	public FontTexture(ResourceManager resourceManager, Identifier identifier, float size) throws IOException, FontFormatException {
+	public FontTexture(ResourceManager resourceManager, Identifier identifier, float size) {
 		this(resourceManager, identifier, DEFAULT_CHARSET, size);
 	}
 
-	public FontTexture(ResourceManager resourceManager, Identifier identifier, String charSet, float size) throws IOException, FontFormatException {
+	public FontTexture(ResourceManager resourceManager, Identifier identifier, String charSet, float size) {
 		Optional<Resource> resource = resourceManager.getResource(identifier);
 		if (resource.isPresent()) {
-			this.font = Font.createFont(Font.TRUETYPE_FONT, resource.get().openStream()).deriveFont(size);
-			this.charSetName = charSet;
-			charMap = new HashMap<>();
-			buildTexture();
+			try {
+				this.font = Font.createFont(Font.TRUETYPE_FONT, resource.get().openStream()).deriveFont(size);
+				this.charSetName = charSet;
+				charMap = new HashMap<>();
+				buildTexture();
+			} catch (FontFormatException | IOException e) {
+				Log.error("Could not load font " + identifier.getPath());
+				e.printStackTrace();
+			}
 		} else {
 			throw new RuntimeException("Could not load font resource " + identifier.toString());
 		}
@@ -76,6 +81,10 @@ public class FontTexture {
 
 	public CharInfo getCharInfo(char c) {
 		return charMap.get(c);
+	}
+
+	public Map<Character, CharInfo> getCharMap() {
+		return charMap;
 	}
 
 	private String getAllAvailableChars(String charsetName) {
