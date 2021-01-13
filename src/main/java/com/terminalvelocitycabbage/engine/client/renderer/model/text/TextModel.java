@@ -6,20 +6,19 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TextModel {
 
-	public List<TextLine> textLines;
+	public List<TextCharacter> textCharacters = new ArrayList<>();
 	public TextMesh mesh;
 	Matrix4f transformationMatrix;
-	public int width;
+	public int width = 0;
 
-	public TextModel(List<TextLine> textLines, FontTexture fontTexture, int width) {
-		this.textLines = textLines;
+	public TextModel(FontTexture fontTexture) {
 		this.mesh = new TextMesh(fontTexture);
 		this.transformationMatrix = new Matrix4f();
-		this.width = width;
 	}
 
 	/**
@@ -28,20 +27,16 @@ public class TextModel {
 	public void resizeBuffer() {
 		int vertexCount = 0;
 		int indexCount = 0;
-		for (TextLine textLine : this.textLines) {
-			for (TextCharacter character : textLine.characters) {
-				vertexCount += character.getTotalVertexCount();
-				indexCount += character.getTotalIndexCount();
-			}
+		for (TextCharacter character : textCharacters) {
+			vertexCount += character.getTotalVertexCount();
+			indexCount += character.getTotalIndexCount();
 		}
 
 		this.mesh.createBuffers(vertexCount, indexCount);
 
 		VertexCounter counter = new VertexCounter();
-		for (TextLine textLine : this.textLines) {
-			for (TextCharacter character : textLine.characters) {
-				character.allocateMesh(this.mesh.indexBuffer, counter);
-			}
+		for (TextCharacter character : textCharacters) {
+			character.allocateMesh(this.mesh.indexBuffer, counter);
 		}
 
 		this.mesh.updateIndexData();
@@ -57,10 +52,8 @@ public class TextModel {
 
 		this.mesh.vertexBuffer.rewind();
 
-		for (TextLine textLine : this.textLines) {
-			for (TextCharacter character : textLine.characters) {
-				character.updateMeshPart(new Matrix4f(transformationMatrix), this.mesh.vertexBuffer);
-			}
+		for (TextCharacter character : textCharacters) {
+			character.updateMeshPart(new Matrix4f(transformationMatrix), this.mesh.vertexBuffer);
 		}
 
 		this.mesh.updateVertexData();

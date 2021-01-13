@@ -15,8 +15,6 @@ public class Element extends UIRenderable {
 	public UIDimension width;
 	public UIDimension height;
 	public Container parent;
-
-	//TODO make this a stylable text
 	public Text innerText;
 
 	public Element(UIDimension width, UIDimension height, Style style) {
