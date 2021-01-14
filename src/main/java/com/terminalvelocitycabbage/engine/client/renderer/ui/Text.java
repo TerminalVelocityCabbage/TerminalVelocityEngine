@@ -25,6 +25,7 @@ public class Text {
 		this.fontMeshPartStorage = fontMeshPartStorage;
 		this.needsUpdate = true;
 		this.model = new TextModel(fontMeshPartStorage.getFontTexture());
+		this.model.resizeBuffer();
 	}
 
 	public String getText() {
@@ -35,6 +36,7 @@ public class Text {
 		this.text = text;
 		this.needsUpdate = true;
 		//TODO make sure this isn't empty
+		this.model.resizeBuffer();
 		this.model.bind();
 	}
 
@@ -79,6 +81,7 @@ public class Text {
 				this.model.textCharacters = characterModelParts;
 			}
 
+			model.resizeBuffer();
 			model.update(new Vector3f(0, 0, zIndex), new Quaternionf(), new Vector3f(1));
 			needsUpdate = false;
 		}

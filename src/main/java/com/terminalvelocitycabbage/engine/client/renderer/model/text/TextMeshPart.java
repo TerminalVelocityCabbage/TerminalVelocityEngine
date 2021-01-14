@@ -11,7 +11,6 @@ import java.nio.ShortBuffer;
 
 public class TextMeshPart extends MeshPart {
 
-
 	private final TextVertex[] vertices;
 	private final short[] vertexOrder;
 
@@ -56,7 +55,7 @@ public class TextMeshPart extends MeshPart {
 			currentXYZ = currentVertex.getXYZ();
 			positions.set(currentXYZ[0], currentXYZ[1], currentXYZ[2], 1f).mul(translationMatrix);
 			currentColor = currentVertex.getColor();
-			colors.set(currentColor[0], currentColor[1], currentColor[2], currentColor[4]);
+			colors.set(currentColor[0], currentColor[1], currentColor[2], 1f);
 
 			// Put the new data in a ByteBuffer (in the view of a FloatBuffer)
 			buffer.put(TextVertex.getElements(positions.x, positions.y, positions.z, currentVertex.getUV(), colors.x, colors.y, colors.z, colors.w));
