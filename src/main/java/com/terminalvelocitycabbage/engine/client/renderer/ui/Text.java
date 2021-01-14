@@ -16,7 +16,8 @@ public class Text {
 	//This should be a constant that is created on init in the implementer's game and shared between texts.
 	private final FontMeshPartStorage fontMeshPartStorage;
 	private String text;
-	private TextModel model;
+	//todo make private
+	public TextModel model;
 	//TODO add a TextStyle parameter here to allow coloring and things, and maybe make it so we can store a map of FontMeshPartStorage for bold,italic,etc.
 
 	public Text(String text, FontMeshPartStorage fontMeshPartStorage) {

@@ -3,6 +3,7 @@ package com.terminalvelocitycabbage.engine.client.renderer.ui;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Style;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.UIDimension;
+import com.terminalvelocitycabbage.engine.debug.Log;
 
 import java.util.function.Consumer;
 
@@ -156,7 +157,10 @@ public class Element extends UIRenderable {
 	}
 
 	public Element setInnerText(Text text) {
+		//todo add methods for setting font and text separately
 		this.innerText = text;
+		//todo is this needed?
+		this.innerText.bind();
 		return this;
 	}
 
@@ -192,5 +196,11 @@ public class Element extends UIRenderable {
 	@Override
 	public void render() {
 		super.render();
+		if (this.innerText != null) {
+			this.innerText.update(this.width.getPixelValue(this.getCanvas().getWindow().width()));
+			this.innerText.render();
+			Log.info(this.innerText.getText());
+			Log.info(this.innerText.model.textCharacters.size());
+		}
 	}
 }
