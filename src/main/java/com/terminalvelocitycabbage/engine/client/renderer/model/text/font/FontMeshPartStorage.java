@@ -10,7 +10,7 @@ import java.util.Map;
 public class FontMeshPartStorage {
 
 	FontTexture fontTexture;
-	Map<Character, TextMeshPart> characterMeshParts;
+	Map<Character, TextRectangle> characterMeshParts;
 
 	public FontMeshPartStorage(FontTexture fontTexture) {
 		this.fontTexture = fontTexture;
@@ -18,7 +18,7 @@ public class FontMeshPartStorage {
 		fontTexture.getCharMap().forEach((character, charInfo) -> characterMeshParts.put(character, buildCharacterMesh(charInfo)));
 	}
 
-	public TextMeshPart getMesh(char character) {
+	public TextRectangle getMesh(char character) {
 		if (!characterMeshParts.containsKey(character)) {
 			throw new RuntimeException("Character not found in mesh part storage for " + character);
 		}
@@ -36,7 +36,7 @@ public class FontMeshPartStorage {
 		return fontTexture;
 	}
 
-	private TextMeshPart buildCharacterMesh(CharInfo charInfo) {
+	private TextRectangle buildCharacterMesh(CharInfo charInfo) {
 
 		//Top Left vertex
 		TextVertex topLeft = new TextVertex()

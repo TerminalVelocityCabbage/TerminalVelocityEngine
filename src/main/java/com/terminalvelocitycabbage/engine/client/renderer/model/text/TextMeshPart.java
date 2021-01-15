@@ -3,6 +3,7 @@ package com.terminalvelocitycabbage.engine.client.renderer.model.text;
 import com.terminalvelocitycabbage.engine.client.renderer.model.MeshPart;
 import com.terminalvelocitycabbage.engine.client.renderer.model.ModelVertex;
 import com.terminalvelocitycabbage.engine.client.renderer.model.VertexCounter;
+import com.terminalvelocitycabbage.engine.client.renderer.shapes.TextRectangle;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 
@@ -16,9 +17,9 @@ public class TextMeshPart extends MeshPart {
 
 	private int vertexOffset = -1;
 
-	public TextMeshPart(TextVertex[] vertices, short[] vertexOrder) {
-		this.vertices = vertices;
-		this.vertexOrder = vertexOrder;
+	public TextMeshPart(TextRectangle rectangle) {
+		this.vertices = rectangle.getVertices();
+		this.vertexOrder = rectangle.getVertexOrder();
 	}
 
 	@Override

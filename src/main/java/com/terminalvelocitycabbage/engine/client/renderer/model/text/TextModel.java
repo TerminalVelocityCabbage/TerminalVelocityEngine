@@ -43,7 +43,6 @@ public class TextModel {
 	}
 
 	public void update(Vector3f position, Quaternionf rotation, Vector3f scale) {
-
 		transformationMatrix.identity().translate(position).
 				rotateX((float)Math.toRadians(-rotation.x)).
 				rotateY((float)Math.toRadians(-rotation.y)).
