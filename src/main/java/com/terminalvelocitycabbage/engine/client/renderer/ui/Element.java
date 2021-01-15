@@ -194,10 +194,10 @@ public class Element extends UIRenderable {
 	}
 
 	@Override
-	public void render() {
-		super.render();
+	public void renderText() {
+		super.renderText();
 		if (this.innerText != null) {
-			this.innerText.update(this.width.getPixelValue(this.getCanvas().getWindow().width()));
+			this.innerText.update(this.width.getPixelValue(this.getCanvas().getWindow().width()), this.getCanvas().getWindow());
 			this.innerText.render();
 			Log.info(this.innerText.getText());
 			Log.info(this.innerText.model.textCharacters.size());

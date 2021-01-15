@@ -1,8 +1,10 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
+import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
 import com.terminalvelocitycabbage.engine.client.renderer.model.text.TextCharacter;
 import com.terminalvelocitycabbage.engine.client.renderer.model.text.TextModel;
 import com.terminalvelocitycabbage.engine.client.renderer.model.text.font.FontMeshPartStorage;
+import com.terminalvelocitycabbage.engine.client.renderer.ui.components.UIDimension;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -48,29 +50,32 @@ public class Text {
 		model.render();
 	}
 
-	public void update(int width) {
+	public void update(int lineWidth, Window window) {
 		if (needsUpdate) {
+			//If we wanted to do font size, we can just replace 1F here
+			float xScale = 1F / window.width();
+			float yScale = 1F / window.height();
 
 			//Update text lines
-			if (width != this.model.width) {
+			if (lineWidth != this.model.width) {
 				//Create a Mesh for each character
 				var characterModelParts = new ArrayList<TextCharacter>();
 				int xOffset = 0;
 				int yOffset = 0;
+				boolean t = false;
 				for (char character : text.toCharArray()) {
-
 					//Create a mesh with the correct UV coordinated from the texture atlas
 					TextCharacter textCharacter = new TextCharacter(fontMeshPartStorage.getMesh(character));
 
 					//Put the text on the next and reset x position line if it would overflow
-					if (xOffset + fontMeshPartStorage.getCharInfo(character).getWidth() > width) {
+					if (xOffset + fontMeshPartStorage.getCharInfo(character).getWidth() > lineWidth) {
 						yOffset -= fontMeshPartStorage.getFontTexture().getHeight();
 						xOffset = 0;
 					}
 
 					//Position the character based on the x offset and y offset
-					textCharacter.position.set(xOffset, yOffset, zIndex);
-
+					textCharacter.offset.set(xOffset*xScale - 1F, yOffset*yScale + 1F, zIndex);
+					textCharacter.scale.set(xScale, -yScale, 1);
 					//Add the character model part to the model
 					characterModelParts.add(textCharacter);
 
@@ -82,7 +87,7 @@ public class Text {
 			}
 
 			model.resizeBuffer();
-			model.update(new Vector3f(0, 0, zIndex), new Quaternionf(), new Vector3f(1));
+			model.update(new Vector3f(1F, -1F, zIndex), new Quaternionf(), new Vector3f(1));
 			needsUpdate = false;
 		}
 	}

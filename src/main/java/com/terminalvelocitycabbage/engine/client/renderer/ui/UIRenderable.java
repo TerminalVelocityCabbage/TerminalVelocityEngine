@@ -51,6 +51,10 @@ public abstract class UIRenderable {
 	public void render() {
 		rectangle.render();
 	}
+	
+	public void renderText() {
+
+	}
 
 	public void destroy() {
 		rectangle.destroy();

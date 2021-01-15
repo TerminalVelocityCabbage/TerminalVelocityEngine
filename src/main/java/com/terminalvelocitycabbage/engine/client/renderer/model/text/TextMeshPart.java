@@ -50,7 +50,7 @@ public class TextMeshPart extends MeshPart {
 		Vector4f colors = new Vector4f();
 		float[] currentXYZ;
 		float[] currentColor;
-		buffer.position(this.vertexOffset * ModelVertex.ELEMENT_COUNT);
+		buffer.position(this.vertexOffset * TextVertex.ELEMENT_COUNT);
 		for (TextVertex currentVertex : vertices) {
 			currentXYZ = currentVertex.getXYZ();
 			positions.set(currentXYZ[0], currentXYZ[1], currentXYZ[2], 1f).mul(translationMatrix);
