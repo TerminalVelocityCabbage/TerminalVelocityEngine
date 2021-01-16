@@ -1,6 +1,7 @@
 package com.terminalvelocitycabbage.engine.client.renderer.model.text;
 
 import com.terminalvelocitycabbage.engine.client.renderer.model.VertexCounter;
+import com.terminalvelocitycabbage.engine.client.renderer.shapes.TextRectangle;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -15,8 +16,8 @@ public class TextCharacter {
 	public Vector3f rotation;
 	public Vector3f scale;
 
-	public TextCharacter(TextMeshPart part) {
-		this.meshPart = part;
+	public TextCharacter(TextRectangle part) {
+		this.meshPart = new TextMeshPart(part);
 
 		this.offset = new Vector3f();
 		this.position = new Vector3f();
