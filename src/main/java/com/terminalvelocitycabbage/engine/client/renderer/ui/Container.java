@@ -187,6 +187,7 @@ public class Container extends UIRenderable {
 				//Update the last row
 				moveElementsVertical(tmpColIndex, elements.size(), (rectangle.vertices[2].getY() - elements.get(elements.size() - 1).rectangle.vertices[2].getY()));
 			}
+
 			//Make sure text is updated with all these elements
 			for (Element element : elements) {
 				if (element.innerText != null) {

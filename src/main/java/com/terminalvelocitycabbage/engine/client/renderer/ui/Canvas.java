@@ -14,13 +14,27 @@ import java.util.function.Consumer;
 public class Canvas extends UIRenderable {
 
 	Window window;
+	boolean active;
 	List<Container> containers;
 
 	public Canvas(Window window) {
 		super(new Style());
 		this.window = window;
+		active = false;
 		this.containers = new ArrayList<>();
 		ClientBase.instance.addEventHandler(this);
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void activate() {
+		this.active = true;
+	}
+
+	public void deactivate() {
+		this.active = false;
 	}
 
 	public void addContainer(Container container) {
@@ -41,7 +55,7 @@ public class Canvas extends UIRenderable {
 	@Override
 	public void update() {
 
-		if (needsUpdate) {
+		if (needsUpdate && isActive()) {
 
 			float leftX = -1f;
 			float rightX = 1f;
@@ -73,6 +87,13 @@ public class Canvas extends UIRenderable {
 				container.queueUpdate();
 			}
 			this.needsUpdate = false;
+		}
+	}
+
+	@Override
+	public void render() {
+		if (isActive()) {
+			super.render();
 		}
 	}
 

@@ -1,5 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
+import com.terminalvelocitycabbage.engine.client.renderer.model.text.font.FontMeshPartStorage;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Style;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.UIDimension;
@@ -135,10 +136,11 @@ public class Element extends UIRenderable {
 			rectangle.vertices[1].setXYZ(leftX, bottomY, 0);
 			rectangle.vertices[2].setXYZ(rightX, bottomY, 0);
 			rectangle.vertices[3].setXYZ(rightX, topY, 0);
+		}
 
-			if (this.innerText != null) {
-				this.innerText.update(this.width.getPixelValue(this.getCanvas().getWindow().width()), this.getCanvas().getWindow(), leftX, bottomY);
-			}
+		//Pass the update to the text and let it determine if it's required
+		if (this.innerText != null) {
+			this.innerText.update(this.width.getPixelValue(this.getCanvas().getWindow().width()), this.getCanvas().getWindow(), rectangle.vertices[0].getX(), rectangle.vertices[0].getY());
 		}
 
 		//Update the data that gets passed to the gpu
@@ -161,10 +163,20 @@ public class Element extends UIRenderable {
 	}
 
 	public Element setInnerText(Text text) {
-		//todo add methods for setting font and text separately
-		this.innerText = text;
-		//todo is this needed?
-		this.innerText.bind();
+		if (innerText == null) {
+			this.innerText = Text.EMPTY;
+		}
+		this.innerText.setText(text);
+		return this;
+	}
+
+	public Element updateTextString(String text) {
+		this.innerText.setTextString(text);
+		return this;
+	}
+
+	public Element changeFont(FontMeshPartStorage font) {
+		this.innerText.setFont(font);
 		return this;
 	}
 
