@@ -139,10 +139,10 @@ public class Container extends UIRenderable {
 			topY += yDirOffset;
 
 			//Set the vertexes based on the calculated positions
-			rectangle.vertices[0].setXYZ(leftX, topY, zIndex);
-			rectangle.vertices[1].setXYZ(leftX, bottomY, zIndex);
-			rectangle.vertices[2].setXYZ(rightX, bottomY, zIndex);
-			rectangle.vertices[3].setXYZ(rightX, topY, zIndex);
+			rectangle.vertices[0].setXYZ(leftX, topY, 0);
+			rectangle.vertices[1].setXYZ(leftX, bottomY, 0);
+			rectangle.vertices[2].setXYZ(rightX, bottomY, 0);
+			rectangle.vertices[3].setXYZ(rightX, topY, 0);
 
 			//Update the data that gets passed to the gpu
 			rectangle.update(translationMatrix.identity());
@@ -233,7 +233,6 @@ public class Container extends UIRenderable {
 
 	public Container addContainer(Container container) {
 		container.setParent(this);
-		container.zIndex = zIndex - 1;
 		childContainers.add(container);
 		container.bind();
 		container.queueUpdate();
@@ -242,7 +241,6 @@ public class Container extends UIRenderable {
 
 	public Container addElement(Element element) {
 		element.setParent(this);
-		element.zIndex = zIndex - 0.0001f;
 		elements.add(element);
 		element.bind();
 		element.queueUpdate();

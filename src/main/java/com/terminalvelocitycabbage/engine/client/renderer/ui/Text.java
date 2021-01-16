@@ -11,7 +11,6 @@ import java.util.ArrayList;
 
 public class Text {
 
-	public float zIndex = 0.0f;
 	//This should be a constant that is created on init in the implementer's game and shared between texts.
 	private final FontMeshPartStorage fontMeshPartStorage;
 	private String text;
@@ -81,7 +80,7 @@ public class Text {
 		}
 
 		model.resizeBuffer();
-		model.update(new Vector3f(xCenter, yCenter, zIndex), new Quaternionf(), new Vector3f(1));
+		model.update(new Vector3f(xCenter, yCenter, 0), new Quaternionf(), new Vector3f(1));
 	}
 
 	public void destroy() {

@@ -25,7 +25,6 @@ public class Canvas extends UIRenderable {
 
 	public void addContainer(Container container) {
 		container.setParent(this);
-		container.zIndex = zIndex - 0.0001f;
 		containers.add(container);
 		container.bind();
 	}
@@ -64,10 +63,10 @@ public class Canvas extends UIRenderable {
 			bottomY += style.getMargin().bottom().getUnitizedValue(screenHeight, windowHeight);
 
 			//Set the vertexes based on the calculated positions
-			rectangle.vertices[0].setXYZ(leftX, topY, zIndex);
-			rectangle.vertices[1].setXYZ(leftX, bottomY, zIndex);
-			rectangle.vertices[2].setXYZ(rightX, bottomY, zIndex);
-			rectangle.vertices[3].setXYZ(rightX, topY, zIndex);
+			rectangle.vertices[0].setXYZ(leftX, topY, 0);
+			rectangle.vertices[1].setXYZ(leftX, bottomY, 0);
+			rectangle.vertices[2].setXYZ(rightX, bottomY, 0);
+			rectangle.vertices[3].setXYZ(rightX, topY, 0);
 
 			rectangle.update(translationMatrix.identity());
 			for (Container container : containers) {

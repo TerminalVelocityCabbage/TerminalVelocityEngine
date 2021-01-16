@@ -131,10 +131,10 @@ public class Element extends UIRenderable {
 			}
 
 			//Set the vertexes based on the calculated positions
-			rectangle.vertices[0].setXYZ(leftX, topY, zIndex);
-			rectangle.vertices[1].setXYZ(leftX, bottomY, zIndex);
-			rectangle.vertices[2].setXYZ(rightX, bottomY, zIndex);
-			rectangle.vertices[3].setXYZ(rightX, topY, zIndex);
+			rectangle.vertices[0].setXYZ(leftX, topY, 0);
+			rectangle.vertices[1].setXYZ(leftX, bottomY, 0);
+			rectangle.vertices[2].setXYZ(rightX, bottomY, 0);
+			rectangle.vertices[3].setXYZ(rightX, topY, 0);
 
 			if (this.innerText != null) {
 				this.innerText.update(this.width.getPixelValue(this.getCanvas().getWindow().width()), this.getCanvas().getWindow(), leftX, bottomY);
@@ -163,7 +163,6 @@ public class Element extends UIRenderable {
 	public Element setInnerText(Text text) {
 		//todo add methods for setting font and text separately
 		this.innerText = text;
-		this.innerText.zIndex = zIndex - 0.0001f;
 		//todo is this needed?
 		this.innerText.bind();
 		return this;
