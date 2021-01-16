@@ -187,6 +187,12 @@ public class Container extends UIRenderable {
 				//Update the last row
 				moveElementsVertical(tmpColIndex, elements.size(), (rectangle.vertices[2].getY() - elements.get(elements.size() - 1).rectangle.vertices[2].getY()));
 			}
+			//Make sure text is updated with all these elements
+			for (Element element : elements) {
+				if (element.innerText != null) {
+					element.innerText.update(element.width.getPixelValue(this.getCanvas().getWindow().width()), this.getCanvas().getWindow(), element.rectangle.vertices[0].getX(), element.rectangle.vertices[0].getY());
+				}
+			}
 
 			//Complete this update
 			needsUpdate = false;
@@ -236,7 +242,7 @@ public class Container extends UIRenderable {
 
 	public Container addElement(Element element) {
 		element.setParent(this);
-		element.zIndex = zIndex - 1;
+		element.zIndex = zIndex - 0.0001f;
 		elements.add(element);
 		element.bind();
 		element.queueUpdate();

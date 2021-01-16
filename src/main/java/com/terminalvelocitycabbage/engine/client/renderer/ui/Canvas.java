@@ -25,7 +25,7 @@ public class Canvas extends UIRenderable {
 
 	public void addContainer(Container container) {
 		container.setParent(this);
-		container.zIndex = zIndex - 1;
+		container.zIndex = zIndex - 0.0001f;
 		containers.add(container);
 		container.bind();
 	}

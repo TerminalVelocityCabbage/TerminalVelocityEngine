@@ -3,11 +3,11 @@ package com.terminalvelocitycabbage.engine.client.renderer.ui;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Style;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.UIDimension;
-import com.terminalvelocitycabbage.engine.debug.Log;
 
 import java.util.function.Consumer;
 
-import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment.Horizontal.*;
+import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment.Horizontal.LEFT;
+import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment.Horizontal.RIGHT;
 import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment.Vertical.BOTTOM;
 import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment.Vertical.TOP;
 
@@ -135,6 +135,10 @@ public class Element extends UIRenderable {
 			rectangle.vertices[1].setXYZ(leftX, bottomY, zIndex);
 			rectangle.vertices[2].setXYZ(rightX, bottomY, zIndex);
 			rectangle.vertices[3].setXYZ(rightX, topY, zIndex);
+
+			if (this.innerText != null) {
+				this.innerText.update(this.width.getPixelValue(this.getCanvas().getWindow().width()), this.getCanvas().getWindow(), leftX, bottomY);
+			}
 		}
 
 		//Update the data that gets passed to the gpu
@@ -159,6 +163,7 @@ public class Element extends UIRenderable {
 	public Element setInnerText(Text text) {
 		//todo add methods for setting font and text separately
 		this.innerText = text;
+		this.innerText.zIndex = zIndex - 0.0001f;
 		//todo is this needed?
 		this.innerText.bind();
 		return this;
@@ -197,10 +202,7 @@ public class Element extends UIRenderable {
 	public void renderText() {
 		super.renderText();
 		if (this.innerText != null) {
-			this.innerText.update(this.width.getPixelValue(this.getCanvas().getWindow().width()), this.getCanvas().getWindow());
 			this.innerText.render();
-			Log.info(this.innerText.getText());
-			Log.info(this.innerText.model.textCharacters.size());
 		}
 	}
 }
