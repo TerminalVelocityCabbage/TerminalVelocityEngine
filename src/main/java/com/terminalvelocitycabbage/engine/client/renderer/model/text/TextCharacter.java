@@ -3,6 +3,7 @@ package com.terminalvelocitycabbage.engine.client.renderer.model.text;
 import com.terminalvelocitycabbage.engine.client.renderer.model.VertexCounter;
 import com.terminalvelocitycabbage.engine.client.renderer.shapes.TextRectangle;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import java.nio.FloatBuffer;
@@ -13,7 +14,7 @@ public class TextCharacter {
 
 	public Vector3f offset;
 	public Vector3f position;
-	public Vector3f rotation;
+	public Quaternionf rotation;
 	public Vector3f scale;
 
 	public TextCharacter(TextRectangle part) {
@@ -21,11 +22,11 @@ public class TextCharacter {
 
 		this.offset = new Vector3f();
 		this.position = new Vector3f();
-		this.rotation = new Vector3f();
+		this.rotation = new Quaternionf();
 		this.scale = new Vector3f(1);
 	}
 
-	public TextCharacter(TextMeshPart meshPart, Vector3f offset, Vector3f position, Vector3f rotation, Vector3f scale) {
+	public TextCharacter(TextMeshPart meshPart, Vector3f offset, Vector3f position, Quaternionf rotation, Vector3f scale) {
 		this.meshPart = meshPart;
 
 		this.offset = offset;
@@ -37,9 +38,7 @@ public class TextCharacter {
 	public void updateMeshPart(Matrix4f transformationMatrix, FloatBuffer buffer) {
 		transformationMatrix
 				.translate(position)
-				.rotateX(rotation.x)
-				.rotateY(rotation.y)
-				.rotateZ(rotation.z);
+				.rotate(rotation);
 		transformationMatrix
 				.translate(offset)
 				.scale(scale);

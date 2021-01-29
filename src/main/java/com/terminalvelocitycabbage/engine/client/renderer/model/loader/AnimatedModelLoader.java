@@ -10,6 +10,7 @@ import net.dumbcode.studio.animation.instance.AnimatedCube;
 import net.dumbcode.studio.model.CubeInfo;
 import net.dumbcode.studio.model.ModelLoader;
 import net.dumbcode.studio.model.RotationOrder;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import java.io.IOException;
@@ -56,7 +57,7 @@ public class AnimatedModelLoader {
 					),
 					new Vector3f(cube.getOffset()[0] - cube.getCubeGrow()[0], cube.getOffset()[1] - cube.getCubeGrow()[1], cube.getOffset()[2] - cube.getCubeGrow()[2]),
 					new Vector3f(cube.getRotationPoint()),
-					new Vector3f(cube.getRotation()),
+					new Quaternionf().rotationXYZ(cube.getRotation()[0], cube.getRotation()[1], cube.getRotation()[2]),
 					new Vector3f(cube.getDimensions()[0] + (2*cube.getCubeGrow()[0]), cube.getDimensions()[1] + (2*cube.getCubeGrow()[1]), cube.getDimensions()[2] + (2*cube.getCubeGrow()[2])),
 					cube.getChildren().stream().map(Part::createPart).collect(Collectors.toList())
 			);
@@ -75,7 +76,7 @@ public class AnimatedModelLoader {
 
 		@Override
 		public void setRotation(float x, float y, float z) {
-			this.rotation.set(x, y, z);
+			this.rotation.rotationXYZ(x, y, z);
 		}
 
 		@Override
