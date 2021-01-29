@@ -1,19 +1,25 @@
-package com.terminalvelocitycabbage.engine.client.renderer.model;
+package com.terminalvelocitycabbage.engine.client.renderer.model.text;
 
+import com.terminalvelocitycabbage.engine.client.renderer.model.text.font.FontTexture;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
-import static com.terminalvelocitycabbage.engine.client.renderer.model.ModelVertex.*;
+import static com.terminalvelocitycabbage.engine.client.renderer.model.text.TextVertex.*;
+import static com.terminalvelocitycabbage.engine.client.renderer.model.Vertex.POSITION_ELEMENT_COUNT;
+import static com.terminalvelocitycabbage.engine.client.renderer.model.Vertex.POSITION_OFFSET;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_SHORT;
 import static org.lwjgl.opengl.GL11.glDrawElements;
 import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL30.*;
 
-public class ModelMesh {
+public class TextMesh {
 
 	private int vaoID;
 	private int vboID;
@@ -24,7 +30,12 @@ public class ModelMesh {
 
 	protected FloatBuffer vertexBuffer;
 	protected ShortBuffer indexBuffer;
-	private Material material;
+
+	protected FontTexture fontTexture;
+
+	public TextMesh(FontTexture fontTexture) {
+		this.fontTexture = fontTexture;
+	}
 
 	//TODO note that these translations have to be done in a specific order so we should make it clear and make an API that dummi-proofs it
 	//1. Scale	- so that the axis stuff is scaled properly
@@ -33,7 +44,7 @@ public class ModelMesh {
 	//4. Move	- because moving is dum
 
 	public void createBuffers(int vertexCount, int indexCount) {
-		this.vertexBuffer = BufferUtils.createFloatBuffer(vertexCount * ModelVertex.ELEMENT_COUNT);
+		this.vertexBuffer = BufferUtils.createFloatBuffer(vertexCount * TextVertex.ELEMENT_COUNT);
 		this.indexBuffer = BufferUtils.createShortBuffer(indexCount);
 		this.indexCount = indexCount;
 		this.vertexCount = vertexCount;
@@ -51,7 +62,7 @@ public class ModelMesh {
 		//Define vertex data for shader
 		glVertexAttribPointer(0, POSITION_ELEMENT_COUNT, GL11.GL_FLOAT, false, STRIDE, POSITION_OFFSET);
 		glVertexAttribPointer(1, TEXTURE_ELEMENT_COUNT, GL11.GL_FLOAT, false, STRIDE, TEXTURE_OFFSET);
-		glVertexAttribPointer(2, NORMAL_ELEMENT_COUNT, GL11.GL_FLOAT, false, STRIDE, NORMAL_OFFSET);
+		glVertexAttribPointer(2, COLOR_ELEMENT_COUNT, GL11.GL_FLOAT, false, STRIDE, COLOR_OFFSET);
 
 		//Enable the attrib pointers
 		glEnableVertexAttribArray(0);
@@ -67,9 +78,7 @@ public class ModelMesh {
 		glBindVertexArray(vaoID);
 
 		//Bind Textures
-		if (material.hasTexture()) {
-			material.getTexture().bind();
-		}
+		fontTexture.getTexture().bind();
 
 		// Bind to the index VBO/EBO that has all the information about the order of the vertices
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
@@ -91,13 +100,11 @@ public class ModelMesh {
 		glDeleteBuffers(eboID);
 		glDeleteVertexArrays(vaoID);
 
-		if (material.hasTexture()) {
-			material.getTexture().destroy();
-		}
+		fontTexture.getTexture().destroy();
 	}
 
 	public void updateVertexData() {
-		vertexBuffer.position(vertexCount * ModelVertex.ELEMENT_COUNT);
+		vertexBuffer.position(vertexCount * TextVertex.ELEMENT_COUNT);
 		vertexBuffer.flip();
 
 		glBindBuffer(GL_ARRAY_BUFFER, vboID);
@@ -112,11 +119,11 @@ public class ModelMesh {
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexBuffer, GL_STATIC_DRAW);
 	}
 
-	public void setMaterial(Material material) {
-		this.material = material;
+	public void setFontTexture(FontTexture fontTexture) {
+		this.fontTexture = fontTexture;
 	}
 
-	public Material getMaterial() {
-		return material;
+	public FontTexture getFontTexture() {
+		return fontTexture;
 	}
 }

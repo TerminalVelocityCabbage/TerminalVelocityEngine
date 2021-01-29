@@ -14,18 +14,31 @@ import java.util.function.Consumer;
 public class Canvas extends UIRenderable {
 
 	Window window;
+	boolean active;
 	List<Container> containers;
 
 	public Canvas(Window window) {
 		super(new Style());
 		this.window = window;
+		active = false;
 		this.containers = new ArrayList<>();
 		ClientBase.instance.addEventHandler(this);
 	}
 
+	public boolean isActive() {
+		return active;
+	}
+
+	public void activate() {
+		this.active = true;
+	}
+
+	public void deactivate() {
+		this.active = false;
+	}
+
 	public void addContainer(Container container) {
 		container.setParent(this);
-		container.zIndex = zIndex - 1;
 		containers.add(container);
 		container.bind();
 	}
@@ -42,7 +55,7 @@ public class Canvas extends UIRenderable {
 	@Override
 	public void update() {
 
-		if (needsUpdate) {
+		if (needsUpdate && isActive()) {
 
 			float leftX = -1f;
 			float rightX = 1f;
@@ -64,16 +77,23 @@ public class Canvas extends UIRenderable {
 			bottomY += style.getMargin().bottom().getUnitizedValue(screenHeight, windowHeight);
 
 			//Set the vertexes based on the calculated positions
-			rectangle.vertices[0].setXYZ(leftX, topY, zIndex);
-			rectangle.vertices[1].setXYZ(leftX, bottomY, zIndex);
-			rectangle.vertices[2].setXYZ(rightX, bottomY, zIndex);
-			rectangle.vertices[3].setXYZ(rightX, topY, zIndex);
+			rectangle.vertices[0].setXYZ(leftX, topY, 0);
+			rectangle.vertices[1].setXYZ(leftX, bottomY, 0);
+			rectangle.vertices[2].setXYZ(rightX, bottomY, 0);
+			rectangle.vertices[3].setXYZ(rightX, topY, 0);
 
 			rectangle.update(translationMatrix.identity());
 			for (Container container : containers) {
 				container.queueUpdate();
 			}
 			this.needsUpdate = false;
+		}
+	}
+
+	@Override
+	public void render() {
+		if (isActive()) {
+			super.render();
 		}
 	}
 

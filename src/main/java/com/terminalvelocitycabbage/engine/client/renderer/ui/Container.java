@@ -139,10 +139,10 @@ public class Container extends UIRenderable {
 			topY += yDirOffset;
 
 			//Set the vertexes based on the calculated positions
-			rectangle.vertices[0].setXYZ(leftX, topY, zIndex);
-			rectangle.vertices[1].setXYZ(leftX, bottomY, zIndex);
-			rectangle.vertices[2].setXYZ(rightX, bottomY, zIndex);
-			rectangle.vertices[3].setXYZ(rightX, topY, zIndex);
+			rectangle.vertices[0].setXYZ(leftX, topY, 0);
+			rectangle.vertices[1].setXYZ(leftX, bottomY, 0);
+			rectangle.vertices[2].setXYZ(rightX, bottomY, 0);
+			rectangle.vertices[3].setXYZ(rightX, topY, 0);
 
 			//Update the data that gets passed to the gpu
 			rectangle.update(translationMatrix.identity());
@@ -188,6 +188,13 @@ public class Container extends UIRenderable {
 				moveElementsVertical(tmpColIndex, elements.size(), (rectangle.vertices[2].getY() - elements.get(elements.size() - 1).rectangle.vertices[2].getY()));
 			}
 
+			//Make sure text is updated with all these elements
+			for (Element element : elements) {
+				if (element.innerText != null) {
+					element.innerText.update(element.width.getPixelValue(this.getCanvas().getWindow().width()), this.getCanvas().getWindow(), element.rectangle.vertices[0].getX(), element.rectangle.vertices[0].getY());
+				}
+			}
+
 			//Complete this update
 			needsUpdate = false;
 		}
@@ -227,7 +234,6 @@ public class Container extends UIRenderable {
 
 	public Container addContainer(Container container) {
 		container.setParent(this);
-		container.zIndex = zIndex - 1;
 		childContainers.add(container);
 		container.bind();
 		container.queueUpdate();
@@ -236,7 +242,6 @@ public class Container extends UIRenderable {
 
 	public Container addElement(Element element) {
 		element.setParent(this);
-		element.zIndex = zIndex - 1;
 		elements.add(element);
 		element.bind();
 		element.queueUpdate();

@@ -1,12 +1,14 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
+import com.terminalvelocitycabbage.engine.client.renderer.model.text.font.FontMeshPartStorage;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Style;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.UIDimension;
 
 import java.util.function.Consumer;
 
-import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment.Horizontal.*;
+import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment.Horizontal.LEFT;
+import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment.Horizontal.RIGHT;
 import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment.Vertical.BOTTOM;
 import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment.Vertical.TOP;
 
@@ -15,15 +17,12 @@ public class Element extends UIRenderable {
 	public UIDimension width;
 	public UIDimension height;
 	public Container parent;
+	public Text innerText;
 
-	//TODO make this a stylable text
-	public String innerText;
-
-	public Element(String text, UIDimension width, UIDimension height, Style style) {
+	public Element(UIDimension width, UIDimension height, Style style) {
 		super(style);
 		this.width = width;
 		this.height = height;
-		this.innerText = text;
 	}
 
 	@Override
@@ -133,10 +132,15 @@ public class Element extends UIRenderable {
 			}
 
 			//Set the vertexes based on the calculated positions
-			rectangle.vertices[0].setXYZ(leftX, topY, zIndex);
-			rectangle.vertices[1].setXYZ(leftX, bottomY, zIndex);
-			rectangle.vertices[2].setXYZ(rightX, bottomY, zIndex);
-			rectangle.vertices[3].setXYZ(rightX, topY, zIndex);
+			rectangle.vertices[0].setXYZ(leftX, topY, 0);
+			rectangle.vertices[1].setXYZ(leftX, bottomY, 0);
+			rectangle.vertices[2].setXYZ(rightX, bottomY, 0);
+			rectangle.vertices[3].setXYZ(rightX, topY, 0);
+		}
+
+		//Pass the update to the text and let it determine if it's required
+		if (this.innerText != null) {
+			this.innerText.update(this.width.getPixelValue(this.getCanvas().getWindow().width()), this.getCanvas().getWindow(), rectangle.vertices[0].getX(), rectangle.vertices[0].getY());
 		}
 
 		//Update the data that gets passed to the gpu
@@ -156,6 +160,28 @@ public class Element extends UIRenderable {
 
 	public void setParent(Container parent) {
 		this.parent = parent;
+	}
+
+	public Element setInnerText(Text text) {
+		if (innerText == null) {
+			this.innerText = Text.EMPTY;
+		}
+		this.innerText.setText(text);
+		return this;
+	}
+
+	public Element updateTextString(String text) {
+		this.innerText.setTextString(text);
+		return this;
+	}
+
+	public Element changeFont(FontMeshPartStorage font) {
+		this.innerText.setFont(font);
+		return this;
+	}
+
+	public Text getInnerText() {
+		return innerText;
 	}
 
 	@Override
@@ -184,7 +210,10 @@ public class Element extends UIRenderable {
 	}
 
 	@Override
-	public void render() {
-		super.render();
+	public void renderText() {
+		super.renderText();
+		if (this.innerText != null) {
+			this.innerText.render();
+		}
 	}
 }

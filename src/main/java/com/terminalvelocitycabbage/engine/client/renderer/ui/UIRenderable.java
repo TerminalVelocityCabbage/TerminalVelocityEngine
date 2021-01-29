@@ -14,7 +14,6 @@ public abstract class UIRenderable {
 	boolean needsUpdate;
 	Rectangle rectangle;
 	public Style style;
-	int zIndex;
 	Matrix4f translationMatrix;
 
 	List<Consumer<UIRenderable>> hoverConsumers;
@@ -28,7 +27,6 @@ public abstract class UIRenderable {
 		this.needsUpdate = false;
 		this.rectangle = new Rectangle(new Vertex().setXYZ(0, 0, 0), new Vertex().setXYZ(0, 0, 0), new Vertex().setXYZ(0, 0, 0), new Vertex().setXYZ(0, 0, 0));
 		this.style = style;
-		this.zIndex = 0;
 		this.translationMatrix = new Matrix4f();
 		hoverConsumers = new ArrayList<>();
 		lastHover = false;
@@ -50,6 +48,10 @@ public abstract class UIRenderable {
 
 	public void render() {
 		rectangle.render();
+	}
+
+	public void renderText() {
+
 	}
 
 	public void destroy() {

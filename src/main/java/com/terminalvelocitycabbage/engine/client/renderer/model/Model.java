@@ -17,7 +17,6 @@ import java.util.List;
 public class Model {
 
 	public List<Part> modelParts;
-	private Material material;
 	public ModelMesh mesh;
 	//To avoid creating a new one every part render call
 	Matrix4f transformationMatrix;
@@ -53,11 +52,9 @@ public class Model {
 	}
 
 	public void update(Vector3f position, Quaternionf rotation, Vector3f scale) {
-		transformationMatrix.identity().translate(position).
-			rotateX((float)Math.toRadians(-rotation.x)).
-			rotateY((float)Math.toRadians(-rotation.y)).
-			rotateZ((float)Math.toRadians(-rotation.z)).
-			scale(scale);
+		transformationMatrix.translation(position)
+			.rotate(rotation)
+			.scale(scale);
 
 		this.mesh.vertexBuffer.rewind();
 
@@ -87,7 +84,7 @@ public class Model {
 
 		public Vector3f offset;
 		public Vector3f position;
-		public Vector3f rotation;
+		public Quaternionf rotation;
 		public Vector3f scale;
 
 		public Part(MeshPart part) {
@@ -95,13 +92,13 @@ public class Model {
 
 			this.offset = new Vector3f();
 			this.position = new Vector3f();
-			this.rotation = new Vector3f();
+			this.rotation = new Quaternionf();
 			this.scale = new Vector3f(1);
 
 			this.children = Collections.emptyList();
 		}
 
-		public Part(MeshPart meshPart, Vector3f offset, Vector3f position, Vector3f rotation, Vector3f scale, List<Model.Part> children) {
+		public Part(MeshPart meshPart, Vector3f offset, Vector3f position, Quaternionf rotation, Vector3f scale, List<Model.Part> children) {
 			this.meshPart = meshPart;
 
 			this.offset = offset;
@@ -114,10 +111,7 @@ public class Model {
 
 		public void updateMeshes(Matrix4f transformationMatrix, FloatBuffer buffer) {
 			transformationMatrix
-				.translate(position)
-				.rotateX(rotation.x)
-				.rotateY(rotation.y)
-				.rotateZ(rotation.z);
+				.translate(position).rotate(rotation);
 			var mat = new Matrix4f();
 			for (Model.Part child : children) {
 				child.updateMeshes(mat.set(transformationMatrix), buffer);
@@ -153,22 +147,11 @@ public class Model {
 	}
 
 	public Model setMaterial(Material material) {
-		this.material = material;
 		this.mesh.setMaterial(material);
 		return this;
 	}
 
 	public Material getMaterial() {
-		return material;
-	}
-
-	protected static class VertexCounter {
-		private int vertexCount;
-
-		public int getVertexIndex(int count) {
-			int ret = this.vertexCount;
-			this.vertexCount += count;
-			return ret;
-		}
+		return this.mesh.getMaterial();
 	}
 }

@@ -1,4 +1,4 @@
-package com.terminalvelocitycabbage.engine.client.renderer.font;
+package com.terminalvelocitycabbage.engine.client.renderer.model.text.font;
 
 import com.terminalvelocitycabbage.engine.client.renderer.model.Texture;
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
@@ -26,13 +26,13 @@ public class FontTexture {
 	private static final int CHAR_PADDING = 2;
 	private static final float DEFAULT_SIZE = 32f;
 
-	private final Font font;
-	private final String charSetName;
-	private final Map<Character, CharInfo> charMap;
+	private Font font;
+	private String charSetName;
+	private Map<Character, CharInfo> charMap;
 
 	private Texture texture;
 	private int height;
-	private int width;
+	private int position;
 
 	public FontTexture(Font font, String charSetName) {
 		this.font = font;
@@ -42,28 +42,33 @@ public class FontTexture {
 		buildTexture();
 	}
 
-	public FontTexture(ResourceManager resourceManager, Identifier identifier) throws IOException, FontFormatException {
+	public FontTexture(ResourceManager resourceManager, Identifier identifier) {
 		this(resourceManager, identifier, DEFAULT_CHARSET, DEFAULT_SIZE);
 	}
 
-	public FontTexture(ResourceManager resourceManager, Identifier identifier, float size) throws IOException, FontFormatException {
+	public FontTexture(ResourceManager resourceManager, Identifier identifier, float size) {
 		this(resourceManager, identifier, DEFAULT_CHARSET, size);
 	}
 
-	public FontTexture(ResourceManager resourceManager, Identifier identifier, String charSet, float size) throws IOException, FontFormatException {
+	public FontTexture(ResourceManager resourceManager, Identifier identifier, String charSet, float size) {
 		Optional<Resource> resource = resourceManager.getResource(identifier);
 		if (resource.isPresent()) {
-			this.font = Font.createFont(Font.TRUETYPE_FONT, resource.get().openStream()).deriveFont(size);
-			this.charSetName = charSet;
-			charMap = new HashMap<>();
-			buildTexture();
+			try {
+				this.font = Font.createFont(Font.TRUETYPE_FONT, resource.get().openStream()).deriveFont(size);
+				this.charSetName = charSet;
+				charMap = new HashMap<>();
+				buildTexture();
+			} catch (FontFormatException | IOException e) {
+				Log.error("Could not load font " + identifier.getPath());
+				e.printStackTrace();
+			}
 		} else {
 			throw new RuntimeException("Could not load font resource " + identifier.toString());
 		}
 	}
 
-	public int getWidth() {
-		return width;
+	public int getPosition() {
+		return position;
 	}
 
 	public int getHeight() {
@@ -76,6 +81,10 @@ public class FontTexture {
 
 	public CharInfo getCharInfo(char c) {
 		return charMap.get(c);
+	}
+
+	public Map<Character, CharInfo> getCharMap() {
+		return charMap;
 	}
 
 	private String getAllAvailableChars(String charsetName) {
@@ -98,18 +107,18 @@ public class FontTexture {
 		FontMetrics fontMetrics = g2D.getFontMetrics();
 
 		String allChars = getAllAvailableChars(charSetName);
-		this.width = 0;
+		this.position = 0;
 		this.height = fontMetrics.getHeight();
 		for (char c : allChars.toCharArray()) {
 			// Get the size for each character and update global image size
-			CharInfo charInfo = new CharInfo(width, fontMetrics.charWidth(c));
+			CharInfo charInfo = new CharInfo(position, fontMetrics.charWidth(c));
 			charMap.put(c, charInfo);
-			width += charInfo.getWidth() + CHAR_PADDING;
+			position += charInfo.getWidth() + CHAR_PADDING;
 		}
 		g2D.dispose();
 
 		// Create the image associated to the charset
-		img = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
+		img = new BufferedImage(position, height, BufferedImage.TYPE_4BYTE_ABGR);
 		g2D = img.createGraphics();
 		g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g2D.setFont(font);
@@ -133,25 +142,5 @@ public class FontTexture {
 		}
 		//ImageIO.write(img, IMAGE_FORMAT, new File("Temp.png"));
 		texture = new Texture(inputStream);
-	}
-
-	public static class CharInfo {
-
-		private final int startX;
-
-		private final int width;
-
-		public CharInfo(int startX, int width) {
-			this.startX = startX;
-			this.width = width;
-		}
-
-		public int getStartX() {
-			return startX;
-		}
-
-		public int getWidth() {
-			return width;
-		}
 	}
 }
