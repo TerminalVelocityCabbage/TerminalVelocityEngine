@@ -41,7 +41,10 @@ public class Camera {
 	}
 
 	public void move(float offsetX, float offsetY, float offsetZ) {
-		position.add(offsetX, offsetY, offsetZ);
+		position.add(
+				((float)Math.sin(rotation.y) * -offsetZ) + ((float)Math.sin(rotation.y - 90) * -offsetX),
+				offsetY,
+				((float)Math.cos(rotation.y) * offsetZ) + ((float)Math.cos(rotation.y - 90) * offsetX));
 	}
 
 	public void move(Vector3f offset, float sensitivity) {
@@ -57,7 +60,7 @@ public class Camera {
 	}
 
 	public void rotate(float x, float y, float z) {
-		rotation.rotateXYZ(x, y, z);
+		rotation.rotateYXZ(y, x, z);
 	}
 
 	public void rotate(Vector2f rotation) {

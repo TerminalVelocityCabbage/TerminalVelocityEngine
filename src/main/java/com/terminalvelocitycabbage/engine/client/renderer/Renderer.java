@@ -6,7 +6,6 @@ import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
 import com.terminalvelocitycabbage.engine.client.renderer.scenes.SceneHandler;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.CanvasHandler;
 import com.terminalvelocitycabbage.engine.utils.TickManager;
-import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 
@@ -21,7 +20,6 @@ public abstract class Renderer {
 	// The window handle
 	private static Window window;
 	protected static Camera camera;
-	protected Matrix4f viewMatrix = new Matrix4f();
 	private static float[] frameTimes = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0,};
 	private static long endFrameTime = 0;
 	private static long previousFrameTime = 0;
