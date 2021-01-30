@@ -1,7 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.input;
 
 import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
-import com.terminalvelocitycabbage.engine.debug.Log;
 import org.joml.Vector2d;
 import org.joml.Vector2f;
 
@@ -52,7 +51,6 @@ public abstract class InputHandler {
 
 
 	public Vector2f getDeltaMouseVector(float sensitivity) {
-		Log.info(deltaMouseVector.x + " " + deltaMouseVector.y);
 		return deltaMouseVector.mul(sensitivity);
 	}
 

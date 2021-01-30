@@ -16,6 +16,7 @@ public class Camera {
 	private Matrix4f viewMatrix;
 
 	private final Vector3f position;
+	private final Vector3f tempVec3;
 	private final Quaternionf rotation;
 
 	public Camera(int fov, float clippingPlane, float farPlane) {
@@ -27,6 +28,7 @@ public class Camera {
 		viewMatrix = new Matrix4f();
 
 		position = new Vector3f(0, 0, 0);
+		tempVec3 = new Vector3f();
 		rotation = new Quaternionf();
 	}
 
@@ -35,21 +37,11 @@ public class Camera {
 	}
 
 	public void setPosition(float x, float y, float z) {
-		position.x = x;
-		position.y = y;
-		position.z = z;
+		position.set(x, y, z);
 	}
 
 	public void move(float offsetX, float offsetY, float offsetZ) {
-		if ( offsetZ != 0 ) {
-			position.x += (float)Math.sin(Math.toRadians(rotation.y)) * -1.0f * offsetZ;
-			position.z += (float)Math.cos(Math.toRadians(rotation.y)) * offsetZ;
-		}
-		if ( offsetX != 0) {
-			position.x += (float)Math.sin(Math.toRadians(rotation.y - 90)) * -1.0f * offsetX;
-			position.z += (float)Math.cos(Math.toRadians(rotation.y - 90)) * offsetX;
-		}
-		position.y += offsetY;
+		position.add(offsetX, offsetY, offsetZ);
 	}
 
 	public void move(Vector3f offset, float sensitivity) {
@@ -86,11 +78,8 @@ public class Camera {
 	}
 
 	public Matrix4f getViewMatrix() {
-		viewMatrix.identity();
-		//First do the rotation so camera rotates over its position instead of world position
-		viewMatrix.rotateXYZ(rotation.x, rotation.y, rotation.z);
-		//Then do the translation in opposite direction of the camera movement
-		viewMatrix.translate(-position.x, -position.y, -position.z);
+		viewMatrix.rotation(rotation);
+		viewMatrix.translate(position.negate(tempVec3));
 		return viewMatrix;
 	}
 }
