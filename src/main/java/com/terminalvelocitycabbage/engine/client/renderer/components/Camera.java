@@ -61,20 +61,16 @@ public class Camera {
 	}
 
 	public void setRotation(float x, float y, float z) {
-		rotation.x = x;
-		rotation.y = y;
-		rotation.z = z;
+		rotation.rotationXYZ(x, y, z);
 	}
 
-	public void rotate(float roll, float pitch, float yaw) {
-		rotation.x += roll;
-		rotation.y += pitch;
-		rotation.z += yaw;
+	public void rotate(float x, float y, float z) {
+		rotation.rotateXYZ(x, y, z);
 	}
 
-	public void rotate(Vector2f rotation, float roll) {
-		//TODO roll needs to be applied on the local z axis not the global axis
-		rotate(rotation.x, rotation.y, 0);
+	public void rotate(Vector2f rotation) {
+		//TODO roll option in one of these
+		rotate(rotation.y, rotation.x, 0);
 	}
 
 	private Matrix4f createProjectionMatrix(int width, int height) {
@@ -92,9 +88,7 @@ public class Camera {
 	public Matrix4f getViewMatrix() {
 		viewMatrix.identity();
 		//First do the rotation so camera rotates over its position instead of world position
-		viewMatrix.rotate((float)Math.toRadians(rotation.x), new Vector3f(1, 0, 0))
-				.rotate((float)Math.toRadians(rotation.y), new Vector3f(0, 1, 0))
-				.rotate((float)Math.toRadians(rotation.z), new Vector3f(0, 0, 1));
+		viewMatrix.rotateXYZ(rotation.x, rotation.y, rotation.z);
 		//Then do the translation in opposite direction of the camera movement
 		viewMatrix.translate(-position.x, -position.y, -position.z);
 		return viewMatrix;
