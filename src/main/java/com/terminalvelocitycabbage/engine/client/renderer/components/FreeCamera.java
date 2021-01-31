@@ -4,6 +4,8 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+@Deprecated()
+//Don't use this right now, it doesn't work at all, will re-implement when parented to objects with actual physics
 public class FreeCamera extends Camera {
 
     Matrix4f viewMatrix = new Matrix4f();
