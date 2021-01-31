@@ -11,8 +11,7 @@ public abstract class InputHandler {
 	private static long window;
 
 	private Vector2d previousPos;
-	private final Vector2d currentPos;
-	protected final Vector2f displayVector;
+	protected final Vector2f deltaMouseVector;
 
 	private boolean focused = false;
 
@@ -24,21 +23,21 @@ public abstract class InputHandler {
 	private short ticksSinceLastClick = -1;
 
 	public InputHandler() {
-		previousPos = new Vector2d(0, 0);
-		currentPos = new Vector2d(0, 0);
-		displayVector = new Vector2f(0, 0);
+		previousPos = new Vector2d(-10, -10);
+		deltaMouseVector = new Vector2f(0, 0);
 	}
 
 	public void init(Window window) {
 		InputHandler.window = window.getID();
-		glfwSetCursorPosCallback(window.getID(), (windowHandle, xpos, ypos) -> {
-			currentPos.x = xpos;
-			currentPos.y = ypos;
-			mouseInput();
-			previousPos.x = currentPos.x;
-			previousPos.y = currentPos.y;
-			window.cursorX = currentPos.x;
-			window.cursorY = currentPos.y;
+		glfwSetCursorPosCallback(window.getID(), (windowHandle, xPos, yPos) -> {
+			window.cursorX = xPos;
+			window.cursorY = yPos;
+			if (previousPos.x != -10 && previousPos.y != -10 && focused) {
+				deltaMouseVector.x = (float)(xPos - previousPos.x);
+				deltaMouseVector.y = (float)(yPos - previousPos.y);
+			}
+			previousPos.x = xPos;
+			previousPos.y = yPos;
 		});
 		glfwSetCursorEnterCallback(window.getID(), (windowHandle, entered) -> focused = entered);
 		glfwSetMouseButtonCallback(window.getID(), (windowHandle, button, action, mode) -> {
@@ -50,29 +49,20 @@ public abstract class InputHandler {
 
 	public abstract void processInput(KeyBind keyBind);
 
-
-	public Vector2f getDisplayVector() {
-		return displayVector;
+	public void resetDeltas() {
+		deltaMouseVector.zero();
 	}
 
-	public void mouseInput() {
-		displayVector.x = 0;
-		displayVector.y = 0;
-		if (previousPos.x > 0 && previousPos.y > 0 && focused) {
-			double deltaX = currentPos.x - previousPos.x;
-			double deltaY = currentPos.y - previousPos.y;
-			if (deltaX != 0.0) {
-				displayVector.y = (float) deltaX;
-			}
-			if (deltaY != 0.0) {
-				displayVector.x = (float) deltaY;
-			}
-		}
+	public Vector2f getDeltaMouseVector(float sensitivity) {
+		return deltaMouseVector.mul(sensitivity);
 	}
 
-	public void resetDisplayVector() {
-		displayVector.x = 0;
-		displayVector.y = 0;
+	public float getMouseDeltaX() {
+		return deltaMouseVector.x();
+	}
+
+	public float getMouseDeltaY() {
+		return deltaMouseVector.y();
 	}
 
 	public void updateMouseButtons() {

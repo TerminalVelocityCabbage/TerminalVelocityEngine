@@ -1,12 +1,10 @@
 package com.terminalvelocitycabbage.engine.client.renderer;
 
 import com.terminalvelocitycabbage.engine.client.input.InputHandler;
-import com.terminalvelocitycabbage.engine.client.renderer.components.Camera;
 import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
 import com.terminalvelocitycabbage.engine.client.renderer.scenes.SceneHandler;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.CanvasHandler;
 import com.terminalvelocitycabbage.engine.utils.TickManager;
-import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 
@@ -20,8 +18,6 @@ public abstract class Renderer {
 
 	// The window handle
 	private static Window window;
-	protected static Camera camera;
-	protected Matrix4f viewMatrix = new Matrix4f();
 	private static float[] frameTimes = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0,};
 	private static long endFrameTime = 0;
 	private static long previousFrameTime = 0;
@@ -94,8 +90,16 @@ public abstract class Renderer {
 		return total / frameTimes.length;
 	}
 
-	public float getDeltaTime() {
+	public float getDeltaTimeInSeconds() {
+		return deltaTime / 1e9f;
+	}
+
+	public float getDeltaTimeInMillis() {
 		return deltaTime / 1e6f;
+	}
+
+	public float getDeltaTime() {
+		return deltaTime;
 	}
 
 	public float getFramerate() {
@@ -130,7 +134,7 @@ public abstract class Renderer {
 
 		if (window.isResized()) {
 			window.updateDisplay();
-			camera.updateProjectionMatrix(window.width(), window.height());
+			sceneHandler.getActiveScene().getCamera().updateProjectionMatrix(window.aspectRatio());
 		}
 	}
 
