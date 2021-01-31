@@ -39,9 +39,9 @@ public class FirstPersonCamera extends Camera {
     public void move(float deltaTime) {
         deltaPosition.mul(deltaTime);
         position.add(
-                ((float)Math.sin(rotation.y) * -deltaPosition.z) + ((float)Math.sin(rotation.y - 90) * -deltaPosition.x),
+                ((float)Math.sin(rotation.y) * -deltaPosition.z) + ((float)Math.sin(rotation.y - Math.toRadians(90)) * -deltaPosition.x),
                 deltaPosition.y,
-                ((float)Math.cos(rotation.y) * deltaPosition.z) + ((float)Math.cos(rotation.y - 90) * deltaPosition.x));
+                ((float)Math.cos(rotation.y) * deltaPosition.z) + ((float)Math.cos(rotation.y - Math.toRadians(90)) * deltaPosition.x));
     }
 
     public void update(float deltaTime) {
