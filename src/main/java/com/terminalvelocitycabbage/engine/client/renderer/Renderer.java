@@ -128,7 +128,7 @@ public abstract class Renderer {
 
 		if (window.isResized()) {
 			window.updateDisplay();
-			camera.updateProjectionMatrix(window.width(), window.height());
+			camera.updateProjectionMatrix(window.aspectRatio());
 		}
 	}
 

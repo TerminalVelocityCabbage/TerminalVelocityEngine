@@ -24,7 +24,7 @@ public class Camera {
 		this.clippingPlane = clippingPlane;
 		this.farPlane = farPlane;
 
-		projectionMatrix = createProjectionMatrix(Renderer.getWindow().width(), Renderer.getWindow().height());
+		projectionMatrix = createProjectionMatrix(Renderer.getWindow().aspectRatio());
 		viewMatrix = new Matrix4f();
 
 		position = new Vector3f(0, 0, 0);
@@ -68,12 +68,12 @@ public class Camera {
 		rotate(rotation.y, rotation.x, 0);
 	}
 
-	private Matrix4f createProjectionMatrix(int width, int height) {
-		return new Matrix4f().perspective(fov, (float)width/height, clippingPlane, farPlane);
+	private Matrix4f createProjectionMatrix(float aspectRatio) {
+		return new Matrix4f().perspective(fov, aspectRatio, clippingPlane, farPlane);
 	}
 
-	public void updateProjectionMatrix(int width, int height) {
-		this.projectionMatrix = projectionMatrix.setPerspective(fov, (float)width/ height, clippingPlane, farPlane);
+	public void updateProjectionMatrix(float aspectRatio) {
+		this.projectionMatrix = projectionMatrix.setPerspective(fov, aspectRatio, clippingPlane, farPlane);
 	}
 
 	public Matrix4f getProjectionMatrix() {

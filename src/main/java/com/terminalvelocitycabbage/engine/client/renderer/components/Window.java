@@ -191,6 +191,10 @@ public class Window {
 		return windowHeight;
 	}
 
+	public float aspectRatio() {
+		return windowWidth / (float)windowHeight;
+	}
+
 	public InputHandler getInputHandler() {
 		return inputHandler;
 	}
