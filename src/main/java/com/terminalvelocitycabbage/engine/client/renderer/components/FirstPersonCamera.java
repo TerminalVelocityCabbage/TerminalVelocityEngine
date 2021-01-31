@@ -33,7 +33,8 @@ public class FirstPersonCamera extends Camera {
 
     public void rotate(float deltaTime) {
         deltaRotation.mul(deltaTime);
-        rotation.rotateLocalX(deltaRotation.x).rotateLocalY(deltaRotation.y);
+        rotation.x += deltaRotation.x;
+        rotation.y += deltaRotation.y;
     }
 
     public void move(float deltaTime) {
@@ -66,6 +67,6 @@ public class FirstPersonCamera extends Camera {
 
     @Override
     public Matrix4f getViewMatrix() {
-        return viewMatrix.rotation(rotation).translate(position.negate(tempVec3));
+        return viewMatrix.identity().rotateX(rotation.x).rotateY(rotation.y).translate(position.negate(tempVec3));
     }
 }
