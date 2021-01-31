@@ -8,8 +8,8 @@ import org.joml.Vector3f;
 //TODO make this fit new way of doing input handler
 public class FirstPersonCamera extends Camera {
 
-    private float moveModifier = 0.1f;
-    private float rotateModifier = 0.01f;
+    private float moveModifier = 60f;
+    private float rotateModifier = 1f;
 
     //For adding movement queues
     private Vector3f deltaPosition = new Vector3f();
@@ -31,25 +31,27 @@ public class FirstPersonCamera extends Camera {
         viewMatrix = new Matrix4f();
     }
 
-    public void rotate(float x, float y, float z) {
-        rotation.rotateXYZ(x, y, z);
+    public void rotate(float deltaTime) {
+        deltaRotation.mul(deltaTime);
+        rotation.rotateLocalX(deltaRotation.x).rotateLocalY(deltaRotation.y);
     }
 
-    public void move(float offsetX, float offsetY, float offsetZ) {
+    public void move(float deltaTime) {
+        deltaPosition.mul(deltaTime);
         position.add(
-                ((float)Math.sin(rotation.y) * -offsetZ) + ((float)Math.sin(rotation.y - 90) * -offsetX),
-                offsetY,
-                ((float)Math.cos(rotation.y) * offsetZ) + ((float)Math.cos(rotation.y - 90) * offsetX));
+                ((float)Math.sin(rotation.y) * -deltaPosition.z) + ((float)Math.sin(rotation.y - 90) * -deltaPosition.x),
+                deltaPosition.y,
+                ((float)Math.cos(rotation.y) * deltaPosition.z) + ((float)Math.cos(rotation.y - 90) * deltaPosition.x));
     }
 
     public void update(float deltaTime) {
-        //Update transformations based on velocity
-        rotation.integrate(deltaTime, deltaRotation.x, deltaRotation.y, 0f);
-        //TODO use move to convert it to rotated movement
-        position.fma(deltaTime, deltaPosition);
+        deltaPosition.mul(moveModifier);
+        deltaRotation.mul(rotateModifier);
+        rotate(deltaTime);
+        move(deltaTime);
     }
 
-    public void queueRotate(float y, float x) {
+    public void queueRotate(float x, float y) {
         deltaRotation.add(y, x);
     }
 
@@ -64,6 +66,6 @@ public class FirstPersonCamera extends Camera {
 
     @Override
     public Matrix4f getViewMatrix() {
-        return viewMatrix.identity().rotate(rotation).translate(position.negate(tempVec3));
+        return viewMatrix.rotation(rotation).translate(position.negate(tempVec3));
     }
 }
