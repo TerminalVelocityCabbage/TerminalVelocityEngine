@@ -1,7 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.renderer;
 
 import com.terminalvelocitycabbage.engine.client.input.InputHandler;
-import com.terminalvelocitycabbage.engine.client.renderer.components.Camera;
 import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
 import com.terminalvelocitycabbage.engine.client.renderer.scenes.SceneHandler;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.CanvasHandler;
@@ -19,7 +18,6 @@ public abstract class Renderer {
 
 	// The window handle
 	private static Window window;
-	protected static Camera camera;
 	private static float[] frameTimes = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0,};
 	private static long endFrameTime = 0;
 	private static long previousFrameTime = 0;
@@ -92,8 +90,16 @@ public abstract class Renderer {
 		return total / frameTimes.length;
 	}
 
-	public float getDeltaTime() {
+	public float getDeltaTimeInSeconds() {
+		return deltaTime / 1e9f;
+	}
+
+	public float getDeltaTimeInMillis() {
 		return deltaTime / 1e6f;
+	}
+
+	public float getDeltaTime() {
+		return deltaTime;
 	}
 
 	public float getFramerate() {
@@ -128,7 +134,7 @@ public abstract class Renderer {
 
 		if (window.isResized()) {
 			window.updateDisplay();
-			camera.updateProjectionMatrix(window.aspectRatio());
+			sceneHandler.getActiveScene().getCamera().updateProjectionMatrix(window.aspectRatio());
 		}
 	}
 
