@@ -49,9 +49,20 @@ public abstract class InputHandler {
 
 	public abstract void processInput(KeyBind keyBind);
 
+	public void resetDeltas() {
+		deltaMouseVector.zero();
+	}
 
 	public Vector2f getDeltaMouseVector(float sensitivity) {
 		return deltaMouseVector.mul(sensitivity);
+	}
+
+	public float getMouseDeltaX() {
+		return deltaMouseVector.x();
+	}
+
+	public float getMouseDeltaY() {
+		return deltaMouseVector.y();
 	}
 
 	public void updateMouseButtons() {

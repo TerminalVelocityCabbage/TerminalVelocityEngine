@@ -5,7 +5,15 @@ import org.joml.Quaternionf;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
+//TODO make this fit new way of doing input handler
 public class FirstPersonCamera extends Camera {
+
+    private float moveModifier = 60f;
+    private float rotateModifier = 1f;
+
+    //For adding movement queues
+    private Vector3f deltaPosition = new Vector3f();
+    private Vector2f deltaRotation = new Vector2f();
 
     private final Vector3f position;
     private final Vector3f tempVec3;
@@ -23,46 +31,42 @@ public class FirstPersonCamera extends Camera {
         viewMatrix = new Matrix4f();
     }
 
-    public Vector3f getPosition() {
-        return position;
+    public void rotate(float deltaTime) {
+        deltaRotation.mul(deltaTime);
+        rotation.x += deltaRotation.x;
+        rotation.y += deltaRotation.y;
     }
 
-    public void setPosition(float x, float y, float z) {
-        position.set(x, y, z);
-    }
-
-    public void move(float offsetX, float offsetY, float offsetZ) {
+    public void move(float deltaTime) {
+        deltaPosition.mul(deltaTime);
         position.add(
-                ((float)Math.sin(rotation.y) * -offsetZ) + ((float)Math.sin(rotation.y - 90) * -offsetX),
-                offsetY,
-                ((float)Math.cos(rotation.y) * offsetZ) + ((float)Math.cos(rotation.y - 90) * offsetX));
+                ((float)Math.sin(rotation.y) * -deltaPosition.z) + ((float)Math.sin(rotation.y - Math.toRadians(90)) * -deltaPosition.x),
+                deltaPosition.y,
+                ((float)Math.cos(rotation.y) * deltaPosition.z) + ((float)Math.cos(rotation.y - Math.toRadians(90)) * deltaPosition.x));
     }
 
-    public void move(Vector3f offset, float sensitivity) {
-        move(offset.x * sensitivity, offset.y * sensitivity, offset.z * sensitivity);
+    public void update(float deltaTime) {
+        deltaPosition.mul(moveModifier);
+        deltaRotation.mul(rotateModifier);
+        rotate(deltaTime);
+        move(deltaTime);
     }
 
-    public Quaternionf getRotation() {
-        return rotation;
+    public void queueRotate(float x, float y) {
+        deltaRotation.add(y, x);
     }
 
-    public void setRotation(float x, float y, float z) {
-        rotation.rotationXYZ(x, y, z);
+    public void queueMove(float x, float y, float z) {
+        deltaPosition.add(x, y, z);
     }
 
-    public void rotate(float x, float y, float z) {
-        rotation.rotateXYZ(x, y, z);
-    }
-
-    public void rotate(Vector2f rotation) {
-        //TODO roll option in one of these
-        rotate(rotation.y, rotation.x, 0);
+    public void resetDeltas() {
+        deltaPosition.zero();
+        deltaRotation.zero();
     }
 
     @Override
     public Matrix4f getViewMatrix() {
-        viewMatrix.rotation(rotation);
-        viewMatrix.translate(position.negate(tempVec3));
-        return viewMatrix;
+        return viewMatrix.identity().rotateX(rotation.x).rotateY(rotation.y).translate(position.negate(tempVec3));
     }
 }
