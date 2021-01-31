@@ -5,6 +5,7 @@ import org.joml.Quaternionf;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
+//TODO make this fit new way of doing input handler
 public class FirstPersonCamera extends Camera {
 
     private final Vector3f position;
