@@ -4,6 +4,7 @@ import com.terminalvelocitycabbage.engine.client.ClientBase;
 import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
 import com.terminalvelocitycabbage.engine.client.renderer.shapes.Rectangle;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Style;
+import com.terminalvelocitycabbage.engine.events.EventContext;
 import com.terminalvelocitycabbage.engine.events.HandleEvent;
 import com.terminalvelocitycabbage.engine.events.client.WindowResizeEvent;
 
@@ -22,7 +23,7 @@ public class Canvas extends UIRenderable {
 		this.window = window;
 		active = false;
 		this.containers = new ArrayList<>();
-		ClientBase.instance.addEventHandler(this);
+		ClientBase.instance.addEventHandler(EventContext.CLIENT, this);
 	}
 
 	public boolean isActive() {

@@ -2,6 +2,7 @@ package com.terminalvelocitycabbage.engine.events.client;
 
 import com.github.simplenet.Client;
 import com.terminalvelocitycabbage.engine.events.Event;
+import com.terminalvelocitycabbage.engine.events.EventContext;
 
 public class ClientStartEvent extends Event {
 
@@ -13,7 +14,7 @@ public class ClientStartEvent extends Event {
 	Client client;
 
 	public ClientStartEvent(String name, Client client) {
-		super(name);
+		super(EventContext.CLIENT, name);
 		this.client = client;
 	}
 

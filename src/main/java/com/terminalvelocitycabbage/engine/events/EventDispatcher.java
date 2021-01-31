@@ -6,35 +6,44 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 public class EventDispatcher {
-	Collection<Object> handlers = new ArrayList<Object>();
 
-	public void addEventHandler(Object handler) {
-		this.handlers.add(handler);
-	}
+	private static final HashMap<EventContext, EventHandler> handlers = new HashMap<>();
 
-	public void removeEventHandler(Object handler) {
-		this.handlers.remove(handler);
-	}
-
-	public void dispatchEvent(Event event) {
-		for (Object handler : handlers) {
-			dispatchEventTo(event, handler);
+	public EventDispatcher() {
+		for (EventContext context: EventContext.values()) {
+			handlers.put(context, new EventHandler(context));
 		}
 	}
 
-	protected void dispatchEventTo(Event event, Object handler) {
-		Collection<Method> methods = findMatchingEventHandlerMethods(handler, event.getName());
+	public void addEventHandler(EventContext type, Object listener) {
+		handlers.get(type).addListener(listener);
+	}
+
+	public void removeEventHandler(Object listener) {
+		for (EventHandler handler : handlers.values()) {
+			handler.removeListener(listener);
+		}
+	}
+
+	public void dispatchEvent(Event event) {
+		for (Object listener : handlers.get(event.getContext()).getListeners()) {
+			dispatchEventTo(event, listener);
+		}
+	}
+
+	protected void dispatchEventTo(Event event, Object listener) {
+		Collection<Method> methods = findMatchingEventHandlerMethods(listener, event.getName());
 		for (Method method : methods) {
 			try {
 				// Workaround for a JDK bug:
 				method.setAccessible(true);
 
 				if (method.getParameterTypes().length == 0)
-					method.invoke(handler);
+					method.invoke(listener);
 				if (method.getParameterTypes().length == 1)
-					method.invoke(handler, event);
+					method.invoke(listener, event);
 				if (method.getParameterTypes().length == 2)
-					method.invoke(handler, this, event);
+					method.invoke(listener, this, event);
 			} catch (Exception e) {
 				System.err.println("Could not invoke event handler!");
 				e.printStackTrace(System.err);
