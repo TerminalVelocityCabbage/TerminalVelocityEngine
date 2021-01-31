@@ -60,7 +60,7 @@ public class Camera {
 	}
 
 	public void rotate(float x, float y, float z) {
-		rotation.rotateYXZ(y, x, z);
+		rotation.rotateXYZ(x, y, z);
 	}
 
 	public void rotate(Vector2f rotation) {
