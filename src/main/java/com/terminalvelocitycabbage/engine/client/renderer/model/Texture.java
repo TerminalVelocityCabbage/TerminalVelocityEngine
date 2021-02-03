@@ -1,9 +1,9 @@
 package com.terminalvelocitycabbage.engine.client.renderer.model;
 
+import com.terminalvelocitycabbage.engine.client.renderer.util.PNGDecoder2;
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 import com.terminalvelocitycabbage.engine.client.resources.Resource;
 import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
-import com.terminalvelocitycabbage.engine.client.renderer.util.PNGDecoder;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -70,14 +70,13 @@ public class Texture {
 		ByteBuffer buf = null;
 		try {
 			// Link the PNG decoder to this stream
-			PNGDecoder decoder = new PNGDecoder(in);
+			PNGDecoder2 decoder = new PNGDecoder2(in);
 			// Get the width and height of the texture
 			this.width = decoder.getWidth();
 			this.height = decoder.getHeight();
 
 			// Decode the PNG file in a ByteBuffer
-			buf = ByteBuffer.allocateDirect(Float.BYTES * width * height);
-			decoder.decode(buf, width * Float.BYTES, PNGDecoder.Format.RGBA);
+			buf = decoder.decode();
 			buf.flip();
 			in.close();
 		} catch (IOException e) {
