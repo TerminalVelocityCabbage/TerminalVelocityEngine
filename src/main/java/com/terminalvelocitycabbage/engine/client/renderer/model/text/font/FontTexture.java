@@ -57,7 +57,7 @@ public class FontTexture {
 				this.font = Font.createFont(Font.TRUETYPE_FONT, resource.get().openStream()).deriveFont(size);
 				this.charSetName = charSet;
 				charMap = new HashMap<>();
-				buildTexture();
+				buildTexture(resourceManager, identifier);
 			} catch (FontFormatException | IOException e) {
 				Log.error("Could not load font " + identifier.getPath());
 				e.printStackTrace();
@@ -98,7 +98,7 @@ public class FontTexture {
 		return result.toString();
 	}
 
-	private void buildTexture() {
+	private void buildTexture(ResourceManager resourceManager, Identifier identifier) {
 		// Get the font metrics for each character for the selected font by using image
 		BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_4BYTE_ABGR);
 		Graphics2D g2D = img.createGraphics();
@@ -141,6 +141,7 @@ public class FontTexture {
 			Log.error("Could not convert image to ByteBuffer " + e.getMessage());
 		}
 		//ImageIO.write(img, IMAGE_FORMAT, new File("Temp.png"));
-		texture = new Texture(inputStream);
+		//TODO fix this too not use ImageIO
+		texture = new Texture(resourceManager, identifier);
 	}
 }

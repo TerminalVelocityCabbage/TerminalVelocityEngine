@@ -1,15 +1,15 @@
 package com.terminalvelocitycabbage.engine.client.renderer.util;
 
-import org.lwjgl.BufferUtils;
-import org.lwjgl.stb.STBImage;
+import com.terminalvelocitycabbage.engine.client.resources.Identifier;
+import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
 import org.lwjgl.system.MemoryStack;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
+
+import static org.lwjgl.stb.STBImage.*;
+import static org.lwjgl.system.MemoryStack.stackPush;
 
 public class PNGDecoder2 {
 
@@ -18,72 +18,44 @@ public class PNGDecoder2 {
 
     ByteBuffer imageBuffer;
 
-    public PNGDecoder2(InputStream inputStream) throws IOException {
-        imageBuffer = allocate(inputStream);
+    public PNGDecoder2(ResourceManager resourceManager, Identifier identifier) throws IOException {
+        if (resourceManager.getResource(identifier).isPresent()) {
+            imageBuffer = resourceManager.getResource(identifier).get().asByteBuffer().orElseThrow();
+        }
     }
 
     public ByteBuffer decode() {
         ByteBuffer image;
 
-        try(MemoryStack stack = MemoryStack.stackPush()) {
-            IntBuffer wBuffer = stack.mallocInt(1);
-            IntBuffer hBuffer = stack.mallocInt(1);
-            IntBuffer component = stack.mallocInt(1);
+        try (MemoryStack stack = stackPush()) {
+            IntBuffer w    = stack.mallocInt(1);
+            IntBuffer h    = stack.mallocInt(1);
+            IntBuffer comp = stack.mallocInt(1);
 
-            assert imageBuffer != null;
-            if(!STBImage.stbi_info_from_memory(imageBuffer, wBuffer, hBuffer, component)) {
-                throw new RuntimeException("Failed to read image information: " + STBImage.stbi_failure_reason());
+            // Use info to read image metadata without decoding the entire image.
+            // We don't need this for this demo, just testing the API.
+            if (!stbi_info_from_memory(imageBuffer, w, h, comp)) {
+                throw new RuntimeException("Failed to read image information: " + stbi_failure_reason());
             } else {
-                System.out.println("Okay with reason: " + STBImage.stbi_failure_reason());
+                System.out.println("OK with reason: " + stbi_failure_reason());
             }
 
-            image = STBImage.stbi_load_from_memory(imageBuffer, wBuffer, hBuffer, component, 4);
+            System.out.println("Image width: " + w.get(0));
+            System.out.println("Image height: " + h.get(0));
+            System.out.println("Image components: " + comp.get(0));
+            System.out.println("Image HDR: " + stbi_is_hdr_from_memory(imageBuffer));
 
-            width = wBuffer.get(0);
-            height = hBuffer.get(0);
-
-            if(image == null) {
-                throw new RuntimeException("Failed to load image: " + STBImage.stbi_failure_reason());
+            // Decode the image
+            image = stbi_load_from_memory(imageBuffer, w, h, comp, 0);
+            if (image == null) {
+                throw new RuntimeException("Failed to load image: " + stbi_failure_reason());
             }
 
-            return image;
-        }
-    }
-
-    private static ByteBuffer allocate(InputStream source) throws IOException {
-
-        ByteBuffer buffer = null;
-
-        try (ReadableByteChannel rbc = Channels.newChannel(source)) {
-            buffer = BufferUtils.createByteBuffer(8096);
-
-            while(true) {
-                int bytes = rbc.read(buffer);
-
-                if(bytes == -1) {
-                    break;
-                }
-
-                if(buffer.remaining() == 0) {
-                    buffer = resizeBuffer(buffer, buffer.capacity() * 3 / 2);
-                }
-            }
-        } catch(IOException e) {
-            e.printStackTrace();
+            width = w.get(0);
+            height = h.get(0);
         }
 
-        buffer.flip();
-
-        return buffer;
-    }
-
-    private static ByteBuffer resizeBuffer(ByteBuffer buffer, int newCapacity) {
-        ByteBuffer newBuffer = BufferUtils.createByteBuffer(newCapacity);
-
-        buffer.flip();
-        newBuffer.put(buffer);
-
-        return newBuffer;
+        return image;
     }
 
     public int getWidth() {
