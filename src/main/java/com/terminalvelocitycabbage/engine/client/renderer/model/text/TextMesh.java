@@ -78,7 +78,7 @@ public class TextMesh {
 		glBindVertexArray(vaoID);
 
 		//Bind Textures
-		fontTexture.getTexture().bind();
+		fontTexture.bind();
 
 		// Bind to the index VBO/EBO that has all the information about the order of the vertices
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
@@ -100,7 +100,7 @@ public class TextMesh {
 		glDeleteBuffers(eboID);
 		glDeleteVertexArrays(vaoID);
 
-		fontTexture.getTexture().destroy();
+		fontTexture.destroy();
 	}
 
 	public void updateVertexData() {

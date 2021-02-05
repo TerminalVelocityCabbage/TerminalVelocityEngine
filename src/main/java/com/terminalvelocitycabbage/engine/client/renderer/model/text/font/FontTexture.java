@@ -1,82 +1,73 @@
 package com.terminalvelocitycabbage.engine.client.renderer.model.text.font;
 
-import com.terminalvelocitycabbage.engine.client.renderer.model.Texture;
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 import com.terminalvelocitycabbage.engine.client.resources.Resource;
 import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
-import com.terminalvelocitycabbage.engine.debug.Log;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.stb.STBTTBakedChar;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetEncoder;
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.stb.STBTruetype.stbtt_BakeFontBitmap;
+
 public class FontTexture {
 
-	private static final String IMAGE_FORMAT = "png";
-	private static final String DEFAULT_CHARSET = "ISO-8859-1";
-	private static final int CHAR_PADDING = 2;
-	private static final float DEFAULT_SIZE = 32f;
+	private static final float DEFAULT_FONT_HEIGHT = 24f;
 
-	private Font font;
-	private String charSetName;
 	private Map<Character, CharInfo> charMap;
 
-	private Texture texture;
-	private int height;
-	private int position;
+	private int textureID;
 
-	public FontTexture(Font font, String charSetName) {
-		this.font = font;
-		this.charSetName = charSetName;
-		charMap = new HashMap<>();
+	ByteBuffer texture;
 
-		buildTexture();
-	}
+	int width;
+	int height;
 
 	public FontTexture(ResourceManager resourceManager, Identifier identifier) {
-		this(resourceManager, identifier, DEFAULT_CHARSET, DEFAULT_SIZE);
+		this(resourceManager, identifier, DEFAULT_FONT_HEIGHT);
 	}
 
-	public FontTexture(ResourceManager resourceManager, Identifier identifier, float size) {
-		this(resourceManager, identifier, DEFAULT_CHARSET, size);
-	}
-
-	public FontTexture(ResourceManager resourceManager, Identifier identifier, String charSet, float size) {
+	public FontTexture(ResourceManager resourceManager, Identifier identifier, float fontHeight) {
 		Optional<Resource> resource = resourceManager.getResource(identifier);
 		if (resource.isPresent()) {
-			try {
-				this.font = Font.createFont(Font.TRUETYPE_FONT, resource.get().openStream()).deriveFont(size);
-				this.charSetName = charSet;
-				charMap = new HashMap<>();
-				buildTexture(resourceManager, identifier);
-			} catch (FontFormatException | IOException e) {
-				Log.error("Could not load font " + identifier.getPath());
-				e.printStackTrace();
+			charMap = new HashMap<>();
+			ByteBuffer source = resource.get().asByteBuffer().orElseThrow();
+
+			textureID = glGenTextures();
+			STBTTBakedChar.Buffer charData = STBTTBakedChar.malloc(96); //Not sure why it's 96
+
+			texture = BufferUtils.createByteBuffer(512 * 512); //512 is base dimension might need scaled or something
+			stbtt_BakeFontBitmap(source, fontHeight, texture, 512, 512, 32, charData);
+
+			for (STBTTBakedChar charDatum : charData) {
+				charMap.put('a', new CharInfo(charDatum.x0(), charDatum.x1() - charDatum.x0()));
 			}
+
+			width = 512;
+			height = 512;
 		} else {
 			throw new RuntimeException("Could not load font resource " + identifier.toString());
 		}
 	}
 
-	public int getPosition() {
-		return position;
+	public void bind() {
+		glBindTexture(GL_TEXTURE_2D, textureID);
+	}
+
+	public void destroy() {
+		glDeleteTextures(textureID);
+	}
+
+	public int getWidth() {
+		return width;
 	}
 
 	public int getHeight() {
 		return height;
-	}
-
-	public Texture getTexture() {
-		return texture;
 	}
 
 	public CharInfo getCharInfo(char c) {
@@ -85,63 +76,5 @@ public class FontTexture {
 
 	public Map<Character, CharInfo> getCharMap() {
 		return charMap;
-	}
-
-	private String getAllAvailableChars(String charsetName) {
-		CharsetEncoder ce = Charset.forName(charsetName).newEncoder();
-		StringBuilder result = new StringBuilder();
-		for (char c = 0; c < Character.MAX_VALUE; c++) {
-			if (ce.canEncode(c)) {
-				result.append(c);
-			}
-		}
-		return result.toString();
-	}
-
-	private void buildTexture(ResourceManager resourceManager, Identifier identifier) {
-		// Get the font metrics for each character for the selected font by using image
-		BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_4BYTE_ABGR);
-		Graphics2D g2D = img.createGraphics();
-		g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g2D.setFont(font);
-		FontMetrics fontMetrics = g2D.getFontMetrics();
-
-		String allChars = getAllAvailableChars(charSetName);
-		this.position = 0;
-		this.height = fontMetrics.getHeight();
-		for (char c : allChars.toCharArray()) {
-			// Get the size for each character and update global image size
-			CharInfo charInfo = new CharInfo(position, fontMetrics.charWidth(c));
-			charMap.put(c, charInfo);
-			position += charInfo.getWidth() + CHAR_PADDING;
-		}
-		g2D.dispose();
-
-		// Create the image associated to the charset
-		img = new BufferedImage(position, height, BufferedImage.TYPE_4BYTE_ABGR);
-		g2D = img.createGraphics();
-		g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g2D.setFont(font);
-		fontMetrics = g2D.getFontMetrics();
-		g2D.setColor(Color.WHITE);
-		int startX = 0;
-		for (char c : allChars.toCharArray()) {
-			CharInfo charInfo = charMap.get(c);
-			g2D.drawString("" + c, startX, fontMetrics.getAscent());
-			startX += charInfo.getWidth() + CHAR_PADDING;
-		}
-		g2D.dispose();
-
-		InputStream inputStream = null;
-		try ( ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-			ImageIO.write(img, IMAGE_FORMAT, out);
-			out.flush();
-			inputStream = new ByteArrayInputStream(out.toByteArray());
-		} catch (IOException e) {
-			Log.error("Could not convert image to ByteBuffer " + e.getMessage());
-		}
-		//ImageIO.write(img, IMAGE_FORMAT, new File("Temp.png"));
-		//TODO fix this too not use ImageIO
-		texture = new Texture(resourceManager, identifier);
 	}
 }

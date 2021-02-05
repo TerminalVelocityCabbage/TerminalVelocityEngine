@@ -15,6 +15,8 @@ public class PNGDecoder2 {
 
     int width;
     int height;
+    int numComponents;
+    boolean hdr;
 
     ByteBuffer imageBuffer;
 
@@ -36,14 +38,7 @@ public class PNGDecoder2 {
             // We don't need this for this demo, just testing the API.
             if (!stbi_info_from_memory(imageBuffer, w, h, comp)) {
                 throw new RuntimeException("Failed to read image information: " + stbi_failure_reason());
-            } else {
-                System.out.println("OK with reason: " + stbi_failure_reason());
             }
-
-            System.out.println("Image width: " + w.get(0));
-            System.out.println("Image height: " + h.get(0));
-            System.out.println("Image components: " + comp.get(0));
-            System.out.println("Image HDR: " + stbi_is_hdr_from_memory(imageBuffer));
 
             // Decode the image
             image = stbi_load_from_memory(imageBuffer, w, h, comp, 0);
@@ -53,6 +48,8 @@ public class PNGDecoder2 {
 
             width = w.get(0);
             height = h.get(0);
+            numComponents = comp.get(0);
+            hdr = stbi_is_hdr_from_memory(imageBuffer);
         }
 
         return image;

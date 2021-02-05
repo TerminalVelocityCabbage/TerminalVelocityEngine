@@ -17,6 +17,8 @@ public class Texture {
 	public int width;
 	public int height;
 
+	public Texture() {}
+
 	public Texture(ResourceManager resourceManager, Identifier identifier) {
 		this.createTexture(this.load(resourceManager, identifier));
 	}

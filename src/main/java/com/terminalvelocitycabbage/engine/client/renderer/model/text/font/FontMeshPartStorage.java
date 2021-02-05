@@ -1,6 +1,5 @@
 package com.terminalvelocitycabbage.engine.client.renderer.model.text.font;
 
-import com.terminalvelocitycabbage.engine.client.renderer.model.text.TextMeshPart;
 import com.terminalvelocitycabbage.engine.client.renderer.model.text.TextVertex;
 import com.terminalvelocitycabbage.engine.client.renderer.shapes.TextRectangle;
 
@@ -41,19 +40,19 @@ public class FontMeshPartStorage {
 		//Top Left vertex
 		TextVertex topLeft = new TextVertex()
 				.setXYZ(0, 0, 0)
-				.setUv((float) charInfo.getStartX() / (float) fontTexture.getPosition(), 0);
+				.setUv((float) charInfo.getStartX() / (float) fontTexture.getWidth(), 0);
 		//Bottom Left vertex
 		TextVertex bottomLeft = new TextVertex()
 				.setXYZ(0, (float) fontTexture.getHeight(), 0)
-				.setUv((float) charInfo.getStartX() / (float) fontTexture.getPosition(), 1);
+				.setUv((float) charInfo.getStartX() / (float) fontTexture.getWidth(), 1);
 		//Bottom Right vertex
 		TextVertex bottomRight = new TextVertex()
 				.setXYZ(charInfo.getWidth(), (float) fontTexture.getHeight(), 0)
-				.setUv((float) (charInfo.getStartX() + charInfo.getWidth()) / (float) fontTexture.getPosition(), 1);
+				.setUv((float) (charInfo.getStartX() + charInfo.getWidth()) / (float) fontTexture.getWidth(), 1);
 		//Top Right vertex
 		TextVertex topRight = new TextVertex()
 				.setXYZ(charInfo.getWidth(), 0, 0)
-				.setUv((float) (charInfo.getStartX() + charInfo.getWidth()) / (float) fontTexture.getPosition(), 0);
+				.setUv((float) (charInfo.getStartX() + charInfo.getWidth()) / (float) fontTexture.getWidth(), 0);
 
 		return TextRectangle.createTextRectangle(topLeft, bottomLeft, bottomRight, topRight);
 	}
