@@ -74,4 +74,12 @@ public class Texture {
 	public Material toMaterial() {
 		return Material.builder().texture(this).build();
 	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	public int getHeight() {
+		return height;
+	}
 }
