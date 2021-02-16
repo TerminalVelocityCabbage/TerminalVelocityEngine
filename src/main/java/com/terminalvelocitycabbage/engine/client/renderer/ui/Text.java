@@ -89,7 +89,7 @@ public class Text {
 
 					//Put the text on the next and reset x position line if it would overflow
 					if (xOffset + fontMeshPartStorage.getCharInfo(character).getWidth() > lineWidth) {
-						yOffset -= fontMeshPartStorage.getFontTexture().getHeight();
+						yOffset -= fontMeshPartStorage.getFontTexture().getTexture().getHeight();
 						xOffset = 0;
 					}
 

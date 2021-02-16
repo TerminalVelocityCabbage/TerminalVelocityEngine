@@ -16,7 +16,6 @@ public class FirstPersonCamera extends Camera {
     private Vector2f deltaRotation = new Vector2f();
 
     private final Vector3f position;
-    private final Vector3f tempVec3;
     private final Quaternionf rotation;
 
     private Matrix4f viewMatrix;
@@ -25,7 +24,6 @@ public class FirstPersonCamera extends Camera {
         super(fov, clippingPlane, farPlane);
 
         position = new Vector3f(0, 0, 0);
-        tempVec3 = new Vector3f();
         rotation = new Quaternionf();
 
         viewMatrix = new Matrix4f();
@@ -39,10 +37,8 @@ public class FirstPersonCamera extends Camera {
 
     public void move(float deltaTime) {
         deltaPosition.mul(deltaTime);
-        position.add(
-                ((float)Math.sin(rotation.y) * -deltaPosition.z) + ((float)Math.sin(rotation.y - Math.toRadians(90)) * -deltaPosition.x),
-                deltaPosition.y,
-                ((float)Math.cos(rotation.y) * deltaPosition.z) + ((float)Math.cos(rotation.y - Math.toRadians(90)) * deltaPosition.x));
+        rotation.transformInverse(deltaPosition);
+        position.sub(deltaPosition);
     }
 
     public void update(float deltaTime) {
@@ -67,6 +63,6 @@ public class FirstPersonCamera extends Camera {
 
     @Override
     public Matrix4f getViewMatrix() {
-        return viewMatrix.identity().rotateX(rotation.x).rotateY(rotation.y).translate(position.negate(tempVec3));
+        return viewMatrix.identity().rotateX(rotation.x).rotateY(rotation.y).translate(position);
     }
 }
