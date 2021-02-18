@@ -3,6 +3,7 @@ package com.terminalvelocitycabbage.engine.client.renderer.model;
 import com.terminalvelocitycabbage.engine.client.renderer.model.loader.AnimatedModelLoader;
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
+import net.dumbcode.studio.animation.info.AnimationEntryData;
 import net.dumbcode.studio.animation.info.AnimationInfo;
 import net.dumbcode.studio.animation.info.AnimationLoader;
 import net.dumbcode.studio.animation.instance.ModelAnimationHandler;
@@ -37,13 +38,11 @@ public class AnimatedModel extends Model {
         }
     }
 
-    public void startAnimation(String name) {
-        startAnimation(name, false);
-    }
-
-    public void startAnimation(String name, boolean loop) {
+    public AnimationEntryData startAnimation(String name) {
         if (animations.containsKey(name)) {
-            handler.startAnimation(animations.get(name).data().loop(loop));
+            AnimationEntryData data = animations.get(name).data();
+            handler.startAnimation(data);
+            return data;
         } else {
             throw new RuntimeException("Animation not found " + name);
         }
