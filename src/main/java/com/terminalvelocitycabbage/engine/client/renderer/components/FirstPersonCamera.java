@@ -1,7 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.renderer.components;
 
 import org.joml.Matrix4f;
-import org.joml.Quaternionf;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
@@ -15,7 +14,8 @@ public class FirstPersonCamera extends Camera {
     private Vector2f deltaRotation = new Vector2f();
 
     private final Vector3f position;
-    private final Quaternionf rotation;
+    private float pitch;
+    private float yaw;
 
     private Matrix4f viewMatrix;
 
@@ -23,25 +23,24 @@ public class FirstPersonCamera extends Camera {
         super(fov, clippingPlane, farPlane);
 
         position = new Vector3f(0, 0, 0);
-        rotation = new Quaternionf();
 
         viewMatrix = new Matrix4f();
     }
 
     public void rotate(float deltaTime) {
         deltaRotation.mul(deltaTime);
-        rotation.x += deltaRotation.x;
-        rotation.y += deltaRotation.y;
+        pitch += deltaRotation.x;
+        yaw += deltaRotation.y;
     }
 
     public void move(float deltaTime) {
-        deltaPosition.mul(deltaTime);
-        rotation.transformInverse(deltaPosition.negate());
-        position.add(deltaPosition);
+        position.add(
+                ((float)Math.sin(yaw) * deltaPosition.z) + ((float)Math.sin(yaw - Math.toRadians(90)) * deltaPosition.x) * deltaTime * moveModifier,
+                -deltaPosition.y,
+                ((float)Math.cos(yaw) * -deltaPosition.z) + ((float)Math.cos(yaw - Math.toRadians(90)) * -deltaPosition.x) * deltaTime * moveModifier);
     }
 
     public void update(float deltaTime) {
-        deltaPosition.mul(moveModifier);
         deltaRotation.mul(rotateModifier);
         rotate(deltaTime);
         move(deltaTime);
@@ -62,6 +61,6 @@ public class FirstPersonCamera extends Camera {
 
     @Override
     public Matrix4f getViewMatrix() {
-        return viewMatrix.identity().rotateX(rotation.x).rotateY(rotation.y).translate(position);
+        return viewMatrix.identity().rotateX(pitch).rotateY(yaw).translate(position);
     }
 }
