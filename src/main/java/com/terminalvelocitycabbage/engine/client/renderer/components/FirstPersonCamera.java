@@ -5,7 +5,6 @@ import org.joml.Quaternionf;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
-//TODO make this fit new way of doing input handler
 public class FirstPersonCamera extends Camera {
 
     private float moveModifier = 60f;
@@ -37,8 +36,8 @@ public class FirstPersonCamera extends Camera {
 
     public void move(float deltaTime) {
         deltaPosition.mul(deltaTime);
-        rotation.transformInverse(deltaPosition);
-        position.sub(deltaPosition);
+        rotation.transformInverse(deltaPosition.negate());
+        position.add(deltaPosition);
     }
 
     public void update(float deltaTime) {
