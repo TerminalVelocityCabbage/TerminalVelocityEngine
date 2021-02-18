@@ -31,16 +31,16 @@ public class KeyBind {
 		this.modifiers = modifiers;
 	}
 
-	public boolean isKeyPressed(KeyBind keyBind) {
-		return glfwGetKey(window, keyBind.getKeyCode()) == GLFW_PRESS;
+	public boolean isKeyPressed() {
+		return glfwGetKey(window, this.getKeyCode()) == GLFW_PRESS;
 	}
 
-	public boolean isKeyReleased(KeyBind keyBind) {
-		return glfwGetKey(window, keyBind.getKeyCode()) == GLFW_RELEASE;
+	public boolean isKeyReleased() {
+		return glfwGetKey(window, this.getKeyCode()) == GLFW_RELEASE;
 	}
 
-	public boolean isKeyRepeated(KeyBind keyBind) {
-		return glfwGetKey(window, keyBind.getKeyCode()) == GLFW_REPEAT;
+	public boolean isKeyRepeated() {
+		return glfwGetKey(window, this.getKeyCode()) == GLFW_REPEAT;
 	}
 
 	public long getWindow() {
