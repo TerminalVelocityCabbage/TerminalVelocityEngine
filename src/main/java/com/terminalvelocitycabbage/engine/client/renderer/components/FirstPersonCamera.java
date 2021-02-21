@@ -63,4 +63,16 @@ public class FirstPersonCamera extends Camera {
     public Matrix4f getViewMatrix() {
         return viewMatrix.identity().rotateX(pitch).rotateY(yaw).translate(position);
     }
+
+    public Vector3f getPosition() {
+        return position;
+    }
+
+    public float getPitch() {
+        return pitch;
+    }
+
+    public float getYaw() {
+        return yaw;
+    }
 }
