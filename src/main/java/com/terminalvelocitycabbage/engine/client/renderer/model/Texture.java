@@ -3,8 +3,11 @@ package com.terminalvelocitycabbage.engine.client.renderer.model;
 import com.terminalvelocitycabbage.engine.client.renderer.util.PNGDecoder2;
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
+import com.terminalvelocitycabbage.engine.utils.BufferUtils;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -18,6 +21,10 @@ public class Texture {
 	public int height;
 
 	public Texture() {}
+
+	public Texture(FileInputStream inputStream) {
+		this.createTexture(BufferUtils.inputStreamToByteBuffer(inputStream));
+	}
 
 	public Texture(ResourceManager resourceManager, Identifier identifier) {
 		this.createTexture(this.load(resourceManager, identifier));
