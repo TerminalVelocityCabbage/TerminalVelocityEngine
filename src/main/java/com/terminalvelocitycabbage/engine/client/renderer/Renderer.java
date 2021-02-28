@@ -18,7 +18,7 @@ public abstract class Renderer {
 
 	// The window handle
 	private static Window window;
-	private static float[] frameTimes = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0,};
+	private static float[] frameTimes = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	private static long endFrameTime = 0;
 	private static long previousFrameTime = 0;
 	private static long deltaTime = 0;
