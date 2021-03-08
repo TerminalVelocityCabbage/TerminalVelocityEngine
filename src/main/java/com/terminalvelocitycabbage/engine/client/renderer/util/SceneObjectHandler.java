@@ -1,6 +1,7 @@
 package com.terminalvelocitycabbage.engine.client.renderer.util;
 
 import com.terminalvelocitycabbage.engine.client.renderer.gameobjects.EmptyGameObject;
+import com.terminalvelocitycabbage.engine.debug.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,7 +14,8 @@ public class SceneObjectHandler {
 
 	public <T extends EmptyGameObject>T add(String key, T object) {
 		if (gameObjects.containsKey(key)) {
-			throw new RuntimeException("Added gameObject with same key to map is not allowed " + key);
+			Log.crash("Scene Object Handler Error", new RuntimeException("Added gameObject with same key to map is not allowed " + key));
+			return null;
 		} else {
 			gameObjects.put(key, object);
 			return object;

@@ -27,11 +27,10 @@ public class ShaderHandler {
 	}
 
 	public ShaderProgram get(String name) {
-		if (programs.containsKey(name)) {
-			return programs.get(name);
-		} else {
-			throw new RuntimeException("No shader program defined with id " + name);
+		if (!programs.containsKey(name)) {
+			Log.crash("Shader Retrieval Error", "undefined shader", new RuntimeException("No shader program defined with id " + name));
 		}
+		return programs.get(name);
 	}
 
 	public void queueShader(String name, Shader.Type type, ResourceManager resourceManager, Identifier identifier) {

@@ -54,7 +54,7 @@ public class Window {
 	public void create() {
 		long tID = glfwCreateWindow(windowWidth, windowHeight, title, NULL, NULL);
 		if (tID == NULL) {
-			throw new RuntimeException("Failed to create the GLFW window");
+			Log.crash("Failed to Initialize", "an error occured trying to init the game", new RuntimeException("Failed to create the GLFW window"));
 		}
 		windowID = tID;
 	}

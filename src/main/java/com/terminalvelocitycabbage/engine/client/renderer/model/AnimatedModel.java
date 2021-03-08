@@ -3,6 +3,7 @@ package com.terminalvelocitycabbage.engine.client.renderer.model;
 import com.terminalvelocitycabbage.engine.client.renderer.model.loader.AnimatedModelLoader;
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
+import com.terminalvelocitycabbage.engine.debug.Log;
 import net.dumbcode.studio.animation.info.AnimationEntryData;
 import net.dumbcode.studio.animation.info.AnimationInfo;
 import net.dumbcode.studio.animation.info.AnimationLoader;
@@ -39,13 +40,12 @@ public class AnimatedModel extends Model {
     }
 
     public AnimationEntryData startAnimation(String name) {
-        if (animations.containsKey(name)) {
-            AnimationEntryData data = animations.get(name).data();
-            handler.startAnimation(data);
-            return data;
-        } else {
-            throw new RuntimeException("Animation not found " + name);
+        if (!animations.containsKey(name)) {
+            Log.crash("Animation Error", new RuntimeException("Animation not found " + name));
         }
+        AnimationEntryData data = animations.get(name).data();
+        handler.startAnimation(data);
+        return data;
     }
 
     public void stopAnimation(String name) {
@@ -55,7 +55,7 @@ public class AnimatedModel extends Model {
                 activeAnimations.remove(name);
             }
         } else {
-            throw new RuntimeException("Animation not found " + name);
+            Log.crash("Animation Error", new RuntimeException("Animation not found " + name));
         }
     }
 
@@ -65,15 +65,15 @@ public class AnimatedModel extends Model {
             animations.put(name, info);
             return info;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            Log.crash("Animation Error", new RuntimeException("Animation not found " + name, e));
         }
+        return null;
     }
 
     public AnimationInfo getAnimation(String name) {
-        if (animations.containsKey(name)) {
-            return animations.get(name);
-        } else {
-            throw new RuntimeException("Could not get animation " + name + " in model " + this.toString() + " no value found.");
+        if (!animations.containsKey(name)) {
+            Log.crash("Animation Error", new RuntimeException("Could not get animation " + name + " in model " + this.toString() + " no value found."));
         }
+        return animations.get(name);
     }
 }

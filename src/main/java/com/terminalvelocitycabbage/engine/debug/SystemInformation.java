@@ -65,21 +65,21 @@ public class SystemInformation {
 
     public static String getGpuVendor() {
         if (gpuVendor == null) {
-            throw new RuntimeException("gpu vendor not set in opengl context yet.");
+            Log.crash("System Collection Error", new RuntimeException("gpu vendor not set in opengl context yet."));
         }
         return gpuVendor;
     }
 
     public static String getGpuModel() {
         if (gpuModel == null) {
-            throw new RuntimeException("gpu model not set in opengl context yet.");
+            Log.crash("System Collection Error", new RuntimeException("gpu model not set in opengl context yet."));
         }
         return gpuModel;
     }
 
     public static String getGpuVersion() {
         if (gpuVersion == null) {
-            throw new RuntimeException("gpu version not set in opengl context yet.");
+            Log.crash("System Collection Error", new RuntimeException("gpu version not set in opengl context yet."));
         }
         return gpuVersion;
     }

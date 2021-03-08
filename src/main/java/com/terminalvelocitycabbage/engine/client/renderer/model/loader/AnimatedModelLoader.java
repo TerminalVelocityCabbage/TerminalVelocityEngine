@@ -6,6 +6,7 @@ import com.terminalvelocitycabbage.engine.client.renderer.model.ModelVertex;
 import com.terminalvelocitycabbage.engine.client.renderer.shapes.TexturedModelCuboid;
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
+import com.terminalvelocitycabbage.engine.debug.Log;
 import net.dumbcode.studio.animation.instance.AnimatedCube;
 import net.dumbcode.studio.model.CubeInfo;
 import net.dumbcode.studio.model.ModelLoader;
@@ -100,14 +101,16 @@ public class AnimatedModelLoader {
 					try {
 						return resource.openStream();
 					} catch (IOException e) {
-						throw new RuntimeException("No resource found for identifier: " + model.toString(), e);
+						Log.crash("Model Loading error", "failed to load animation", new RuntimeException("No resource found for identifier: " + model.toString(), e));
+						return null;
 					}
 				})
 				.map(stream -> {
 					try {
 						return ModelLoader.loadModel(stream, RotationOrder.XYZ);
 					} catch (IOException e) {
-						throw new RuntimeException("Could not read model: " + model.toString(), e);
+						Log.crash("Model Loading error", "failed to load animation", new RuntimeException("Could not read model: " + model.toString(), e));
+						return null;
 					}
 				})
 				.map(AnimatedModel::new)

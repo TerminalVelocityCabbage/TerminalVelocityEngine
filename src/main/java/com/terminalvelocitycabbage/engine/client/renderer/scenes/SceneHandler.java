@@ -1,5 +1,7 @@
 package com.terminalvelocitycabbage.engine.client.renderer.scenes;
 
+import com.terminalvelocitycabbage.engine.debug.Log;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,7 +31,7 @@ public class SceneHandler {
 			activeScene = name;
 			sceneHandler.get(name).init();
 		} else {
-			throw new RuntimeException("Could not load scene " + name + " not present in scene handler.");
+			Log.crash("Scene Load Exception", new RuntimeException("Could not load scene " + name + " not present in scene handler."));
 		}
 	}
 

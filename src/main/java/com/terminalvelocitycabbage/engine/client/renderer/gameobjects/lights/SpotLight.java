@@ -1,7 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.renderer.gameobjects.lights;
 
 import com.terminalvelocitycabbage.engine.client.renderer.gameobjects.EmptyGameObject;
-import com.terminalvelocitycabbage.engine.client.renderer.lights.Attenuation;
 import com.terminalvelocitycabbage.engine.debug.Log;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;

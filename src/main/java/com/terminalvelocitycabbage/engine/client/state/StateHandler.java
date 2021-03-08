@@ -1,5 +1,7 @@
 package com.terminalvelocitycabbage.engine.client.state;
 
+import com.terminalvelocitycabbage.engine.debug.Log;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,7 +25,7 @@ public class StateHandler {
 		if (states.containsKey(state)) {
 			activeState = states.get(state);
 		} else {
-			throw new RuntimeException("No state defined by " + state);
+			Log.crash("State Error", new RuntimeException("No state defined by " + state));
 		}
 	}
 

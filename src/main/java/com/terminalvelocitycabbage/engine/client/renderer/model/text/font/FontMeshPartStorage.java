@@ -2,6 +2,7 @@ package com.terminalvelocitycabbage.engine.client.renderer.model.text.font;
 
 import com.terminalvelocitycabbage.engine.client.renderer.model.text.TextVertex;
 import com.terminalvelocitycabbage.engine.client.renderer.shapes.TextRectangle;
+import com.terminalvelocitycabbage.engine.debug.Log;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,14 +20,14 @@ public class FontMeshPartStorage {
 
 	public TextRectangle getMesh(char character) {
 		if (!characterMeshParts.containsKey(character)) {
-			throw new RuntimeException("Character not found in mesh part storage for " + character);
+			Log.crash("Font Read Error", new RuntimeException("Character not found in mesh part storage for " + character));
 		}
 		return characterMeshParts.get(character);
 	}
 
 	public CharInfo getCharInfo(char character) {
 		if (fontTexture.fontInfo.getCharInfo(character) == null) {
-			throw new RuntimeException("Character not found in mesh part storage for " + character);
+			Log.crash("Font Read Error", new RuntimeException("Character not found in mesh part storage for " + character));
 		}
 		return fontTexture.fontInfo.getCharInfo(character);
 	}

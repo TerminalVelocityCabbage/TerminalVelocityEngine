@@ -2,6 +2,7 @@ package com.terminalvelocitycabbage.engine.client.renderer.util;
 
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
+import com.terminalvelocitycabbage.engine.debug.Log;
 import org.lwjgl.system.MemoryStack;
 
 import java.io.IOException;
@@ -37,13 +38,13 @@ public class PNGDecoder2 {
             // Use info to read image metadata without decoding the entire image.
             // We don't need this for this demo, just testing the API.
             if (!stbi_info_from_memory(imageBuffer, w, h, comp)) {
-                throw new RuntimeException("Failed to read image information: " + stbi_failure_reason());
+                Log.crash("Image Loading Error", new RuntimeException("Failed to read image information: " + stbi_failure_reason()));
             }
 
             // Decode the image
             image = stbi_load_from_memory(imageBuffer, w, h, comp, 0);
             if (image == null) {
-                throw new RuntimeException("Failed to load image: " + stbi_failure_reason());
+                Log.crash("Image Loading Error", new RuntimeException("Failed to load image: " + stbi_failure_reason()));
             }
 
             width = w.get(0);

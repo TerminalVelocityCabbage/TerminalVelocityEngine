@@ -1,5 +1,7 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui.components;
 
+import com.terminalvelocitycabbage.engine.debug.Log;
+
 public class UIDimension {
 
 	int value;
@@ -16,7 +18,8 @@ public class UIDimension {
 		} else if (unit.equals(Unit.PERCENT)) {
 			return value * windowDimension;
 		}
-		throw new RuntimeException("Unknown unit for UIDimension");
+		Log.crash("UI Error", new RuntimeException("Unknown unit for UIDimension"));
+		return -1;
 	}
 
 	public float getUnitizedValue(int screenDimension, int windowDimension) {
@@ -25,7 +28,8 @@ public class UIDimension {
 		} else if (unit.equals(Unit.PIXELS)) {
 			return (((float)value / (float)screenDimension) * ((float)screenDimension / (float)windowDimension)) * 2f;
 		}
-		throw new RuntimeException("Unknown unit for UIDimension");
+		Log.crash("UI Error", new RuntimeException("Unknown unit for UIDimension"));
+		return -1;
 	}
 
 	public enum Unit {

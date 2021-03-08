@@ -1,5 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.renderer.model;
 
+import com.terminalvelocitycabbage.engine.debug.Log;
 import org.joml.Vector4f;
 
 public class Material {
@@ -84,7 +85,7 @@ public class Material {
 			if (diffuseColor == null) diffuseColor = ambientColor;
 			if (specularColor == null) specularColor = ambientColor;
 			if (reflectivityTexture != null && albedoTexture != null && !(reflectivityTexture.height % albedoTexture.height == 0) && !(reflectivityTexture.width % albedoTexture.width == 0)) {
-				throw new RuntimeException("The reflectivity texture must be the same size or a multiple of the albedo texture to be used.");
+				Log.crash("Material Build error", new RuntimeException("The reflectivity texture must be the same size or a multiple of the albedo texture to be used."));
 			}
 			return new Material(albedoTexture, ambientColor, diffuseColor, specularColor, reflectivity, reflectivityTexture);
 		}

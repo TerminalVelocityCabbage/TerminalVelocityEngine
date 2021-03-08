@@ -2,6 +2,7 @@ package com.terminalvelocitycabbage.engine.client.renderer.gameobjects.entity;
 
 import com.terminalvelocitycabbage.engine.client.renderer.gameobjects.EmptyGameObject;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
+import com.terminalvelocitycabbage.engine.debug.Log;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -34,7 +35,7 @@ public class ModeledGameObject extends EmptyGameObject {
 		if (model != null) {
 			model.bind();
 		} else {
-			throw new RuntimeException("Could not bind ModeledGameObject without model.");
+			Log.crash("Model Bind Error", new RuntimeException("Could not bind ModeledGameObject without model."));
 		}
 	}
 

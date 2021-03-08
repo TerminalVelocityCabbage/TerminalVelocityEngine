@@ -1,5 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.resources;
 
+import com.terminalvelocitycabbage.engine.debug.Log;
 import org.apache.commons.io.IOUtils;
 import org.lwjgl.BufferUtils;
 
@@ -35,7 +36,7 @@ public class UrlResource implements Resource {
 	@Override
 	public InputStream openStream() throws IOException {
 		if (invalid) {
-			throw new RuntimeException("Invalid Resource for url: " + url.toString());
+			Log.crash("Resource Loading Error", new RuntimeException("Invalid Resource for url: " + url.toString()));
 		}
 		return url.openStream();
 	}
@@ -43,7 +44,7 @@ public class UrlResource implements Resource {
 	@Override
 	public Optional<DataInputStream> asDataStream() {
 		if (invalid) {
-			throw new RuntimeException("Invalid Resource for url: " + url.toString());
+			Log.crash("Resource Loading Error", new RuntimeException("Invalid Resource for url: " + url.toString()));
 		}
 		try {
 			return Optional.of(new DataInputStream(url.openStream()));

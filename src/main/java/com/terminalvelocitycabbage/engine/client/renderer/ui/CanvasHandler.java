@@ -20,7 +20,7 @@ public class CanvasHandler {
 			canvas.bind();
 			canvas.queueUpdate();
 		} else {
-			throw new RuntimeException("Could not add duplicate entry " + name + " to canvas handler.");
+			Log.crash("Canvas Addition Error", new RuntimeException("Could not add duplicate entry " + name + " to canvas handler."));
 		}
 	}
 
@@ -44,7 +44,8 @@ public class CanvasHandler {
 		if (canvases.containsKey(name)) {
 			return canvases.get(name);
 		} else {
-			throw new RuntimeException("could not get canvas for name " + name);
+			Log.crash("Canvas Retrieval Error", new RuntimeException("could not get canvas for name " + name));
+			return null;
 		}
 	}
 

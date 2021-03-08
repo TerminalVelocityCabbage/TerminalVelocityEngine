@@ -4,6 +4,7 @@ import com.terminalvelocitycabbage.engine.client.input.InputHandler;
 import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
 import com.terminalvelocitycabbage.engine.client.renderer.scenes.SceneHandler;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.CanvasHandler;
+import com.terminalvelocitycabbage.engine.debug.Log;
 import com.terminalvelocitycabbage.engine.debug.SystemInformation;
 import com.terminalvelocitycabbage.engine.utils.TickManager;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -45,7 +46,7 @@ public abstract class Renderer {
 
 		// Initialize GLFW. Most GLFW functions will not work before doing this.
 		if (!glfwInit()) {
-			throw new IllegalStateException("Unable to initialize GLFW");
+			Log.crash("Initialization Error", new IllegalStateException("Unable to initialize GLFW"));
 		}
 
 		// Configure GLFW

@@ -3,6 +3,7 @@ package com.terminalvelocitycabbage.engine.client.renderer.model.text.font;
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 import com.terminalvelocitycabbage.engine.client.resources.Resource;
 import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
+import com.terminalvelocitycabbage.engine.debug.Log;
 
 import java.io.*;
 import java.util.HashMap;
@@ -32,7 +33,7 @@ public class FontInfo {
                 e.printStackTrace();
             }
         } else {
-            throw new RuntimeException("Could not load font resource " + identifier.toString());
+            Log.crash("Font Read Error", new RuntimeException("Could not load font resource " + identifier.toString()));
         }
         return info;
     }
@@ -49,7 +50,8 @@ public class FontInfo {
         if (characterInfo.containsKey(character)) {
             return characterInfo.get(character);
         } else {
-            throw new RuntimeException("Encountered invalid character in font " + this.toString());
+            Log.crash("Font Read Error", new RuntimeException("Encountered invalid character in font " + this.toString()));
+            return null;
         }
     }
 

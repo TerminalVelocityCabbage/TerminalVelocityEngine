@@ -1,9 +1,9 @@
 package com.terminalvelocitycabbage.engine.client.renderer.model.text;
 
 import com.terminalvelocitycabbage.engine.client.renderer.model.MeshPart;
-import com.terminalvelocitycabbage.engine.client.renderer.model.ModelVertex;
 import com.terminalvelocitycabbage.engine.client.renderer.model.VertexCounter;
 import com.terminalvelocitycabbage.engine.client.renderer.shapes.TextRectangle;
+import com.terminalvelocitycabbage.engine.debug.Log;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 
@@ -44,7 +44,7 @@ public class TextMeshPart extends MeshPart {
 	@Override
 	public void update(Matrix4f translationMatrix, FloatBuffer buffer) {
 		if (this.vertexOffset == -1) {
-			throw new IllegalStateException("Vertex not allocated");
+			Log.crash("Text Error", new IllegalStateException("Vertex not allocated"));
 		}
 		//Update the vertex attributes
 		Vector4f positions = new Vector4f();

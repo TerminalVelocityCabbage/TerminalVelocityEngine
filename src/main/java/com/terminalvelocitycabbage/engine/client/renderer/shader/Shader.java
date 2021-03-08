@@ -3,6 +3,7 @@ package com.terminalvelocitycabbage.engine.client.renderer.shader;
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 import com.terminalvelocitycabbage.engine.client.resources.Resource;
 import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
+import com.terminalvelocitycabbage.engine.debug.Log;
 import com.terminalvelocitycabbage.engine.utils.StringUtils;
 
 import java.util.Optional;
@@ -37,7 +38,7 @@ public class Shader {
 		glShaderSource(shader, src);
 		glCompileShader(shader);
 		if (glGetShaderi(shader, GL_COMPILE_STATUS) == GL_FALSE) {
-			throw new RuntimeException("Could not compile shader " + identifier.getPath() + " " + glGetShaderInfoLog(shader));
+			Log.crash("Shader Creation Error", new RuntimeException("Could not compile shader " + identifier.getPath() + " " + glGetShaderInfoLog(shader)));
 		}
 		glAttachShader(shaderProgram, shader);
 		glDeleteShader(shader);
@@ -56,12 +57,12 @@ public class Shader {
 
 		String[] importNameSplit = importName.split(":");
 		if (importNameSplit.length < 2) {
-			throw new RuntimeException("You must specify a namespace and path for an imported shader");
+			Log.crash("Shader Creation Error", "You must specify a namespace and path for an imported shader", new RuntimeException("Could not compile shader " + identifier.getPath()));
 		}
 		//Try to get the resource for the shader trying to be included
 		Optional<Resource> resource = resourceManager.getResource(new Identifier(importNameSplit[0], importNameSplit[1]));
 		if (resource.isEmpty()) {
-			throw new RuntimeException("No shader found for the inclusion " + importNameSplit[0] + ":" + importNameSplit[1]);
+			Log.crash("Shader Creation Error", "No shader found for the inclusion " + importNameSplit[0] + ":" + importNameSplit[1], new RuntimeException("Could not compile shader " + identifier.getPath()));
 		}
 
 		//Attempt to insert the included shader source in place of the requested.
