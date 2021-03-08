@@ -4,6 +4,7 @@ import com.terminalvelocitycabbage.engine.client.input.InputHandler;
 import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
 import com.terminalvelocitycabbage.engine.client.renderer.scenes.SceneHandler;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.CanvasHandler;
+import com.terminalvelocitycabbage.engine.debug.SystemInformation;
 import com.terminalvelocitycabbage.engine.utils.TickManager;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
@@ -60,6 +61,12 @@ public abstract class Renderer {
 		window.show();
 		// creates the GLCapabilities instance and makes the OpenGL bindings available for use.
 		GL.createCapabilities();
+
+		//Tell the system information tracker what gpu we are working with here
+		SystemInformation.gpuVendor = glGetString(GL_VENDOR);
+		SystemInformation.gpuModel = glGetString(GL_RENDERER);
+		SystemInformation.gpuVersion = glGetString(GL_VERSION);
+
 		//Transparent stuff
 		glEnable(GL_BLEND);
 		//TODO make ways to swap between blend functions like render layers
