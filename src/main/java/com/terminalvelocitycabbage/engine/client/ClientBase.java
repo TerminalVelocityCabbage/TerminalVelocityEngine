@@ -1,10 +1,11 @@
 package com.terminalvelocitycabbage.engine.client;
 
+import com.github.simplenet.Client;
 import com.terminalvelocitycabbage.engine.client.networking.PingClient;
+import com.terminalvelocitycabbage.engine.debug.Logger;
 import com.terminalvelocitycabbage.engine.events.EventDispatcher;
 import com.terminalvelocitycabbage.engine.events.client.ClientConnectionEvent;
 import com.terminalvelocitycabbage.engine.events.client.ClientStartEvent;
-import com.github.simplenet.Client;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -15,8 +16,11 @@ public abstract class ClientBase extends EventDispatcher {
 	Client client;
 	boolean shouldDisconnect;
 	public static ClientBase instance;
+	private Logger logger;
 
-	public ClientBase() {}
+	public ClientBase(Logger logger) {
+		this.logger = logger;
+	}
 
 	public void init() {
 		preInit();
@@ -36,20 +40,20 @@ public abstract class ClientBase extends EventDispatcher {
 	}
 
 	public void start() {
-		client.onConnect(() -> dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.CONNECT, client)));
-		client.preDisconnect(() -> dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.PRE_DISCONNECT, client)));
-		client.postDisconnect(() -> dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.POST_DISCONNECT, client)));
+		//client.onConnect(() -> dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.CONNECT, client)));
+		//client.preDisconnect(() -> dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.PRE_DISCONNECT, client)));
+		//client.postDisconnect(() -> dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.POST_DISCONNECT, client)));
 		dispatchEvent(new ClientStartEvent(ClientStartEvent.START, client));
 	}
 
 	public void connect(String address, int port) {
-		client.connect(address, port);
-		shouldDisconnect = false;
+		//client.connect(address, port);
+		//shouldDisconnect = false;
 	}
 
 	public void disconnect() {
-		shouldDisconnect = true;
-		client.close();
+		//shouldDisconnect = true;
+		//client.close();
 	}
 
 	public boolean shouldDisconnect() {
@@ -91,5 +95,9 @@ public abstract class ClientBase extends EventDispatcher {
 
 	public String getID() {
 		return this.id;
+	}
+
+	public Logger getLogger() {
+		return logger;
 	}
 }

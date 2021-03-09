@@ -2,7 +2,7 @@ package com.terminalvelocitycabbage.engine.debug;
 
 import java.lang.management.ManagementFactory;
 
-public class SystemInformation {
+public class SystemInfo {
 
     private static long cachedMaxMemory = -1;
 
