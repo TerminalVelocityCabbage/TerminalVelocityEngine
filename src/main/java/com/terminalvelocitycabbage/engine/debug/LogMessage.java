@@ -14,4 +14,8 @@ public class LogMessage {
         this.message = message;
     }
 
+    @Override
+    public String toString() {
+        return "[" + timestamp + "][" + level + "]: " + message;
+    }
 }
