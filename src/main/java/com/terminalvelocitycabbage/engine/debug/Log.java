@@ -42,11 +42,13 @@ public class Log {
 
 	public static void crash(String title, Object message, Throwable throwable) {
 		ClientBase.instance.getLogger().queueAndPrint(LogLevel.CRASH, title, throwable);
+		ClientBase.instance.getLogger().createLog(true);
 		throw new RuntimeException(String.valueOf(message), throwable);
 	}
 
 	public static void crash(String title, Object message, String additionalInfo, Throwable throwable) {
 		ClientBase.instance.getLogger().queueAndPrint(LogLevel.CRASH, title, additionalInfo, throwable);
+		ClientBase.instance.getLogger().createLog(true);
 		throw new RuntimeException(String.valueOf(message), throwable);
 	}
 

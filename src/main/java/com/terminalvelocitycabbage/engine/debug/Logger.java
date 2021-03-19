@@ -32,12 +32,20 @@ public class Logger {
     }
 
     protected void queueMessage(LogLevel logLevel, String message) {
-        messageQueue.add(new LogMessage(logLevel, showNamespace ? "[" + nameSpace + "]" : "" + " " + message));
+        queueMessage(logLevel, message, false);
+    }
+
+    protected void queueMessage(LogLevel logLevel, String message, boolean clean) {
+        if (clean) {
+            messageQueue.add(new LogMessage(logLevel, message, true));
+        } else {
+            messageQueue.add(new LogMessage(logLevel, showNamespace ? "[" + nameSpace + "]" : "" + " " + message));
+        }
     }
 
     protected void queueAndPrint(LogLevel level, String message) {
         if (level == LogLevel.DEBUG && !debugMode) return;
-        queueMessage(level, level.prefix + ": " + message);
+        queueMessage(level, message);
         date.setTime(System.currentTimeMillis());
         AnsiConsole.out().println( ansi().fg(level.color).a(showTimestamp ? "[" + date.toString() + "]" : "").a(level.prefix + ": ").a(showNamespace ? "[" + nameSpace + "]" : "").reset().a(message).reset() );
     }
@@ -45,7 +53,7 @@ public class Logger {
     protected void queueAndPrint(LogLevel level, String message, String additionalInfo) {
         if (level == LogLevel.DEBUG && !debugMode) return;
         date.setTime(System.currentTimeMillis());
-        queueMessage(level, level.prefix + ": " + message);
+        queueMessage(level, message);
         AnsiConsole.out().println( ansi().fg(level.color).a(showTimestamp ? "[" + date.toString() + "]" : "").a(level.prefix + ": ").a(showNamespace ? "[" + nameSpace + "]" : "").reset().a(message).reset() );
         if (showAdditionalInfo || debugMode) {
             queueMessage(level, additionalInfo);
@@ -54,8 +62,8 @@ public class Logger {
     }
 
     protected void queueAndPrint(LogLevel level, String title, Throwable throwable) {
-        Arrays.stream(throwable.getStackTrace()).sequential().forEach(stackTraceElement -> queueMessage(level, stackTraceElement.toString()));
-        queueMessage(level, level.prefix + ": " + title);
+        Arrays.stream(throwable.getStackTrace()).sequential().forEach(stackTraceElement -> queueMessage(level, stackTraceElement.toString(), true));
+        queueMessage(level, title);
         throwable.printStackTrace(AnsiConsole.err());
         date.setTime(System.currentTimeMillis());
         AnsiConsole.err().println();
@@ -63,8 +71,8 @@ public class Logger {
     }
 
     protected void queueAndPrint(LogLevel level, String title, String additionalInfo, Throwable throwable) {
-        Arrays.stream(throwable.getStackTrace()).sequential().forEach(stackTraceElement -> queueMessage(level, stackTraceElement.toString()));
-        queueMessage(level, level.prefix + ": " + title);
+        Arrays.stream(throwable.getStackTrace()).sequential().forEach(stackTraceElement -> queueMessage(level, stackTraceElement.toString(), true));
+        queueMessage(level, title);
         throwable.printStackTrace(AnsiConsole.err());
         date.setTime(System.currentTimeMillis());
         AnsiConsole.err().println();
@@ -102,7 +110,7 @@ public class Logger {
 
         //If this is a crash log we want to create a new file in a different directory
         if (crash) {
-            return;
+            Log.error("oops something went wrong.");
         }
 
         //Check to see if there already exists a latest.log and if so back it pu
