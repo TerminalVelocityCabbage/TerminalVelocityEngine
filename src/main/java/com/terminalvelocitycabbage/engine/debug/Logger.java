@@ -4,6 +4,7 @@ import org.fusesource.jansi.AnsiConsole;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 
 import static org.fusesource.jansi.Ansi.ansi;
 
@@ -11,6 +12,8 @@ public class Logger {
 
     private final String nameSpace;
     private ArrayList<LogMessage> messageQueue;
+
+    private Date date;
 
     private boolean showTimestamp = false;
     private boolean showAdditionalInfo = true;
@@ -20,6 +23,7 @@ public class Logger {
     public Logger(String nameSpace) {
         this.nameSpace = nameSpace;
         this.messageQueue = new ArrayList<>();
+        this.date = new Date(System.currentTimeMillis());
     }
 
     protected void queueMessage(LogLevel logLevel, String message) {
@@ -29,16 +33,18 @@ public class Logger {
     protected void queueAndPrint(LogLevel level, String message) {
         if (level == LogLevel.DEBUG && !debugMode) return;
         queueMessage(level, level.prefix + ": " + message);
-        AnsiConsole.out().println( ansi().fg(level.color).a(level.prefix + ": ").a(showNamespace ? "[" + nameSpace + "]" : "").reset().a(message).reset() );
+        date.setTime(System.currentTimeMillis());
+        AnsiConsole.out().println( ansi().fg(level.color).a(showTimestamp ? "[" + date.toString() + "]" : "").a(level.prefix + ": ").a(showNamespace ? "[" + nameSpace + "]" : "").reset().a(message).reset() );
     }
 
     protected void queueAndPrint(LogLevel level, String message, String additionalInfo) {
         if (level == LogLevel.DEBUG && !debugMode) return;
+        date.setTime(System.currentTimeMillis());
         queueMessage(level, level.prefix + ": " + message);
-        AnsiConsole.out().println( ansi().fg(level.color).a(level.prefix + ": ").a(showNamespace ? "[" + nameSpace + "]" : "").reset().a(message).reset() );
+        AnsiConsole.out().println( ansi().fg(level.color).a(showTimestamp ? "[" + date.toString() + "]" : "").a(level.prefix + ": ").a(showNamespace ? "[" + nameSpace + "]" : "").reset().a(message).reset() );
         if (showAdditionalInfo || debugMode) {
             queueMessage(level, additionalInfo);
-            AnsiConsole.out().println( ansi().fg(level.color).a(showNamespace ? "[" + nameSpace + "]" : "").a(additionalInfo).reset() );
+            AnsiConsole.out().println( ansi().fg(level.color).a(showTimestamp ? "[" + date.toString() + "]" : "").a(showNamespace ? "[" + nameSpace + "]" : "").a(additionalInfo).reset() );
         }
     }
 
@@ -46,19 +52,21 @@ public class Logger {
         Arrays.stream(throwable.getStackTrace()).sequential().forEach(stackTraceElement -> queueMessage(level, stackTraceElement.toString()));
         queueMessage(level, level.prefix + ": " + title);
         throwable.printStackTrace(AnsiConsole.err());
+        date.setTime(System.currentTimeMillis());
         AnsiConsole.err().println();
-        AnsiConsole.err().println( ansi().fg(level.color).a(level.prefix + ": ").a(showNamespace ? "[" + nameSpace + "]" : "").reset().a(title).reset() );
+        AnsiConsole.err().println( ansi().fg(level.color).a(showTimestamp ? "[" + date.toString() + "]" : "").a(level.prefix + ": ").a(showNamespace ? "[" + nameSpace + "]" : "").reset().a(title).reset() );
     }
 
     protected void queueAndPrint(LogLevel level, String title, String additionalInfo, Throwable throwable) {
         Arrays.stream(throwable.getStackTrace()).sequential().forEach(stackTraceElement -> queueMessage(level, stackTraceElement.toString()));
         queueMessage(level, level.prefix + ": " + title);
         throwable.printStackTrace(AnsiConsole.err());
+        date.setTime(System.currentTimeMillis());
         AnsiConsole.err().println();
-        AnsiConsole.err().println( ansi().fg(level.color).a(level.prefix + ": ").a(showNamespace ? "[" + nameSpace + "]" : "").reset().a(title).reset() );
+        AnsiConsole.err().println( ansi().fg(level.color).a(showTimestamp ? "[" + date.toString() + "]" : "").a(level.prefix + ": ").a(showNamespace ? "[" + nameSpace + "]" : "").reset().a(title).reset() );
         if (showAdditionalInfo || debugMode) {
             queueMessage(level, additionalInfo);
-            AnsiConsole.err().println( ansi().fg(level.color).a(showNamespace ? "[" + nameSpace + "]" : "").a(additionalInfo).reset() );
+            AnsiConsole.err().println( ansi().fg(level.color).a(showTimestamp ? "[" + date.toString() + "]" : "").a(showNamespace ? "[" + nameSpace + "]" : "").a(additionalInfo).reset() );
         }
     }
 
