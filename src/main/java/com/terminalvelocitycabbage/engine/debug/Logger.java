@@ -111,6 +111,18 @@ public class Logger {
         //If this is a crash log we want to create a new file in a different directory
         if (crash) {
             Log.error("oops something went wrong.");
+
+            //Print the system information
+            Log.info(SystemInfo.getAvailableProcessors() + " logical processors");
+            Log.info(Math.round(SystemInfo.getFreeMemory()/256.0/102.4) / 10d + "GB free of "
+                    + Math.round(SystemInfo.getMaxMemory()/256.0/102.4) /10d + "GB system memory. limit: "
+                    + SystemInfo.getAllocatedMemory() + "GB");
+            Log.info(SystemInfo.getArchitecture());
+            Log.info(SystemInfo.getOSName() + " version "
+                    + SystemInfo.getOSVersion());
+            Log.info(SystemInfo.getGpuVendor() + " model "
+                    + SystemInfo.getGpuModel() + " version");
+            Log.info(SystemInfo.getGpuVersion());
         }
 
         //Check to see if there already exists a latest.log and if so back it pu
