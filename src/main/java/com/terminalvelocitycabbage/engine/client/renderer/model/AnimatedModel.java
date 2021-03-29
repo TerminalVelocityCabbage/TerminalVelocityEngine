@@ -20,6 +20,7 @@ public class AnimatedModel extends Model {
     public Map<String, AnimationInfo> animations;
     public final ModelAnimationHandler handler;
     private Map<String, UUID> activeAnimations;
+    private ArrayList<AnimatedModelLoader.Part> parts;
 
     public AnimatedModel(ModelInfo model) {
         super(model.getRoots().stream().map(AnimatedModelLoader.Part::createPart).collect(Collectors.toList()));
@@ -27,9 +28,9 @@ public class AnimatedModel extends Model {
         this.animations = new HashMap<>();
         this.activeAnimations = new HashMap<>();
 
-        List<AnimatedModelLoader.Part> partMap = new ArrayList<>();
-        recursiveOnPart(modelParts, partMap::add);
-        this.handler = new ModelAnimationHandler(model.getOrder(), partMap);
+        this.parts = new ArrayList<>();
+        recursiveOnPart(modelParts, parts::add);
+        this.handler = new ModelAnimationHandler(model.getOrder());
     }
 
     public <T extends Model.Part>void recursiveOnPart(List<T> modelParts, Consumer<AnimatedModelLoader.Part> consumer) {
@@ -75,5 +76,10 @@ public class AnimatedModel extends Model {
             Log.crash("Animation Error", new RuntimeException("Could not get animation " + name + " in model " + this.toString() + " no value found."));
         }
         return animations.get(name);
+    }
+
+    //Delta time is in seconds
+    public void animate(float deltaTime) {
+        this.handler.animate(parts, deltaTime);
     }
 }
