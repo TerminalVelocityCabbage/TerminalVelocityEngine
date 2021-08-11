@@ -35,6 +35,10 @@ public class SceneHandler {
 		}
 	}
 
+	public boolean isActive(String testableScene) {
+		return activeScene.equalsIgnoreCase(testableScene);
+	}
+
 	public void update(float deltaTime) {
 		sceneHandler.get(activeScene).update(deltaTime);
 	}
