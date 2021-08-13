@@ -1,6 +1,7 @@
 package com.terminalvelocitycabbage.engine.client.renderer.model;
 
 import com.terminalvelocitycabbage.engine.debug.Log;
+import org.joml.Math;
 
 import java.util.Arrays;
 
@@ -28,7 +29,8 @@ public class ModelVertex extends Vertex {
 	}
 
 	public ModelVertex setNormal(float x, float y, float z) {
-		normal = new float[] {x, y, z};
+		float factor = Math.invsqrt(Math.fma(x, x, Math.fma(y, y, z * z)));
+		normal = new float[] {x/factor, y/factor, z/factor};
 		return this;
 	}
 

@@ -10,6 +10,10 @@ public class ModeledGameObject extends EmptyGameObject {
 
 	Model model;
 
+	public ModeledGameObject() {
+		super();
+	}
+
 	public ModeledGameObject(Model model) {
 		super();
 		this.model = model;
