@@ -1,5 +1,9 @@
 package com.terminalvelocitycabbage.engine.client.renderer.model;
 
+import com.terminalvelocitycabbage.engine.debug.Log;
+
+import java.util.Arrays;
+
 public class ModelVertex extends Vertex {
 
 	private float[] uv = new float[] {0f, 0f};
@@ -75,5 +79,14 @@ public class ModelVertex extends Vertex {
 		out[i++] = nz;
 
 		return out;
+	}
+
+	public void printInfo() {
+		Log.info("Positions:");
+		Log.info(Arrays.toString(getXYZ()));
+		Log.info("Normals:");
+		Log.info(Arrays.toString(getNormals()));
+		Log.info("UVs:");
+		Log.info(Arrays.toString(getUV()));
 	}
 }
