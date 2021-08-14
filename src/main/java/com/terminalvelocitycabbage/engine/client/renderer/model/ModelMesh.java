@@ -67,7 +67,7 @@ public class ModelMesh {
 		glBindVertexArray(vaoID);
 
 		//Bind Textures
-		if (material.hasTexture()) {
+		if (material != null && material.hasTexture()) {
 			material.getTexture().bind();
 		}
 
