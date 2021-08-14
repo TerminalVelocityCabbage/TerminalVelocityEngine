@@ -12,6 +12,7 @@ public class ModeledGameObject extends EmptyGameObject {
 
 	public ModeledGameObject() {
 		super();
+		enable();
 	}
 
 	public ModeledGameObject(Model model) {
