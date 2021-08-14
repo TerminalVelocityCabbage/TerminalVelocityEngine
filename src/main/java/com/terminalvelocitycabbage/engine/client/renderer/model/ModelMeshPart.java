@@ -30,6 +30,10 @@ public class ModelMeshPart extends MeshPart {
 		return vertexOrder.length;
 	}
 
+	public ModelVertex getVertex(int num) {
+		return vertices[num];
+	}
+
 	@Override
 	public void allocate(ShortBuffer indexBuffer, VertexCounter counter) {
 		short vertexOffset = (short) counter.getVertexIndex(this.verticesCount());
