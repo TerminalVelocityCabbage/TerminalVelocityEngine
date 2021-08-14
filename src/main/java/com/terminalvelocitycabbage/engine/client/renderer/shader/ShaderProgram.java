@@ -57,7 +57,8 @@ public class ShaderProgram {
 			//Note: when a uniform is not used in a shader it will silently be removed upon compilation
 			//		this can lead to some confusion here since it may be defined in the shader correctly,
 			//		but if it's not used it will also throw this error.
-			throw new RuntimeException("No uniform defined by name: " + name);
+//			throw new RuntimeException("No uniform defined by name: " + name);
+			return;
 		}
 		uniforms.put(name, uniformLocation);
 	}
@@ -119,44 +120,58 @@ public class ShaderProgram {
 
 	public void setUniform(String name, int value) {
 		test();
-		glUniform1i(uniforms.get(name), value);
+		if(uniforms.containsKey(name)) {
+			glUniform1i(uniforms.get(name), value);
+		}
 	}
 
 	public void setUniform(String name, float value) {
 		test();
-		glUniform1f(uniforms.get(name), value);
+		if(uniforms.containsKey(name)) {
+			glUniform1f(uniforms.get(name), value);
+		}
 	}
 
 	public void setUniform(String name, Vector2f value) {
 		test();
-		glUniform2f(uniforms.get(name), value.x, value.y);
+		if(uniforms.containsKey(name)) {
+			glUniform2f(uniforms.get(name), value.x, value.y);
+		}
 	}
 
 	public void setUniform(String name, Vector3f value) {
 		test();
-		glUniform3f(uniforms.get(name), value.x, value.y, value.z);
+		if(uniforms.containsKey(name)) {
+			glUniform3f(uniforms.get(name), value.x, value.y, value.z);
+		}
 	}
 
 	public void setUniform(String name, Vector4f value) {
 		test();
-		glUniform4f(uniforms.get(name), value.x, value.y, value.z, value.w);
+		if(uniforms.containsKey(name)) {
+			glUniform4f(uniforms.get(name), value.x, value.y, value.z, value.w);
+		}
 	}
 
 	public void setUniform(String name, Matrix3f value) {
 		test();
-		try (MemoryStack stack = MemoryStack.stackPush()) {
-			FloatBuffer fb = stack.mallocFloat(9);
-			value.get(fb);
-			glUniformMatrix3fv(uniforms.get(name), false, fb);
+		if(uniforms.containsKey(name)) {
+			try (MemoryStack stack = MemoryStack.stackPush()) {
+				FloatBuffer fb = stack.mallocFloat(9);
+				value.get(fb);
+				glUniformMatrix3fv(uniforms.get(name), false, fb);
+			}
 		}
 	}
 
 	public void setUniform(String name, Matrix4f value) {
 		test();
-		try (MemoryStack stack = MemoryStack.stackPush()) {
-			FloatBuffer fb = stack.mallocFloat(16);
-			value.get(fb);
-			glUniformMatrix4fv(uniforms.get(name), false, fb);
+		if(uniforms.containsKey(name)) {
+			try (MemoryStack stack = MemoryStack.stackPush()) {
+				FloatBuffer fb = stack.mallocFloat(16);
+				value.get(fb);
+				glUniformMatrix4fv(uniforms.get(name), false, fb);
+			}
 		}
 	}
 
@@ -222,6 +237,7 @@ public class ShaderProgram {
 		if (!enabled) {
 			throw new RuntimeException("Cant update uniform value before shader program is enabled.");
 		}
+
 	}
 
 	public void enable() {
