@@ -20,7 +20,11 @@ public class VectorUtils {
      * @return a new Vector3f at the requested location
      */
     public static Vector3f findPercentDistVector(final Vector3f startVec, final Vector3f endVec, float position) {
-        return new Vector3f((startVec.x + endVec.x) * position, (startVec.y + endVec.y) * position, (startVec.z + endVec.z) * position);
+        return new Vector3f(
+            startVec.x + (endVec.x - startVec.x) * position,
+            startVec.y + (endVec.y - startVec.y) * position,
+            startVec.z + (endVec.z - startVec.z) * position
+        );
     }
 
 }
