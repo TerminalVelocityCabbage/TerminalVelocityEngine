@@ -66,6 +66,10 @@ public abstract class EmptyGameObject {
 		return viewMatrix.mul(transformationMatrix, new Matrix4f());
 	}
 
+	public Matrix4f getModelMatrix() {
+		return this.transformationMatrix;
+	}
+
 	public Matrix4f getTransformationMatrix() {
 		transformationMatrix.identity().translate(position).
 				rotateX((float)Math.toRadians(-rotation.x)).

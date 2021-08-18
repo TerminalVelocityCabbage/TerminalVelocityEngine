@@ -24,6 +24,7 @@ public abstract class Renderer {
 	private static long endFrameTime = 0;
 	private static long previousFrameTime = 0;
 	private static long deltaTime = 0;
+	private static long totalTime = 0;
 
 	private final TickManager tickManager;
 	public SceneHandler sceneHandler = new SceneHandler();
@@ -88,6 +89,7 @@ public abstract class Renderer {
 		deltaTime = endFrameTime - previousFrameTime;
 		if (frameTimes.length - 1 >= 0) System.arraycopy(frameTimes, 1, frameTimes, 0, frameTimes.length - 1);
 		frameTimes[frameTimes.length - 1] = TimeUnit.MILLISECONDS.convert(deltaTime, TimeUnit.NANOSECONDS);
+		totalTime += deltaTime;
 	}
 
 	public float getFrameTimeAverageMillis() {
@@ -113,6 +115,12 @@ public abstract class Renderer {
 	public float getFramerate() {
 		return 1 / getFrameTimeAverageMillis() * 1000;
 	}
+
+	public float getTotalTimeInSeconds() {
+		return totalTime / 1e9f;
+	}
+
+
 
 	public void destroy() {
 		// Free the window callbacks and destroy the window
