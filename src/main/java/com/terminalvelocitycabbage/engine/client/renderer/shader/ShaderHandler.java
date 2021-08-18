@@ -13,17 +13,14 @@ public class ShaderHandler {
 
 	private Map<String, ShaderProgram> programs = new HashMap<>();
 
-	private Runnable duplicateError(String name) {
-		Log.error("Program of name " + name + " already exists in this shader handler.");
-		return null;
-	}
 
-	public void newProgram(String name) {
+	public ShaderProgram newProgram(String name) {
 		if (programs.containsKey(name)) {
-			duplicateError(name);
-		} else {
-			programs.put(name, new ShaderProgram());
+			throw new IllegalArgumentException("Program of name " + name + " already exists in this shader handler.");
 		}
+		ShaderProgram program = new ShaderProgram(name);
+		programs.put(name, program);
+		return program;
 	}
 
 	public ShaderProgram get(String name) {
@@ -33,10 +30,12 @@ public class ShaderHandler {
 		return programs.get(name);
 	}
 
+	@Deprecated
 	public void queueShader(String name, Shader.Type type, ResourceManager resourceManager, Identifier identifier) {
 		programs.get(name).queueShader(type.getGLType(), resourceManager, identifier);
 	}
 
+	@Deprecated
 	public void build(String name) {
 		programs.get(name).build();
 	}

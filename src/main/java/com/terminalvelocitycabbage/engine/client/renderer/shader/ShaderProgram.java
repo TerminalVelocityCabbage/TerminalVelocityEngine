@@ -17,6 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.terminalvelocitycabbage.engine.client.renderer.shader.Shader.Type.FRAGMENT;
+import static com.terminalvelocitycabbage.engine.client.renderer.shader.Shader.Type.VERTEX;
 import static org.lwjgl.opengl.GL20.*;
 
 public class ShaderProgram {
@@ -29,16 +31,30 @@ public class ShaderProgram {
 	public static final int MAX_POINT_LIGHTS = 256;
 	public static final int MAX_SPOT_LIGHTS = 256;
 
-	public ShaderProgram() {
+	private final String name;
+
+	public ShaderProgram(String name) {
 		this.id = glCreateProgram();
+		this.name = name;
 		if (this.id == 0) {
 			Log.crash("Shader Program Creation Error", new RuntimeException("Could not create shader program"));
 		}
 		uniforms = new HashMap<>();
 	}
 
-	public void queueShader(int type, ResourceManager resourceManager, Identifier identifier) {
+	public ShaderProgram queueDefaultShaders(ResourceManager resourceManager, String namespace) {
+		return this
+			.queueShader(VERTEX, resourceManager, new Identifier(namespace, this.name + ".vert"))
+			.queueShader(FRAGMENT, resourceManager, new Identifier(namespace, this.name + ".frag"));
+	}
+
+	public ShaderProgram queueShader(Shader.Type type, ResourceManager resourceManager, Identifier identifier) {
+		return this.queueShader(type.getGLType(), resourceManager, identifier);
+	}
+
+	public ShaderProgram queueShader(int type, ResourceManager resourceManager, Identifier identifier) {
 		shaderQueue.add(new Shader(type, id, resourceManager, identifier));
+		return this;
 	}
 
 	public void build() {
@@ -61,6 +77,10 @@ public class ShaderProgram {
 			return;
 		}
 		uniforms.put(name, uniformLocation);
+	}
+
+	private int getUniformId(String name) {
+		return glGetUniformLocation(id, name);
 	}
 
 	public void createMaterialUniform(String name) {
@@ -120,57 +140,64 @@ public class ShaderProgram {
 
 	public void setUniform(String name, int value) {
 		test();
-		if(uniforms.containsKey(name)) {
-			glUniform1i(uniforms.get(name), value);
+		int id = uniforms.computeIfAbsent(name, this::getUniformId);
+		if(id != -1) {
+			glUniform1i(id, value);
 		}
 	}
 
 	public void setUniform(String name, float value) {
 		test();
-		if(uniforms.containsKey(name)) {
-			glUniform1f(uniforms.get(name), value);
+		int id = uniforms.computeIfAbsent(name, this::getUniformId);
+		if(id != -1) {
+			glUniform1f(id, value);
 		}
 	}
 
 	public void setUniform(String name, Vector2f value) {
 		test();
-		if(uniforms.containsKey(name)) {
-			glUniform2f(uniforms.get(name), value.x, value.y);
+		int id = uniforms.computeIfAbsent(name, this::getUniformId);
+		if(id != -1) {
+			glUniform2f(id, value.x, value.y);
 		}
 	}
 
 	public void setUniform(String name, Vector3f value) {
 		test();
-		if(uniforms.containsKey(name)) {
-			glUniform3f(uniforms.get(name), value.x, value.y, value.z);
+		int id = uniforms.computeIfAbsent(name, this::getUniformId);
+		if(id != -1) {
+			glUniform3f(id, value.x, value.y, value.z);
 		}
 	}
 
 	public void setUniform(String name, Vector4f value) {
 		test();
-		if(uniforms.containsKey(name)) {
-			glUniform4f(uniforms.get(name), value.x, value.y, value.z, value.w);
+		int id = uniforms.computeIfAbsent(name, this::getUniformId);
+		if(id != -1) {
+			glUniform4f(id, value.x, value.y, value.z, value.w);
 		}
 	}
 
 	public void setUniform(String name, Matrix3f value) {
 		test();
-		if(uniforms.containsKey(name)) {
+		int id = uniforms.computeIfAbsent(name, this::getUniformId);
+		if(id != -1) {
 			try (MemoryStack stack = MemoryStack.stackPush()) {
 				FloatBuffer fb = stack.mallocFloat(9);
 				value.get(fb);
-				glUniformMatrix3fv(uniforms.get(name), false, fb);
+				glUniformMatrix3fv(id, false, fb);
 			}
 		}
 	}
 
 	public void setUniform(String name, Matrix4f value) {
 		test();
-		if(uniforms.containsKey(name)) {
+		int id = uniforms.computeIfAbsent(name, this::getUniformId);
+		if(id != -1) {
 			try (MemoryStack stack = MemoryStack.stackPush()) {
 				FloatBuffer fb = stack.mallocFloat(16);
 				value.get(fb);
-				glUniformMatrix4fv(uniforms.get(name), false, fb);
+				glUniformMatrix4fv(id, false, fb);
 			}
 		}
 	}
