@@ -785,6 +785,6 @@ public class OpenSimplex2F {
      * @return a 0 to 1 double value
      */
     private double makeSense(double input) {
-        return (input / 2f) + 0.5f;
+        return input + 0.5f;
     }
 }
