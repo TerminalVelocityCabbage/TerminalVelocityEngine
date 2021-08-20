@@ -74,11 +74,10 @@ public class MeshPart {
             int offset = 0;
             for (RenderElement element : elementList) {
                 if (element.hasTransformer()) {
-                    Vector4f set = new Vector4f().set(currentVertex.getX(), currentVertex.getY(), currentVertex.getZ(), 1F);
-                    set.mul(translationMatrix);
-                    dataToSet[offset] = set.x;
-                    dataToSet[offset+1] = set.y;
-                    dataToSet[offset+2] = set.z;
+                    float[] toModify = new float[element.getCount()];
+                    System.arraycopy(data, offset, toModify, 0, element.getCount());
+                    element.transform(toModify, translationMatrix);
+                    System.arraycopy(toModify, 0, dataToSet, offset, element.getCount());
                 } else {
                     System.arraycopy(data, offset, dataToSet, offset, element.getCount());
                 }
