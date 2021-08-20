@@ -1,6 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
-import com.terminalvelocitycabbage.engine.client.renderer.model.vertexformats.VertexXYZ;
+import com.terminalvelocitycabbage.engine.client.renderer.Vertex;
 import com.terminalvelocitycabbage.engine.debug.Log;
 
 import java.util.*;
@@ -79,7 +79,7 @@ public class CanvasHandler {
 
 	public List<UIRenderable> getElementsAt(double x, double y) {
 		List<UIRenderable> inCanvases = new ArrayList<>();
-		VertexXYZ[] currVertices;
+		Vertex[] currVertices;
 		for (Canvas canvas : getActiveCanvases()) {
 			currVertices = canvas.rectangle.vertices;
 			if (testPosition(currVertices, x, y)) {
@@ -95,7 +95,7 @@ public class CanvasHandler {
 		return inCanvases;
 	}
 
-	private boolean testPosition(VertexXYZ[] currVertices, double x, double y) {
+	private boolean testPosition(Vertex[] currVertices, double x, double y) {
 		return currVertices[0].getX() < x && currVertices[2].getX() > x && currVertices[1].getY() < y && currVertices[0].getY() > y;
 	}
 

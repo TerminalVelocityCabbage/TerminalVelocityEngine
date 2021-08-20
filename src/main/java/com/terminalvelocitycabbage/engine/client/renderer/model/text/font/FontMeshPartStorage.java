@@ -1,7 +1,7 @@
 package com.terminalvelocitycabbage.engine.client.renderer.model.text.font;
 
-import com.terminalvelocitycabbage.engine.client.renderer.model.text.TextVertex;
-import com.terminalvelocitycabbage.engine.client.renderer.shapes.TextRectangle;
+import com.terminalvelocitycabbage.engine.client.renderer.Vertex;
+import com.terminalvelocitycabbage.engine.client.renderer.model.MeshPart;
 import com.terminalvelocitycabbage.engine.debug.Log;
 
 import java.util.HashMap;
@@ -9,16 +9,16 @@ import java.util.Map;
 
 public class FontMeshPartStorage {
 
-	FontTexture fontTexture;
-	Map<Character, TextRectangle> characterMeshParts;
+	FontMaterial fontTexture;
+	Map<Character, MeshPart> characterMeshParts;
 
-	public FontMeshPartStorage(FontTexture fontTexture) {
+	public FontMeshPartStorage(FontMaterial fontTexture) {
 		this.fontTexture = fontTexture;
 		this.characterMeshParts = new HashMap<>();
 		fontTexture.fontInfo.getCharMap().forEach((character, charInfo) -> characterMeshParts.put(character, buildCharacterMesh(charInfo)));
 	}
 
-	public TextRectangle getMesh(char character) {
+	public MeshPart getMesh(char character) {
 		if (!characterMeshParts.containsKey(character)) {
 			Log.crash("Font Read Error", new RuntimeException("Character not found in mesh part storage for " + character));
 		}
@@ -32,29 +32,20 @@ public class FontMeshPartStorage {
 		return fontTexture.fontInfo.getCharInfo(character);
 	}
 
-	public FontTexture getFontTexture() {
+	public FontMaterial getFontTexture() {
 		return fontTexture;
 	}
 
-	private TextRectangle buildCharacterMesh(CharInfo charInfo) {
+	private MeshPart buildCharacterMesh(CharInfo charInfo) {
 
-		//Top Left vertex
-		TextVertex topLeft = new TextVertex()
-				.setXYZ(0, 0, 0)
-				.setUv((float) charInfo.getStartX() / (float) fontTexture.texture.getWidth(), 0);
-		//Bottom Left vertex
-		TextVertex bottomLeft = new TextVertex()
-				.setXYZ(0, (float) fontTexture.texture.getHeight(), 0)
-				.setUv((float) charInfo.getStartX() / (float) fontTexture.texture.getWidth(), 1);
-		//Bottom Right vertex
-		TextVertex bottomRight = new TextVertex()
-				.setXYZ(charInfo.getWidth(), (float) fontTexture.texture.getHeight(), 0)
-				.setUv((float) (charInfo.getStartX() + charInfo.getWidth()) / (float) fontTexture.texture.getWidth(), 1);
-		//Top Right vertex
-		TextVertex topRight = new TextVertex()
-				.setXYZ(charInfo.getWidth(), 0, 0)
-				.setUv((float) (charInfo.getStartX() + charInfo.getWidth()) / (float) fontTexture.texture.getWidth(), 0);
+		Vertex topLeft = Vertex.positionUvColour(0, 0, 0, (float) charInfo.getStartX() / (float) fontTexture.texture.getWidth(), 0, 1, 1, 1, 1);
+		Vertex bottomLeft = Vertex.positionUvColour(0, (float) fontTexture.texture.getHeight(), 0, (float) charInfo.getStartX() / (float) fontTexture.texture.getWidth(), 1, 1, 1, 1, 1);
+		Vertex bottomRight = Vertex.positionUvColour(charInfo.getWidth(), (float) fontTexture.texture.getHeight(), 0, (float) (charInfo.getStartX() + charInfo.getWidth()) / (float) fontTexture.texture.getWidth(), 1, 1, 1, 1, 1);
+		Vertex topRight = Vertex.positionUvColour(charInfo.getWidth(), 0, 0, (float) (charInfo.getStartX() + charInfo.getWidth()) / (float) fontTexture.texture.getWidth(), 0, 1, 1, 1, 1);
 
-		return TextRectangle.createTextRectangle(topLeft, bottomLeft, bottomRight, topRight);
+		return new MeshPart(
+			new Vertex[]{topLeft, bottomLeft, bottomRight, topRight},
+			new short[]{ 0, 1, 2, 2, 3, 0 }
+		);
 	}
 }

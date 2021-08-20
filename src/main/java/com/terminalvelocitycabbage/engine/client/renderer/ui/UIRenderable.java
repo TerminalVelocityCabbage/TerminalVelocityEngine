@@ -1,20 +1,26 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
-import com.terminalvelocitycabbage.engine.client.renderer.model.vertexformats.VertexXYZ;
+import com.terminalvelocitycabbage.engine.client.renderer.Vertex;
+import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderElement;
+import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
+import com.terminalvelocitycabbage.engine.client.renderer.model.Mesh;
+import com.terminalvelocitycabbage.engine.client.renderer.model.MeshPart;
+import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
+import com.terminalvelocitycabbage.engine.client.renderer.model.RectangleModel;
 import com.terminalvelocitycabbage.engine.client.renderer.shapes.Rectangle;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Style;
 import org.joml.Matrix4f;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
 public abstract class UIRenderable {
 
 	boolean needsUpdate;
-	Rectangle rectangle;
+	RectangleModel rectangle;
 	public Style style;
-	Matrix4f translationMatrix;
 
 	List<Consumer<UIRenderable>> hoverConsumers;
 	boolean lastHover;
@@ -25,9 +31,13 @@ public abstract class UIRenderable {
 
 	public UIRenderable(Style style) {
 		this.needsUpdate = false;
-		this.rectangle = new Rectangle(new VertexXYZ().setXYZ(0, 0, 0), new VertexXYZ().setXYZ(0, 0, 0), new VertexXYZ().setXYZ(0, 0, 0), new VertexXYZ().setXYZ(0, 0, 0));
+		this.rectangle = new RectangleModel(RenderFormat.POSITION_COLOUR,
+			Vertex.positionColour(0, 0, 0, 0, 0, 0, 0),
+			Vertex.positionColour(0, 0, 0, 0, 0, 0, 0),
+			Vertex.positionColour(0, 0, 0, 0, 0, 0, 0),
+			Vertex.positionColour(0, 0, 0, 0, 0, 0, 0)
+		);
 		this.style = style;
-		this.translationMatrix = new Matrix4f();
 		hoverConsumers = new ArrayList<>();
 		lastHover = false;
 		unHoverConsumers = new ArrayList<>();
@@ -62,7 +72,7 @@ public abstract class UIRenderable {
 		this.needsUpdate = true;
 	}
 
-	public Rectangle getRectangle() {
+	public Model getRectangle() {
 		return rectangle;
 	}
 

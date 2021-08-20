@@ -1,18 +1,18 @@
 package com.terminalvelocitycabbage.engine.client.renderer.shapes;
 
-import com.terminalvelocitycabbage.engine.client.renderer.model.ModelMeshPart;
-import com.terminalvelocitycabbage.engine.client.renderer.model.vertexformats.VertexXYZNormalUV;
+import com.terminalvelocitycabbage.engine.client.renderer.Vertex;
+import com.terminalvelocitycabbage.engine.client.renderer.model.MeshPart;
 
 public class TexturedModelCuboid {
 
-	public static ModelMeshPart createTexturedCuboid(VertexXYZNormalUV frontTL, VertexXYZNormalUV frontBL, VertexXYZNormalUV frontBR, VertexXYZNormalUV frontTR,
-													 VertexXYZNormalUV rightTL, VertexXYZNormalUV rightBL, VertexXYZNormalUV rightBR, VertexXYZNormalUV rightTR,
-													 VertexXYZNormalUV backTL, VertexXYZNormalUV backBL, VertexXYZNormalUV backBR, VertexXYZNormalUV backTR,
-													 VertexXYZNormalUV leftTL, VertexXYZNormalUV leftBL, VertexXYZNormalUV leftBR, VertexXYZNormalUV leftTR,
-													 VertexXYZNormalUV topTL, VertexXYZNormalUV topBL, VertexXYZNormalUV topBR, VertexXYZNormalUV topTR,
-													 VertexXYZNormalUV bottomTL, VertexXYZNormalUV bottomBL, VertexXYZNormalUV bottomBR, VertexXYZNormalUV bottomTR) {
-		return new ModelMeshPart(
-			new VertexXYZNormalUV[]{
+	public static MeshPart createTexturedCuboid(Vertex frontTL, Vertex frontBL, Vertex frontBR, Vertex frontTR,
+												Vertex rightTL, Vertex rightBL, Vertex rightBR, Vertex rightTR,
+												Vertex backTL, Vertex backBL, Vertex backBR, Vertex backTR,
+												Vertex leftTL, Vertex leftBL, Vertex leftBR, Vertex leftTR,
+												Vertex topTL, Vertex topBL, Vertex topBR, Vertex topTR,
+												Vertex bottomTL, Vertex bottomBL, Vertex bottomBR, Vertex bottomTR) {
+		return new MeshPart(
+			new Vertex[]{
 				frontTL, frontBL, frontBR, frontTR,
 				rightTL, rightBL, rightBR, rightTR,
 				backTL, backBL, backBR, backTR,

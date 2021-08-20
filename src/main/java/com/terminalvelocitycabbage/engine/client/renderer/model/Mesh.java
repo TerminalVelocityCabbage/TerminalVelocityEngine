@@ -1,34 +1,55 @@
 package com.terminalvelocitycabbage.engine.client.renderer.model;
 
-import com.terminalvelocitycabbage.engine.client.renderer.model.vertexformats.VertexXYZ;
-import org.joml.Matrix4f;
-import org.joml.Vector4f;
+import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderElement;
+import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL15;
 
-import java.nio.ByteBuffer;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+import java.io.StringWriter;
 import java.nio.FloatBuffer;
+import java.nio.ShortBuffer;
+import java.util.List;
 
-import static com.terminalvelocitycabbage.engine.client.renderer.model.vertexformats.VertexXYZ.*;
+import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL11.glDrawElements;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
 
-public abstract class Mesh {
+public class Mesh {
+
+	private final RenderFormat format;
 
 	private int vaoID;
 	private int vboID;
 	private int eboID;
 
-	public VertexXYZ[] vertices;
-	public byte[] vertexOrder;
+	private int indexCount;
+	private int vertexCount;
+
+	protected FloatBuffer vertexBuffer;
+	protected ShortBuffer indexBuffer;
+	private Material material;
+
+	public Mesh(RenderFormat format) {
+		this.format = format;
+	}
 
 	//TODO note that these translations have to be done in a specific order so we should make it clear and make an API that dummi-proofs it
 	//1. Scale	- so that the axis stuff is scaled properly
 	//2. Offset	- so that rotations happen about the rotation point
 	//3. Rotate	- so that the move action doesnt mess up the rotation point pos
 	//4. Move	- because moving is dum
+
+	public void createBuffers(int vertexCount, int indexCount) {
+		this.vertexBuffer = BufferUtils.createFloatBuffer(vertexCount * this.format.getStride());
+		this.indexBuffer = BufferUtils.createShortBuffer(indexCount);
+		this.indexCount = indexCount;
+		this.vertexCount = vertexCount;
+	}
 
 	public void bind() {
 		//Create the VAO and bind it
@@ -38,70 +59,121 @@ public abstract class Mesh {
 		//Create the VBO and bind it
 		vboID = glGenBuffers();
 		glBindBuffer(GL_ARRAY_BUFFER, vboID);
-		glBufferData(GL_ARRAY_BUFFER, getCombinedVertices(), GL_STATIC_DRAW);
 
 		//Define vertex data for shader
-		glVertexAttribPointer(0, POSITION_ELEMENT_COUNT, GL11.GL_FLOAT, false, STRIDE, POSITION_OFFSET);
+		List<RenderElement> elementList = this.format.getElementList();
+		int offset = 0;
+		for (int i = 0; i < elementList.size(); i++) {
+			RenderElement element = elementList.get(i);
+			glVertexAttribPointer(i, element.getCount(), GL11.GL_FLOAT, false, this.format.getStrideBytes(), offset);
+			offset += element.getSize();
+		}
+
+		//Enable the attrib pointers
+		for (int i = 0; i < elementList.size(); i++) {
+			glEnableVertexAttribArray(i);
+		}
 
 		//Create EBO for connected tris
 		eboID = glGenBuffers();
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, getIndicesBuffer(), GL_STATIC_DRAW);
 	}
 
 	public void render() {
 		// Bind to the VAO that has all the information about the vertices
 		glBindVertexArray(vaoID);
-		glEnableVertexAttribArray(0);
+
+		//Bind Textures
+		if (material != null && material.hasTexture()) {
+			material.getTexture().bind();
+		}
 
 		// Bind to the index VBO/EBO that has all the information about the order of the vertices
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
 
 		// Draw the vertices
-		glDrawElements(GL_TRIANGLES, vertexOrder.length, GL_UNSIGNED_BYTE, 0);
+		glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_SHORT, 0);
 
 		// Put everything back to default (deselect)
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		glDisableVertexAttribArray(0);
 	}
 
 	public void destroy() {
+
+		glDisableVertexAttribArray(0);
+		glDisableVertexAttribArray(1);
+		glDisableVertexAttribArray(2);
+
 		glDeleteBuffers(vboID);
 		glDeleteBuffers(eboID);
 		glDeleteVertexArrays(vaoID);
-	}
 
-	public void update(Matrix4f translationMatrix) {
-		//Update the vertex positions
-		Vector4f positions = new Vector4f();
-		VertexXYZ currentVertex;
-		FloatBuffer vertexFloatBuffer = getCombinedVertices();
-		float[] currentXYZ;
-		for (int i = 0; i < vertices.length; i++) {
-			currentVertex = vertices[i];
-			currentXYZ = currentVertex.getXYZ();
-			positions.set(currentXYZ[0], currentXYZ[1], currentXYZ[2], 1f).mul(translationMatrix);
-
-			// Put the new data in a ByteBuffer (in the view of a FloatBuffer)
-			vertexFloatBuffer.rewind();
-			vertexFloatBuffer.put(VertexXYZ.getElements( new float[] { positions.x, positions.y, positions.z }));
-			vertexFloatBuffer.flip();
-
-			//Pass new data to OpenGL
-			glBindBuffer(GL_ARRAY_BUFFER, vboID);
-			GL15.glBufferSubData(GL_ARRAY_BUFFER, i * VertexXYZ.STRIDE, vertexFloatBuffer);
+		if (material.hasTexture()) {
+			material.getTexture().destroy();
 		}
 	}
 
-	public FloatBuffer getCombinedVertices() {
-		FloatBuffer verticesBuffer = BufferUtils.createFloatBuffer(vertices.length * VertexXYZ.ELEMENT_COUNT);
-		for (VertexXYZ vertex : vertices) {
-			verticesBuffer.put(VertexXYZ.getElements(vertex.getXYZ()));
-		}
-		return verticesBuffer.flip();
+	public void updateVertexData() {
+		vertexBuffer.position(vertexCount * this.format.getStride());
+		vertexBuffer.flip();
+
+		glBindBuffer(GL_ARRAY_BUFFER, vboID);
+		glBufferData(GL_ARRAY_BUFFER, vertexBuffer, GL_STATIC_DRAW);
 	}
 
-	private ByteBuffer getIndicesBuffer() {
-		return BufferUtils.createByteBuffer(vertexOrder.length).put(vertexOrder).flip();
+	public void updateIndexData() {
+		indexBuffer.position(indexCount);
+		indexBuffer.flip();
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexBuffer, GL_STATIC_DRAW);
+	}
+
+	public void setMaterial(Material material) {
+		this.material = material;
+	}
+
+	public Material getMaterial() {
+		return material;
+	}
+
+	public RenderFormat getFormat() {
+		return format;
+	}
+
+	public void dumpAsObj() {
+		try (PrintStream stream = new PrintStream(new FileOutputStream("./dump.obj"))) {
+			int stride = this.format.getStride();
+			float[] vertex = new float[this.vertexCount * stride];
+			this.vertexBuffer.position(0);
+			this.vertexBuffer.get(vertex);
+
+			short[] index = new short[this.indexCount];
+			this.indexBuffer.position(0);
+			this.indexBuffer.get(index);
+
+			int pos = this.format.getElementOffset(RenderElement.POSITION, 0);
+			int uv = this.format.getElementOffset(RenderElement.UV, -1);
+			int normal = this.format.getElementOffset(RenderElement.NORMAL, -1);
+
+			String format = "%1$s";
+			if(uv != -1) format += "/%1$s";
+			if(normal != -1) format += "/%1$s";
+
+			for (int i = 0; i < vertex.length; i += stride) {
+				stream.println("v " + vertex[i+pos] + " " + vertex[i+pos+1] + " " + vertex[i+pos+2]);
+				if(uv != -1) {
+					stream.println("vt " + vertex[i+uv] + " " + vertex[i+uv+1]);
+				}
+				if(normal != -1) {
+					stream.println("vn " + vertex[i+normal] + " " + vertex[i+normal+1] + " " + vertex[i+normal+2]);
+				}
+			}
+
+			for (int i = 0; i < index.length; i+=3) {
+				stream.println("f " + String.format(format, index[i]+1) + " " + String.format(format, index[i+1]+1) + " " + String.format(format, index[i+2]+1));
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 }
