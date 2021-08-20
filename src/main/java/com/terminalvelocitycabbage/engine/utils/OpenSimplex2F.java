@@ -56,7 +56,7 @@ public class OpenSimplex2F {
         double s = 0.366025403784439 * (x + y);
         double xs = x + s, ys = y + s;
 
-        return noise2_Base(xs, ys);
+        return makeSense(noise2_Base(xs, ys));
     }
 
     /**
@@ -70,7 +70,7 @@ public class OpenSimplex2F {
         double xx = x * 0.7071067811865476;
         double yy = y * 1.224744871380249;
 
-        return noise2_Base(yy + xx, yy - xx);
+        return makeSense(noise2_Base(yy + xx, yy - xx));
     }
 
     /**
@@ -123,7 +123,7 @@ public class OpenSimplex2F {
         double xr = r - x, yr = r - y, zr = r - z;
 
         // Evaluate both lattices to form a BCC lattice.
-        return noise3_BCC(xr, yr, zr);
+        return makeSense(noise3_BCC(xr, yr, zr));
     }
 
     /**
@@ -145,7 +145,7 @@ public class OpenSimplex2F {
         double zr = xy * 0.577350269189626 + zz;
 
         // Evaluate both lattices to form a BCC lattice.
-        return noise3_BCC(xr, yr, zr);
+        return makeSense(noise3_BCC(xr, yr, zr));
     }
 
     /**
@@ -167,7 +167,7 @@ public class OpenSimplex2F {
         double yr = xz * 0.577350269189626 + yy;
 
         // Evaluate both lattices to form a BCC lattice.
-        return noise3_BCC(xr, yr, zr);
+        return makeSense(noise3_BCC(xr, yr, zr));
     }
 
     /**
@@ -217,7 +217,7 @@ public class OpenSimplex2F {
         double s = -0.138196601125011 * (x + y + z + w);
         double xs = x + s, ys = y + s, zs = z + s, ws = w + s;
 
-        return noise4_Base(xs, ys, zs, ws);
+        return makeSense(noise4_Base(xs, ys, zs, ws));
     }
 
     /**
@@ -231,7 +231,7 @@ public class OpenSimplex2F {
         double t2 = (z + w) * -0.403949762580207112 + (x + y) * -0.375199083010075342;
         double xs = x + s2, ys = y + s2, zs = z + t2, ws = w + t2;
 
-        return noise4_Base(xs, ys, zs, ws);
+        return makeSense(noise4_Base(xs, ys, zs, ws));
     }
 
     /**
@@ -244,7 +244,7 @@ public class OpenSimplex2F {
         double t2 = (y + w) * -0.403949762580207112 + (x + z) * -0.375199083010075342;
         double xs = x + s2, ys = y + t2, zs = z + s2, ws = w + t2;
 
-        return noise4_Base(xs, ys, zs, ws);
+        return makeSense(noise4_Base(xs, ys, zs, ws));
     }
 
     /**
@@ -259,7 +259,7 @@ public class OpenSimplex2F {
         double s2 = xyz * -0.16666666666666666 + ww;
         double xs = x + s2, ys = y + s2, zs = z + s2, ws = -0.5 * xyz + ww;
 
-        return noise4_Base(xs, ys, zs, ws);
+        return makeSense(noise4_Base(xs, ys, zs, ws));
     }
 
     /**
@@ -778,5 +778,13 @@ public class OpenSimplex2F {
         for (int i = 0; i < PSIZE; i++) {
             GRADIENTS_4D[i] = grad4[i % grad4.length];
         }
+    }
+
+    /**
+     * @param input the -1 to 1 range double to make sense of
+     * @return a 0 to 1 double value
+     */
+    private double makeSense(double input) {
+        return (input / 2f) + 0.5f;
     }
 }
