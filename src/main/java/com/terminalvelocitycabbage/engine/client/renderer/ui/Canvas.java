@@ -2,11 +2,14 @@ package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
 import com.terminalvelocitycabbage.engine.client.ClientBase;
 import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
+import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
 import com.terminalvelocitycabbage.engine.client.renderer.shapes.Rectangle;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Style;
 import com.terminalvelocitycabbage.engine.events.EventContext;
 import com.terminalvelocitycabbage.engine.events.HandleEvent;
 import com.terminalvelocitycabbage.engine.events.client.WindowResizeEvent;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +47,7 @@ public class Canvas extends UIRenderable {
 		container.bind();
 	}
 
-	public Rectangle getRectangle() {
+	public Model getRectangle() {
 		return rectangle;
 	}
 
@@ -83,7 +86,7 @@ public class Canvas extends UIRenderable {
 			rectangle.vertices[2].setXYZ(rightX, bottomY, 0);
 			rectangle.vertices[3].setXYZ(rightX, topY, 0);
 
-			rectangle.update(translationMatrix.identity());
+			rectangle.update(new Vector3f(), new Quaternionf().identity(), new Vector3f(1F)); //TODO
 			for (Container container : containers) {
 				container.queueUpdate();
 			}

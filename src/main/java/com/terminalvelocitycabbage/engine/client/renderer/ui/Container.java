@@ -1,6 +1,8 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.*;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -145,7 +147,7 @@ public class Container extends UIRenderable {
 			rectangle.vertices[3].setXYZ(rightX, topY, 0);
 
 			//Update the data that gets passed to the gpu
-			rectangle.update(translationMatrix.identity());
+			rectangle.update(new Vector3f(), new Quaternionf().identity(), new Vector3f(1F)); //TODO
 
 			for (Container container : childContainers) {
 				container.queueUpdate();

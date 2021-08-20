@@ -4,6 +4,8 @@ import com.terminalvelocitycabbage.engine.client.renderer.model.text.font.FontMe
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Style;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.UIDimension;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import java.util.function.Consumer;
 
@@ -144,7 +146,7 @@ public class Element extends UIRenderable {
 		}
 
 		//Update the data that gets passed to the gpu
-		rectangle.update(translationMatrix.identity());
+		rectangle.update(new Vector3f(), new Quaternionf().identity(), new Vector3f(1F)); //TODO
 
 		//Complete this update
 		needsUpdate = false;

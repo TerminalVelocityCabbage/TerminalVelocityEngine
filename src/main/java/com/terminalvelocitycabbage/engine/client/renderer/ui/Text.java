@@ -1,7 +1,8 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
 import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
-import com.terminalvelocitycabbage.engine.client.renderer.model.text.TextCharacter;
+import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
+import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
 import com.terminalvelocitycabbage.engine.client.renderer.model.text.TextModel;
 import com.terminalvelocitycabbage.engine.client.renderer.model.text.font.FontMeshPartStorage;
 import org.joml.Quaternionf;
@@ -80,12 +81,12 @@ public class Text {
 			//Update text lines
 			if (lineWidth != this.model.width) {
 				//Create a Mesh for each character
-				var characterModelParts = new ArrayList<TextCharacter>();
+				var characterModelParts = new ArrayList<Model.Part>();
 				int xOffset = 0;
 				int yOffset = 0;
 				for (char character : text.toCharArray()) {
 					//Create a mesh with the correct UV coordinated from the texture atlas
-					TextCharacter textCharacter = new TextCharacter(fontMeshPartStorage.getMesh(character));
+					Model.Part textCharacter = new Model.Part(fontMeshPartStorage.getMesh(character));
 
 					//Put the text on the next and reset x position line if it would overflow
 					if (xOffset + fontMeshPartStorage.getCharInfo(character).getWidth() > lineWidth) {
@@ -103,7 +104,7 @@ public class Text {
 					//Update the next character's xOffset
 					xOffset += fontMeshPartStorage.getCharInfo(character).getWidth();
 				}
-				this.model.textCharacters = characterModelParts;
+				this.model.setCharacters(characterModelParts);
 			}
 
 			model.resizeBuffer();

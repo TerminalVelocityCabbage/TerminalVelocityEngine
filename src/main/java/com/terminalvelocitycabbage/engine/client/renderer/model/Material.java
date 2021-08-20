@@ -21,7 +21,7 @@ public class Material {
 		return new Builder();
 	}
 
-	private Material(Texture albedo, Vector4f ambientColor, Vector4f diffuseColor, Vector4f specularColor, float reflectivity, Texture reflectivityTexture) {
+	protected Material(Texture albedo, Vector4f ambientColor, Vector4f diffuseColor, Vector4f specularColor, float reflectivity, Texture reflectivityTexture) {
 		this.texture = albedo;
 		this.ambientColor = ambientColor;
 		this.diffuseColor = diffuseColor;

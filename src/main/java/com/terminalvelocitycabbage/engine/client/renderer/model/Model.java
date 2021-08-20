@@ -1,5 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.renderer.model;
 
+import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -17,14 +18,21 @@ import java.util.List;
 public class Model {
 
 	public List<Part> modelParts;
-	public ModelMesh mesh;
+	public Mesh mesh;
 	//To avoid creating a new one every part render call
 	Matrix4f transformationMatrix;
 
-	public Model(List<Model.Part> modelParts) {
+	public Model(RenderFormat format, List<Model.Part> modelParts) {
 		this.modelParts = modelParts;
-		this.mesh = new ModelMesh();
+		this.mesh = new Mesh(format);
 		this.transformationMatrix = new Matrix4f();
+		this.onPartsChange();
+	}
+
+	public void onPartsChange() {
+		for (Part part : this.modelParts) {
+			part.setFormat(this.mesh.getFormat());
+		}
 	}
 
 	/**
@@ -63,6 +71,7 @@ public class Model {
 		}
 
 		this.mesh.updateVertexData();
+//		this.mesh.dumpAsObj();
 	}
 
 	public void bind() {
@@ -120,6 +129,13 @@ public class Model {
 				.translate(offset)
 				.scale(scale);
 			this.meshPart.update(transformationMatrix, buffer);
+		}
+
+		public void setFormat(RenderFormat format) {
+			this.meshPart.setFormat(format);
+			for (Part child : this.children) {
+				child.setFormat(format);
+			}
 		}
 
 		public int getTotalVertexCount() {
