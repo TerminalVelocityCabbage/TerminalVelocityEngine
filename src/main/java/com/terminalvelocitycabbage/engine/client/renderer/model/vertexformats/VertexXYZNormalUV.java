@@ -1,11 +1,11 @@
-package com.terminalvelocitycabbage.engine.client.renderer.model;
+package com.terminalvelocitycabbage.engine.client.renderer.model.vertexformats;
 
 import com.terminalvelocitycabbage.engine.debug.Log;
 import org.joml.Math;
 
 import java.util.Arrays;
 
-public class ModelVertex extends Vertex {
+public class VertexXYZNormalUV extends VertexXYZ {
 
 	private float[] uv = new float[] {0f, 0f};
 	private float[] normal = new float[] {0f, 0f, 0f};
@@ -23,20 +23,20 @@ public class ModelVertex extends Vertex {
 
 	public static final int STRIDE = POSITION_BYTES + TEXTURE_BYTES + NORMAL_BYTES;
 
-	public ModelVertex setUv(float u, float v) {
+	public VertexXYZNormalUV setUv(float u, float v) {
 		uv = new float[] {u, v};
 		return this;
 	}
 
-	public ModelVertex setNormal(float x, float y, float z) {
+	public VertexXYZNormalUV setNormal(float x, float y, float z) {
 		float factor = Math.invsqrt(Math.fma(x, x, Math.fma(y, y, z * z)));
 		normal = new float[] {x/factor, y/factor, z/factor};
 		return this;
 	}
 
 	@Override
-	public ModelVertex setXYZ(float x, float y, float z) {
-		return (ModelVertex) super.setXYZ(x, y, z);
+	public VertexXYZNormalUV setXYZ(float x, float y, float z) {
+		return (VertexXYZNormalUV) super.setXYZ(x, y, z);
 	}
 
 	public float[] getUV() {

@@ -8,8 +8,8 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
 import static com.terminalvelocitycabbage.engine.client.renderer.model.text.TextVertex.*;
-import static com.terminalvelocitycabbage.engine.client.renderer.model.Vertex.POSITION_ELEMENT_COUNT;
-import static com.terminalvelocitycabbage.engine.client.renderer.model.Vertex.POSITION_OFFSET;
+import static com.terminalvelocitycabbage.engine.client.renderer.model.vertexformats.VertexXYZ.POSITION_ELEMENT_COUNT;
+import static com.terminalvelocitycabbage.engine.client.renderer.model.vertexformats.VertexXYZ.POSITION_OFFSET;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_SHORT;
 import static org.lwjgl.opengl.GL11.glDrawElements;

@@ -2,7 +2,8 @@ package com.terminalvelocitycabbage.engine.client.renderer.shapes;
 
 import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
 import com.terminalvelocitycabbage.engine.client.renderer.model.ModelMeshPart;
-import com.terminalvelocitycabbage.engine.client.renderer.model.ModelVertex;
+import com.terminalvelocitycabbage.engine.client.renderer.model.vertexformats.VertexXYZ;
+import com.terminalvelocitycabbage.engine.client.renderer.model.vertexformats.VertexXYZNormalUV;
 import com.terminalvelocitycabbage.engine.utils.VectorUtils;
 import org.joml.Vector3f;
 
@@ -15,20 +16,20 @@ public class Icosphere {
 
     //Create the 3 intersecting planes that make up a Icosahedron
     private static final float T = (1.0f + ((float) Math.sqrt(5))) / 2.0f;
-    private static final List<ModelVertex> UNIT_ICO_VERTICES = new ArrayList<>(
+    private static final List<VertexXYZNormalUV> UNIT_ICO_VERTICES = new ArrayList<>(
             Arrays.asList(
-            new ModelVertex().setXYZ(-1, T, 0).setNormal(-1f, T, 0).setUv(0, 0),
-            new ModelVertex().setXYZ(1, T, 0).setNormal(1f, T, 0).setUv(0, 0),
-            new ModelVertex().setXYZ(-1, -T, 0).setNormal(-1f, -T, 0).setUv(0, 0),
-            new ModelVertex().setXYZ(1, -T, 0).setNormal(1f, -T, 0).setUv(0, 0),
-            new ModelVertex().setXYZ(0f, -1, T).setNormal(0f, -1, T).setUv(0, 0),
-            new ModelVertex().setXYZ(0f, 1, T).setNormal(0f, 1, T).setUv(0, 0),
-            new ModelVertex().setXYZ(0f, -1, -T).setNormal(0f, -1, -T).setUv(0, 0),
-            new ModelVertex().setXYZ(0f, 1, -T).setNormal(0f, 1, -T).setUv(0, 0),
-            new ModelVertex().setXYZ(T, 0, -1).setNormal(T, 0, -1).setUv(0, 0),
-            new ModelVertex().setXYZ(T, 0, 1).setNormal(T, 0, 1).setUv(0, 0),
-            new ModelVertex().setXYZ(-T, 0, -1).setNormal(-T, 0, -1).setUv(0, 0),
-            new ModelVertex().setXYZ(-T, 0, 1).setNormal(-T, 0, 1).setUv(0, 0))
+            new VertexXYZNormalUV().setXYZ(-1, T, 0).setNormal(-1f, T, 0).setUv(0, 0),
+            new VertexXYZNormalUV().setXYZ(1, T, 0).setNormal(1f, T, 0).setUv(0, 0),
+            new VertexXYZNormalUV().setXYZ(-1, -T, 0).setNormal(-1f, -T, 0).setUv(0, 0),
+            new VertexXYZNormalUV().setXYZ(1, -T, 0).setNormal(1f, -T, 0).setUv(0, 0),
+            new VertexXYZNormalUV().setXYZ(0f, -1, T).setNormal(0f, -1, T).setUv(0, 0),
+            new VertexXYZNormalUV().setXYZ(0f, 1, T).setNormal(0f, 1, T).setUv(0, 0),
+            new VertexXYZNormalUV().setXYZ(0f, -1, -T).setNormal(0f, -1, -T).setUv(0, 0),
+            new VertexXYZNormalUV().setXYZ(0f, 1, -T).setNormal(0f, 1, -T).setUv(0, 0),
+            new VertexXYZNormalUV().setXYZ(T, 0, -1).setNormal(T, 0, -1).setUv(0, 0),
+            new VertexXYZNormalUV().setXYZ(T, 0, 1).setNormal(T, 0, 1).setUv(0, 0),
+            new VertexXYZNormalUV().setXYZ(-T, 0, -1).setNormal(-T, 0, -1).setUv(0, 0),
+            new VertexXYZNormalUV().setXYZ(-T, 0, 1).setNormal(-T, 0, 1).setUv(0, 0))
     );
 
     //Connect the corners of these planes into the most basic 20 sided IcoSphere
@@ -58,7 +59,7 @@ public class Icosphere {
     public static Model.Part getUnitFace(int i) {
         return new Model.Part(
                 new ModelMeshPart(
-                        new ModelVertex[]{
+                        new VertexXYZNormalUV[]{
                                 UNIT_ICO_VERTICES.get(UNIT_INDICES[i * 3]),
                                 UNIT_ICO_VERTICES.get(UNIT_INDICES[i * 3 + 1]),
                                 UNIT_ICO_VERTICES.get(UNIT_INDICES[i * 3 + 2])
@@ -68,7 +69,7 @@ public class Icosphere {
         );
     }
 
-    public static Model.Part getDividedFace(int faceID, int divisions) {
+    public static VertexXYZ[] getVerticesForDivisions(int faceID, int divisions) {
 
         Model.Part existingFace = getUnitFace(faceID);
 
@@ -102,6 +103,18 @@ public class Icosphere {
             vec.normalize();
         }
 
+        //Combine vertex data with indices to create the ModelVertexes
+        VertexXYZ[] newVertices = new VertexXYZ[newVertexLocations.size()];
+        for (int i = 0; i < newVertexLocations.size(); i++) {
+            Vector3f cL = newVertexLocations.get(i);
+            newVertices[i] = new VertexXYZ().setXYZ(cL.x(), cL.y(), cL.z());
+        }
+
+        return newVertices;
+    }
+
+    public static short[] getIndicesForDivisions(int divisions) {
+
         //Get indices for the faces of the triangle
         short numUp = (short)getPointUpTrisForDivisions(divisions);
         short numDown = (short)getPointDownTrisForDivisions(divisions);
@@ -121,14 +134,7 @@ public class Icosphere {
             newIndices[i * 3 + 2 + (numUp * 3)] = (short)(newIndices[i * 3 + (numUp * 3)] + (getCurrentRowIndex(i) + 1) + 1);
         }
 
-        //Combine vertex data with indices to create the ModelVertexes
-        ModelVertex[] newVertices = new ModelVertex[newVertexLocations.size()];
-        for (int i = 0; i < newVertexLocations.size(); i++) {
-            Vector3f cL = newVertexLocations.get(i);
-            newVertices[i] = new ModelVertex().setXYZ(cL.x(), cL.y(), cL.z()).setNormal(cL.x(), cL.y(), cL.z()).setUv(0, 0);
-        }
-
-        return new Model.Part(new ModelMeshPart(newVertices, newIndices));
+        return newIndices;
     }
 
     /**

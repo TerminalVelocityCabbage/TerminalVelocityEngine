@@ -1,8 +1,8 @@
 package com.terminalvelocitycabbage.engine.client.renderer.model.text;
 
-import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
+import com.terminalvelocitycabbage.engine.client.renderer.model.vertexformats.VertexXYZ;
 
-public class TextVertex extends Vertex {
+public class TextVertex extends VertexXYZ {
 
 	private float[] uv = new float[] {0f, 0f};
 	private float[] color = new float[] {0f, 0f, 0f, 0f};

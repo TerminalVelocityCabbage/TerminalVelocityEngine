@@ -1,6 +1,6 @@
-package com.terminalvelocitycabbage.engine.client.renderer.model;
+package com.terminalvelocitycabbage.engine.client.renderer.model.vertexformats;
 
-public class Vertex {
+public class VertexXYZ {
 
 	//Vertex information
 	private float[] xyz = new float[] {0f, 0f, 0f};
@@ -21,14 +21,14 @@ public class Vertex {
 	//The total number of bytes this vertex requires
 	public static final int STRIDE = POSITION_BYTES;
 
-	public Vertex setXYZ(float x, float y, float z) {
+	public VertexXYZ setXYZ(float x, float y, float z) {
 		xyz[0] = x;
 		xyz[1] = y;
 		xyz[2] = z;
 		return this;
 	}
 
-	public Vertex addXYZ(float x, float y, float z) {
+	public VertexXYZ addXYZ(float x, float y, float z) {
 		xyz[0] += x;
 		xyz[1] += y;
 		xyz[2] += z;

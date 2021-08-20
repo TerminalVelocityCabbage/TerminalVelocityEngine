@@ -1,12 +1,13 @@
 package com.terminalvelocitycabbage.engine.client.renderer.model;
 
+import com.terminalvelocitycabbage.engine.client.renderer.model.vertexformats.VertexXYZNormalUV;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
-import static com.terminalvelocitycabbage.engine.client.renderer.model.ModelVertex.*;
+import static com.terminalvelocitycabbage.engine.client.renderer.model.vertexformats.VertexXYZNormalUV.*;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.glDrawElements;
 import static org.lwjgl.opengl.GL15.*;
@@ -33,7 +34,7 @@ public class ModelMesh {
 	//4. Move	- because moving is dum
 
 	public void createBuffers(int vertexCount, int indexCount) {
-		this.vertexBuffer = BufferUtils.createFloatBuffer(vertexCount * ModelVertex.ELEMENT_COUNT);
+		this.vertexBuffer = BufferUtils.createFloatBuffer(vertexCount * VertexXYZNormalUV.ELEMENT_COUNT);
 		this.indexBuffer = BufferUtils.createShortBuffer(indexCount);
 		this.indexCount = indexCount;
 		this.vertexCount = vertexCount;
@@ -97,7 +98,7 @@ public class ModelMesh {
 	}
 
 	public void updateVertexData() {
-		vertexBuffer.position(vertexCount * ModelVertex.ELEMENT_COUNT);
+		vertexBuffer.position(vertexCount * VertexXYZNormalUV.ELEMENT_COUNT);
 		vertexBuffer.flip();
 
 		glBindBuffer(GL_ARRAY_BUFFER, vboID);

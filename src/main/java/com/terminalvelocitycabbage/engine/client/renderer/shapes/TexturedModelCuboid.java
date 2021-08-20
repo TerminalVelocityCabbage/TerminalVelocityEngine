@@ -1,18 +1,18 @@
 package com.terminalvelocitycabbage.engine.client.renderer.shapes;
 
 import com.terminalvelocitycabbage.engine.client.renderer.model.ModelMeshPart;
-import com.terminalvelocitycabbage.engine.client.renderer.model.ModelVertex;
+import com.terminalvelocitycabbage.engine.client.renderer.model.vertexformats.VertexXYZNormalUV;
 
 public class TexturedModelCuboid {
 
-	public static ModelMeshPart createTexturedCuboid(ModelVertex frontTL, ModelVertex frontBL, ModelVertex frontBR, ModelVertex frontTR,
-													 ModelVertex rightTL, ModelVertex rightBL, ModelVertex rightBR, ModelVertex rightTR,
-													 ModelVertex backTL, ModelVertex backBL, ModelVertex backBR, ModelVertex backTR,
-													 ModelVertex leftTL, ModelVertex leftBL, ModelVertex leftBR, ModelVertex leftTR,
-													 ModelVertex topTL, ModelVertex topBL, ModelVertex topBR, ModelVertex topTR,
-													 ModelVertex bottomTL, ModelVertex bottomBL, ModelVertex bottomBR, ModelVertex bottomTR) {
+	public static ModelMeshPart createTexturedCuboid(VertexXYZNormalUV frontTL, VertexXYZNormalUV frontBL, VertexXYZNormalUV frontBR, VertexXYZNormalUV frontTR,
+													 VertexXYZNormalUV rightTL, VertexXYZNormalUV rightBL, VertexXYZNormalUV rightBR, VertexXYZNormalUV rightTR,
+													 VertexXYZNormalUV backTL, VertexXYZNormalUV backBL, VertexXYZNormalUV backBR, VertexXYZNormalUV backTR,
+													 VertexXYZNormalUV leftTL, VertexXYZNormalUV leftBL, VertexXYZNormalUV leftBR, VertexXYZNormalUV leftTR,
+													 VertexXYZNormalUV topTL, VertexXYZNormalUV topBL, VertexXYZNormalUV topBR, VertexXYZNormalUV topTR,
+													 VertexXYZNormalUV bottomTL, VertexXYZNormalUV bottomBL, VertexXYZNormalUV bottomBR, VertexXYZNormalUV bottomTR) {
 		return new ModelMeshPart(
-			new ModelVertex[]{
+			new VertexXYZNormalUV[]{
 				frontTL, frontBL, frontBR, frontTR,
 				rightTL, rightBL, rightBR, rightTR,
 				backTL, backBL, backBR, backTR,

@@ -1,5 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.renderer.model;
 
+import com.terminalvelocitycabbage.engine.client.renderer.model.vertexformats.VertexXYZ;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
@@ -9,7 +10,7 @@ import org.lwjgl.opengl.GL15;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
-import static com.terminalvelocitycabbage.engine.client.renderer.model.Vertex.*;
+import static com.terminalvelocitycabbage.engine.client.renderer.model.vertexformats.VertexXYZ.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
@@ -20,7 +21,7 @@ public abstract class Mesh {
 	private int vboID;
 	private int eboID;
 
-	public Vertex[] vertices;
+	public VertexXYZ[] vertices;
 	public byte[] vertexOrder;
 
 	//TODO note that these translations have to be done in a specific order so we should make it clear and make an API that dummi-proofs it
@@ -73,7 +74,7 @@ public abstract class Mesh {
 	public void update(Matrix4f translationMatrix) {
 		//Update the vertex positions
 		Vector4f positions = new Vector4f();
-		Vertex currentVertex;
+		VertexXYZ currentVertex;
 		FloatBuffer vertexFloatBuffer = getCombinedVertices();
 		float[] currentXYZ;
 		for (int i = 0; i < vertices.length; i++) {
@@ -83,19 +84,19 @@ public abstract class Mesh {
 
 			// Put the new data in a ByteBuffer (in the view of a FloatBuffer)
 			vertexFloatBuffer.rewind();
-			vertexFloatBuffer.put(Vertex.getElements( new float[] { positions.x, positions.y, positions.z }));
+			vertexFloatBuffer.put(VertexXYZ.getElements( new float[] { positions.x, positions.y, positions.z }));
 			vertexFloatBuffer.flip();
 
 			//Pass new data to OpenGL
 			glBindBuffer(GL_ARRAY_BUFFER, vboID);
-			GL15.glBufferSubData(GL_ARRAY_BUFFER, i * Vertex.STRIDE, vertexFloatBuffer);
+			GL15.glBufferSubData(GL_ARRAY_BUFFER, i * VertexXYZ.STRIDE, vertexFloatBuffer);
 		}
 	}
 
 	public FloatBuffer getCombinedVertices() {
-		FloatBuffer verticesBuffer = BufferUtils.createFloatBuffer(vertices.length * Vertex.ELEMENT_COUNT);
-		for (Vertex vertex : vertices) {
-			verticesBuffer.put(Vertex.getElements(vertex.getXYZ()));
+		FloatBuffer verticesBuffer = BufferUtils.createFloatBuffer(vertices.length * VertexXYZ.ELEMENT_COUNT);
+		for (VertexXYZ vertex : vertices) {
+			verticesBuffer.put(VertexXYZ.getElements(vertex.getXYZ()));
 		}
 		return verticesBuffer.flip();
 	}

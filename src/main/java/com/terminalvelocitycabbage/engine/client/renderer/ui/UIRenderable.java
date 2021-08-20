@@ -1,6 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
-import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
+import com.terminalvelocitycabbage.engine.client.renderer.model.vertexformats.VertexXYZ;
 import com.terminalvelocitycabbage.engine.client.renderer.shapes.Rectangle;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Style;
 import org.joml.Matrix4f;
@@ -25,7 +25,7 @@ public abstract class UIRenderable {
 
 	public UIRenderable(Style style) {
 		this.needsUpdate = false;
-		this.rectangle = new Rectangle(new Vertex().setXYZ(0, 0, 0), new Vertex().setXYZ(0, 0, 0), new Vertex().setXYZ(0, 0, 0), new Vertex().setXYZ(0, 0, 0));
+		this.rectangle = new Rectangle(new VertexXYZ().setXYZ(0, 0, 0), new VertexXYZ().setXYZ(0, 0, 0), new VertexXYZ().setXYZ(0, 0, 0), new VertexXYZ().setXYZ(0, 0, 0));
 		this.style = style;
 		this.translationMatrix = new Matrix4f();
 		hoverConsumers = new ArrayList<>();

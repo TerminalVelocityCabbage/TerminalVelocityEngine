@@ -14,4 +14,25 @@ public class NumUtils {
         return currentOrder;
     }
 
+    public static int getRotatedInt(int number, int rotations) {
+        int digits = numberOfDigits(number);
+        int powTen = (int) Math.pow(10, digits - 1);
+
+        for (int i = 0; i < rotations - 1; i++) {
+            int firstDigit = number / powTen;
+            number = ((number * 10) + firstDigit) - (firstDigit * powTen * 10);
+        }
+
+        return number;
+    }
+
+    public static int numberOfDigits(int number) {
+        int digits = 0;
+        while (number > 0) {
+            digits++;
+            number /= 10;
+        }
+        return digits;
+    }
+
 }
