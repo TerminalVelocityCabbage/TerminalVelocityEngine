@@ -13,7 +13,7 @@ public class RenderElement {
 
     public static final RenderElement POSITION = new RenderElement("position", 3, Float.BYTES).setVec4Transformer(Vector4f::mul);
     public static final RenderElement UV = new RenderElement("uv", 2, Float.BYTES);
-    public static final RenderElement NORMAL = new RenderElement("normal", 3, Float.BYTES).setVec4Transformer((vector4f, matrix4f) -> vector4f.rotate(matrix4f.getUnnormalizedRotation(REUSABLE_QUATERNION)));
+    public static final RenderElement NORMAL = new RenderElement("normal", 3, Float.BYTES).setVec4Transformer((vector4f, matrix4f) -> vector4f.normalize().rotate(matrix4f.getUnnormalizedRotation(REUSABLE_QUATERNION)));
     public static final RenderElement COLOUR_RGBA = new RenderElement("colour", 4, Float.BYTES);
 
     private final String debugName;
