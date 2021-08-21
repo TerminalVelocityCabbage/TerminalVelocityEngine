@@ -1,7 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.renderer.components;
 
 import com.terminalvelocitycabbage.engine.client.ClientBase;
-import com.terminalvelocitycabbage.engine.client.input.InputHandler;
 import com.terminalvelocitycabbage.engine.debug.Log;
 import com.terminalvelocitycabbage.engine.events.client.WindowResizeEvent;
 import org.joml.Matrix4f;
@@ -25,7 +24,6 @@ public class Window {
 	private int windowHeight;
 	private String title;
 	private boolean vSync;
-	private InputHandler inputHandler;
 	private boolean center;
 	private boolean lockAndHideCursor;
 
@@ -40,12 +38,11 @@ public class Window {
 
 	Matrix4f orthoProjectionMatrix;
 
-	public Window(int width, int height, String title, boolean vSync, InputHandler inputHandler, boolean center, boolean lockAndHideCursor) {
+	public Window(int width, int height, String title, boolean vSync, boolean center, boolean lockAndHideCursor) {
 		this.windowWidth = width;
 		this.windowHeight = height;
 		this.title = title;
 		this.vSync = vSync;
-		this.inputHandler = inputHandler;
 		this.center = center;
 		this.lockAndHideCursor = lockAndHideCursor;
 		orthoProjectionMatrix = new Matrix4f();
@@ -95,9 +92,6 @@ public class Window {
 
 			sizeCallback = GLFWWindowSizeCallback.create(this::windowSizeCallback);
 			glfwSetWindowSizeCallback(windowID, sizeCallback);
-
-			//init the input handler
-			inputHandler.init(this);
 		}
 	}
 
@@ -155,22 +149,6 @@ public class Window {
 		return ((-cursorY / height()) * 2) + 1;
 	}
 
-	public boolean isLeftMouseJustReleased() {
-		return inputHandler.isLeftButtonReleased();
-	}
-
-	public boolean isLeftMouseDown() {
-		return inputHandler.isLeftButtonPressed();
-	}
-
-	public boolean isRightMouseJustReleased() {
-		return inputHandler.isRightButtonReleased();
-	}
-
-	public boolean isRightMouseDown() {
-		return inputHandler.isRightButtonPressed();
-	}
-
 	public long getID() {
 		return windowID;
 	}
@@ -193,10 +171,6 @@ public class Window {
 
 	public float aspectRatio() {
 		return windowWidth / (float)windowHeight;
-	}
-
-	public InputHandler getInputHandler() {
-		return inputHandler;
 	}
 
 	public Matrix4f getOrthoProjectionMatrix() {

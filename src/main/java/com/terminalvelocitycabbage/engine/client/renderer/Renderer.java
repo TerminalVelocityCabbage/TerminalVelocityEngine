@@ -1,6 +1,5 @@
 package com.terminalvelocitycabbage.engine.client.renderer;
 
-import com.terminalvelocitycabbage.engine.client.input.InputHandler;
 import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
 import com.terminalvelocitycabbage.engine.client.renderer.scenes.SceneHandler;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.CanvasHandler;
@@ -30,8 +29,8 @@ public abstract class Renderer {
 	public SceneHandler sceneHandler = new SceneHandler();
 	public CanvasHandler canvasHandler = new CanvasHandler();
 
-	public Renderer(int width, int height, String title, InputHandler inputHandler, float tickRate) {
-		window = new Window(width, height, title, false, inputHandler, true, true);
+	public Renderer(int width, int height, String title, float tickRate) {
+		window = new Window(width, height, title, false, true, true);
 		tickManager = new TickManager(tickRate);
 	}
 
@@ -143,9 +142,9 @@ public abstract class Renderer {
 		//tick as many time as needed
 		while (tickManager.hasTick()) {
 			sceneHandler.update(deltaTime / 1e6f);
-			canvasHandler.tick(getWindow().getCursorX(), getWindow().getCursorY(), getWindow().isLeftMouseJustReleased(), getWindow().isRightMouseJustReleased(), getWindow().getInputHandler().getTicksSinceLastClick());
+			canvasHandler.tick(getWindow().getCursorX(), getWindow().getCursorY(), sceneHandler.getActiveScene().getInputHandler().isLeftButtonReleased(), sceneHandler.getActiveScene().getInputHandler().isRightButtonReleased(), sceneHandler.getActiveScene().getInputHandler().getTicksSinceLastClick());
 			//Update input handler last state
-			window.getInputHandler().updateMouseButtons();
+			sceneHandler.getActiveScene().getInputHandler().updateMouseButtons();
 		}
 
 		if (window.isResized()) {

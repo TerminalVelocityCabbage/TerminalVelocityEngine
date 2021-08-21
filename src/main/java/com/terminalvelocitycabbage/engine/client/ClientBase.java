@@ -2,6 +2,7 @@ package com.terminalvelocitycabbage.engine.client;
 
 import com.github.simplenet.Client;
 import com.terminalvelocitycabbage.engine.client.networking.PingClient;
+import com.terminalvelocitycabbage.engine.client.renderer.Renderer;
 import com.terminalvelocitycabbage.engine.debug.Logger;
 import com.terminalvelocitycabbage.engine.events.EventDispatcher;
 import com.terminalvelocitycabbage.engine.events.client.ClientConnectionEvent;
@@ -17,9 +18,11 @@ public abstract class ClientBase extends EventDispatcher {
 	boolean shouldDisconnect;
 	public static ClientBase instance;
 	private Logger logger;
+	private static Renderer renderer;
 
-	public ClientBase(Logger logger) {
+	public ClientBase(Logger logger, Renderer renderer) {
 		this.logger = logger;
+		ClientBase.renderer = renderer;
 	}
 
 	public void init() {
@@ -99,5 +102,9 @@ public abstract class ClientBase extends EventDispatcher {
 
 	public Logger getLogger() {
 		return logger;
+	}
+
+	public static Renderer getRenderer() {
+		return renderer;
 	}
 }

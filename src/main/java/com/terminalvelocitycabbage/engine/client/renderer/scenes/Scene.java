@@ -1,6 +1,8 @@
 package com.terminalvelocitycabbage.engine.client.renderer.scenes;
 
+import com.terminalvelocitycabbage.engine.client.input.InputHandler;
 import com.terminalvelocitycabbage.engine.client.renderer.components.Camera;
+import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
 import com.terminalvelocitycabbage.engine.client.renderer.gameobjects.EmptyGameObject;
 import com.terminalvelocitycabbage.engine.client.renderer.util.SceneObjectHandler;
 
@@ -9,14 +11,18 @@ import java.util.List;
 public abstract class Scene {
 
 	Camera camera;
+	InputHandler inputHandler;
 	public SceneObjectHandler objectHandler;
 
-	public Scene(Camera camera) {
-		this.objectHandler = new SceneObjectHandler();
+	public Scene(Camera camera, InputHandler inputHandler) {
 		this.camera = camera;
+		this.inputHandler = inputHandler;
+		this.objectHandler = new SceneObjectHandler();
 	}
 
-	public abstract void init();
+	public void init(Window window) {
+		inputHandler.init(window);
+	}
 
 	public abstract void update(float deltaTime);
 
@@ -30,4 +36,7 @@ public abstract class Scene {
 		return objectHandler.getAllOfType(type);
 	}
 
+	public InputHandler getInputHandler() {
+		return inputHandler;
+	}
 }
