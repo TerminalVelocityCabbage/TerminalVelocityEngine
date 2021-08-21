@@ -3,6 +3,7 @@ package com.terminalvelocitycabbage.engine.client.input;
 import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
 import org.joml.Vector2d;
 import org.joml.Vector2f;
+import org.joml.Vector2i;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -12,6 +13,7 @@ public abstract class InputHandler {
 
 	private Vector2d previousPos;
 	protected final Vector2f deltaMouseVector;
+	protected final Vector2i deltaScrollVector;
 
 	private boolean focused = false;
 
@@ -25,6 +27,7 @@ public abstract class InputHandler {
 	public InputHandler() {
 		previousPos = new Vector2d(-10, -10);
 		deltaMouseVector = new Vector2f(0, 0);
+		deltaScrollVector = new Vector2i(0, 0);
 	}
 
 	public void init(Window window) {
@@ -44,6 +47,10 @@ public abstract class InputHandler {
 			leftButtonPressed = button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS;
 			rightButtonPressed = button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS;
 		});
+		glfwSetScrollCallback(window.getID(), (window1, xoffset, yoffset) -> {
+			deltaScrollVector.x += (float)xoffset;
+			deltaScrollVector.y += (float)yoffset;
+		});
 		glfwSetKeyCallback(window.getID(), (win, key, scancode, action, mods) -> processInput(new KeyBind(key, scancode, action, mods)));
 	}
 
@@ -51,6 +58,7 @@ public abstract class InputHandler {
 
 	public void resetDeltas() {
 		deltaMouseVector.zero();
+		deltaScrollVector.zero();
 	}
 
 	public Vector2f getDeltaMouseVector(float sensitivity) {
@@ -111,5 +119,13 @@ public abstract class InputHandler {
 
 	public static long getWindow() {
 		return window;
+	}
+
+	public int getDeltaScrollVertical() {
+		return deltaScrollVector.y;
+	}
+
+	public int getDeltaScrollHorizontal() {
+		return deltaScrollVector.x;
 	}
 }
