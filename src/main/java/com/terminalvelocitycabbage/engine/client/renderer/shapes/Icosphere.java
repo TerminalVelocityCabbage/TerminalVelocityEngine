@@ -1,8 +1,5 @@
 package com.terminalvelocitycabbage.engine.client.renderer.shapes;
 
-import com.terminalvelocitycabbage.engine.client.renderer.Vertex;
-import com.terminalvelocitycabbage.engine.client.renderer.model.MeshPart;
-import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
 import com.terminalvelocitycabbage.engine.utils.VectorUtils;
 import org.joml.Vector3f;
 
@@ -32,7 +29,7 @@ public class Icosphere {
     );
 
     //Connect the corners of these planes into the most basic 20 sided IcoSphere
-    private static final short[] UNIT_INDICES = new short[]{
+    private static final int[] UNIT_INDICES = new int[]{
             0, 11, 5,
             0, 5, 1,
             0, 1, 7,
@@ -100,25 +97,25 @@ public class Icosphere {
         return newVertexLocations;
     }
 
-    public static short[] getIndicesForDivisions(int divisions) {
+    public static int[] getIndicesForDivisions(int divisions) {
 
         //Get indices for the faces of the triangle
-        short numUp = (short)getPointUpTrisForDivisions(divisions);
-        short numDown = (short)getPointDownTrisForDivisions(divisions);
-        short[] newIndices = new short[(numUp * 3) + (numDown * 3)];
+        int numUp = getPointUpTrisForDivisions(divisions);
+        int numDown = getPointDownTrisForDivisions(divisions);
+        int[] newIndices = new int[(numUp * 3) + (numDown * 3)];
 
         //Get indices for triangles that point up
-        for (short i = 0; i < numUp; i++) {
+        for (int i = 0; i < numUp; i++) {
             newIndices[i * 3] = i;
-            newIndices[i * 3 + 1] = (short)(i + (getCurrentRowIndex(i) + 1));
-            newIndices[i * 3 + 2] = (short)(newIndices[i * 3 + 1] + 1);
+            newIndices[i * 3 + 1] = (i + (getCurrentRowIndex(i) + 1));
+            newIndices[i * 3 + 2] = (newIndices[i * 3 + 1] + 1);
         }
 
         //Get indices for triangles that point down
-        for (short i = 0; i < numDown; i++) {
-            newIndices[i * 3 + (numUp * 3)] = (short)(i + (getCurrentRowIndex(i) + 1) + 1);
-            newIndices[i * 3 + 1 + (numUp * 3)] = (short)(newIndices[i * 3 + (numUp * 3)] - 1);
-            newIndices[i * 3 + 2 + (numUp * 3)] = (short)(newIndices[i * 3 + (numUp * 3)] + (getCurrentRowIndex(i) + 1) + 1);
+        for (int i = 0; i < numDown; i++) {
+            newIndices[i * 3 + (numUp * 3)] = (i + (getCurrentRowIndex(i) + 1) + 1);
+            newIndices[i * 3 + 1 + (numUp * 3)] = (newIndices[i * 3 + (numUp * 3)] - 1);
+            newIndices[i * 3 + 2 + (numUp * 3)] = (newIndices[i * 3 + (numUp * 3)] + (getCurrentRowIndex(i) + 1) + 1);
         }
 
         return newIndices;
@@ -128,8 +125,8 @@ public class Icosphere {
      * @param i the current index of the triangle vertex to test
      * @return the row starting from 0 the the current vertex is positioned in
      */
-    public static short getCurrentRowIndex(int i) {
-        return (short)Math.floor((-1 + Math.sqrt(1 + 8*i)) / 2);
+    public static int getCurrentRowIndex(int i) {
+        return (int)Math.floor((-1 + Math.sqrt(1 + 8*i)) / 2);
     }
 
     /**

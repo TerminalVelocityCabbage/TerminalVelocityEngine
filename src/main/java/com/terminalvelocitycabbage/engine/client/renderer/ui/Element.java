@@ -207,7 +207,7 @@ public class Element extends UIRenderable {
 	}
 
 	@Override
-	public Element onDoubleClick(short tickTime, Consumer<UIRenderable> consumer) {
+	public Element onDoubleClick(int tickTime, Consumer<UIRenderable> consumer) {
 		return (Element) super.onDoubleClick(tickTime, consumer);
 	}
 

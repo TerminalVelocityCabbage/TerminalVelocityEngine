@@ -5,10 +5,9 @@ import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderElement
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
 import com.terminalvelocitycabbage.engine.debug.Log;
 import org.joml.Matrix4f;
-import org.joml.Vector4f;
 
 import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
+import java.nio.IntBuffer;
 import java.util.List;
 
 public class MeshPart {
@@ -18,9 +17,9 @@ public class MeshPart {
     private int vertexOffset = -1;
 
     private final Vertex[] vertices;
-    private final short[] vertexOrder;
+    private final int[] vertexOrder;
 
-    public MeshPart(Vertex[] vertices, short[] vertexOrder) {
+    public MeshPart(Vertex[] vertices, int[] vertexOrder) {
         this.vertices = vertices;
         this.vertexOrder = vertexOrder;
     }
@@ -49,11 +48,11 @@ public class MeshPart {
      * @param indexBuffer The index buffer to add to.
      * @param counter The vertex counter.
      */
-    public void allocate(ShortBuffer indexBuffer, VertexCounter counter) {
-        short vertexOffset = (short) counter.getVertexIndex(this.verticesCount());
+    public void allocate(IntBuffer indexBuffer, VertexCounter counter) {
+        int vertexOffset = counter.getVertexIndex(this.verticesCount());
         this.vertexOffset = vertexOffset;
-        for (short s : this.vertexOrder) {
-            indexBuffer.put((short) (vertexOffset + s));
+        for (int s : this.vertexOrder) {
+            indexBuffer.put((vertexOffset + s));
         }
     }
 

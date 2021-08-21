@@ -8,9 +8,8 @@ import org.lwjgl.opengl.GL11;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
-import java.io.StringWriter;
 import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
+import java.nio.IntBuffer;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
@@ -31,7 +30,7 @@ public class Mesh {
 	private int vertexCount;
 
 	protected FloatBuffer vertexBuffer;
-	protected ShortBuffer indexBuffer;
+	protected IntBuffer indexBuffer;
 	private Material material;
 
 	public Mesh(RenderFormat format) {
@@ -46,7 +45,7 @@ public class Mesh {
 
 	public void createBuffers(int vertexCount, int indexCount) {
 		this.vertexBuffer = BufferUtils.createFloatBuffer(vertexCount * this.format.getStride());
-		this.indexBuffer = BufferUtils.createShortBuffer(indexCount);
+		this.indexBuffer = BufferUtils.createIntBuffer(indexCount);
 		this.indexCount = indexCount;
 		this.vertexCount = vertexCount;
 	}
@@ -91,7 +90,7 @@ public class Mesh {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
 
 		// Draw the vertices
-		glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_SHORT, 0);
+		glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
 
 		// Put everything back to default (deselect)
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -147,7 +146,7 @@ public class Mesh {
 			this.vertexBuffer.position(0);
 			this.vertexBuffer.get(vertex);
 
-			short[] index = new short[this.indexCount];
+			int[] index = new int[this.indexCount];
 			this.indexBuffer.position(0);
 			this.indexBuffer.get(index);
 

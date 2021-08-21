@@ -1,18 +1,12 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
 import com.terminalvelocitycabbage.engine.client.renderer.Vertex;
-import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderElement;
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
-import com.terminalvelocitycabbage.engine.client.renderer.model.Mesh;
-import com.terminalvelocitycabbage.engine.client.renderer.model.MeshPart;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
 import com.terminalvelocitycabbage.engine.client.renderer.model.RectangleModel;
-import com.terminalvelocitycabbage.engine.client.renderer.shapes.Rectangle;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Style;
-import org.joml.Matrix4f;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -122,7 +116,7 @@ public abstract class UIRenderable {
 		return this;
 	}
 
-	public void callDoubleCLick(short time) {
+	public void callDoubleCLick(int time) {
 		for (DoubleClickRunnable consumer : doubleClickConsumers) {
 			if (consumer.tickTime >= time && time > 0) {
 				consumer.consumer.accept(this);
@@ -130,17 +124,17 @@ public abstract class UIRenderable {
 		}
 	}
 
-	public UIRenderable onDoubleClick(short tickTime, Consumer<UIRenderable> consumer) {
+	public UIRenderable onDoubleClick(int tickTime, Consumer<UIRenderable> consumer) {
 		doubleClickConsumers.add(new DoubleClickRunnable(tickTime, consumer));
 		return this;
 	}
 
 	private static class DoubleClickRunnable {
 
-		short tickTime;
+		int tickTime;
 		Consumer<UIRenderable> consumer;
 
-		public DoubleClickRunnable(short tickTime, Consumer<UIRenderable> consumer) {
+		public DoubleClickRunnable(int tickTime, Consumer<UIRenderable> consumer) {
 			this.tickTime = tickTime;
 			this.consumer = consumer;
 		}

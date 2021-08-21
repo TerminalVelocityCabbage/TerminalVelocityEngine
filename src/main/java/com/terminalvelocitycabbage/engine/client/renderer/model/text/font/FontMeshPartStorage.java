@@ -45,7 +45,7 @@ public class FontMeshPartStorage {
 
 		return new MeshPart(
 			new Vertex[]{topLeft, bottomLeft, bottomRight, topRight},
-			new short[]{ 0, 1, 2, 2, 3, 0 }
+			new int[]{ 0, 1, 2, 2, 3, 0 }
 		);
 	}
 }

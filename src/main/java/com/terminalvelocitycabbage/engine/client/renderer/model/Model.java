@@ -6,7 +6,7 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
+import java.nio.IntBuffer;
 import java.util.Collections;
 import java.util.List;
 
@@ -154,7 +154,7 @@ public class Model {
 			return vertexCount;
 		}
 
-		public void allocateMesh(ShortBuffer indexBuffer, VertexCounter counter) {
+		public void allocateMesh(IntBuffer indexBuffer, VertexCounter counter) {
 			for (Part child : this.children) {
 				child.allocateMesh(indexBuffer, counter);
 			}

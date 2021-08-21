@@ -13,7 +13,7 @@ public class RectangleModel extends Model {
     public RectangleModel(RenderFormat format, Vertex v1, Vertex v2, Vertex v3, Vertex v4) {
         super(format, Collections.singletonList(new Part(new MeshPart(
             new Vertex[] { v1, v2, v3, v4 },
-            new short[] { 0, 1, 2, 2, 3, 0 }
+            new int[] { 0, 1, 2, 2, 3, 0 }
         ))));
         this.vertices = new Vertex[] { v1, v2, v3, v4 };
     }

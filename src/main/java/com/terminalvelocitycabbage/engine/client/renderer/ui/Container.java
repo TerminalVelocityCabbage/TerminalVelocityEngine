@@ -321,7 +321,7 @@ public class Container extends UIRenderable {
 	}
 
 	@Override
-	public Container onDoubleClick(short tickTime, Consumer<UIRenderable> consumer) {
+	public Container onDoubleClick(int tickTime, Consumer<UIRenderable> consumer) {
 		return (Container) super.onDoubleClick(tickTime, consumer);
 	}
 

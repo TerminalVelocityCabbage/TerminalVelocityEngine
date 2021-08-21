@@ -3,7 +3,6 @@ package com.terminalvelocitycabbage.engine.client.renderer.ui;
 import com.terminalvelocitycabbage.engine.client.ClientBase;
 import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
-import com.terminalvelocitycabbage.engine.client.renderer.shapes.Rectangle;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Style;
 import com.terminalvelocitycabbage.engine.events.EventContext;
 import com.terminalvelocitycabbage.engine.events.HandleEvent;
@@ -149,7 +148,7 @@ public class Canvas extends UIRenderable {
 	}
 
 	@Override
-	public Canvas onDoubleClick(short tickTime, Consumer<UIRenderable> consumer) {
+	public Canvas onDoubleClick(int tickTime, Consumer<UIRenderable> consumer) {
 		return (Canvas) super.onDoubleClick(tickTime, consumer);
 	}
 

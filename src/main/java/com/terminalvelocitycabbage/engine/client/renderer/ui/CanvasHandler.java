@@ -49,7 +49,7 @@ public class CanvasHandler {
 		}
 	}
 
-	public void tick(double posX, double posY, boolean leftClick, boolean rightClick, short timeSinceLastClick) {
+	public void tick(double posX, double posY, boolean leftClick, boolean rightClick, int timeSinceLastClick) {
 
 		getActiveCanvases().forEach(canvas -> canvas.getAllChildren().forEach(element -> {
 
