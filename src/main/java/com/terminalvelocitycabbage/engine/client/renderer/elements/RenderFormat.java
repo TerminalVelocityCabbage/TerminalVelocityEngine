@@ -9,7 +9,7 @@ public class RenderFormat {
     public static final RenderFormat POSITION_UV_NORMAL = new RenderFormat(RenderElement.POSITION, RenderElement.UV, RenderElement.NORMAL);
     public static final RenderFormat POSITION_UV_COLOUR = new RenderFormat(RenderElement.POSITION, RenderElement.UV, RenderElement.COLOUR_RGBA);
     public static final RenderFormat POSITION_UV_NORMAL_COLOUR = new RenderFormat(RenderElement.POSITION, RenderElement.UV, RenderElement.NORMAL, RenderElement.COLOUR_RGBA);
-    public static final RenderFormat POSITION_COLOUR = new RenderFormat(RenderElement.POSITION, RenderElement.UV, RenderElement.COLOUR_RGBA);
+    public static final RenderFormat POSITION_COLOUR = new RenderFormat(RenderElement.POSITION, RenderElement.COLOUR_RGBA);
 
     private final List<RenderElement> elementList;
     private final Map<RenderElement, Integer> offsetList = new HashMap<>();
