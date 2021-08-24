@@ -39,7 +39,7 @@ public abstract class EmptyGameObject {
 	}
 
 	public void rotate(float x, float y, float z) {
-		rotation.add(-x, -y, -z, rotation.w, rotation);
+		rotation.rotateXYZ(x, y, z);
 		queueUpdate();
 	}
 
