@@ -35,17 +35,14 @@ public abstract class EmptyGameObject {
 
 	public void move(float x, float y, float z) {
 		position.add(x, y, z);
-		queueUpdate();
 	}
 
 	public void rotate(float x, float y, float z) {
 		rotation.rotateXYZ(x, y, z);
-		queueUpdate();
 	}
 
 	public void scale(float x, float y, float z) {
 		scale.add(x, y, z);
-		queueUpdate();
 	}
 
 	public void disable() {
@@ -72,9 +69,7 @@ public abstract class EmptyGameObject {
 
 	public Matrix4f getTransformationMatrix() {
 		transformationMatrix.identity().translate(position).
-				rotateX((float)Math.toRadians(-rotation.x)).
-				rotateY((float)Math.toRadians(-rotation.y)).
-				rotateZ((float)Math.toRadians(-rotation.z)).
+				rotate(rotation).
 				scale(scale);
 		return transformationMatrix;
 	}
