@@ -1,47 +1,21 @@
 package com.terminalvelocitycabbage.engine.utils;
 
 /**
- * K.jpg's OpenSimplex 2, faster variant
- *
- * - 2D is standard simplex implemented using a lookup table.
- * - 3D is "Re-oriented 4-point BCC noise" which constructs a
- *   congruent BCC lattice in a much different way than usual.
- * - 4D constructs the lattice as a union of five copies of its
- *   reciprocal. It successively finds the closest point on each.
- *
- * Multiple versions of each function are provided. See the
- * documentation above each, for more info.
+ * K.jpg's OpenSimplex2 noise
  */
+
 public class OpenSimplex2F {
+    private static final long PRIME_X = 0x5205402B9270C86FL;
+    private static final long PRIME_Y = 0x598CD327003817B5L;
+    private static final long PRIME_Z = 0x5BCC226E9FA0BACBL;
+    private static final long HASH_UNIQUIFIER = 0x53A3F72DEEC546F5L;
+    private static final long PAIR_SEED_FLIP_BITS = -0x52D547B2E96ED629L;
 
-    private static final int PSIZE = 2048;
-    private static final int PMASK = 2047;
+    private static final double SKEW2 = 0.366025403784439;
+    private static final double UNSKEW2 = -0.21132486540518713;
 
-    private short[] perm;
-    private Grad2[] permGrad2;
-    private Grad3[] permGrad3;
-    private Grad4[] permGrad4;
-
-    public OpenSimplex2F(long seed) {
-        perm = new short[PSIZE];
-        permGrad2 = new Grad2[PSIZE];
-        permGrad3 = new Grad3[PSIZE];
-        permGrad4 = new Grad4[PSIZE];
-        short[] source = new short[PSIZE];
-        for (short i = 0; i < PSIZE; i++)
-            source[i] = i;
-        for (int i = PSIZE - 1; i >= 0; i--) {
-            seed = seed * 6364136223846793005L + 1442695040888963407L;
-            int r = (int)((seed + 31) % (i + 1));
-            if (r < 0)
-                r += (i + 1);
-            perm[i] = source[r];
-            permGrad2[i] = GRADIENTS_2D[perm[i]];
-            permGrad3[i] = GRADIENTS_3D[perm[i]];
-            permGrad4[i] = GRADIENTS_4D[perm[i]];
-            source[r] = source[i];
-        }
-    }
+    private static final double ROOT3OVER3 = 0.577350269189626;
+    private static final double ROTATE3_ORTHOGONALIZER = UNSKEW2;
 
     /*
      * Noise Evaluators
@@ -50,326 +24,161 @@ public class OpenSimplex2F {
     /**
      * 2D Simplex noise, standard lattice orientation.
      */
-    public double noise2(double x, double y) {
+    public static float noise2(long seed, double x, double y) {
 
         // Get points for A2* lattice
-        double s = 0.366025403784439 * (x + y);
+        double s = SKEW2 * (x + y);
         double xs = x + s, ys = y + s;
 
-        return makeSense(noise2_Base(xs, ys));
-    }
-
-    /**
-     * 2D Simplex noise, with Y pointing down the main diagonal.
-     * Might be better for a 2D sandbox style game, where Y is vertical.
-     * Probably slightly less optimal for heightmaps or continent maps.
-     */
-    public double noise2_XBeforeY(double x, double y) {
-
-        // Skew transform and rotation baked into one.
-        double xx = x * 0.7071067811865476;
-        double yy = y * 1.224744871380249;
-
-        return makeSense(noise2_Base(yy + xx, yy - xx));
+        return noise2_UnskewedBase(seed, xs, ys);
     }
 
     /**
      * 2D Simplex noise base.
-     * Lookup table implementation inspired by DigitalShadow.
      */
-    private double noise2_Base(double xs, double ys) {
-        double value = 0;
+    private static float noise2_UnskewedBase(long seed, double xs, double ys) {
+        float value = 0;
+        // 2D OpenSimplex2S case is a modified 2D simplex noise.
 
-        // Get base points and offsets
-        int xsb = fastFloor(xs), ysb = fastFloor(ys);
-        double xsi = xs - xsb, ysi = ys - ysb;
+        int xsb = fastFloor(xs);
+        int ysb = fastFloor(ys);
+        float xi = (float)(xs - xsb);
+        float yi = (float)(ys - ysb);
 
-        // Index to point list
-        int index = (int)((ysi - xsi) / 2 + 1);
+        long xsbp = xsb * PRIME_X;
+        long ysbp = ysb * PRIME_Y;
 
-        double ssi = (xsi + ysi) * -0.211324865405187;
-        double xi = xsi + ssi, yi = ysi + ssi;
+        float t = (xi + yi) * (float)UNSKEW2;
+        float dx0 = xi + t;
+        float dy0 = yi + t;
 
-        // Point contributions
-        for (int i = 0; i < 3; i++) {
-            LatticePoint2D c = LOOKUP_2D[index + i];
-
-            double dx = xi + c.dx, dy = yi + c.dy;
-            double attn = 0.5 - dx * dx - dy * dy;
-            if (attn <= 0) continue;
-
-            int pxm = (xsb + c.xsv) & PMASK, pym = (ysb + c.ysv) & PMASK;
-            Grad2 grad = permGrad2[perm[pxm] ^ pym];
-            double extrapolation = grad.dx * dx + grad.dy * dy;
-
-            attn *= attn;
-            value += attn * attn * extrapolation;
+        float a0 = 0.5f - dx0 * dx0 - dy0 * dy0;
+        if (a0 > 0) {
+            value = (a0 * a0) * (a0 * a0) * grad(seed, xsbp, ysbp, dx0, dy0);
         }
 
-        return value;
-    }
-
-    /**
-     * 3D Re-oriented 4-point BCC noise, classic orientation.
-     * Proper substitute for 3D Simplex in light of Forbidden Formulae.
-     * Use noise3_XYBeforeZ or noise3_XZBeforeY instead, wherever appropriate.
-     */
-    public double noise3_Classic(double x, double y, double z) {
-
-        // Re-orient the cubic lattices via rotation, to produce the expected look on cardinal planar slices.
-        // If texturing objects that don't tend to have cardinal plane faces, you could even remove this.
-        // Orthonormal rotation. Not a skew transform.
-        double r = (2.0 / 3.0) * (x + y + z);
-        double xr = r - x, yr = r - y, zr = r - z;
-
-        // Evaluate both lattices to form a BCC lattice.
-        return makeSense(noise3_BCC(xr, yr, zr));
-    }
-
-    /**
-     * 3D Re-oriented 4-point BCC noise, with better visual isotropy in (X, Y).
-     * Recommended for 3D terrain and time-varied animations.
-     * The Z coordinate should always be the "different" coordinate in your use case.
-     * If Y is vertical in world coordinates, call noise3_XYBeforeZ(x, z, Y) or use noise3_XZBeforeY.
-     * If Z is vertical in world coordinates, call noise3_XYBeforeZ(x, y, Z).
-     * For a time varied animation, call noise3_XYBeforeZ(x, y, T).
-     */
-    public double noise3_XYBeforeZ(double x, double y, double z) {
-
-        // Re-orient the cubic lattices without skewing, to make X and Y triangular like 2D.
-        // Orthonormal rotation. Not a skew transform.
-        double xy = x + y;
-        double s2 = xy * -0.211324865405187;
-        double zz = z * 0.577350269189626;
-        double xr = x + s2 - zz, yr = y + s2 - zz;
-        double zr = xy * 0.577350269189626 + zz;
-
-        // Evaluate both lattices to form a BCC lattice.
-        return makeSense(noise3_BCC(xr, yr, zr));
-    }
-
-    /**
-     * 3D Re-oriented 4-point BCC noise, with better visual isotropy in (X, Z).
-     * Recommended for 3D terrain and time-varied animations.
-     * The Y coordinate should always be the "different" coordinate in your use case.
-     * If Y is vertical in world coordinates, call noise3_XZBeforeY(x, Y, z).
-     * If Z is vertical in world coordinates, call noise3_XZBeforeY(x, Z, y) or use noise3_XYBeforeZ.
-     * For a time varied animation, call noise3_XZBeforeY(x, T, y) or use noise3_XYBeforeZ.
-     */
-    public double noise3_XZBeforeY(double x, double y, double z) {
-
-        // Re-orient the cubic lattices without skewing, to make X and Z triangular like 2D.
-        // Orthonormal rotation. Not a skew transform.
-        double xz = x + z;
-        double s2 = xz * -0.211324865405187;
-        double yy = y * 0.577350269189626;
-        double xr = x + s2 - yy; double zr = z + s2 - yy;
-        double yr = xz * 0.577350269189626 + yy;
-
-        // Evaluate both lattices to form a BCC lattice.
-        return makeSense(noise3_BCC(xr, yr, zr));
-    }
-
-    /**
-     * Generate overlapping cubic lattices for 3D Re-oriented BCC noise.
-     * Lookup table implementation inspired by DigitalShadow.
-     * It was actually faster to narrow down the points in the loop itself,
-     * than to build up the index with enough info to isolate 4 points.
-     */
-    private double noise3_BCC(double xr, double yr, double zr) {
-
-        // Get base and offsets inside cube of first lattice.
-        int xrb = fastFloor(xr), yrb = fastFloor(yr), zrb = fastFloor(zr);
-        double xri = xr - xrb, yri = yr - yrb, zri = zr - zrb;
-
-        // Identify which octant of the cube we're in. This determines which cell
-        // in the other cubic lattice we're in, and also narrows down one point on each.
-        int xht = (int)(xri + 0.5), yht = (int)(yri + 0.5), zht = (int)(zri + 0.5);
-        int index = (xht << 0) | (yht << 1) | (zht << 2);
-
-        // Point contributions
-        double value = 0;
-        LatticePoint3D c = LOOKUP_3D[index];
-        while (c != null) {
-            double dxr = xri + c.dxr, dyr = yri + c.dyr, dzr = zri + c.dzr;
-            double attn = 0.5 - dxr * dxr - dyr * dyr - dzr * dzr;
-            if (attn < 0) {
-                c = c.nextOnFailure;
-            } else {
-                int pxm = (xrb + c.xrv) & PMASK, pym = (yrb + c.yrv) & PMASK, pzm = (zrb + c.zrv) & PMASK;
-                Grad3 grad = permGrad3[perm[perm[pxm] ^ pym] ^ pzm];
-                double extrapolation = grad.dx * dxr + grad.dy * dyr + grad.dz * dzr;
-
-                attn *= attn;
-                value += attn * attn * extrapolation;
-                c = c.nextOnSuccess;
-            }
-        }
-        return value;
-    }
-
-    /**
-     * 4D OpenSimplex2F noise, classic lattice orientation.
-     */
-    public double noise4_Classic(double x, double y, double z, double w) {
-
-        // Get points for A4 lattice
-        double s = -0.138196601125011 * (x + y + z + w);
-        double xs = x + s, ys = y + s, zs = z + s, ws = w + s;
-
-        return makeSense(noise4_Base(xs, ys, zs, ws));
-    }
-
-    /**
-     * 4D OpenSimplex2F noise, with XY and ZW forming orthogonal triangular-based planes.
-     * Recommended for 3D terrain, where X and Y (or Z and W) are horizontal.
-     * Recommended for noise(x, y, sin(time), cos(time)) trick.
-     */
-    public double noise4_XYBeforeZW(double x, double y, double z, double w) {
-
-        double s2 = (x + y) * -0.178275657951399372 + (z + w) * 0.215623393288842828;
-        double t2 = (z + w) * -0.403949762580207112 + (x + y) * -0.375199083010075342;
-        double xs = x + s2, ys = y + s2, zs = z + t2, ws = w + t2;
-
-        return makeSense(noise4_Base(xs, ys, zs, ws));
-    }
-
-    /**
-     * 4D OpenSimplex2F noise, with XZ and YW forming orthogonal triangular-based planes.
-     * Recommended for 3D terrain, where X and Z (or Y and W) are horizontal.
-     */
-    public double noise4_XZBeforeYW(double x, double y, double z, double w) {
-
-        double s2 = (x + z) * -0.178275657951399372 + (y + w) * 0.215623393288842828;
-        double t2 = (y + w) * -0.403949762580207112 + (x + z) * -0.375199083010075342;
-        double xs = x + s2, ys = y + t2, zs = z + s2, ws = w + t2;
-
-        return makeSense(noise4_Base(xs, ys, zs, ws));
-    }
-
-    /**
-     * 4D OpenSimplex2F noise, with XYZ oriented like noise3_Classic,
-     * and W for an extra degree of freedom. W repeats eventually.
-     * Recommended for time-varied animations which texture a 3D object (W=time)
-     */
-    public double noise4_XYZBeforeW(double x, double y, double z, double w) {
-
-        double xyz = x + y + z;
-        double ww = w * 0.2236067977499788;
-        double s2 = xyz * -0.16666666666666666 + ww;
-        double xs = x + s2, ys = y + s2, zs = z + s2, ws = -0.5 * xyz + ww;
-
-        return makeSense(noise4_Base(xs, ys, zs, ws));
-    }
-
-    /**
-     * 4D OpenSimplex2F noise base.
-     * Current implementation not fully optimized by lookup tables.
-     * But still comes out slightly ahead of Gustavson's Simplex in tests.
-     */
-    private double noise4_Base(double xs, double ys, double zs, double ws) {
-        double value = 0;
-
-        // Get base points and offsets
-        int xsb = fastFloor(xs), ysb = fastFloor(ys), zsb = fastFloor(zs), wsb = fastFloor(ws);
-        double xsi = xs - xsb, ysi = ys - ysb, zsi = zs - zsb, wsi = ws - wsb;
-
-        // If we're in the lower half, flip so we can repeat the code for the upper half. We'll flip back later.
-        double siSum = xsi + ysi + zsi + wsi;
-        double ssi = siSum * 0.309016994374947; // Prep for vertex contributions.
-        boolean inLowerHalf = (siSum < 2);
-        if (inLowerHalf) {
-            xsi = 1 - xsi; ysi = 1 - ysi; zsi = 1 - zsi; wsi = 1 - wsi;
-            siSum = 4 - siSum;
+        float a1 = (float)(2 * (1 + 2 * UNSKEW2) * (1 / UNSKEW2 + 2)) * t + ((float)(-2 * (1 + 2 * UNSKEW2) * (1 + 2 * UNSKEW2)) + a0);
+        if (a1 > 0) {
+            float dx1 = dx0 - (float)(1 + 2 * UNSKEW2);
+            float dy1 = dy0 - (float)(1 + 2 * UNSKEW2);
+            value += (a1 * a1) * (a1 * a1) * grad(seed, xsbp + PRIME_X, ysbp + PRIME_Y, dx1, dy1);
         }
 
-        // Consider opposing vertex pairs of the octahedron formed by the central cross-section of the stretched tesseract
-        double aabb = xsi + ysi - zsi - wsi, abab = xsi - ysi + zsi - wsi, abba = xsi - ysi - zsi + wsi;
-        double aabbScore = Math.abs(aabb), ababScore = Math.abs(abab), abbaScore = Math.abs(abba);
-
-        // Find the closest point on the stretched tesseract as if it were the upper half
-        int vertexIndex, via, vib;
-        double asi, bsi;
-        if (aabbScore > ababScore && aabbScore > abbaScore) {
-            if (aabb > 0) {
-                asi = zsi; bsi = wsi; vertexIndex = 0b0011; via = 0b0111; vib = 0b1011;
-            } else {
-                asi = xsi; bsi = ysi; vertexIndex = 0b1100; via = 0b1101; vib = 0b1110;
-            }
-        } else if (ababScore > abbaScore) {
-            if (abab > 0) {
-                asi = ysi; bsi = wsi; vertexIndex = 0b0101; via = 0b0111; vib = 0b1101;
-            } else {
-                asi = xsi; bsi = zsi; vertexIndex = 0b1010; via = 0b1011; vib = 0b1110;
+        if (dy0 > dx0) {
+            float dx2 = dx0 - (float)UNSKEW2;
+            float dy2 = dy0 - (float)(UNSKEW2 + 1);
+            float a2 = 0.5f - dx2 * dx2 - dy2 * dy2;
+            if (a2 > 0) {
+                value += (a2 * a2) * (a2 * a2) * grad(seed, xsbp, ysbp + PRIME_Y, dx2, dy2);
             }
         } else {
-            if (abba > 0) {
-                asi = ysi; bsi = zsi; vertexIndex = 0b1001; via = 0b1011; vib = 0b1101;
+            float dx2 = dx0 - (float)(UNSKEW2 + 1);
+            float dy2 = dy0 - (float)UNSKEW2;
+            float a2 = 0.5f - dx2 * dx2 - dy2 * dy2;
+            if (a2 > 0) {
+                value += (a2 * a2) * (a2 * a2) * grad(seed, xsbp + PRIME_X, ysbp, dx2, dy2);
+            }
+        }
+
+        return value;
+    }
+
+    /**
+     * 3D OpenSimplex2 noise, with better visual isotropy in (X, Z).
+     * Recommended for 3D terrain and time-varied animations.
+     * The Y coordinate should always be the "different" coordinate in whatever your use case is.
+     * If Y is vertical in world coordinates, call Noise3_ImproveXZ(x, Y, z).
+     * If Z is vertical in world coordinates, call Noise3_ImproveXZ(x, Z, y).
+     * For a time varied animation, call Noise3_ImproveXZ(x, T, y).
+     */
+    public static float noise3_ImproveXZ(long seed, double x, double y, double z) {
+
+        // Re-orient the cubic lattices without skewing, so Y points up the main lattice diagonal,
+        // and the planes formed by XZ are moved far out of alignment with the cube faces.
+        // Orthonormal rotation. Not a skew transform.
+        double xz = x + z;
+        double s2 = xz * ROTATE3_ORTHOGONALIZER;
+        double yy = y * ROOT3OVER3;
+        double xr = x + s2 + yy;
+        double zr = z + s2 + yy;
+        double yr = xz * -ROOT3OVER3 + yy;
+
+        // Evaluate both lattices to form a BCC lattice.
+        return noise3_UnrotatedBase(seed, xr, yr, zr) + 0.5f;
+    }
+
+    /**
+     * Generate overlapping cubic lattices for 3D OpenSimplex2 noise.
+     */
+    private static float noise3_UnrotatedBase(long seed, double xr, double yr, double zr) {
+        int xrb = fastRound(xr);
+        int yrb = fastRound(yr);
+        int zrb = fastRound(zr);
+        float xri = (float)(xr - xrb);
+        float yri = (float)(yr - yrb);
+        float zri = (float)(zr - zrb);
+
+        int xNSign = (int)(-1.0f - xri) | 1;
+        int yNSign = (int)(-1.0f - yri) | 1;
+        int zNSign = (int)(-1.0f - zri) | 1;
+
+        float ax0 = xNSign * -xri;
+        float ay0 = yNSign * -yri;
+        float az0 = zNSign * -zri;
+
+        long xrbp = xrb * PRIME_X;
+        long yrbp = yrb * PRIME_Y;
+        long zrbp = zrb * PRIME_Z;
+
+        float value = 0;
+        float a = (0.6f - xri * xri) - (yri * yri + zri * zri);
+
+        for (int l = 0; ; l++) {
+            if (a > 0) {
+                value += (a * a) * (a * a) * grad(seed, xrbp, yrbp, zrbp, xri, yri, zri);
+            }
+
+            if (ax0 >= ay0 && ax0 >= az0) {
+                float b = a + ax0 + ax0;
+                if (b > 1) {
+                    b -= 1;
+                    value += (b * b) * (b * b) * grad(seed, xrbp - xNSign * PRIME_X, yrbp, zrbp, xri + xNSign, yri, zri);
+                }
+            } else if (ay0 > ax0 && ay0 >= az0) {
+                float b = a + ay0 + ay0;
+                if (b > 1) {
+                    b -= 1;
+                    value += (b * b) * (b * b) * grad(seed, xrbp, yrbp - yNSign * PRIME_Y, zrbp, xri, yri + yNSign, zri);
+                }
             } else {
-                asi = xsi; bsi = wsi; vertexIndex = 0b0110; via = 0b0111; vib = 0b1110;
-            }
-        }
-        if (bsi > asi) {
-            via = vib;
-            double temp = bsi;
-            bsi = asi;
-            asi = temp;
-        }
-        if (siSum + asi > 3) {
-            vertexIndex = via;
-            if (siSum + bsi > 4) {
-                vertexIndex = 0b1111;
-            }
-        }
-
-        // Now flip back if we're actually in the lower half.
-        if (inLowerHalf) {
-            xsi = 1 - xsi; ysi = 1 - ysi; zsi = 1 - zsi; wsi = 1 - wsi;
-            vertexIndex ^= 0b1111;
-        }
-
-        // Five points to add, total, from five copies of the A4 lattice.
-        for (int i = 0; i < 5; i++) {
-
-            // Update xsb/etc. and add the lattice point's contribution.
-            LatticePoint4D c = VERTICES_4D[vertexIndex];
-            xsb += c.xsv; ysb += c.ysv; zsb += c.zsv; wsb += c.wsv;
-            double xi = xsi + ssi, yi = ysi + ssi, zi = zsi + ssi, wi = wsi + ssi;
-            double dx = xi + c.dx, dy = yi + c.dy, dz = zi + c.dz, dw = wi + c.dw;
-            double attn = 0.5 - dx * dx - dy * dy - dz * dz - dw * dw;
-            if (attn > 0) {
-                int pxm = xsb & PMASK, pym = ysb & PMASK, pzm = zsb & PMASK, pwm = wsb & PMASK;
-                Grad4 grad = permGrad4[perm[perm[perm[pxm] ^ pym] ^ pzm] ^ pwm];
-                double ramped = grad.dx * dx + grad.dy * dy + grad.dz * dz + grad.dw * dw;
-
-                attn *= attn;
-                value += attn * attn * ramped;
+                float b = a + az0 + az0;
+                if (b > 1) {
+                    b -= 1;
+                    value += (b * b) * (b * b) * grad(seed, xrbp, yrbp, zrbp - zNSign * PRIME_Z, xri, yri, zri + zNSign);
+                }
             }
 
-            // Maybe this helps the compiler/JVM/LLVM/etc. know we can end the loop here. Maybe not.
-            if (i == 4) break;
+            if (l == 1) break;
 
-            // Update the relative skewed coordinates to reference the vertex we just added.
-            // Rather, reference its counterpart on the lattice copy that is shifted down by
-            // the vector <-0.2, -0.2, -0.2, -0.2>
-            xsi += c.xsi; ysi += c.ysi; zsi += c.zsi; wsi += c.wsi;
-            ssi += c.ssiDelta;
+            ax0 = 0.5f - ax0;
+            ay0 = 0.5f - ay0;
+            az0 = 0.5f - az0;
 
-            // Next point is the closest vertex on the 4-simplex whose base vertex is the aforementioned vertex.
-            double score0 = 1.0 + ssi * (-1.0 / 0.309016994374947); // Seems slightly faster than 1.0-xsi-ysi-zsi-wsi
-            vertexIndex = 0b0000;
-            if (xsi >= ysi && xsi >= zsi && xsi >= wsi && xsi >= score0) {
-                vertexIndex = 0b0001;
-            }
-            else if (ysi > xsi && ysi >= zsi && ysi >= wsi && ysi >= score0) {
-                vertexIndex = 0b0010;
-            }
-            else if (zsi > xsi && zsi > ysi && zsi >= wsi && zsi >= score0) {
-                vertexIndex = 0b0100;
-            }
-            else if (wsi > xsi && wsi > ysi && wsi > zsi && wsi >= score0) {
-                vertexIndex = 0b1000;
-            }
+            xri = xNSign * ax0;
+            yri = yNSign * ay0;
+            zri = zNSign * az0;
+
+            a += (0.75f - ax0) - (ay0 + az0);
+
+            xrbp += (xNSign >> 1) & PRIME_X;
+            yrbp += (yNSign >> 1) & PRIME_Y;
+            zrbp += (zNSign >> 1) & PRIME_Z;
+
+            xNSign = -xNSign;
+            yNSign = -yNSign;
+            zNSign = -zNSign;
+
+            seed ^= PAIR_SEED_FLIP_BITS;
         }
 
         return value;
@@ -379,412 +188,163 @@ public class OpenSimplex2F {
      * Utility
      */
 
+    private static float grad(long seed, long xrvp, long yrvp, float dx, float dy) {
+        long hash = seed ^ xrvp ^ yrvp;
+        hash *= HASH_UNIQUIFIER;
+        hash ^= hash >> 56;
+        int gi = (int)hash & 0xFE;
+        return GRADIENTS_2D[gi | 0] * dx + GRADIENTS_2D[gi | 1] * dy;
+    }
+
+    private static float grad(long seed, long xrvp, long yrvp, long zrvp, float dx, float dy, float dz) {
+        long hash = (seed ^ xrvp) ^ (yrvp ^ zrvp);
+        hash *= HASH_UNIQUIFIER;
+        hash ^= hash >> 54;
+        int gi = (int)hash & 0x3FC;
+        return GRADIENTS_3D[gi | 0] * dx + GRADIENTS_3D[gi | 1] * dy + GRADIENTS_3D[gi | 2] * dz;
+    }
+
     private static int fastFloor(double x) {
         int xi = (int)x;
         return x < xi ? xi - 1 : xi;
     }
 
-    /*
-     * Definitions
-     */
-
-    private static final LatticePoint2D[] LOOKUP_2D;
-    private static final LatticePoint3D[] LOOKUP_3D;
-    private static final LatticePoint4D[] VERTICES_4D;
-    static {
-        LOOKUP_2D = new LatticePoint2D[4];
-        LOOKUP_3D = new LatticePoint3D[8];
-        VERTICES_4D = new LatticePoint4D[16];
-
-        LOOKUP_2D[0] = new LatticePoint2D(1, 0);
-        LOOKUP_2D[1] = new LatticePoint2D(0, 0);
-        LOOKUP_2D[2] = new LatticePoint2D(1, 1);
-        LOOKUP_2D[3] = new LatticePoint2D(0, 1);
-
-        for (int i = 0; i < 8; i++) {
-            int i1, j1, k1, i2, j2, k2;
-            i1 = (i >> 0) & 1; j1 = (i >> 1) & 1; k1 = (i >> 2) & 1;
-            i2 = i1 ^ 1; j2 = j1 ^ 1; k2 = k1 ^ 1;
-
-            // The two points within this octant, one from each of the two cubic half-lattices.
-            LatticePoint3D c0 = new LatticePoint3D(i1, j1, k1, 0);
-            LatticePoint3D c1 = new LatticePoint3D(i1 + i2, j1 + j2, k1 + k2, 1);
-
-            // Each single step away on the first half-lattice.
-            LatticePoint3D c2 = new LatticePoint3D(i1 ^ 1, j1, k1, 0);
-            LatticePoint3D c3 = new LatticePoint3D(i1, j1 ^ 1, k1, 0);
-            LatticePoint3D c4 = new LatticePoint3D(i1, j1, k1 ^ 1, 0);
-
-            // Each single step away on the second half-lattice.
-            LatticePoint3D c5 = new LatticePoint3D(i1 + (i2 ^ 1), j1 + j2, k1 + k2, 1);
-            LatticePoint3D c6 = new LatticePoint3D(i1 + i2, j1 + (j2 ^ 1), k1 + k2, 1);
-            LatticePoint3D c7 = new LatticePoint3D(i1 + i2, j1 + j2, k1 + (k2 ^ 1), 1);
-
-            // First two are guaranteed.
-            c0.nextOnFailure = c0.nextOnSuccess = c1;
-            c1.nextOnFailure = c1.nextOnSuccess = c2;
-
-            // Once we find one on the first half-lattice, the rest are out.
-            // In addition, knowing c2 rules out c5.
-            c2.nextOnFailure = c3; c2.nextOnSuccess = c6;
-            c3.nextOnFailure = c4; c3.nextOnSuccess = c5;
-            c4.nextOnFailure = c4.nextOnSuccess = c5;
-
-            // Once we find one on the second half-lattice, the rest are out.
-            c5.nextOnFailure = c6; c5.nextOnSuccess = null;
-            c6.nextOnFailure = c7; c6.nextOnSuccess = null;
-            c7.nextOnFailure = c7.nextOnSuccess = null;
-
-            LOOKUP_3D[i] = c0;
-        }
-
-        for (int i = 0; i < 16; i++) {
-            VERTICES_4D[i] = new LatticePoint4D((i >> 0) & 1, (i >> 1) & 1, (i >> 2) & 1, (i >> 3) & 1);
-        }
-    }
-
-    private static class LatticePoint2D {
-        int xsv, ysv;
-        double dx, dy;
-        public LatticePoint2D(int xsv, int ysv) {
-            this.xsv = xsv; this.ysv = ysv;
-            double ssv = (xsv + ysv) * -0.211324865405187;
-            this.dx = -xsv - ssv;
-            this.dy = -ysv - ssv;
-        }
-    }
-
-    private static class LatticePoint3D {
-        public double dxr, dyr, dzr;
-        public int xrv, yrv, zrv;
-        LatticePoint3D nextOnFailure, nextOnSuccess;
-        public LatticePoint3D(int xrv, int yrv, int zrv, int lattice) {
-            this.dxr = -xrv + lattice * 0.5; this.dyr = -yrv + lattice * 0.5; this.dzr = -zrv + lattice * 0.5;
-            this.xrv = xrv + lattice * 1024; this.yrv = yrv + lattice * 1024; this.zrv = zrv + lattice * 1024;
-        }
-    }
-
-    private static class LatticePoint4D {
-        int xsv, ysv, zsv, wsv;
-        double dx, dy, dz, dw;
-        double xsi, ysi, zsi, wsi;
-        double ssiDelta;
-        public LatticePoint4D(int xsv, int ysv, int zsv, int wsv) {
-            this.xsv = xsv + 409; this.ysv = ysv + 409; this.zsv = zsv + 409; this.wsv = wsv + 409;
-            double ssv = (xsv + ysv + zsv + wsv) * 0.309016994374947;
-            this.dx = -xsv - ssv;
-            this.dy = -ysv - ssv;
-            this.dz = -zsv - ssv;
-            this.dw = -wsv - ssv;
-            this.xsi = 0.2 - xsv;
-            this.ysi = 0.2 - ysv;
-            this.zsi = 0.2 - zsv;
-            this.wsi = 0.2 - wsv;
-            this.ssiDelta = (0.8 - xsv - ysv - zsv - wsv) * 0.309016994374947;
-        }
+    private static int fastRound(double x) {
+        return x < 0 ? (int)(x - 0.5) : (int)(x + 0.5);
     }
 
     /*
-     * Gradients
+     * Lookup Tables & Gradients
      */
 
-    private static class Grad2 {
-        double dx, dy;
-        public Grad2(double dx, double dy) {
-            this.dx = dx; this.dy = dy;
-        }
-    }
+    private static final double NORMALIZER2 = 0.01001634121365712;
+    private static final double NORMALIZER3 = 0.07969837668935331;
 
-    private static class Grad3 {
-        double dx, dy, dz;
-        public Grad3(double dx, double dy, double dz) {
-            this.dx = dx; this.dy = dy; this.dz = dz;
-        }
-    }
+    private static final int N_GRADS_2D = 128;
+    private static final int N_GRADS_3D = 256;
 
-    private static class Grad4 {
-        double dx, dy, dz, dw;
-        public Grad4(double dx, double dy, double dz,  double dw) {
-            this.dx = dx; this.dy = dy; this.dz = dz; this.dw = dw;
-        }
-    }
+    private static float[] GRADIENTS_2D;
+    private static float[] GRADIENTS_3D;
 
-    private static final double N2 = 0.01001634121365712;
-    private static final double N3 = 0.030485933181293584;
-    private static final double N4 = 0.009202377986303158;
-    private static final Grad2[] GRADIENTS_2D;
-    private static final Grad3[] GRADIENTS_3D;
-    private static final Grad4[] GRADIENTS_4D;
     static {
 
-        GRADIENTS_2D = new Grad2[PSIZE];
-        Grad2[] grad2 = {
-                new Grad2( 0.130526192220052,  0.99144486137381),
-                new Grad2( 0.38268343236509,   0.923879532511287),
-                new Grad2( 0.608761429008721,  0.793353340291235),
-                new Grad2( 0.793353340291235,  0.608761429008721),
-                new Grad2( 0.923879532511287,  0.38268343236509),
-                new Grad2( 0.99144486137381,   0.130526192220051),
-                new Grad2( 0.99144486137381,  -0.130526192220051),
-                new Grad2( 0.923879532511287, -0.38268343236509),
-                new Grad2( 0.793353340291235, -0.60876142900872),
-                new Grad2( 0.608761429008721, -0.793353340291235),
-                new Grad2( 0.38268343236509,  -0.923879532511287),
-                new Grad2( 0.130526192220052, -0.99144486137381),
-                new Grad2(-0.130526192220052, -0.99144486137381),
-                new Grad2(-0.38268343236509,  -0.923879532511287),
-                new Grad2(-0.608761429008721, -0.793353340291235),
-                new Grad2(-0.793353340291235, -0.608761429008721),
-                new Grad2(-0.923879532511287, -0.38268343236509),
-                new Grad2(-0.99144486137381,  -0.130526192220052),
-                new Grad2(-0.99144486137381,   0.130526192220051),
-                new Grad2(-0.923879532511287,  0.38268343236509),
-                new Grad2(-0.793353340291235,  0.608761429008721),
-                new Grad2(-0.608761429008721,  0.793353340291235),
-                new Grad2(-0.38268343236509,   0.923879532511287),
-                new Grad2(-0.130526192220052,  0.99144486137381)
+        int[] grad2FillIndices = new int[] { 1, 4, 7, 10, 13, 16, 19, 22 };
+        GRADIENTS_2D = new float[N_GRADS_2D * 2];
+        float[] grad2 = {
+                0.130526192220052f,  0.99144486137381f,
+                0.38268343236509f,   0.923879532511287f,
+                0.608761429008721f,  0.793353340291235f,
+                0.793353340291235f,  0.608761429008721f,
+                0.923879532511287f,  0.38268343236509f,
+                0.99144486137381f,   0.130526192220051f,
+                0.99144486137381f,  -0.130526192220051f,
+                0.923879532511287f, -0.38268343236509f,
+                0.793353340291235f, -0.60876142900872f,
+                0.608761429008721f, -0.793353340291235f,
+                0.38268343236509f,  -0.923879532511287f,
+                0.130526192220052f, -0.99144486137381f,
+                -0.130526192220052f, -0.99144486137381f,
+                -0.38268343236509f,  -0.923879532511287f,
+                -0.608761429008721f, -0.793353340291235f,
+                -0.793353340291235f, -0.608761429008721f,
+                -0.923879532511287f, -0.38268343236509f,
+                -0.99144486137381f,  -0.130526192220052f,
+                -0.99144486137381f,   0.130526192220051f,
+                -0.923879532511287f,  0.38268343236509f,
+                -0.793353340291235f,  0.608761429008721f,
+                -0.608761429008721f,  0.793353340291235f,
+                -0.38268343236509f,   0.923879532511287f,
+                -0.130526192220052f,  0.99144486137381f
         };
         for (int i = 0; i < grad2.length; i++) {
-            grad2[i].dx /= N2; grad2[i].dy /= N2;
+            grad2[i] = (float)(grad2[i] / NORMALIZER2);
         }
-        for (int i = 0; i < PSIZE; i++) {
-            GRADIENTS_2D[i] = grad2[i % grad2.length];
+        {
+            int i = 0;
+            while (i < GRADIENTS_2D.length - grad2.length + 1) {
+                for (int j = 0; j < grad2.length; j++) {
+                    GRADIENTS_2D[i + j] = grad2[j];
+                }
+                i += grad2.length;
+            }
+            for (int f = 0; f < grad2FillIndices.length; f++) {
+                int gi = grad2FillIndices[f] * 2;
+                GRADIENTS_2D[i | 0] = grad2[gi | 0];
+                GRADIENTS_2D[i | 1] = grad2[gi | 1];
+                i += 2;
+            }
         }
 
-        GRADIENTS_3D = new Grad3[PSIZE];
-        Grad3[] grad3 = {
-                new Grad3(-2.22474487139,      -2.22474487139,      -1.0),
-                new Grad3(-2.22474487139,      -2.22474487139,       1.0),
-                new Grad3(-3.0862664687972017, -1.1721513422464978,  0.0),
-                new Grad3(-1.1721513422464978, -3.0862664687972017,  0.0),
-                new Grad3(-2.22474487139,      -1.0,                -2.22474487139),
-                new Grad3(-2.22474487139,       1.0,                -2.22474487139),
-                new Grad3(-1.1721513422464978,  0.0,                -3.0862664687972017),
-                new Grad3(-3.0862664687972017,  0.0,                -1.1721513422464978),
-                new Grad3(-2.22474487139,      -1.0,                 2.22474487139),
-                new Grad3(-2.22474487139,       1.0,                 2.22474487139),
-                new Grad3(-3.0862664687972017,  0.0,                 1.1721513422464978),
-                new Grad3(-1.1721513422464978,  0.0,                 3.0862664687972017),
-                new Grad3(-2.22474487139,       2.22474487139,      -1.0),
-                new Grad3(-2.22474487139,       2.22474487139,       1.0),
-                new Grad3(-1.1721513422464978,  3.0862664687972017,  0.0),
-                new Grad3(-3.0862664687972017,  1.1721513422464978,  0.0),
-                new Grad3(-1.0,                -2.22474487139,      -2.22474487139),
-                new Grad3( 1.0,                -2.22474487139,      -2.22474487139),
-                new Grad3( 0.0,                -3.0862664687972017, -1.1721513422464978),
-                new Grad3( 0.0,                -1.1721513422464978, -3.0862664687972017),
-                new Grad3(-1.0,                -2.22474487139,       2.22474487139),
-                new Grad3( 1.0,                -2.22474487139,       2.22474487139),
-                new Grad3( 0.0,                -1.1721513422464978,  3.0862664687972017),
-                new Grad3( 0.0,                -3.0862664687972017,  1.1721513422464978),
-                new Grad3(-1.0,                 2.22474487139,      -2.22474487139),
-                new Grad3( 1.0,                 2.22474487139,      -2.22474487139),
-                new Grad3( 0.0,                 1.1721513422464978, -3.0862664687972017),
-                new Grad3( 0.0,                 3.0862664687972017, -1.1721513422464978),
-                new Grad3(-1.0,                 2.22474487139,       2.22474487139),
-                new Grad3( 1.0,                 2.22474487139,       2.22474487139),
-                new Grad3( 0.0,                 3.0862664687972017,  1.1721513422464978),
-                new Grad3( 0.0,                 1.1721513422464978,  3.0862664687972017),
-                new Grad3( 2.22474487139,      -2.22474487139,      -1.0),
-                new Grad3( 2.22474487139,      -2.22474487139,       1.0),
-                new Grad3( 1.1721513422464978, -3.0862664687972017,  0.0),
-                new Grad3( 3.0862664687972017, -1.1721513422464978,  0.0),
-                new Grad3( 2.22474487139,      -1.0,                -2.22474487139),
-                new Grad3( 2.22474487139,       1.0,                -2.22474487139),
-                new Grad3( 3.0862664687972017,  0.0,                -1.1721513422464978),
-                new Grad3( 1.1721513422464978,  0.0,                -3.0862664687972017),
-                new Grad3( 2.22474487139,      -1.0,                 2.22474487139),
-                new Grad3( 2.22474487139,       1.0,                 2.22474487139),
-                new Grad3( 1.1721513422464978,  0.0,                 3.0862664687972017),
-                new Grad3( 3.0862664687972017,  0.0,                 1.1721513422464978),
-                new Grad3( 2.22474487139,       2.22474487139,      -1.0),
-                new Grad3( 2.22474487139,       2.22474487139,       1.0),
-                new Grad3( 3.0862664687972017,  1.1721513422464978,  0.0),
-                new Grad3( 1.1721513422464978,  3.0862664687972017,  0.0)
+        int[] grad3FillIndices = new int[] { 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 44, 45, 46, 47 };
+        GRADIENTS_3D = new float[N_GRADS_3D * 4];
+        float[] grad3 = {
+                -2.22474487139f,      -2.22474487139f,      -1.0f,                 0.0f,
+                -2.22474487139f,      -2.22474487139f,       1.0f,                 0.0f,
+                -3.0862664687972017f, -1.1721513422464978f,  0.0f,                 0.0f,
+                -1.1721513422464978f, -3.0862664687972017f,  0.0f,                 0.0f,
+                -2.22474487139f,      -1.0f,                -2.22474487139f,       0.0f,
+                -2.22474487139f,       1.0f,                -2.22474487139f,       0.0f,
+                -1.1721513422464978f,  0.0f,                -3.0862664687972017f,  0.0f,
+                -3.0862664687972017f,  0.0f,                -1.1721513422464978f,  0.0f,
+                -2.22474487139f,      -1.0f,                 2.22474487139f,       0.0f,
+                -2.22474487139f,       1.0f,                 2.22474487139f,       0.0f,
+                -3.0862664687972017f,  0.0f,                 1.1721513422464978f,  0.0f,
+                -1.1721513422464978f,  0.0f,                 3.0862664687972017f,  0.0f,
+                -2.22474487139f,       2.22474487139f,      -1.0f,                 0.0f,
+                -2.22474487139f,       2.22474487139f,       1.0f,                 0.0f,
+                -1.1721513422464978f,  3.0862664687972017f,  0.0f,                 0.0f,
+                -3.0862664687972017f,  1.1721513422464978f,  0.0f,                 0.0f,
+                -1.0f,                -2.22474487139f,      -2.22474487139f,       0.0f,
+                1.0f,                -2.22474487139f,      -2.22474487139f,       0.0f,
+                0.0f,                -3.0862664687972017f, -1.1721513422464978f,  0.0f,
+                0.0f,                -1.1721513422464978f, -3.0862664687972017f,  0.0f,
+                -1.0f,                -2.22474487139f,       2.22474487139f,       0.0f,
+                1.0f,                -2.22474487139f,       2.22474487139f,       0.0f,
+                0.0f,                -1.1721513422464978f,  3.0862664687972017f,  0.0f,
+                0.0f,                -3.0862664687972017f,  1.1721513422464978f,  0.0f,
+                -1.0f,                 2.22474487139f,      -2.22474487139f,       0.0f,
+                1.0f,                 2.22474487139f,      -2.22474487139f,       0.0f,
+                0.0f,                 1.1721513422464978f, -3.0862664687972017f,  0.0f,
+                0.0f,                 3.0862664687972017f, -1.1721513422464978f,  0.0f,
+                -1.0f,                 2.22474487139f,       2.22474487139f,       0.0f,
+                1.0f,                 2.22474487139f,       2.22474487139f,       0.0f,
+                0.0f,                 3.0862664687972017f,  1.1721513422464978f,  0.0f,
+                0.0f,                 1.1721513422464978f,  3.0862664687972017f,  0.0f,
+                2.22474487139f,      -2.22474487139f,      -1.0f,                 0.0f,
+                2.22474487139f,      -2.22474487139f,       1.0f,                 0.0f,
+                1.1721513422464978f, -3.0862664687972017f,  0.0f,                 0.0f,
+                3.0862664687972017f, -1.1721513422464978f,  0.0f,                 0.0f,
+                2.22474487139f,      -1.0f,                -2.22474487139f,       0.0f,
+                2.22474487139f,       1.0f,                -2.22474487139f,       0.0f,
+                3.0862664687972017f,  0.0f,                -1.1721513422464978f,  0.0f,
+                1.1721513422464978f,  0.0f,                -3.0862664687972017f,  0.0f,
+                2.22474487139f,      -1.0f,                 2.22474487139f,       0.0f,
+                2.22474487139f,       1.0f,                 2.22474487139f,       0.0f,
+                1.1721513422464978f,  0.0f,                 3.0862664687972017f,  0.0f,
+                3.0862664687972017f,  0.0f,                 1.1721513422464978f,  0.0f,
+                2.22474487139f,       2.22474487139f,      -1.0f,                 0.0f,
+                2.22474487139f,       2.22474487139f,       1.0f,                 0.0f,
+                3.0862664687972017f,  1.1721513422464978f,  0.0f,                 0.0f,
+                1.1721513422464978f,  3.0862664687972017f,  0.0f,                 0.0f
         };
         for (int i = 0; i < grad3.length; i++) {
-            grad3[i].dx /= N3; grad3[i].dy /= N3; grad3[i].dz /= N3;
+            grad3[i] = (float)(grad3[i] / NORMALIZER3);
         }
-        for (int i = 0; i < PSIZE; i++) {
-            GRADIENTS_3D[i] = grad3[i % grad3.length];
+        {
+            int i = 0;
+            while (i < GRADIENTS_3D.length - grad3.length + 1) {
+                for (int j = 0; j < grad3.length; j++) {
+                    GRADIENTS_3D[i + j] = grad3[j];
+                }
+                i += grad3.length;
+            }
+            for (int f = 0; f < grad3FillIndices.length; f++) {
+                int gi = grad3FillIndices[f] * 4;
+                GRADIENTS_3D[i | 0] = grad3[gi | 0];
+                GRADIENTS_3D[i | 1] = grad3[gi | 1];
+                GRADIENTS_3D[i | 2] = grad3[gi | 2];
+                i += 4;
+            }
         }
-
-        GRADIENTS_4D = new Grad4[PSIZE];
-        Grad4[] grad4 = {
-                new Grad4(-0.753341017856078,    -0.37968289875261624,  -0.37968289875261624,  -0.37968289875261624),
-                new Grad4(-0.7821684431180708,   -0.4321472685365301,   -0.4321472685365301,    0.12128480194602098),
-                new Grad4(-0.7821684431180708,   -0.4321472685365301,    0.12128480194602098,  -0.4321472685365301),
-                new Grad4(-0.7821684431180708,    0.12128480194602098,  -0.4321472685365301,   -0.4321472685365301),
-                new Grad4(-0.8586508742123365,   -0.508629699630796,     0.044802370851755174,  0.044802370851755174),
-                new Grad4(-0.8586508742123365,    0.044802370851755174, -0.508629699630796,     0.044802370851755174),
-                new Grad4(-0.8586508742123365,    0.044802370851755174,  0.044802370851755174, -0.508629699630796),
-                new Grad4(-0.9982828964265062,   -0.03381941603233842,  -0.03381941603233842,  -0.03381941603233842),
-                new Grad4(-0.37968289875261624,  -0.753341017856078,    -0.37968289875261624,  -0.37968289875261624),
-                new Grad4(-0.4321472685365301,   -0.7821684431180708,   -0.4321472685365301,    0.12128480194602098),
-                new Grad4(-0.4321472685365301,   -0.7821684431180708,    0.12128480194602098,  -0.4321472685365301),
-                new Grad4( 0.12128480194602098,  -0.7821684431180708,   -0.4321472685365301,   -0.4321472685365301),
-                new Grad4(-0.508629699630796,    -0.8586508742123365,    0.044802370851755174,  0.044802370851755174),
-                new Grad4( 0.044802370851755174, -0.8586508742123365,   -0.508629699630796,     0.044802370851755174),
-                new Grad4( 0.044802370851755174, -0.8586508742123365,    0.044802370851755174, -0.508629699630796),
-                new Grad4(-0.03381941603233842,  -0.9982828964265062,   -0.03381941603233842,  -0.03381941603233842),
-                new Grad4(-0.37968289875261624,  -0.37968289875261624,  -0.753341017856078,    -0.37968289875261624),
-                new Grad4(-0.4321472685365301,   -0.4321472685365301,   -0.7821684431180708,    0.12128480194602098),
-                new Grad4(-0.4321472685365301,    0.12128480194602098,  -0.7821684431180708,   -0.4321472685365301),
-                new Grad4( 0.12128480194602098,  -0.4321472685365301,   -0.7821684431180708,   -0.4321472685365301),
-                new Grad4(-0.508629699630796,     0.044802370851755174, -0.8586508742123365,    0.044802370851755174),
-                new Grad4( 0.044802370851755174, -0.508629699630796,    -0.8586508742123365,    0.044802370851755174),
-                new Grad4( 0.044802370851755174,  0.044802370851755174, -0.8586508742123365,   -0.508629699630796),
-                new Grad4(-0.03381941603233842,  -0.03381941603233842,  -0.9982828964265062,   -0.03381941603233842),
-                new Grad4(-0.37968289875261624,  -0.37968289875261624,  -0.37968289875261624,  -0.753341017856078),
-                new Grad4(-0.4321472685365301,   -0.4321472685365301,    0.12128480194602098,  -0.7821684431180708),
-                new Grad4(-0.4321472685365301,    0.12128480194602098,  -0.4321472685365301,   -0.7821684431180708),
-                new Grad4( 0.12128480194602098,  -0.4321472685365301,   -0.4321472685365301,   -0.7821684431180708),
-                new Grad4(-0.508629699630796,     0.044802370851755174,  0.044802370851755174, -0.8586508742123365),
-                new Grad4( 0.044802370851755174, -0.508629699630796,     0.044802370851755174, -0.8586508742123365),
-                new Grad4( 0.044802370851755174,  0.044802370851755174, -0.508629699630796,    -0.8586508742123365),
-                new Grad4(-0.03381941603233842,  -0.03381941603233842,  -0.03381941603233842,  -0.9982828964265062),
-                new Grad4(-0.6740059517812944,   -0.3239847771997537,   -0.3239847771997537,    0.5794684678643381),
-                new Grad4(-0.7504883828755602,   -0.4004672082940195,    0.15296486218853164,   0.5029860367700724),
-                new Grad4(-0.7504883828755602,    0.15296486218853164,  -0.4004672082940195,    0.5029860367700724),
-                new Grad4(-0.8828161875373585,    0.08164729285680945,   0.08164729285680945,   0.4553054119602712),
-                new Grad4(-0.4553054119602712,   -0.08164729285680945,  -0.08164729285680945,   0.8828161875373585),
-                new Grad4(-0.5029860367700724,   -0.15296486218853164,   0.4004672082940195,    0.7504883828755602),
-                new Grad4(-0.5029860367700724,    0.4004672082940195,   -0.15296486218853164,   0.7504883828755602),
-                new Grad4(-0.5794684678643381,    0.3239847771997537,    0.3239847771997537,    0.6740059517812944),
-                new Grad4(-0.3239847771997537,   -0.6740059517812944,   -0.3239847771997537,    0.5794684678643381),
-                new Grad4(-0.4004672082940195,   -0.7504883828755602,    0.15296486218853164,   0.5029860367700724),
-                new Grad4( 0.15296486218853164,  -0.7504883828755602,   -0.4004672082940195,    0.5029860367700724),
-                new Grad4( 0.08164729285680945,  -0.8828161875373585,    0.08164729285680945,   0.4553054119602712),
-                new Grad4(-0.08164729285680945,  -0.4553054119602712,   -0.08164729285680945,   0.8828161875373585),
-                new Grad4(-0.15296486218853164,  -0.5029860367700724,    0.4004672082940195,    0.7504883828755602),
-                new Grad4( 0.4004672082940195,   -0.5029860367700724,   -0.15296486218853164,   0.7504883828755602),
-                new Grad4( 0.3239847771997537,   -0.5794684678643381,    0.3239847771997537,    0.6740059517812944),
-                new Grad4(-0.3239847771997537,   -0.3239847771997537,   -0.6740059517812944,    0.5794684678643381),
-                new Grad4(-0.4004672082940195,    0.15296486218853164,  -0.7504883828755602,    0.5029860367700724),
-                new Grad4( 0.15296486218853164,  -0.4004672082940195,   -0.7504883828755602,    0.5029860367700724),
-                new Grad4( 0.08164729285680945,   0.08164729285680945,  -0.8828161875373585,    0.4553054119602712),
-                new Grad4(-0.08164729285680945,  -0.08164729285680945,  -0.4553054119602712,    0.8828161875373585),
-                new Grad4(-0.15296486218853164,   0.4004672082940195,   -0.5029860367700724,    0.7504883828755602),
-                new Grad4( 0.4004672082940195,   -0.15296486218853164,  -0.5029860367700724,    0.7504883828755602),
-                new Grad4( 0.3239847771997537,    0.3239847771997537,   -0.5794684678643381,    0.6740059517812944),
-                new Grad4(-0.6740059517812944,   -0.3239847771997537,    0.5794684678643381,   -0.3239847771997537),
-                new Grad4(-0.7504883828755602,   -0.4004672082940195,    0.5029860367700724,    0.15296486218853164),
-                new Grad4(-0.7504883828755602,    0.15296486218853164,   0.5029860367700724,   -0.4004672082940195),
-                new Grad4(-0.8828161875373585,    0.08164729285680945,   0.4553054119602712,    0.08164729285680945),
-                new Grad4(-0.4553054119602712,   -0.08164729285680945,   0.8828161875373585,   -0.08164729285680945),
-                new Grad4(-0.5029860367700724,   -0.15296486218853164,   0.7504883828755602,    0.4004672082940195),
-                new Grad4(-0.5029860367700724,    0.4004672082940195,    0.7504883828755602,   -0.15296486218853164),
-                new Grad4(-0.5794684678643381,    0.3239847771997537,    0.6740059517812944,    0.3239847771997537),
-                new Grad4(-0.3239847771997537,   -0.6740059517812944,    0.5794684678643381,   -0.3239847771997537),
-                new Grad4(-0.4004672082940195,   -0.7504883828755602,    0.5029860367700724,    0.15296486218853164),
-                new Grad4( 0.15296486218853164,  -0.7504883828755602,    0.5029860367700724,   -0.4004672082940195),
-                new Grad4( 0.08164729285680945,  -0.8828161875373585,    0.4553054119602712,    0.08164729285680945),
-                new Grad4(-0.08164729285680945,  -0.4553054119602712,    0.8828161875373585,   -0.08164729285680945),
-                new Grad4(-0.15296486218853164,  -0.5029860367700724,    0.7504883828755602,    0.4004672082940195),
-                new Grad4( 0.4004672082940195,   -0.5029860367700724,    0.7504883828755602,   -0.15296486218853164),
-                new Grad4( 0.3239847771997537,   -0.5794684678643381,    0.6740059517812944,    0.3239847771997537),
-                new Grad4(-0.3239847771997537,   -0.3239847771997537,    0.5794684678643381,   -0.6740059517812944),
-                new Grad4(-0.4004672082940195,    0.15296486218853164,   0.5029860367700724,   -0.7504883828755602),
-                new Grad4( 0.15296486218853164,  -0.4004672082940195,    0.5029860367700724,   -0.7504883828755602),
-                new Grad4( 0.08164729285680945,   0.08164729285680945,   0.4553054119602712,   -0.8828161875373585),
-                new Grad4(-0.08164729285680945,  -0.08164729285680945,   0.8828161875373585,   -0.4553054119602712),
-                new Grad4(-0.15296486218853164,   0.4004672082940195,    0.7504883828755602,   -0.5029860367700724),
-                new Grad4( 0.4004672082940195,   -0.15296486218853164,   0.7504883828755602,   -0.5029860367700724),
-                new Grad4( 0.3239847771997537,    0.3239847771997537,    0.6740059517812944,   -0.5794684678643381),
-                new Grad4(-0.6740059517812944,    0.5794684678643381,   -0.3239847771997537,   -0.3239847771997537),
-                new Grad4(-0.7504883828755602,    0.5029860367700724,   -0.4004672082940195,    0.15296486218853164),
-                new Grad4(-0.7504883828755602,    0.5029860367700724,    0.15296486218853164,  -0.4004672082940195),
-                new Grad4(-0.8828161875373585,    0.4553054119602712,    0.08164729285680945,   0.08164729285680945),
-                new Grad4(-0.4553054119602712,    0.8828161875373585,   -0.08164729285680945,  -0.08164729285680945),
-                new Grad4(-0.5029860367700724,    0.7504883828755602,   -0.15296486218853164,   0.4004672082940195),
-                new Grad4(-0.5029860367700724,    0.7504883828755602,    0.4004672082940195,   -0.15296486218853164),
-                new Grad4(-0.5794684678643381,    0.6740059517812944,    0.3239847771997537,    0.3239847771997537),
-                new Grad4(-0.3239847771997537,    0.5794684678643381,   -0.6740059517812944,   -0.3239847771997537),
-                new Grad4(-0.4004672082940195,    0.5029860367700724,   -0.7504883828755602,    0.15296486218853164),
-                new Grad4( 0.15296486218853164,   0.5029860367700724,   -0.7504883828755602,   -0.4004672082940195),
-                new Grad4( 0.08164729285680945,   0.4553054119602712,   -0.8828161875373585,    0.08164729285680945),
-                new Grad4(-0.08164729285680945,   0.8828161875373585,   -0.4553054119602712,   -0.08164729285680945),
-                new Grad4(-0.15296486218853164,   0.7504883828755602,   -0.5029860367700724,    0.4004672082940195),
-                new Grad4( 0.4004672082940195,    0.7504883828755602,   -0.5029860367700724,   -0.15296486218853164),
-                new Grad4( 0.3239847771997537,    0.6740059517812944,   -0.5794684678643381,    0.3239847771997537),
-                new Grad4(-0.3239847771997537,    0.5794684678643381,   -0.3239847771997537,   -0.6740059517812944),
-                new Grad4(-0.4004672082940195,    0.5029860367700724,    0.15296486218853164,  -0.7504883828755602),
-                new Grad4( 0.15296486218853164,   0.5029860367700724,   -0.4004672082940195,   -0.7504883828755602),
-                new Grad4( 0.08164729285680945,   0.4553054119602712,    0.08164729285680945,  -0.8828161875373585),
-                new Grad4(-0.08164729285680945,   0.8828161875373585,   -0.08164729285680945,  -0.4553054119602712),
-                new Grad4(-0.15296486218853164,   0.7504883828755602,    0.4004672082940195,   -0.5029860367700724),
-                new Grad4( 0.4004672082940195,    0.7504883828755602,   -0.15296486218853164,  -0.5029860367700724),
-                new Grad4( 0.3239847771997537,    0.6740059517812944,    0.3239847771997537,   -0.5794684678643381),
-                new Grad4( 0.5794684678643381,   -0.6740059517812944,   -0.3239847771997537,   -0.3239847771997537),
-                new Grad4( 0.5029860367700724,   -0.7504883828755602,   -0.4004672082940195,    0.15296486218853164),
-                new Grad4( 0.5029860367700724,   -0.7504883828755602,    0.15296486218853164,  -0.4004672082940195),
-                new Grad4( 0.4553054119602712,   -0.8828161875373585,    0.08164729285680945,   0.08164729285680945),
-                new Grad4( 0.8828161875373585,   -0.4553054119602712,   -0.08164729285680945,  -0.08164729285680945),
-                new Grad4( 0.7504883828755602,   -0.5029860367700724,   -0.15296486218853164,   0.4004672082940195),
-                new Grad4( 0.7504883828755602,   -0.5029860367700724,    0.4004672082940195,   -0.15296486218853164),
-                new Grad4( 0.6740059517812944,   -0.5794684678643381,    0.3239847771997537,    0.3239847771997537),
-                new Grad4( 0.5794684678643381,   -0.3239847771997537,   -0.6740059517812944,   -0.3239847771997537),
-                new Grad4( 0.5029860367700724,   -0.4004672082940195,   -0.7504883828755602,    0.15296486218853164),
-                new Grad4( 0.5029860367700724,    0.15296486218853164,  -0.7504883828755602,   -0.4004672082940195),
-                new Grad4( 0.4553054119602712,    0.08164729285680945,  -0.8828161875373585,    0.08164729285680945),
-                new Grad4( 0.8828161875373585,   -0.08164729285680945,  -0.4553054119602712,   -0.08164729285680945),
-                new Grad4( 0.7504883828755602,   -0.15296486218853164,  -0.5029860367700724,    0.4004672082940195),
-                new Grad4( 0.7504883828755602,    0.4004672082940195,   -0.5029860367700724,   -0.15296486218853164),
-                new Grad4( 0.6740059517812944,    0.3239847771997537,   -0.5794684678643381,    0.3239847771997537),
-                new Grad4( 0.5794684678643381,   -0.3239847771997537,   -0.3239847771997537,   -0.6740059517812944),
-                new Grad4( 0.5029860367700724,   -0.4004672082940195,    0.15296486218853164,  -0.7504883828755602),
-                new Grad4( 0.5029860367700724,    0.15296486218853164,  -0.4004672082940195,   -0.7504883828755602),
-                new Grad4( 0.4553054119602712,    0.08164729285680945,   0.08164729285680945,  -0.8828161875373585),
-                new Grad4( 0.8828161875373585,   -0.08164729285680945,  -0.08164729285680945,  -0.4553054119602712),
-                new Grad4( 0.7504883828755602,   -0.15296486218853164,   0.4004672082940195,   -0.5029860367700724),
-                new Grad4( 0.7504883828755602,    0.4004672082940195,   -0.15296486218853164,  -0.5029860367700724),
-                new Grad4( 0.6740059517812944,    0.3239847771997537,    0.3239847771997537,   -0.5794684678643381),
-                new Grad4( 0.03381941603233842,   0.03381941603233842,   0.03381941603233842,   0.9982828964265062),
-                new Grad4(-0.044802370851755174, -0.044802370851755174,  0.508629699630796,     0.8586508742123365),
-                new Grad4(-0.044802370851755174,  0.508629699630796,    -0.044802370851755174,  0.8586508742123365),
-                new Grad4(-0.12128480194602098,   0.4321472685365301,    0.4321472685365301,    0.7821684431180708),
-                new Grad4( 0.508629699630796,    -0.044802370851755174, -0.044802370851755174,  0.8586508742123365),
-                new Grad4( 0.4321472685365301,   -0.12128480194602098,   0.4321472685365301,    0.7821684431180708),
-                new Grad4( 0.4321472685365301,    0.4321472685365301,   -0.12128480194602098,   0.7821684431180708),
-                new Grad4( 0.37968289875261624,   0.37968289875261624,   0.37968289875261624,   0.753341017856078),
-                new Grad4( 0.03381941603233842,   0.03381941603233842,   0.9982828964265062,    0.03381941603233842),
-                new Grad4(-0.044802370851755174,  0.044802370851755174,  0.8586508742123365,    0.508629699630796),
-                new Grad4(-0.044802370851755174,  0.508629699630796,     0.8586508742123365,   -0.044802370851755174),
-                new Grad4(-0.12128480194602098,   0.4321472685365301,    0.7821684431180708,    0.4321472685365301),
-                new Grad4( 0.508629699630796,    -0.044802370851755174,  0.8586508742123365,   -0.044802370851755174),
-                new Grad4( 0.4321472685365301,   -0.12128480194602098,   0.7821684431180708,    0.4321472685365301),
-                new Grad4( 0.4321472685365301,    0.4321472685365301,    0.7821684431180708,   -0.12128480194602098),
-                new Grad4( 0.37968289875261624,   0.37968289875261624,   0.753341017856078,     0.37968289875261624),
-                new Grad4( 0.03381941603233842,   0.9982828964265062,    0.03381941603233842,   0.03381941603233842),
-                new Grad4(-0.044802370851755174,  0.8586508742123365,   -0.044802370851755174,  0.508629699630796),
-                new Grad4(-0.044802370851755174,  0.8586508742123365,    0.508629699630796,    -0.044802370851755174),
-                new Grad4(-0.12128480194602098,   0.7821684431180708,    0.4321472685365301,    0.4321472685365301),
-                new Grad4( 0.508629699630796,     0.8586508742123365,   -0.044802370851755174, -0.044802370851755174),
-                new Grad4( 0.4321472685365301,    0.7821684431180708,   -0.12128480194602098,   0.4321472685365301),
-                new Grad4( 0.4321472685365301,    0.7821684431180708,    0.4321472685365301,   -0.12128480194602098),
-                new Grad4( 0.37968289875261624,   0.753341017856078,     0.37968289875261624,   0.37968289875261624),
-                new Grad4( 0.9982828964265062,    0.03381941603233842,   0.03381941603233842,   0.03381941603233842),
-                new Grad4( 0.8586508742123365,   -0.044802370851755174, -0.044802370851755174,  0.508629699630796),
-                new Grad4( 0.8586508742123365,   -0.044802370851755174,  0.508629699630796,    -0.044802370851755174),
-                new Grad4( 0.7821684431180708,   -0.12128480194602098,   0.4321472685365301,    0.4321472685365301),
-                new Grad4( 0.8586508742123365,    0.508629699630796,    -0.044802370851755174, -0.044802370851755174),
-                new Grad4( 0.7821684431180708,    0.4321472685365301,   -0.12128480194602098,   0.4321472685365301),
-                new Grad4( 0.7821684431180708,    0.4321472685365301,    0.4321472685365301,   -0.12128480194602098),
-                new Grad4( 0.753341017856078,     0.37968289875261624,   0.37968289875261624,   0.37968289875261624)
-        };
-        for (int i = 0; i < grad4.length; i++) {
-            grad4[i].dx /= N4; grad4[i].dy /= N4; grad4[i].dz /= N4; grad4[i].dw /= N4;
-        }
-        for (int i = 0; i < PSIZE; i++) {
-            GRADIENTS_4D[i] = grad4[i % grad4.length];
-        }
-    }
-
-    /**
-     * @param input the -1 to 1 range double to make sense of
-     * @return a 0 to 1 double value
-     */
-    private double makeSense(double input) {
-        return input + 0.5f;
     }
 }

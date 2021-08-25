@@ -154,6 +154,16 @@ public class ShaderProgram {
 		}
 	}
 
+	public void setUniform(String name, float floatV, int position) {
+		setUniform(name + "[" + position + "]", floatV);
+	}
+
+	public void setUniform(String name, float[] floats) {
+		for (int i = 0; i < (floats != null ? floats.length : 0); i++) {
+			setUniform(name, floats[i], i);
+		}
+	}
+
 	public void setUniform(String name, Vector2f value) {
 		test();
 		int id = uniforms.computeIfAbsent(name, this::getUniformId);
