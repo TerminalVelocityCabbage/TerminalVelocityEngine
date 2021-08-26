@@ -59,6 +59,11 @@ public abstract class EmptyGameObject {
 
 	public abstract void update();
 
+	public void queueAndUpdate() {
+		queueUpdate();
+		update();
+	}
+
 	public Matrix4f getModelViewMatrix(Matrix4f viewMatrix) {
 		return viewMatrix.mul(transformationMatrix, new Matrix4f());
 	}
