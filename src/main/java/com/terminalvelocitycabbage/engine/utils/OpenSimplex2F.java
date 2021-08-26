@@ -104,7 +104,7 @@ public class OpenSimplex2F {
         double yr = xz * -ROOT3OVER3 + yy;
 
         // Evaluate both lattices to form a BCC lattice.
-        return noise3_UnrotatedBase(seed, xr, yr, zr) + 0.5f;
+        return noise3_UnrotatedBase(seed, xr, yr, zr)/2 + 0.5f;
     }
 
     /**
