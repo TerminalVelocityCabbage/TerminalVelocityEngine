@@ -54,6 +54,12 @@ public class Style {
 		return this;
 	}
 
+	public Style margin(int value, UIDimension.Unit unit) {
+		setMargins(value, value, value, value);
+		setMarginUnits(unit, unit, unit, unit);
+		return this;
+	}
+
 	public Style setMargins(int left, int right, int top, int bottom) {
 		this.margin.left.value = left;
 		this.margin.right.value = right;

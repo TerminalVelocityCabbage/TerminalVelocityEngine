@@ -86,6 +86,10 @@ public class Vertex {
         }
     }
 
+    public static Vertex position(float x, float y, float z) {
+        return new Vertex(new float[]{ x, y, z });
+    }
+
     public static Vertex positionUvNormal(float x, float y, float z, float u, float v, float nx, float ny, float nz) {
         return new Vertex(new float[]{ x, y, z, u, v, nx, ny, nz });
     }

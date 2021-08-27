@@ -25,11 +25,11 @@ public abstract class UIRenderable {
 
 	public UIRenderable(Style style) {
 		this.needsUpdate = false;
-		this.rectangle = new RectangleModel(RenderFormat.POSITION_COLOUR,
-			Vertex.positionColour(0, 0, 0, 0, 0, 0, 0),
-			Vertex.positionColour(0, 0, 0, 0, 0, 0, 0),
-			Vertex.positionColour(0, 0, 0, 0, 0, 0, 0),
-			Vertex.positionColour(0, 0, 0, 0, 0, 0, 0)
+		this.rectangle = new RectangleModel(RenderFormat.POSITION,
+			Vertex.position(0, 0, 0),
+			Vertex.position(0, 0, 0),
+			Vertex.position(0, 0, 0),
+			Vertex.position(0, 0, 0)
 		);
 		this.style = style;
 		hoverConsumers = new ArrayList<>();
