@@ -47,9 +47,30 @@ public class Vertex {
         return this.data[2];
     }
 
+    public float[] getXYZ() {
+        if(this.format != null) {
+            int o = this.format.getElementOffset(RenderElement.POSITION, 0);
+            return new float[] {
+                this.data[o], this.data[o+1], this.data[o+2]
+            };
+        }
+        return new float[] {
+            this.data[0], this.data[1], this.data[2]
+        };
+    }
+
     public void setXYZ(float x, float y, float z) {
         if(this.format != null) {
             int off = this.format.getElementOffset(RenderElement.POSITION, 0);
+            this.data[off] = x;
+            this.data[off+1] = y;
+            this.data[off+2] = z;
+        }
+    }
+
+    public void setNormalXYZ(float x, float y, float z) {
+        if(this.format != null) {
+            int off = this.format.getElementOffset(RenderElement.NORMAL, 0);
             this.data[off] = x;
             this.data[off+1] = y;
             this.data[off+2] = z;
