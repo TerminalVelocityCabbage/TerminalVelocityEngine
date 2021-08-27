@@ -106,7 +106,7 @@ public class Mesh {
 		glDeleteBuffers(eboID);
 		glDeleteVertexArrays(vaoID);
 
-		if (material.hasTexture()) {
+		if (material != null && material.hasTexture()) {
 			material.getTexture().destroy();
 		}
 	}
