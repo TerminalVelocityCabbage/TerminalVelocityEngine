@@ -1,10 +1,9 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
 import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
-import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
-import com.terminalvelocitycabbage.engine.client.renderer.model.text.TextModel;
-import com.terminalvelocitycabbage.engine.client.renderer.model.text.font.FontMeshPartStorage;
+import com.terminalvelocitycabbage.engine.client.renderer.ui.text.TextModel;
+import com.terminalvelocitycabbage.engine.client.renderer.ui.text.FontMeshPartStorage;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -32,7 +31,7 @@ public class Text {
 		this.needsUpdate = true;
 		this.text = text;
 		this.fontMeshPartStorage = fontMeshPartStorage;
-		this.model = new TextModel(fontMeshPartStorage.getFontTexture());
+		this.model = new TextModel(fontMeshPartStorage.getFontMaterial());
 		this.model.resizeBuffer();
 	}
 
@@ -43,7 +42,7 @@ public class Text {
 	public void setText(Text text) {
 		this.fontMeshPartStorage = text.fontMeshPartStorage;
 		this.text = text.text;
-		this.model = new TextModel(fontMeshPartStorage.getFontTexture());
+		this.model = new TextModel(fontMeshPartStorage.getFontMaterial());
 		this.model.resizeBuffer();
 		bind();
 	}
@@ -57,7 +56,7 @@ public class Text {
 
 	public void setFont(FontMeshPartStorage font) {
 		this.fontMeshPartStorage = font;
-		this.model = new TextModel(fontMeshPartStorage.getFontTexture());
+		this.model = new TextModel(fontMeshPartStorage.getFontMaterial());
 		this.model.resizeBuffer();
 		this.bind();
 	}
@@ -90,7 +89,7 @@ public class Text {
 
 					//Put the text on the next and reset x position line if it would overflow
 					if (xOffset + fontMeshPartStorage.getCharInfo(character).getWidth() > lineWidth) {
-						yOffset -= fontMeshPartStorage.getFontTexture().getTexture().getHeight();
+						yOffset -= fontMeshPartStorage.getFontMaterial().getTexture().getHeight();
 						xOffset = 0;
 					}
 

@@ -1,4 +1,4 @@
-package com.terminalvelocitycabbage.engine.client.renderer.model.text.font;
+package com.terminalvelocitycabbage.engine.client.renderer.ui.text;
 
 import com.terminalvelocitycabbage.engine.client.renderer.model.Material;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Texture;
@@ -8,7 +8,6 @@ import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
 public class FontMaterial extends Material {
 
 	FontInfo fontInfo;
-	Texture texture;
 
 	public FontMaterial(FontInfo info, ResourceManager resourceManager, Identifier identifier) {
 		super(null, DEFAULT_ALBEDO_COLOR, DEFAULT_ALBEDO_COLOR, DEFAULT_ALBEDO_COLOR, 1F, null);

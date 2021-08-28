@@ -1,6 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
-import com.terminalvelocitycabbage.engine.client.renderer.model.text.font.FontMeshPartStorage;
+import com.terminalvelocitycabbage.engine.client.renderer.ui.text.FontMeshPartStorage;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Style;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.UIDimension;
@@ -213,7 +213,6 @@ public class Element extends UIRenderable {
 
 	@Override
 	public void renderText() {
-		super.renderText();
 		if (this.innerText != null) {
 			this.innerText.render();
 		}

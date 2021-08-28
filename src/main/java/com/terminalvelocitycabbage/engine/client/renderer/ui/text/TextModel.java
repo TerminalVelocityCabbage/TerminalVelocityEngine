@@ -1,8 +1,7 @@
-package com.terminalvelocitycabbage.engine.client.renderer.model.text;
+package com.terminalvelocitycabbage.engine.client.renderer.ui.text;
 
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
-import com.terminalvelocitycabbage.engine.client.renderer.model.text.font.FontMaterial;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +12,7 @@ public class TextModel extends Model {
 
     public TextModel(FontMaterial material) {
         super(RenderFormat.POSITION_UV_COLOUR, new ArrayList<>());
+        this.setMaterial(material);
     }
 
     public void setWidth(int width) {

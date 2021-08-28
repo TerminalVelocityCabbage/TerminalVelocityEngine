@@ -8,7 +8,7 @@ public class Material {
 	public static final Vector4f DEFAULT_ALBEDO_COLOR = new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
 
 	//if the texture exists the colors below will be ignored by the shader.
-	private Texture texture;
+	protected Texture texture;
 	private Vector4f ambientColor;
 	private Vector4f diffuseColor;
 	private Vector4f specularColor;

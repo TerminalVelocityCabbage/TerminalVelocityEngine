@@ -202,6 +202,11 @@ public class Container extends UIRenderable {
 		}
 	}
 
+	@Override
+	public void renderText() {
+
+	}
+
 	/**
 	 * @param beginIndex start index of the row being moved
 	 * @param endIndex end index of row being moved
