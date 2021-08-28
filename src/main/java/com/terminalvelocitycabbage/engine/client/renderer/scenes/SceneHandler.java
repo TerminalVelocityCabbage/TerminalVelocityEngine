@@ -50,4 +50,8 @@ public class SceneHandler {
 		}
 	}
 
+	public boolean hasScene(String scene) {
+		return sceneHandler.containsKey(scene);
+	}
+
 }

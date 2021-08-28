@@ -50,10 +50,11 @@ public class Text {
 	}
 
 	public void setText(Text text) {
-		this.fontMeshPartStorage = text.fontMeshPartStorage;
+		this.needsUpdate = true;
 		this.text = text.text;
+		this.fontMeshPartStorage = text.fontMeshPartStorage;
 		this.style = text.style;
-		this.model = new TextModel(fontMeshPartStorage.getFontMaterial());
+		this.model = new TextModel(text.fontMeshPartStorage.getFontMaterial());
 		this.model.resizeBuffer();
 		bind();
 	}
@@ -101,7 +102,7 @@ public class Text {
 					//Put the text on the next and reset x position line if it would overflow
 					//(style.getSize() / (yCenter * 2)) edits the width of the text to the scaled width based on height values
 					if (xOffset + fontMeshPartStorage.getCharInfo(character).getWidth() * (style.getSize() / (yCenter * 2)) > lineWidth) {
-						yOffset -= fontMeshPartStorage.getFontMaterial().getTexture().getHeight();
+						yOffset -= style.getSize();
 						xOffset = 0;
 					}
 

@@ -14,6 +14,11 @@ public class ButtonElement extends Element {
     Vector4f hoverColor;
     Consumer<UIRenderable> clickEvent;
 
+    @Override
+    public void callClick() {
+        clickEvent.accept(this);
+    }
+
     public ButtonElement(UIDimension width, UIDimension height, Style style, Consumer<UIRenderable> clickEvent, Vector4f color, Vector4f hoverColor) {
         super(width, height, style);
         this.clickEvent = clickEvent;
