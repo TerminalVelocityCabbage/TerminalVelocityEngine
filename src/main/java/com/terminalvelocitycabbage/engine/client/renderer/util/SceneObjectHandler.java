@@ -23,13 +23,22 @@ public class SceneObjectHandler {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends EmptyGameObject>List<T> getAllOfType(Class<T> type) {
+	public <T extends EmptyGameObject> List<T> getAllOfType(Class<T> type) {
 		List<T> list = new ArrayList<>();
 		for (EmptyGameObject gameObject : gameObjects.values()) {
 			if (type.isInstance(gameObject)) {
 				list.add((T) gameObject);
 			}
 		}
+		return list;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T extends EmptyGameObject>Map<String, T> getMapOfType(Class<T> type) {
+		Map<String, T> list = new HashMap();
+		gameObjects.forEach((s, emptyGameObject) -> {
+			if (type.isInstance(emptyGameObject)) list.put(s, (T) emptyGameObject);
+		});
 		return list;
 	}
 
