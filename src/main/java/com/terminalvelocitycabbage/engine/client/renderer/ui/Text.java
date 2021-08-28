@@ -2,8 +2,9 @@ package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
 import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
-import com.terminalvelocitycabbage.engine.client.renderer.ui.text.TextModel;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.text.FontMeshPartStorage;
+import com.terminalvelocitycabbage.engine.client.renderer.ui.text.TextModel;
+import com.terminalvelocitycabbage.engine.client.renderer.ui.text.TextStyle;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -14,11 +15,10 @@ public class Text {
 	public static final Text EMPTY = new Text();
 
 	private boolean needsUpdate;
-	private FontMeshPartStorage fontMeshPartStorage;
+	private FontMeshPartStorage fontMeshPartStorage; //TODO expand this to be able to store bold/italic etc.
 	private String text;
-	//todo make private
-	public TextModel model;
-	//TODO add a TextStyle parameter here to allow coloring and things, and maybe make it so we can store a map of FontMeshPartStorage for bold,italic,etc.
+	private TextModel model;
+	private TextStyle style;
 
 	private Text() {
 		this.needsUpdate = true;
@@ -31,6 +31,16 @@ public class Text {
 		this.needsUpdate = true;
 		this.text = text;
 		this.fontMeshPartStorage = fontMeshPartStorage;
+		this.style = new TextStyle();
+		this.model = new TextModel(fontMeshPartStorage.getFontMaterial());
+		this.model.resizeBuffer();
+	}
+
+	public Text(String text, FontMeshPartStorage fontMeshPartStorage, TextStyle style) {
+		this.needsUpdate = true;
+		this.text = text;
+		this.fontMeshPartStorage = fontMeshPartStorage;
+		this.style = style;
 		this.model = new TextModel(fontMeshPartStorage.getFontMaterial());
 		this.model.resizeBuffer();
 	}
@@ -42,6 +52,7 @@ public class Text {
 	public void setText(Text text) {
 		this.fontMeshPartStorage = text.fontMeshPartStorage;
 		this.text = text.text;
+		this.style = text.style;
 		this.model = new TextModel(fontMeshPartStorage.getFontMaterial());
 		this.model.resizeBuffer();
 		bind();
@@ -88,7 +99,8 @@ public class Text {
 					Model.Part textCharacter = new Model.Part(fontMeshPartStorage.getMesh(character));
 
 					//Put the text on the next and reset x position line if it would overflow
-					if (xOffset + fontMeshPartStorage.getCharInfo(character).getWidth() > lineWidth) {
+					//(style.getSize() / (yCenter * 2)) edits the width of the text to the scaled width based on height values
+					if (xOffset + fontMeshPartStorage.getCharInfo(character).getWidth() * (style.getSize() / (yCenter * 2)) > lineWidth) {
 						yOffset -= fontMeshPartStorage.getFontMaterial().getTexture().getHeight();
 						xOffset = 0;
 					}
@@ -107,7 +119,11 @@ public class Text {
 			}
 
 			model.resizeBuffer();
-			model.update(new Vector3f(xCenter, yCenter, 0), new Quaternionf(), new Vector3f(1));
+			if (style != null) {
+				model.update(new Vector3f(xCenter, yCenter, 0), new Quaternionf(), new Vector3f(style.getSize() / fontMeshPartStorage.getFontMaterial().getTexture().getHeight()));
+			} else {
+				model.update(new Vector3f(xCenter, yCenter, 0), new Quaternionf(), new Vector3f(1f));
+			}
 		}
 	}
 
@@ -117,5 +133,9 @@ public class Text {
 
 	public TextModel getModel() {
 		return model;
+	}
+
+	public TextStyle getStyle() {
+		return style;
 	}
 }

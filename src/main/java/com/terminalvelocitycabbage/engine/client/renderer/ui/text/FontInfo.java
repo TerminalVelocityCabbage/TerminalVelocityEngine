@@ -58,4 +58,8 @@ public class FontInfo {
     public Map<Character, CharInfo> getCharMap() {
         return characterInfo;
     }
+
+    public int getTextureHeight() {
+        return textureHeight;
+    }
 }

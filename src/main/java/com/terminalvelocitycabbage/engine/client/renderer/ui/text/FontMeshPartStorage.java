@@ -41,10 +41,10 @@ public class FontMeshPartStorage {
 
 		Texture fontTexture = getFontMaterial().getTexture();
 
-		Vertex topLeft = Vertex.positionUvColour(0, 0, 0, (float) charInfo.getStartX() / (float) fontTexture.getWidth(), 0, 1, 1, 1, 1);
-		Vertex bottomLeft = Vertex.positionUvColour(0, (float) fontTexture.getHeight(), 0, (float) charInfo.getStartX() / (float) fontTexture.getWidth(), 1, 1, 1, 1, 1);
-		Vertex bottomRight = Vertex.positionUvColour(charInfo.getWidth(), (float) fontTexture.getHeight(), 0, (float) (charInfo.getStartX() + charInfo.getWidth()) / (float) fontTexture.getWidth(), 1, 1, 1, 1, 1);
-		Vertex topRight = Vertex.positionUvColour(charInfo.getWidth(), 0, 0, (float) (charInfo.getStartX() + charInfo.getWidth()) / (float) fontTexture.getWidth(), 0, 1, 1, 1, 1);
+		Vertex topLeft = Vertex.positionUv(0, 0, 0, (float) charInfo.getStartX() / (float) fontTexture.getWidth(), 0);
+		Vertex bottomLeft = Vertex.positionUv(0, (float) fontTexture.getHeight(), 0, (float) charInfo.getStartX() / (float) fontTexture.getWidth(), 1);
+		Vertex bottomRight = Vertex.positionUv(charInfo.getWidth(), (float) fontTexture.getHeight(), 0, (float) (charInfo.getStartX() + charInfo.getWidth()) / (float) fontTexture.getWidth(), 1);
+		Vertex topRight = Vertex.positionUv(charInfo.getWidth(), 0, 0, (float) (charInfo.getStartX() + charInfo.getWidth()) / (float) fontTexture.getWidth(), 0);
 
 		return new MeshPart(
 			new Vertex[]{topLeft, bottomLeft, bottomRight, topRight},

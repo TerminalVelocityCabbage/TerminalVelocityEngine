@@ -11,7 +11,7 @@ public class TextModel extends Model {
     public int width;
 
     public TextModel(FontMaterial material) {
-        super(RenderFormat.POSITION_UV_COLOUR, new ArrayList<>());
+        super(RenderFormat.POSITION_UV, new ArrayList<>());
         this.setMaterial(material);
     }
 

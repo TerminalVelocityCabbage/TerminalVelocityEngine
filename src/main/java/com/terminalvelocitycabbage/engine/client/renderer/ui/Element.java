@@ -14,7 +14,7 @@ import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.A
 import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment.Vertical.BOTTOM;
 import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment.Vertical.TOP;
 
-public class Element extends UIRenderable {
+public class Element extends UIRenderableWithText {
 
 	public UIDimension width;
 	public UIDimension height;
@@ -30,7 +30,7 @@ public class Element extends UIRenderable {
 	@Override
 	public void update() {
 
-		if (needsUpdate) {
+		if (needsUpdate()) {
 
 			//Window dimensions
 			int windowWidth = getCanvas().window.width();
@@ -146,10 +146,10 @@ public class Element extends UIRenderable {
 		}
 
 		//Update the data that gets passed to the gpu
-		rectangle.update(new Vector3f(), new Quaternionf().identity(), new Vector3f(1F)); //TODO
+		rectangle.update(new Vector3f(), new Quaternionf().identity(), new Vector3f(1F));
 
 		//Complete this update
-		needsUpdate = false;
+		queueUpdate();
 	}
 
 	public int getPosition() {
@@ -217,4 +217,10 @@ public class Element extends UIRenderable {
 			this.innerText.render();
 		}
 	}
+
+	@Override
+	public Text getText() {
+		return this.innerText;
+	}
+
 }

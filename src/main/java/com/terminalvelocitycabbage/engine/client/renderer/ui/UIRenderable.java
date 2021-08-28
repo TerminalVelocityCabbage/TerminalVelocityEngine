@@ -54,8 +54,6 @@ public abstract class UIRenderable {
 		rectangle.render();
 	}
 
-	public abstract void renderText();
-
 	public void destroy() {
 		rectangle.destroy();
 	}
@@ -144,5 +142,9 @@ public abstract class UIRenderable {
 
 	public float getHeight() {
 		return rectangle.vertices[0].getY() - rectangle.vertices[1].getY();
+	}
+
+	public boolean needsUpdate() {
+		return needsUpdate;
 	}
 }

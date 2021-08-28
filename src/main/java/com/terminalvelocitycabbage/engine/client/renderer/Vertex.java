@@ -90,6 +90,10 @@ public class Vertex {
         return new Vertex(new float[]{ x, y, z });
     }
 
+    public static Vertex positionUv(float x, float y, float z, float u, float v) {
+        return new Vertex(new float[]{ x, y, z, u, v });
+    }
+
     public static Vertex positionUvNormal(float x, float y, float z, float u, float v, float nx, float ny, float nz) {
         return new Vertex(new float[]{ x, y, z, u, v, nx, ny, nz });
     }

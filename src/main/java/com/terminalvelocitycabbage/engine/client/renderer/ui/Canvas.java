@@ -101,11 +101,6 @@ public class Canvas extends UIRenderable {
 	}
 
 	@Override
-	public void renderText() {
-
-	}
-
-	@Override
 	public boolean isRoot() {
 		return true;
 	}
