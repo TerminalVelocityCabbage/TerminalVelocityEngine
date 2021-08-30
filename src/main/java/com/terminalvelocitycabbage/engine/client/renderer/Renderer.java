@@ -157,4 +157,8 @@ public abstract class Renderer {
 		glfwSwapBuffers(window.getID());
 		glfwPollEvents();
 	}
+
+	public SceneHandler getSceneHandler() {
+		return sceneHandler;
+	}
 }
