@@ -23,7 +23,7 @@ public class FontMeshPartStorage {
 		if (!characterMeshParts.containsKey(character)) {
 			Log.crash("Font Read Error", new RuntimeException("Character not found in mesh part storage for " + character));
 		}
-		return characterMeshParts.get(character);
+		return characterMeshParts.get(character).deepCopy();
 	}
 
 	public CharInfo getCharInfo(char character) {

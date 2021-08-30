@@ -8,7 +8,9 @@ import org.joml.Matrix4f;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class MeshPart {
 
@@ -41,6 +43,18 @@ public class MeshPart {
 
     public Vertex getVertex(int i) {
         return this.vertices[i];
+    }
+
+    public MeshPart deepCopy() {
+        MeshPart part = new MeshPart(
+            Arrays.stream(this.vertices)
+                .map(v -> new Vertex(v.getData()))
+                .toArray(Vertex[]::new),
+            IntStream.of(this.vertexOrder).toArray()
+        );
+        part.format = this.format;
+        part.vertexOffset = this.vertexOffset;
+        return part;
     }
 
     /**
