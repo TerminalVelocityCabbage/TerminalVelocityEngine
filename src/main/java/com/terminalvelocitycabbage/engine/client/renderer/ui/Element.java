@@ -165,10 +165,8 @@ public class Element extends UIRenderableWithText {
 	}
 
 	public Element setInnerText(Text text) {
-		if (innerText == null) {
-			this.innerText = Text.EMPTY;
-		}
-		this.innerText.setText(text);
+		this.innerText = text;
+		this.innerText.bind();
 		return this;
 	}
 

@@ -99,7 +99,7 @@ public class CanvasHandler {
 		return currVertices[0].getX() < x && currVertices[2].getX() > x && currVertices[1].getY() < y && currVertices[0].getY() > y;
 	}
 
-	public Collection<Canvas> getActiveCanvases() {
+	public List<Canvas> getActiveCanvases() {
 		return getCanvases().stream().filter(canvas -> canvas.active).collect(Collectors.toList());
 	}
 

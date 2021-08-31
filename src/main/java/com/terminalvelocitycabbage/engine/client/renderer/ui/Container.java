@@ -236,24 +236,23 @@ public class Container extends UIRenderable {
 
 	public Container addContainer(Container container) {
 		container.setParent(this);
-		childContainers.add(container);
 		container.bind();
 		container.queueUpdate();
+		childContainers.add(container);
 		return this;
 	}
 
 	public Container addElement(Element element) {
 		element.setParent(this);
-		elements.add(element);
 		element.bind();
 		element.queueUpdate();
+		elements.add(element);
 		return this;
 	}
 
 	public float getHeightOfElements(int beginIndex, int endIndex) {
 		float value = 0f;
 		for (Element element : elements.subList(beginIndex, endIndex)) {
-			//TODO accommodate for eventual margins
 			value += element.getHeight();
 		}
 		return value;
@@ -262,7 +261,6 @@ public class Container extends UIRenderable {
 	public float getWidthOfElements(int beginIndex, int endIndex) {
 		float value = 0f;
 		for (Element element : elements.subList(beginIndex, endIndex)) {
-			//TODO accommodate for eventual margins
 			value += element.getWidth();
 		}
 		return value;

@@ -16,20 +16,20 @@ public class Text {
 
 	private boolean needsUpdate;
 	private FontMeshPartStorage fontMeshPartStorage; //TODO expand this to be able to store bold/italic etc.
-	private String text;
+	private String textString;
 	private TextModel model;
 	private TextStyle style;
 
 	private Text() {
 		this.needsUpdate = true;
-		this.text = null;
+		this.textString = null;
 		this.fontMeshPartStorage = null;
 		this.model = null;
 	}
 
 	public Text(String text, FontMeshPartStorage fontMeshPartStorage) {
 		this.needsUpdate = true;
-		this.text = text;
+		this.textString = text;
 		this.fontMeshPartStorage = fontMeshPartStorage;
 		this.style = new TextStyle();
 		this.model = new TextModel(fontMeshPartStorage.getFontMaterial());
@@ -38,29 +38,19 @@ public class Text {
 
 	public Text(String text, FontMeshPartStorage fontMeshPartStorage, TextStyle style) {
 		this.needsUpdate = true;
-		this.text = text;
+		this.textString = text;
 		this.fontMeshPartStorage = fontMeshPartStorage;
 		this.style = style;
 		this.model = new TextModel(fontMeshPartStorage.getFontMaterial());
 		this.model.resizeBuffer();
 	}
 
-	public String getText() {
-		return text;
-	}
-
-	public void setText(Text text) {
-		this.needsUpdate = true;
-		this.text = text.text;
-		this.fontMeshPartStorage = text.fontMeshPartStorage;
-		this.style = text.style;
-		this.model = new TextModel(text.fontMeshPartStorage.getFontMaterial());
-		this.model.resizeBuffer();
-		bind();
+	public String getString() {
+		return textString;
 	}
 
 	public void setTextString(String text) {
-		this.text = text;
+		this.textString = text;
 		this.model.resizeBuffer();
 		bind();
 		this.needsUpdate = true;
@@ -95,7 +85,7 @@ public class Text {
 				var characterModelParts = new ArrayList<Model.Part>();
 				int xOffset = 0;
 				int yOffset = 0;
-				for (char character : text.toCharArray()) {
+				for (char character : textString.toCharArray()) {
 					//Create a mesh with the correct UV coordinated from the texture atlas
 					Model.Part textCharacter = new Model.Part(fontMeshPartStorage.getMesh(character));
 

@@ -3,8 +3,8 @@ package com.terminalvelocitycabbage.engine.client.renderer.model;
 import com.terminalvelocitycabbage.engine.client.renderer.Vertex;
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
 
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 public class RectangleModel extends Model {
 
@@ -16,5 +16,12 @@ public class RectangleModel extends Model {
             new int[] { 0, 1, 2, 2, 3, 0 }
         ))));
         this.vertices = new Vertex[] { v1, v2, v3, v4 };
+    }
+
+    @Override
+    public String toString() {
+        return "RectangleModel{" +
+                "vertices=" + Arrays.toString(vertices) +
+                '}';
     }
 }

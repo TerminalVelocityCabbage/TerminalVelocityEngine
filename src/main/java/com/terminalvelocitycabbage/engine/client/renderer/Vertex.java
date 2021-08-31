@@ -3,6 +3,8 @@ package com.terminalvelocitycabbage.engine.client.renderer;
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderElement;
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
 
+import java.util.Arrays;
+
 public class Vertex {
     private final float[] data;
 
@@ -108,5 +110,13 @@ public class Vertex {
 
     public static Vertex positionColour(float x, float y, float z, float r, float g, float b, float a) {
         return new Vertex(new float[] { x, y, z, r, g, b, a });
+    }
+
+    @Override
+    public String toString() {
+        return "Vertex{" +
+                "data=" + Arrays.toString(data) +
+                ", format=" + format +
+                '}';
     }
 }
