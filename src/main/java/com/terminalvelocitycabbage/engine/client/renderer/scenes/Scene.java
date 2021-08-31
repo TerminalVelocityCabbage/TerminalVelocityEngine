@@ -24,7 +24,7 @@ public abstract class Scene {
 		inputHandler.init(window);
 	}
 
-	public abstract void update(float deltaTime);
+	public abstract void tick(float deltaTime);
 
 	public abstract void destroy();
 

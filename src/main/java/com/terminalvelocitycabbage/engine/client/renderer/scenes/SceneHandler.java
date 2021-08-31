@@ -40,10 +40,6 @@ public class SceneHandler {
 		return activeScene.equalsIgnoreCase(testableScene);
 	}
 
-	public void update(float deltaTime) {
-		sceneHandler.get(activeScene).update(deltaTime);
-	}
-
 	public void cleanup() {
 		for (Scene scene : sceneHandler.values()) {
 			scene.destroy();

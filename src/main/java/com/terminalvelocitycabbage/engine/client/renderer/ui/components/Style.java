@@ -27,6 +27,11 @@ public class Style {
 		return this;
 	}
 
+	public Style setColor(Vector4f color) {
+		this.color = color;
+		return this;
+	}
+
 	public Vector4f getBorderColor() {
 		return borderColor;
 	}
@@ -55,24 +60,16 @@ public class Style {
 	}
 
 	public Style margin(int value, UIDimension.Unit unit) {
-		setMargins(value, value, value, value);
-		setMarginUnits(unit, unit, unit, unit);
-		return this;
+		return setMargins(value, value, value, value).setMarginUnits(unit, unit, unit, unit);
 	}
 
 	public Style setMargins(int left, int right, int top, int bottom) {
-		this.margin.left.value = left;
-		this.margin.right.value = right;
-		this.margin.top.value = top;
-		this.margin.bottom.value = bottom;
+		this.margin.setMargins(left, right, top, bottom);
 		return this;
 	}
 
 	public Style setMarginUnits(UIDimension.Unit left, UIDimension.Unit right, UIDimension.Unit top, UIDimension.Unit bottom) {
-		this.margin.left.unit = left;
-		this.margin.right.unit = right;
-		this.margin.top.unit = top;
-		this.margin.bottom.unit = bottom;
+		this.margin.setMarginUnits(left, right, top, bottom);
 		return this;
 	}
 

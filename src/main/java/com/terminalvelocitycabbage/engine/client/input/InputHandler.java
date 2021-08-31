@@ -73,6 +73,10 @@ public abstract class InputHandler {
 		return deltaMouseVector.y();
 	}
 
+	public void update() {
+		updateMouseButtons();
+	}
+
 	public void updateMouseButtons() {
 		if (lastLeftButtonPressed && !leftButtonPressed) {
 			ticksSinceLastClick = -1;

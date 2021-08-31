@@ -137,14 +137,13 @@ public abstract class Renderer {
 	public void loop() {
 
 		//Tell the tick manager the frame time change
-		tickManager.apply(deltaTime / 1e6f);
+		tickManager.apply(getDeltaTimeInMillis());
 
 		//tick as many time as needed
 		while (tickManager.hasTick()) {
-			sceneHandler.update(deltaTime / 1e6f);
+			sceneHandler.getActiveScene().tick(deltaTime);
+			sceneHandler.getActiveScene().getInputHandler().update();
 			canvasHandler.tick(getWindow().getCursorX(), getWindow().getCursorY(), sceneHandler.getActiveScene().getInputHandler().isLeftButtonReleased(), sceneHandler.getActiveScene().getInputHandler().isRightButtonReleased(), sceneHandler.getActiveScene().getInputHandler().getTicksSinceLastClick());
-			//Update input handler last state
-			sceneHandler.getActiveScene().getInputHandler().updateMouseButtons();
 		}
 
 		if (window.isResized()) {
