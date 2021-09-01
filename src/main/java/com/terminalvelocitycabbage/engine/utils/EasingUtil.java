@@ -16,6 +16,116 @@ public class EasingUtil {
     private static final float N1 = 7.5625f;
     private static final float D1 = 2.75f;
 
+    public enum Direction {
+
+        IN("in"),
+        OUT("out"),
+        IN_OUT("in_out");
+
+        private final String name;
+
+        Direction(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
+
+    public enum Function {
+
+        LINEAR("linear"),
+        SIN("sin"),
+        QUADRATIC("quadratic"),
+        CUBIC("cubic"),
+        QUARTIC("quartic"),
+        QUINTIC("quintic"),
+        EXPONENTIAL("exponential"),
+        CIRCULAR("circular"),
+        BACK("back"),
+        ELASTIC("elsatic"),
+        BOUNCE("bounce");
+
+        private final String name;
+
+        Function(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
+
+    public static float ease(Direction direction, Function function, float progress) {
+        return switch (direction) {
+            case IN -> easeIn(function, progress);
+            case OUT -> easeOut(function, progress);
+            case IN_OUT -> easeInOut(function, progress);
+        };
+    }
+
+    public static float easeIn(Function function, float progress) {
+        return switch (function) {
+            case LINEAR -> easeInLinear(progress);
+            case SIN -> easeInSin(progress);
+            case QUADRATIC -> easeInQuad(progress);
+            case CUBIC -> easeInCubic(progress);
+            case QUARTIC -> easeInQuart(progress);
+            case QUINTIC -> easeInQuint(progress);
+            case EXPONENTIAL -> easeInExpo(progress);
+            case CIRCULAR -> easeInCirc(progress);
+            case BACK -> easeInBack(progress);
+            case ELASTIC -> easeInElastic(progress);
+            case BOUNCE -> easeInBounce(progress);
+        };
+    }
+
+    public static float easeOut(Function function, float progress) {
+        return switch (function) {
+            case LINEAR -> easeOutLinear(progress);
+            case SIN -> easeOutSin(progress);
+            case QUADRATIC -> easeOutQuad(progress);
+            case CUBIC -> easeOutCubic(progress);
+            case QUARTIC -> easeOutQuart(progress);
+            case QUINTIC -> easeOutQuint(progress);
+            case EXPONENTIAL -> easeOutExpo(progress);
+            case CIRCULAR -> easeOutCirc(progress);
+            case BACK -> easeOutBack(progress);
+            case ELASTIC -> easeOutElastic(progress);
+            case BOUNCE -> easeOutBounce(progress);
+        };
+    }
+
+    public static float easeInOut(Function function, float progress) {
+        return switch (function) {
+            case LINEAR -> easeInOutLinear(progress);
+            case SIN -> easeInOutSin(progress);
+            case QUADRATIC -> easeInOutQuad(progress);
+            case CUBIC -> easeInOutCubic(progress);
+            case QUARTIC -> easeInOutQuart(progress);
+            case QUINTIC -> easeInOutQuint(progress);
+            case EXPONENTIAL -> easeInOutExpo(progress);
+            case CIRCULAR -> easeInOutCirc(progress);
+            case BACK -> easeInOutBack(progress);
+            case ELASTIC -> easeInOutElastic(progress);
+            case BOUNCE -> easeInOutBounce(progress);
+        };
+    }
+
+    public static float easeInLinear(float progress) {
+        return progress;
+    }
+
+    public static float easeOutLinear(float progress) {
+        return progress;
+    }
+
+    public static float easeInOutLinear(float progress) {
+        return progress;
+    }
+
     public static float easeInSin(float progress) {
         return 1 - cos((progress * PI) / 2f);
     }
@@ -28,15 +138,15 @@ public class EasingUtil {
         return (-cos(PI * progress) - 1) / 2f;
     }
 
-    public static float eastInQuad(float progress) {
+    public static float easeInQuad(float progress) {
         return progress * progress;
     }
 
-    public static float eastOutQuad(float progress) {
+    public static float easeOutQuad(float progress) {
         return 1 - ((1 - progress) * (1 - progress));
     }
 
-    public static float eastInOutQuad(float progress) {
+    public static float easeInOutQuad(float progress) {
         return progress < 0.5 ? 2 * progress * progress : 1 - (float)pow((-2 * progress) + 2, 2) / 2f;
     }
 
@@ -52,7 +162,7 @@ public class EasingUtil {
         return progress < 0.5 ? 4 * progress * progress * progress : 1 - (float)pow((-2 * progress) + 2, 3) / 2f;
     }
 
-    public static float eastInQuart(float progress) {
+    public static float easeInQuart(float progress) {
         return progress * progress * progress * progress;
     }
 
