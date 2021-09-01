@@ -15,7 +15,7 @@ public class AnimatableUIValue {
     public AnimatableUIValue(float defaultValue) {
         this.baseValue = defaultValue;
         this.targetValue = this.baseValue;
-        this.progress = 0f;
+        this.progress = 1f;
         this.delay = 0f;
         this.duration = 0f;
         this.function = EasingUtil.Function.LINEAR;
@@ -43,7 +43,7 @@ public class AnimatableUIValue {
         this.direction = direction;
         return this;
     }
-    
+
     public float getValue() {
         return baseValue + (EasingUtil.ease(direction, function, progress) * (targetValue - baseValue));
     }

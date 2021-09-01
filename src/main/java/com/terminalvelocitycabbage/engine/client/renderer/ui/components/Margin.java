@@ -1,5 +1,7 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui.components;
 
+import com.terminalvelocitycabbage.engine.client.renderer.ui.AnimatableUIValue;
+
 import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.UIDimension.Unit.PIXELS;
 
 public class Margin {
@@ -10,10 +12,10 @@ public class Margin {
 	UIDimension bottom;
 
 	public Margin() {
-		left = new UIDimension(0, PIXELS);
-		right = new UIDimension(0, PIXELS);
-		top = new UIDimension(0, PIXELS);
-		bottom = new UIDimension(0, PIXELS);
+		left = new UIDimension(new AnimatableUIValue(0), PIXELS);
+		right = new UIDimension(new AnimatableUIValue(0), PIXELS);
+		top = new UIDimension(new AnimatableUIValue(0), PIXELS);
+		bottom = new UIDimension(new AnimatableUIValue(0), PIXELS);
 	}
 
 	public void setMarginUnit(UIDimension.Unit unit) {
@@ -27,11 +29,11 @@ public class Margin {
 		this.bottom.unit = bottom;
 	}
 
-	public void setMargins(int value) {
+	public void setMargins(AnimatableUIValue value) {
 		setMargins(value, value, value, value);
 	}
 
-	public void setMargins(int left, int right, int top, int bottom) {
+	public void setMargins(AnimatableUIValue left, AnimatableUIValue right, AnimatableUIValue top, AnimatableUIValue bottom) {
 		this.left.value = left;
 		this.right.value = right;
 		this.top.value = top;

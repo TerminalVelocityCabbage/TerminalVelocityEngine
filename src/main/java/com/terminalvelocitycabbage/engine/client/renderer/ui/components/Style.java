@@ -1,5 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui.components;
 
+import com.terminalvelocitycabbage.engine.client.renderer.ui.AnimatableUIValue;
 import org.joml.Vector4f;
 
 public class Style {
@@ -59,11 +60,11 @@ public class Style {
 		return this;
 	}
 
-	public Style margin(int value, UIDimension.Unit unit) {
+	public Style margin(AnimatableUIValue value, UIDimension.Unit unit) {
 		return setMargins(value, value, value, value).setMarginUnits(unit, unit, unit, unit);
 	}
 
-	public Style setMargins(int left, int right, int top, int bottom) {
+	public Style setMargins(AnimatableUIValue left, AnimatableUIValue right, AnimatableUIValue top, AnimatableUIValue bottom) {
 		this.margin.setMargins(left, right, top, bottom);
 		return this;
 	}
@@ -73,25 +74,25 @@ public class Style {
 		return this;
 	}
 
-	public Style marginLeft(int value, UIDimension.Unit unit) {
+	public Style marginLeft(AnimatableUIValue value, UIDimension.Unit unit) {
 		this.margin.left.value = value;
 		this.margin.left.unit = unit;
 		return this;
 	}
 
-	public Style marginRight(int value, UIDimension.Unit unit) {
+	public Style marginRight(AnimatableUIValue value, UIDimension.Unit unit) {
 		this.margin.right.value = value;
 		this.margin.right.unit = unit;
 		return this;
 	}
 
-	public Style marginTop(int value, UIDimension.Unit unit) {
+	public Style marginTop(AnimatableUIValue value, UIDimension.Unit unit) {
 		this.margin.top.value = value;
 		this.margin.top.unit = unit;
 		return this;
 	}
 
-	public Style marginBottom(int value, UIDimension.Unit unit) {
+	public Style marginBottom(AnimatableUIValue value, UIDimension.Unit unit) {
 		this.margin.bottom.value = value;
 		this.margin.bottom.unit = unit;
 		return this;

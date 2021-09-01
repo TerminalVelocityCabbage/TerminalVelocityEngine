@@ -1,22 +1,23 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui.components;
 
+import com.terminalvelocitycabbage.engine.client.renderer.ui.AnimatableUIValue;
 import com.terminalvelocitycabbage.engine.debug.Log;
 
 public class UIDimension {
 
-	int value;
+	AnimatableUIValue value;
 	Unit unit;
 
-	public UIDimension(int value, Unit unit) {
+	public UIDimension(AnimatableUIValue value, Unit unit) {
 		this.value = value;
 		this.unit = unit;
 	}
 
 	public int getPixelValue(int windowDimension) {
 		if (unit.equals(Unit.PIXELS)) {
-			return value;
+			return (int)value.getValue();
 		} else if (unit.equals(Unit.PERCENT)) {
-			return value * windowDimension;
+			return (int)(value.getValue() * windowDimension);
 		}
 		Log.crash("UI Error", new RuntimeException("Unknown unit for UIDimension"));
 		return -1;
@@ -24,9 +25,9 @@ public class UIDimension {
 
 	public float getUnitizedValue(int screenDimension, int windowDimension) {
 		if (unit.equals(Unit.PERCENT)) {
-			return value / 50f;
+			return value.getValue() / 50f;
 		} else if (unit.equals(Unit.PIXELS)) {
-			return (((float)value / (float)screenDimension) * ((float)screenDimension / (float)windowDimension)) * 2f;
+			return ((value.getValue() / (float)screenDimension) * ((float)screenDimension / (float)windowDimension)) * 2f;
 		}
 		Log.crash("UI Error", new RuntimeException("Unknown unit for UIDimension"));
 		return -1;
@@ -44,7 +45,7 @@ public class UIDimension {
 	}
 
 	public int getValueDirect() {
-		return value;
+		return (int)value.getValue();
 	}
 
 	public Unit getUnitDirect() {
