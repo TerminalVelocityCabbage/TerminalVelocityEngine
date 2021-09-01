@@ -47,4 +47,8 @@ public class AnimatableUIValue {
     public float getValue() {
         return baseValue + (EasingUtil.ease(direction, function, progress) * (targetValue - baseValue));
     }
+
+    public void unsetTarget() {
+        this.setTarget(baseValue);
+    }
 }

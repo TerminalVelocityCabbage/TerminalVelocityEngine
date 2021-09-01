@@ -2,7 +2,6 @@ package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
 import com.terminalvelocitycabbage.engine.client.renderer.ui.text.FontMeshPartStorage;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment;
-import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Style;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.UIDimension;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -21,8 +20,7 @@ public class Element extends UIRenderableWithText {
 	public Container parent;
 	public Text innerText;
 
-	public Element(UIDimension width, UIDimension height, Style style) {
-		super(style);
+	public Element(UIDimension width, UIDimension height) {
 		this.width = width;
 		this.height = height;
 	}
@@ -44,10 +42,10 @@ public class Element extends UIRenderableWithText {
 			int position = getPosition();
 
 			//Get boundaries of parent
-			float originXMin = parent.rectangle.vertices[0].getX() + ((float)parent.style.getBorderThickness() / windowWidth * 2);
-			float originXMax = parent.rectangle.vertices[2].getX() - ((float)parent.style.getBorderThickness() / windowWidth * 2);
-			float originYMin = parent.rectangle.vertices[1].getY() + ((float)parent.style.getBorderThickness() / windowHeight * 2);
-			float originYMax = parent.rectangle.vertices[0].getY() - ((float)parent.style.getBorderThickness() / windowHeight * 2);
+			float originXMin = parent.rectangle.vertices[0].getX() + ((float)parent.getBorderThickness() / windowWidth * 2);
+			float originXMax = parent.rectangle.vertices[2].getX() - ((float)parent.getBorderThickness() / windowWidth * 2);
+			float originYMin = parent.rectangle.vertices[1].getY() + ((float)parent.getBorderThickness() / windowHeight * 2);
+			float originYMax = parent.rectangle.vertices[0].getY() - ((float)parent.getBorderThickness() / windowHeight * 2);
 
 			//Create temp width and height vars in case of a responsive layout
 			float width = this.width.getUnitizedValue(screenWidth, windowWidth);
@@ -221,4 +219,58 @@ public class Element extends UIRenderableWithText {
 		return this.innerText;
 	}
 
+	@Override
+	public Element color(float r, float g, float b, float a) {
+		return (Element) super.color(r, g, b, a);
+	}
+
+	@Override
+	public Element borderColor(float r, float g, float b, float a) {
+		return (Element) super.borderColor(r, g, b, a);
+	}
+
+	@Override
+	public Element borderRadius(int radius) {
+		return (Element) super.borderRadius(radius);
+	}
+
+	@Override
+	public Element borderThickness(int thickness) {
+		return (Element) super.borderThickness(thickness);
+	}
+
+	@Override
+	public Element margin(AnimatableUIValue value, UIDimension.Unit unit) {
+		return (Element) super.margin(value, unit);
+	}
+
+	@Override
+	public Element margins(AnimatableUIValue left, AnimatableUIValue right, AnimatableUIValue top, AnimatableUIValue bottom) {
+		return (Element) super.margins(left, right, top, bottom);
+	}
+
+	@Override
+	public Element marginUnits(UIDimension.Unit left, UIDimension.Unit right, UIDimension.Unit top, UIDimension.Unit bottom) {
+		return (Element) super.marginUnits(left, right, top, bottom);
+	}
+
+	@Override
+	public Element marginLeft(AnimatableUIValue value, UIDimension.Unit unit) {
+		return (Element) super.marginLeft(value, unit);
+	}
+
+	@Override
+	public Element marginRight(AnimatableUIValue value, UIDimension.Unit unit) {
+		return (Element) super.marginRight(value, unit);
+	}
+
+	@Override
+	public Element marginTop(AnimatableUIValue value, UIDimension.Unit unit) {
+		return (Element) super.marginTop(value, unit);
+	}
+
+	@Override
+	public Element marginBottom(AnimatableUIValue value, UIDimension.Unit unit) {
+		return (Element) super.marginBottom(value, unit);
+	}
 }

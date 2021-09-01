@@ -4,7 +4,9 @@ import com.terminalvelocitycabbage.engine.client.renderer.Vertex;
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
 import com.terminalvelocitycabbage.engine.client.renderer.model.RectangleModel;
-import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Style;
+import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Margin;
+import com.terminalvelocitycabbage.engine.client.renderer.ui.components.UIDimension;
+import org.joml.Vector4f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +16,18 @@ public abstract class UIRenderable {
 
 	boolean needsUpdate;
 	RectangleModel rectangle;
-	public Style style;
+
+	AnimatableUIValue backgroundRed;
+	AnimatableUIValue backgroundGreen;
+	AnimatableUIValue backgroundBlue;
+	AnimatableUIValue backgroundAlpha;
+	AnimatableUIValue borderRed;
+	AnimatableUIValue borderGreen;
+	AnimatableUIValue borderBlue;
+	AnimatableUIValue borderAlpha;
+	AnimatableUIValue borderRadius;
+	AnimatableUIValue borderThickness;
+	Margin margin;
 
 	List<Consumer<UIRenderable>> hoverConsumers;
 	boolean lastHover;
@@ -23,7 +36,7 @@ public abstract class UIRenderable {
 	List<Consumer<UIRenderable>> rightClickConsumers;
 	List<DoubleClickRunnable> doubleClickConsumers;
 
-	public UIRenderable(Style style) {
+	public UIRenderable() {
 		this.needsUpdate = false;
 		this.rectangle = new RectangleModel(RenderFormat.POSITION,
 			Vertex.position(0, 0, 0),
@@ -31,13 +44,27 @@ public abstract class UIRenderable {
 			Vertex.position(0, 0, 0),
 			Vertex.position(0, 0, 0)
 		);
-		this.style = style;
 		hoverConsumers = new ArrayList<>();
 		lastHover = false;
 		unHoverConsumers = new ArrayList<>();
 		leftClickConsumers = new ArrayList<>();
 		rightClickConsumers = new ArrayList<>();
 		doubleClickConsumers = new ArrayList<>();
+
+		backgroundRed = new AnimatableUIValue(1);
+		backgroundGreen = new AnimatableUIValue(1);
+		backgroundBlue = new AnimatableUIValue(1);
+		backgroundAlpha = new AnimatableUIValue(1);
+
+		borderRed = new AnimatableUIValue(0);
+		borderGreen = new AnimatableUIValue(0);
+		borderBlue = new AnimatableUIValue(0);
+		borderAlpha = new AnimatableUIValue(0);
+
+		borderRadius = new AnimatableUIValue(0);
+		borderThickness = new AnimatableUIValue(0);
+
+		margin = new Margin();
 	}
 
 	public void bind() {
@@ -146,5 +173,131 @@ public abstract class UIRenderable {
 
 	public boolean needsUpdate() {
 		return needsUpdate;
+	}
+
+	public float getBackgroundRed() {
+		return backgroundRed.getValue();
+	}
+
+	public float getBackgroundGreen() {
+		return backgroundGreen.getValue();
+	}
+
+	public float getBackgroundBlue() {
+		return backgroundBlue.getValue();
+	}
+
+	public float getBackgroundAlpha() {
+		return backgroundAlpha.getValue();
+	}
+
+	public Vector4f getColor() {
+		return new Vector4f(getBackgroundRed(), getBackgroundGreen(), getBackgroundBlue(), getBackgroundAlpha());
+	}
+
+	public UIRenderable color(float r, float g, float b, float a) {
+		this.backgroundRed.setTarget(r);
+		this.backgroundGreen.setTarget(g);
+		this.backgroundBlue.setTarget(b);
+		this.backgroundAlpha.setTarget(a);
+		return this;
+	}
+
+	public void resetColor() {
+		this.backgroundRed.unsetTarget();
+		this.backgroundGreen.unsetTarget();
+		this.backgroundBlue.unsetTarget();
+		this.backgroundAlpha.unsetTarget();
+	}
+
+	public float getBorderRed() {
+		return borderRed.getValue();
+	}
+
+	public float getBorderGreen() {
+		return borderGreen.getValue();
+	}
+
+	public float getBorderBlue() {
+		return borderBlue.getValue();
+	}
+
+	public float getBorderAlpha() {
+		return borderAlpha.getValue();
+	}
+
+	public Vector4f getBorderColor() {
+		return new Vector4f(getBorderRed(), getBorderGreen(), getBorderBlue(), getBorderAlpha());
+	}
+
+	public UIRenderable borderColor(float r, float g, float b, float a) {
+		this.borderRed.setTarget(r);
+		this.borderGreen.setTarget(g);
+		this.borderBlue.setTarget(b);
+		this.borderAlpha.setTarget(a);
+		return this;
+	}
+
+	public void resetBorderColor() {
+		this.borderRed.unsetTarget();
+		this.borderGreen.unsetTarget();
+		this.borderBlue.unsetTarget();
+		this.borderAlpha.unsetTarget();
+	}
+
+	public int getBorderRadius() {
+		return (int)borderRadius.getValue();
+	}
+
+	public UIRenderable borderRadius(int radius) {
+		this.borderRadius.setTarget(radius);
+		return this;
+	}
+
+	public int getBorderThickness() {
+		return (int)borderThickness.getValue();
+	}
+
+	public UIRenderable borderThickness(int thickness) {
+		this.borderThickness.setTarget(thickness);
+		return this;
+	}
+
+	public UIRenderable margin(AnimatableUIValue value, UIDimension.Unit unit) {
+		return margins(value, value, value, value).marginUnits(unit, unit, unit, unit);
+	}
+
+	public UIRenderable margins(AnimatableUIValue left, AnimatableUIValue right, AnimatableUIValue top, AnimatableUIValue bottom) {
+		this.margin.setMargins(left, right, top, bottom);
+		return this;
+	}
+
+	public UIRenderable marginUnits(UIDimension.Unit left, UIDimension.Unit right, UIDimension.Unit top, UIDimension.Unit bottom) {
+		this.margin.setMarginUnits(left, right, top, bottom);
+		return this;
+	}
+
+	public UIRenderable marginLeft(AnimatableUIValue value, UIDimension.Unit unit) {
+		this.margin.setLeft(value, unit);
+		return this;
+	}
+
+	public UIRenderable marginRight(AnimatableUIValue value, UIDimension.Unit unit) {
+		this.margin.setRight(value, unit);
+		return this;
+	}
+
+	public UIRenderable marginTop(AnimatableUIValue value, UIDimension.Unit unit) {
+		this.margin.setTop(value, unit);
+		return this;
+	}
+
+	public UIRenderable marginBottom(AnimatableUIValue value, UIDimension.Unit unit) {
+		this.margin.setBottom(value, unit);
+		return this;
+	}
+
+	public Margin getMargin() {
+		return margin;
 	}
 }

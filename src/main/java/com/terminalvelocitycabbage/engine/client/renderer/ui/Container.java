@@ -25,8 +25,7 @@ public class Container extends UIRenderable {
 	public List<Container> childContainers;
 	public List<Element> elements;
 
-	public Container(UIDimension width, UIDimension height, Anchor anchorPoint, Style style) {
-		super(style);
+	public Container(UIDimension width, UIDimension height, Anchor anchorPoint) {
 		this.width = width;
 		this.height = height;
 		this.anchorPoint = anchorPoint;
@@ -37,6 +36,7 @@ public class Container extends UIRenderable {
 		this.wrap = Wrap.WRAP;
 		this.childContainers = new ArrayList<>();
 		this.elements = new ArrayList<>();
+		this.backgroundAlpha = new AnimatableUIValue(0);
 	}
 
 	public Canvas getCanvas() {
@@ -66,10 +66,6 @@ public class Container extends UIRenderable {
 		return this;
 	}
 
-	public Style getStyle() {
-		return style;
-	}
-
 	@Override
 	public void update() {
 
@@ -84,10 +80,10 @@ public class Container extends UIRenderable {
 			int screenHeight = getCanvas().getWindow().monitorHeight();
 
 			//Get boundaries of parent
-			float originXMin = parent.rectangle.vertices[0].getX() + ((float)parent.style.getBorderThickness() / windowWidth * 2);
-			float originYMin = parent.rectangle.vertices[1].getY() + ((float)parent.style.getBorderThickness() / windowHeight * 2);
-			float originXMax = parent.rectangle.vertices[2].getX() - ((float)parent.style.getBorderThickness() / windowWidth * 2);
-			float originYMax = parent.rectangle.vertices[0].getY() - ((float)parent.style.getBorderThickness() / windowHeight * 2);
+			float originXMin = parent.rectangle.vertices[0].getX() + ((float)parent.getBorderThickness() / windowWidth * 2);
+			float originYMin = parent.rectangle.vertices[1].getY() + ((float)parent.getBorderThickness() / windowHeight * 2);
+			float originXMax = parent.rectangle.vertices[2].getX() - ((float)parent.getBorderThickness() / windowWidth * 2);
+			float originYMax = parent.rectangle.vertices[0].getY() - ((float)parent.getBorderThickness() / windowHeight * 2);
 
 			//Get parent's unit dimensions
 			float uContainerWidth = originXMax - originXMin;
@@ -123,10 +119,10 @@ public class Container extends UIRenderable {
 			topY += uHeight / 2;
 
 			//Apply margins
-			leftX += style.getMargin().left().getUnitizedValue(screenWidth, windowWidth);
-			rightX -= style.getMargin().right().getUnitizedValue(screenWidth, windowWidth);
-			bottomY += style.getMargin().bottom().getUnitizedValue(screenHeight, windowHeight);
-			topY -= style.getMargin().top().getUnitizedValue(screenHeight, windowHeight);
+			leftX += getMargin().left().getUnitizedValue(screenWidth, windowWidth);
+			rightX -= getMargin().right().getUnitizedValue(screenWidth, windowWidth);
+			bottomY += getMargin().bottom().getUnitizedValue(screenHeight, windowHeight);
+			topY -= getMargin().top().getUnitizedValue(screenHeight, windowHeight);
 
 			//Move this box to be centered on the anchor point
 			leftX += xOffset;
@@ -209,7 +205,7 @@ public class Container extends UIRenderable {
 	 */
 	private void moveElementsHorizontal(int beginIndex, int endIndex, float distance) {
 		distance /= 2f;
-		distance -= (float)style.getBorderThickness() / (float)getCanvas().window.monitorWidth();
+		distance -= (float)getBorderThickness() / (float)getCanvas().window.monitorWidth();
 		for (Element element : elements.subList(beginIndex, endIndex)) {
 			element.rectangle.vertices[0].addXYZ(distance, 0, 0);
 			element.rectangle.vertices[1].addXYZ(distance, 0, 0);
@@ -225,7 +221,7 @@ public class Container extends UIRenderable {
 	 */
 	private void moveElementsVertical(int beginIndex, int endIndex, float distance) {
 		distance /= 2f;
-		distance -= (float)style.getBorderThickness() / (float)getCanvas().window.monitorHeight();
+		distance -= (float)getBorderThickness() / (float)getCanvas().window.monitorHeight();
 		for (Element element : elements.subList(beginIndex, endIndex)) {
 			element.rectangle.vertices[0].addXYZ(0, distance, 0);
 			element.rectangle.vertices[1].addXYZ(0, distance, 0);
@@ -347,4 +343,36 @@ public class Container extends UIRenderable {
 	public List<Element> getElements() {
 		return elements;
 	}
+
+	@Override
+	public Container color(float r, float g, float b, float a) {
+		return (Container) super.color(r, g, b, a);
+	}
+
+	@Override
+	public Container margin(AnimatableUIValue value, UIDimension.Unit unit) {
+		return (Container) super.margin(value, unit);
+	}
+
+	@Override
+	public Container marginLeft(AnimatableUIValue value, UIDimension.Unit unit) {
+		return (Container) super.marginLeft(value, unit);
+	}
+
+	@Override
+	public Container marginRight(AnimatableUIValue value, UIDimension.Unit unit) {
+		return (Container) super.marginRight(value, unit);
+	}
+
+	@Override
+	public Container marginTop(AnimatableUIValue value, UIDimension.Unit unit) {
+		return (Container) super.marginTop(value, unit);
+	}
+
+	@Override
+	public Container marginBottom(AnimatableUIValue value, UIDimension.Unit unit) {
+		return (Container) super.marginBottom(value, unit);
+	}
+
+
 }

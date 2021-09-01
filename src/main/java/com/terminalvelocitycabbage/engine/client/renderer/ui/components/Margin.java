@@ -12,9 +12,9 @@ public class Margin {
 	UIDimension bottom;
 
 	public Margin() {
+		top = new UIDimension(new AnimatableUIValue(0), PIXELS);
 		left = new UIDimension(new AnimatableUIValue(0), PIXELS);
 		right = new UIDimension(new AnimatableUIValue(0), PIXELS);
-		top = new UIDimension(new AnimatableUIValue(0), PIXELS);
 		bottom = new UIDimension(new AnimatableUIValue(0), PIXELS);
 	}
 
@@ -54,5 +54,25 @@ public class Margin {
 
 	public UIDimension bottom() {
 		return bottom;
+	}
+
+	public void setLeft(AnimatableUIValue value, UIDimension.Unit unit) {
+		this.left.value = value;
+		this.left.unit = unit;
+	}
+
+	public void setRight(AnimatableUIValue value, UIDimension.Unit unit) {
+		this.right.value = value;
+		this.right.unit = unit;
+	}
+
+	public void setTop(AnimatableUIValue value, UIDimension.Unit unit) {
+		this.top.value = value;
+		this.top.unit = unit;
+	}
+
+	public void setBottom(AnimatableUIValue value, UIDimension.Unit unit) {
+		this.bottom.value = value;
+		this.bottom.unit = unit;
 	}
 }

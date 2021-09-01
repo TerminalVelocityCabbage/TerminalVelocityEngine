@@ -3,7 +3,6 @@ package com.terminalvelocitycabbage.engine.client.renderer.ui;
 import com.terminalvelocitycabbage.engine.client.ClientBase;
 import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
-import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Style;
 import com.terminalvelocitycabbage.engine.events.EventContext;
 import com.terminalvelocitycabbage.engine.events.HandleEvent;
 import com.terminalvelocitycabbage.engine.events.client.WindowResizeEvent;
@@ -21,11 +20,12 @@ public class Canvas extends UIRenderable {
 	List<Container> containers;
 
 	public Canvas(Window window) {
-		super(new Style());
+		super();
 		this.window = window;
 		active = false;
 		this.containers = new ArrayList<>();
 		ClientBase.instance.addEventHandler(EventContext.CLIENT, this);
+		this.backgroundAlpha = new AnimatableUIValue(0);
 	}
 
 	public boolean isActive() {
@@ -74,10 +74,10 @@ public class Canvas extends UIRenderable {
 			int screenHeight = getWindow().monitorHeight();
 
 			//Offset based on margins
-			leftX += style.getMargin().left().getUnitizedValue(screenWidth, windowWidth);
-			rightX -= style.getMargin().right().getUnitizedValue(screenWidth, windowWidth);
-			topY -= style.getMargin().top().getUnitizedValue(screenHeight, windowHeight);
-			bottomY += style.getMargin().bottom().getUnitizedValue(screenHeight, windowHeight);
+			leftX += getMargin().left().getUnitizedValue(screenWidth, windowWidth);
+			rightX -= getMargin().right().getUnitizedValue(screenWidth, windowWidth);
+			topY -= getMargin().top().getUnitizedValue(screenHeight, windowHeight);
+			bottomY += getMargin().bottom().getUnitizedValue(screenHeight, windowHeight);
 
 			//Set the vertexes based on the calculated positions
 			rectangle.vertices[0].setXYZ(leftX, topY, 0);
