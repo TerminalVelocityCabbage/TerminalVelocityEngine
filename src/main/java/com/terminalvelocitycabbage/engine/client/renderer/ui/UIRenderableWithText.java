@@ -1,6 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
-public abstract class UIRenderableWithText<T extends UIRenderableWithText> extends UIRenderable<UIRenderableWithText> {
+public abstract class UIRenderableWithText<T extends UIRenderableWithText> extends UIRenderable<T> {
 
     public UIRenderableWithText() {
     }
