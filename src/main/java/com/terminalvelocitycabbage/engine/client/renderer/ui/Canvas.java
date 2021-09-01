@@ -11,9 +11,8 @@ import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
-public class Canvas extends UIRenderable {
+public class Canvas extends UIRenderable<Canvas> {
 
 	Window window;
 	boolean active;
@@ -125,31 +124,6 @@ public class Canvas extends UIRenderable {
 		for (UIRenderable element : containers) {
 			element.destroy();
 		}
-	}
-
-	@Override
-	public Canvas onHover(Consumer<UIRenderable> consumer) {
-		return (Canvas) super.onHover(consumer);
-	}
-
-	@Override
-	public Canvas onUnHover(Consumer<UIRenderable> consumer) {
-		return (Canvas) super.onUnHover(consumer);
-	}
-
-	@Override
-	public Canvas onClick(Consumer<UIRenderable> consumer) {
-		return (Canvas) super.onClick(consumer);
-	}
-
-	@Override
-	public Canvas onRightClick(Consumer<UIRenderable> consumer) {
-		return (Canvas) super.onRightClick(consumer);
-	}
-
-	@Override
-	public Canvas onDoubleClick(int tickTime, Consumer<UIRenderable> consumer) {
-		return (Canvas) super.onDoubleClick(tickTime, consumer);
 	}
 
 	public List<UIRenderable> getAllChildren() {

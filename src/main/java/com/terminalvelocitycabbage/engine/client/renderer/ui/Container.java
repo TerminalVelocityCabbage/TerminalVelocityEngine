@@ -6,11 +6,10 @@ import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.UIDimension.Unit.PERCENT;
 
-public class Container extends UIRenderable {
+public class Container extends UIRenderable<Container> {
 
 	public UIDimension width;
 	public UIDimension height;
@@ -294,31 +293,6 @@ public class Container extends UIRenderable {
 		return value;
 	}
 
-	@Override
-	public Container onHover(Consumer<UIRenderable> consumer) {
-		return (Container) super.onHover(consumer);
-	}
-
-	@Override
-	public Container onUnHover(Consumer<UIRenderable> consumer) {
-		return (Container) super.onUnHover(consumer);
-	}
-
-	@Override
-	public Container onClick(Consumer<UIRenderable> consumer) {
-		return (Container) super.onClick(consumer);
-	}
-
-	@Override
-	public Container onRightClick(Consumer<UIRenderable> consumer) {
-		return (Container) super.onRightClick(consumer);
-	}
-
-	@Override
-	public Container onDoubleClick(int tickTime, Consumer<UIRenderable> consumer) {
-		return (Container) super.onDoubleClick(tickTime, consumer);
-	}
-
 	public Container overflow(Overflow overflow) {
 		this.overflow = overflow;
 		return this;
@@ -343,36 +317,5 @@ public class Container extends UIRenderable {
 	public List<Element> getElements() {
 		return elements;
 	}
-
-	@Override
-	public Container color(float r, float g, float b, float a) {
-		return (Container) super.color(r, g, b, a);
-	}
-
-	@Override
-	public Container margin(AnimatableUIValue value, UIDimension.Unit unit) {
-		return (Container) super.margin(value, unit);
-	}
-
-	@Override
-	public Container marginLeft(AnimatableUIValue value, UIDimension.Unit unit) {
-		return (Container) super.marginLeft(value, unit);
-	}
-
-	@Override
-	public Container marginRight(AnimatableUIValue value, UIDimension.Unit unit) {
-		return (Container) super.marginRight(value, unit);
-	}
-
-	@Override
-	public Container marginTop(AnimatableUIValue value, UIDimension.Unit unit) {
-		return (Container) super.marginTop(value, unit);
-	}
-
-	@Override
-	public Container marginBottom(AnimatableUIValue value, UIDimension.Unit unit) {
-		return (Container) super.marginBottom(value, unit);
-	}
-
 
 }

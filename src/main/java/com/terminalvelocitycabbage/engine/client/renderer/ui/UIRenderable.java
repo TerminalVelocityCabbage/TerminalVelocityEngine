@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public abstract class UIRenderable {
+public abstract class UIRenderable<T extends UIRenderable> {
 
 	boolean needsUpdate;
 	RectangleModel rectangle;
@@ -29,11 +29,11 @@ public abstract class UIRenderable {
 	AnimatableUIValue borderThickness;
 	Margin margin;
 
-	List<Consumer<UIRenderable>> hoverConsumers;
+	List<Consumer<T>> hoverConsumers;
 	boolean lastHover;
-	List<Consumer<UIRenderable>> unHoverConsumers;
-	List<Consumer<UIRenderable>> leftClickConsumers;
-	List<Consumer<UIRenderable>> rightClickConsumers;
+	List<Consumer<T>> unHoverConsumers;
+	List<Consumer<T>> leftClickConsumers;
+	List<Consumer<T>> rightClickConsumers;
 	List<DoubleClickRunnable> doubleClickConsumers;
 
 	public UIRenderable() {
@@ -94,49 +94,49 @@ public abstract class UIRenderable {
 	}
 
 	public void callHoverable() {
-		for (Consumer<UIRenderable> consumer : hoverConsumers) {
-			consumer.accept(this);
+		for (Consumer<T> consumer : hoverConsumers) {
+			consumer.accept((T)this);
 		}
 		lastHover = true;
 	}
 
-	public UIRenderable onHover(Consumer<UIRenderable> consumer) {
+	public T onHover(Consumer<T> consumer) {
 		hoverConsumers.add(consumer);
-		return this;
+		return (T)this;
 	}
 
 	public void callUnHover() {
-		for (Consumer<UIRenderable> consumer : unHoverConsumers) {
-			consumer.accept(this);
+		for (Consumer<T> consumer : unHoverConsumers) {
+			consumer.accept((T)this);
 		}
 		lastHover = false;
 	}
 
-	public UIRenderable onUnHover(Consumer<UIRenderable> consumer) {
+	public T onUnHover(Consumer<T> consumer) {
 		unHoverConsumers.add(consumer);
-		return this;
+		return (T) this;
 	}
 
 	public void callClick() {
-		for (Consumer<UIRenderable> consumer : leftClickConsumers) {
-			consumer.accept(this);
+		for (Consumer<T> consumer : leftClickConsumers) {
+			consumer.accept((T)this);
 		}
 	}
 
-	public UIRenderable onClick(Consumer<UIRenderable> consumer) {
+	public T onClick(Consumer<T> consumer) {
 		leftClickConsumers.add(consumer);
-		return this;
+		return (T) this;
 	}
 
 	public void callRightClick() {
-		for (Consumer<UIRenderable> consumer : rightClickConsumers) {
-			consumer.accept(this);
+		for (Consumer<T> consumer : rightClickConsumers) {
+			consumer.accept((T)this);
 		}
 	}
 
-	public UIRenderable onRightClick(Consumer<UIRenderable> consumer) {
+	public T onRightClick(Consumer<T> consumer) {
 		rightClickConsumers.add(consumer);
-		return this;
+		return (T) this;
 	}
 
 	public void callDoubleCLick(int time) {
@@ -147,17 +147,17 @@ public abstract class UIRenderable {
 		}
 	}
 
-	public UIRenderable onDoubleClick(int tickTime, Consumer<UIRenderable> consumer) {
+	public T onDoubleClick(int tickTime, Consumer<T> consumer) {
 		doubleClickConsumers.add(new DoubleClickRunnable(tickTime, consumer));
-		return this;
+		return (T) this;
 	}
 
-	private static class DoubleClickRunnable {
+	private static class DoubleClickRunnable<T extends UIRenderable> {
 
 		int tickTime;
-		Consumer<UIRenderable> consumer;
+		Consumer<T> consumer;
 
-		public DoubleClickRunnable(int tickTime, Consumer<UIRenderable> consumer) {
+		public DoubleClickRunnable(int tickTime, Consumer<T> consumer) {
 			this.tickTime = tickTime;
 			this.consumer = consumer;
 		}
@@ -195,12 +195,12 @@ public abstract class UIRenderable {
 		return new Vector4f(getBackgroundRed(), getBackgroundGreen(), getBackgroundBlue(), getBackgroundAlpha());
 	}
 
-	public UIRenderable color(float r, float g, float b, float a) {
+	public T color(float r, float g, float b, float a) {
 		this.backgroundRed.setTarget(r);
 		this.backgroundGreen.setTarget(g);
 		this.backgroundBlue.setTarget(b);
 		this.backgroundAlpha.setTarget(a);
-		return this;
+		return (T) this;
 	}
 
 	public void resetColor() {
@@ -230,12 +230,12 @@ public abstract class UIRenderable {
 		return new Vector4f(getBorderRed(), getBorderGreen(), getBorderBlue(), getBorderAlpha());
 	}
 
-	public UIRenderable borderColor(float r, float g, float b, float a) {
+	public T borderColor(float r, float g, float b, float a) {
 		this.borderRed.setTarget(r);
 		this.borderGreen.setTarget(g);
 		this.borderBlue.setTarget(b);
 		this.borderAlpha.setTarget(a);
-		return this;
+		return (T) this;
 	}
 
 	public void resetBorderColor() {
@@ -249,52 +249,52 @@ public abstract class UIRenderable {
 		return (int)borderRadius.getValue();
 	}
 
-	public UIRenderable borderRadius(int radius) {
+	public T borderRadius(int radius) {
 		this.borderRadius.setTarget(radius);
-		return this;
+		return (T) this;
 	}
 
 	public int getBorderThickness() {
 		return (int)borderThickness.getValue();
 	}
 
-	public UIRenderable borderThickness(int thickness) {
+	public T borderThickness(int thickness) {
 		this.borderThickness.setTarget(thickness);
-		return this;
+		return (T) this;
 	}
 
-	public UIRenderable margin(AnimatableUIValue value, UIDimension.Unit unit) {
-		return margins(value, value, value, value).marginUnits(unit, unit, unit, unit);
+	public T margin(AnimatableUIValue value, UIDimension.Unit unit) {
+		return (T) margins(value, value, value, value).marginUnits(unit, unit, unit, unit);
 	}
 
-	public UIRenderable margins(AnimatableUIValue left, AnimatableUIValue right, AnimatableUIValue top, AnimatableUIValue bottom) {
+	public T margins(AnimatableUIValue left, AnimatableUIValue right, AnimatableUIValue top, AnimatableUIValue bottom) {
 		this.margin.setMargins(left, right, top, bottom);
-		return this;
+		return (T) this;
 	}
 
-	public UIRenderable marginUnits(UIDimension.Unit left, UIDimension.Unit right, UIDimension.Unit top, UIDimension.Unit bottom) {
+	public T marginUnits(UIDimension.Unit left, UIDimension.Unit right, UIDimension.Unit top, UIDimension.Unit bottom) {
 		this.margin.setMarginUnits(left, right, top, bottom);
-		return this;
+		return (T) this;
 	}
 
-	public UIRenderable marginLeft(AnimatableUIValue value, UIDimension.Unit unit) {
+	public T marginLeft(AnimatableUIValue value, UIDimension.Unit unit) {
 		this.margin.setLeft(value, unit);
-		return this;
+		return (T) this;
 	}
 
-	public UIRenderable marginRight(AnimatableUIValue value, UIDimension.Unit unit) {
+	public T marginRight(AnimatableUIValue value, UIDimension.Unit unit) {
 		this.margin.setRight(value, unit);
-		return this;
+		return (T) this;
 	}
 
-	public UIRenderable marginTop(AnimatableUIValue value, UIDimension.Unit unit) {
+	public T marginTop(AnimatableUIValue value, UIDimension.Unit unit) {
 		this.margin.setTop(value, unit);
-		return this;
+		return (T) this;
 	}
 
-	public UIRenderable marginBottom(AnimatableUIValue value, UIDimension.Unit unit) {
+	public T marginBottom(AnimatableUIValue value, UIDimension.Unit unit) {
 		this.margin.setBottom(value, unit);
-		return this;
+		return (T) this;
 	}
 
 	public Margin getMargin() {

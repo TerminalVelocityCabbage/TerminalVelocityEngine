@@ -1,19 +1,17 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
-import com.terminalvelocitycabbage.engine.client.renderer.ui.text.FontMeshPartStorage;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.UIDimension;
+import com.terminalvelocitycabbage.engine.client.renderer.ui.text.FontMeshPartStorage;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-
-import java.util.function.Consumer;
 
 import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment.Horizontal.LEFT;
 import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment.Horizontal.RIGHT;
 import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment.Vertical.BOTTOM;
 import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment.Vertical.TOP;
 
-public class Element extends UIRenderableWithText {
+public class Element extends UIRenderableWithText<Element> {
 
 	public UIDimension width;
 	public UIDimension height;
@@ -183,31 +181,6 @@ public class Element extends UIRenderableWithText {
 	}
 
 	@Override
-	public Element onHover(Consumer<UIRenderable> consumer) {
-		return (Element) super.onHover(consumer);
-	}
-
-	@Override
-	public Element onUnHover(Consumer<UIRenderable> consumer) {
-		return (Element) super.onUnHover(consumer);
-	}
-
-	@Override
-	public Element onClick(Consumer<UIRenderable> consumer) {
-		return (Element) super.onClick(consumer);
-	}
-
-	@Override
-	public Element onRightClick(Consumer<UIRenderable> consumer) {
-		return (Element) super.onRightClick(consumer);
-	}
-
-	@Override
-	public Element onDoubleClick(int tickTime, Consumer<UIRenderable> consumer) {
-		return (Element) super.onDoubleClick(tickTime, consumer);
-	}
-
-	@Override
 	public void renderText() {
 		if (this.innerText != null) {
 			this.innerText.render();
@@ -217,60 +190,5 @@ public class Element extends UIRenderableWithText {
 	@Override
 	public Text getText() {
 		return this.innerText;
-	}
-
-	@Override
-	public Element color(float r, float g, float b, float a) {
-		return (Element) super.color(r, g, b, a);
-	}
-
-	@Override
-	public Element borderColor(float r, float g, float b, float a) {
-		return (Element) super.borderColor(r, g, b, a);
-	}
-
-	@Override
-	public Element borderRadius(int radius) {
-		return (Element) super.borderRadius(radius);
-	}
-
-	@Override
-	public Element borderThickness(int thickness) {
-		return (Element) super.borderThickness(thickness);
-	}
-
-	@Override
-	public Element margin(AnimatableUIValue value, UIDimension.Unit unit) {
-		return (Element) super.margin(value, unit);
-	}
-
-	@Override
-	public Element margins(AnimatableUIValue left, AnimatableUIValue right, AnimatableUIValue top, AnimatableUIValue bottom) {
-		return (Element) super.margins(left, right, top, bottom);
-	}
-
-	@Override
-	public Element marginUnits(UIDimension.Unit left, UIDimension.Unit right, UIDimension.Unit top, UIDimension.Unit bottom) {
-		return (Element) super.marginUnits(left, right, top, bottom);
-	}
-
-	@Override
-	public Element marginLeft(AnimatableUIValue value, UIDimension.Unit unit) {
-		return (Element) super.marginLeft(value, unit);
-	}
-
-	@Override
-	public Element marginRight(AnimatableUIValue value, UIDimension.Unit unit) {
-		return (Element) super.marginRight(value, unit);
-	}
-
-	@Override
-	public Element marginTop(AnimatableUIValue value, UIDimension.Unit unit) {
-		return (Element) super.marginTop(value, unit);
-	}
-
-	@Override
-	public Element marginBottom(AnimatableUIValue value, UIDimension.Unit unit) {
-		return (Element) super.marginBottom(value, unit);
 	}
 }
