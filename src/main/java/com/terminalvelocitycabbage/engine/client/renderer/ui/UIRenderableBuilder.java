@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public abstract class UIRenderableBuilder<T extends UIRenderable<T>> {
+public abstract class UIRenderableBuilder<T extends UIRenderableBuilder<T>> {
 
     protected final T self = (T) (Object) this;
 
