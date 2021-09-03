@@ -7,6 +7,7 @@ public class TextStyle {
     private Vector4f color;
     private float size;
 
+    //TODO convert to proper builder like UIRenderable
     public TextStyle() {
         this.color = new Vector4f(1, 1, 1, 1);
         this.size = -1f;

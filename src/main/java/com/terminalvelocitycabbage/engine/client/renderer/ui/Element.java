@@ -11,16 +11,16 @@ import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.A
 import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment.Vertical.BOTTOM;
 import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment.Vertical.TOP;
 
-public class Element extends UIRenderableWithText<Element> {
+public class Element extends UIRenderable<Element> {
+
+	public Container parent;
 
 	public UIDimension width;
 	public UIDimension height;
-	public Container parent;
 	public Text innerText;
 
-	public Element(UIDimension width, UIDimension height) {
-		this.width = width;
-		this.height = height;
+	public Element(Container parent) {
+		this.parent = parent;
 	}
 
 	@Override
@@ -180,14 +180,12 @@ public class Element extends UIRenderableWithText<Element> {
 		return innerText;
 	}
 
-	@Override
 	public void renderText() {
 		if (this.innerText != null) {
 			this.innerText.render();
 		}
 	}
 
-	@Override
 	public Text getText() {
 		return this.innerText;
 	}

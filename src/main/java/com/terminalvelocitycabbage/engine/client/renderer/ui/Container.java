@@ -24,18 +24,8 @@ public class Container extends UIRenderable<Container> {
 	public List<Container> childContainers;
 	public List<Element> elements;
 
-	public Container(UIDimension width, UIDimension height, Anchor anchorPoint) {
-		this.width = width;
-		this.height = height;
-		this.anchorPoint = anchorPoint;
-		this.horizontalAlignment = Alignment.Horizontal.LEFT;
-		this.verticalAlignment = Alignment.Vertical.TOP;
-		this.alignmentDirection = Alignment.Direction.HORIZONTAL;
-		this.overflow = Overflow.SHOWN;
-		this.wrap = Wrap.WRAP;
-		this.childContainers = new ArrayList<>();
-		this.elements = new ArrayList<>();
-		this.backgroundAlpha = new AnimatableUIValue(0);
+	public Container(UIRenderable<?> parent) {
+		this.parent = parent;
 	}
 
 	public Canvas getCanvas() {

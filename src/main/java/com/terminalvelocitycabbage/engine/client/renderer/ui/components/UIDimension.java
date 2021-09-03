@@ -8,8 +8,8 @@ public class UIDimension {
 	AnimatableUIValue value;
 	Unit unit;
 
-	public UIDimension(AnimatableUIValue value, Unit unit) {
-		this.value = value;
+	public UIDimension(float value, Unit unit) {
+		this.value = new AnimatableUIValue(value);
 		this.unit = unit;
 	}
 
