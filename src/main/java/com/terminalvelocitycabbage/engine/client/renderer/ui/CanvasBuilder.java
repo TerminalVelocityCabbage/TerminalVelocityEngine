@@ -8,9 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CanvasBuilder<T extends CanvasBuilder<T>> extends UIRenderableBuilder<T> {
-
-    private final T self = (T) this;
-
+    
     Window window;
     List<ContainerBuilder> containers;
 
