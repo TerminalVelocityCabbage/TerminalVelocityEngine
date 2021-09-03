@@ -18,8 +18,8 @@ public class ContainerBuilder<T extends ContainerBuilder<T>> extends UIRenderabl
     public Overflow overflow;
     public Wrap wrap;
 
-    public List<ContainerBuilder> childContainers;
-    public List<ElementBuilder> elements;
+    public List<ContainerBuilder<?>> childContainers;
+    public List<ElementBuilder<?>> elements;
 
     public ContainerBuilder() {
 
@@ -97,12 +97,12 @@ public class ContainerBuilder<T extends ContainerBuilder<T>> extends UIRenderabl
         return this.self;
     }
 
-    public T addContainer(ContainerBuilder container) {
+    public T addContainer(ContainerBuilder<?> container) {
         this.childContainers.add(container);
         return this.self;
     }
 
-    public T addElement(ElementBuilder element) {
+    public T addElement(ElementBuilder<?> element) {
         this.elements.add(element);
         return this.self;
     }
