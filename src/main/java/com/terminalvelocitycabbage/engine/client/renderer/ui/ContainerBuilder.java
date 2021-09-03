@@ -6,7 +6,9 @@ import com.terminalvelocitycabbage.engine.debug.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContainerBuilder extends UIRenderableBuilder<Container> {
+public class ContainerBuilder<T extends ContainerBuilder> extends UIRenderableBuilder<ContainerBuilder> {
+
+    private final T self = (T) this;
 
     public UIDimension width;
     public UIDimension height;
@@ -61,40 +63,49 @@ public class ContainerBuilder extends UIRenderableBuilder<Container> {
         return container;
     }
 
-    public void dimensions(UIDimension width, UIDimension height) {
+    public T dimensions(UIDimension width, UIDimension height) {
         this.width = width;
         this.height = height;
+        return self;
     }
 
-    public void anchorPoint(Anchor anchorPoint) {
+    public T anchorPoint(Anchor anchorPoint) {
         this.anchorPoint = anchorPoint;
+        return self;
     }
 
-    public void horizontalAlignment(Alignment.Horizontal horizontalAlignment) {
+    public T horizontalAlignment(Alignment.Horizontal horizontalAlignment) {
         this.horizontalAlignment = horizontalAlignment;
+        return self;
     }
 
-    public void verticalAlignment(Alignment.Vertical verticalAlignment) {
+    public T verticalAlignment(Alignment.Vertical verticalAlignment) {
         this.verticalAlignment = verticalAlignment;
+        return self;
     }
 
-    public void alignmentDirection(Alignment.Direction alignmentDirection) {
+    public T alignmentDirection(Alignment.Direction alignmentDirection) {
         this.alignmentDirection = alignmentDirection;
+        return self;
     }
 
-    public void overflow(Overflow overflow) {
+    public T overflow(Overflow overflow) {
         this.overflow = overflow;
+        return self;
     }
 
-    public void wrap(Wrap wrap) {
+    public T wrap(Wrap wrap) {
         this.wrap = wrap;
+        return self;
     }
 
-    public void addContainer(ContainerBuilder container) {
+    public T addContainer(ContainerBuilder container) {
         this.childContainers.add(container);
+        return self;
     }
 
-    public void addElement(ElementBuilder element) {
+    public T addElement(ElementBuilder element) {
         this.elements.add(element);
+        return self;
     }
 }

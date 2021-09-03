@@ -2,7 +2,9 @@ package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.UIDimension;
 
-public class ElementBuilder extends UIRenderableBuilder<Element> {
+public class ElementBuilder<T extends ElementBuilder> extends UIRenderableBuilder<ElementBuilder> {
+    
+    private final T self = (T) this;
 
     public UIDimension width;
     public UIDimension height;
@@ -28,12 +30,14 @@ public class ElementBuilder extends UIRenderableBuilder<Element> {
         return element;
     }
 
-    public void dimensions(UIDimension width, UIDimension height) {
+    public T dimensions(UIDimension width, UIDimension height) {
         this.width = width;
         this.height = height;
+        return self;
     }
 
-    public void innerText(Text innerText) {
+    public T innerText(Text innerText) {
         this.innerText = innerText;
+        return self;
     }
 }
