@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 
 public abstract class UIRenderableBuilder<T extends UIRenderableBuilder<T>> {
 
-    protected final T self = (T) (Object) this;
+    protected final T self = (T) this;
 
     AnimatableUIValue backgroundRed;
     AnimatableUIValue backgroundGreen;
