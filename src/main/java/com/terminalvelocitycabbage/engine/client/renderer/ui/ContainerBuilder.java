@@ -6,9 +6,7 @@ import com.terminalvelocitycabbage.engine.debug.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContainerBuilder<T extends ContainerBuilder> extends UIRenderableBuilder<ContainerBuilder> {
-
-    private final T self = (T) this;
+public class ContainerBuilder<T extends ContainerBuilder<T>> extends UIRenderableBuilder<T> {
 
     public UIDimension width;
     public UIDimension height;
@@ -66,46 +64,46 @@ public class ContainerBuilder<T extends ContainerBuilder> extends UIRenderableBu
     public T dimensions(UIDimension width, UIDimension height) {
         this.width = width;
         this.height = height;
-        return self;
+        return this.self;
     }
 
     public T anchorPoint(Anchor anchorPoint) {
         this.anchorPoint = anchorPoint;
-        return self;
+        return this.self;
     }
 
     public T horizontalAlignment(Alignment.Horizontal horizontalAlignment) {
         this.horizontalAlignment = horizontalAlignment;
-        return self;
+        return this.self;
     }
 
     public T verticalAlignment(Alignment.Vertical verticalAlignment) {
         this.verticalAlignment = verticalAlignment;
-        return self;
+        return this.self;
     }
 
     public T alignmentDirection(Alignment.Direction alignmentDirection) {
         this.alignmentDirection = alignmentDirection;
-        return self;
+        return this.self;
     }
 
     public T overflow(Overflow overflow) {
         this.overflow = overflow;
-        return self;
+        return this.self;
     }
 
     public T wrap(Wrap wrap) {
         this.wrap = wrap;
-        return self;
+        return this.self;
     }
 
     public T addContainer(ContainerBuilder container) {
         this.childContainers.add(container);
-        return self;
+        return this.self;
     }
 
     public T addElement(ElementBuilder element) {
         this.elements.add(element);
-        return self;
+        return this.self;
     }
 }

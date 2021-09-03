@@ -7,7 +7,7 @@ import com.terminalvelocitycabbage.engine.events.EventContext;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CanvasBuilder<T extends CanvasBuilder> extends UIRenderableBuilder<CanvasBuilder> {
+public class CanvasBuilder<T extends CanvasBuilder<T>> extends UIRenderableBuilder<T> {
 
     private final T self = (T) this;
 
@@ -33,11 +33,11 @@ public class CanvasBuilder<T extends CanvasBuilder> extends UIRenderableBuilder<
 
     public T window(Window window) {
         this.window = window;
-        return self;
+        return this.self;
     }
 
     public T addContainer(ContainerBuilder container) {
         this.containers.add(container);
-        return self;
+        return this.self;
     }
 }

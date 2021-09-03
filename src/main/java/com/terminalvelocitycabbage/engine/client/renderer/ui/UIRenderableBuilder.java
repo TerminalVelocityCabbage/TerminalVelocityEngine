@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public abstract class UIRenderableBuilder<T extends UIRenderableBuilder> {
+public abstract class UIRenderableBuilder<T extends UIRenderable<T>> {
 
-    private final T self = (T) this;
+    protected final T self = (T) (Object) this;
 
     AnimatableUIValue backgroundRed;
     AnimatableUIValue backgroundGreen;
@@ -51,27 +51,27 @@ public abstract class UIRenderableBuilder<T extends UIRenderableBuilder> {
 
     public T onHover(Consumer<T> consumer) {
         hoverConsumers.add(consumer);
-        return self;
+        return this.self;
     }
 
     public T onUnHover(Consumer<T> consumer) {
         unHoverConsumers.add(consumer);
-        return self;
+        return this.self;
     }
 
     public T onClick(Consumer<T> consumer) {
         leftClickConsumers.add(consumer);
-        return self;
+        return this.self;
     }
 
     public T onRightClick(Consumer<T> consumer) {
         rightClickConsumers.add(consumer);
-        return self;
+        return this.self;
     }
 
     public T onDoubleClick(int tickTime, Consumer<T> consumer) {
         doubleClickConsumers.add(new DoubleClickRunnable(tickTime, consumer));
-        return self;
+        return this.self;
     }
 
     public T color(float r, float g, float b, float a) {
@@ -79,7 +79,7 @@ public abstract class UIRenderableBuilder<T extends UIRenderableBuilder> {
         this.backgroundGreen.setTarget(g);
         this.backgroundBlue.setTarget(b);
         this.backgroundAlpha.setTarget(a);
-        return self;
+        return this.self;
     }
 
     public T borderColor(float r, float g, float b, float a) {
@@ -87,53 +87,53 @@ public abstract class UIRenderableBuilder<T extends UIRenderableBuilder> {
         this.borderGreen.setTarget(g);
         this.borderBlue.setTarget(b);
         this.borderAlpha.setTarget(a);
-        return self;
+        return this.self;
     }
 
     public T borderRadius(int radius) {
         this.borderRadius.setTarget(radius);
-        return self;
+        return this.self;
     }
 
     public T borderThickness(int thickness) {
         this.borderThickness.setTarget(thickness);
-        return self;
+        return this.self;
     }
 
     public T margin(AnimatableUIValue value, UIDimension.Unit unit) {
         this.margin.setMargins(value, value, value, value);
         this.margin.setMarginUnits(unit, unit, unit, unit);
-        return self;
+        return this.self;
     }
 
     public T margins(AnimatableUIValue left, AnimatableUIValue right, AnimatableUIValue top, AnimatableUIValue bottom) {
         this.margin.setMargins(left, right, top, bottom);
-        return self;
+        return this.self;
     }
 
     public T marginUnits(UIDimension.Unit left, UIDimension.Unit right, UIDimension.Unit top, UIDimension.Unit bottom) {
         this.margin.setMarginUnits(left, right, top, bottom);
-        return self;
+        return this.self;
     }
 
     public T marginLeft(AnimatableUIValue value, UIDimension.Unit unit) {
         this.margin.setLeft(value, unit);
-        return self;
+        return this.self;
     }
 
     public T marginRight(AnimatableUIValue value, UIDimension.Unit unit) {
         this.margin.setRight(value, unit);
-        return self;
+        return this.self;
     }
 
     public T marginTop(AnimatableUIValue value, UIDimension.Unit unit) {
         this.margin.setTop(value, unit);
-        return self;
+        return this.self;
     }
 
     public T marginBottom(AnimatableUIValue value, UIDimension.Unit unit) {
         this.margin.setBottom(value, unit);
-        return self;
+        return this.self;
     }
 
 }
