@@ -22,6 +22,13 @@ public class AnimatableUIValue {
         this.direction = EasingUtil.Direction.IN_OUT;
     }
 
+    public AnimatableUIValue forceSetTarget(float target) {
+        this.progress = 1f;
+        this.baseValue = target;
+        this.targetValue = target;
+        return this;
+    }
+
     public AnimatableUIValue setTarget(float target) {
         this.progress = 0f;
         this.targetValue = target;

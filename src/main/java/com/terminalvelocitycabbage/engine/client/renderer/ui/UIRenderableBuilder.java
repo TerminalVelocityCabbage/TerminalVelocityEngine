@@ -75,28 +75,28 @@ public abstract class UIRenderableBuilder<T extends UIRenderableBuilder<T>> {
     }
 
     public T color(float r, float g, float b, float a) {
-        this.backgroundRed.setTarget(r);
-        this.backgroundGreen.setTarget(g);
-        this.backgroundBlue.setTarget(b);
-        this.backgroundAlpha.setTarget(a);
+        this.backgroundRed.forceSetTarget(r);
+        this.backgroundGreen.forceSetTarget(g);
+        this.backgroundBlue.forceSetTarget(b);
+        this.backgroundAlpha.forceSetTarget(a);
         return this.self;
     }
 
     public T borderColor(float r, float g, float b, float a) {
-        this.borderRed.setTarget(r);
-        this.borderGreen.setTarget(g);
-        this.borderBlue.setTarget(b);
-        this.borderAlpha.setTarget(a);
+        this.borderRed.forceSetTarget(r);
+        this.borderGreen.forceSetTarget(g);
+        this.borderBlue.forceSetTarget(b);
+        this.borderAlpha.forceSetTarget(a);
         return this.self;
     }
 
     public T borderRadius(int radius) {
-        this.borderRadius.setTarget(radius);
+        this.borderRadius.forceSetTarget(radius);
         return this.self;
     }
 
     public T borderThickness(int thickness) {
-        this.borderThickness.setTarget(thickness);
+        this.borderThickness.forceSetTarget(thickness);
         return this.self;
     }
 
