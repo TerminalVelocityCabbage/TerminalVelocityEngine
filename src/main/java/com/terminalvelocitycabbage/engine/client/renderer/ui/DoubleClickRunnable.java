@@ -11,4 +11,8 @@ class DoubleClickRunnable<T extends UIRenderable> {
         this.tickTime = tickTime;
         this.consumer = consumer;
     }
+
+    public boolean shouldAccept(int time) {
+        return tickTime >= time && time > 0;
+    }
 }

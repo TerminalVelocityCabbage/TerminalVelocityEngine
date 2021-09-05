@@ -120,7 +120,7 @@ public abstract class UIRenderable<T extends UIRenderable> {
 
 	public void callDoubleCLick(int time) {
 		for (DoubleClickRunnable consumer : doubleClickConsumers) {
-			if (consumer.tickTime >= time && time > 0) {
+			if (consumer.shouldAccept(time)) {
 				consumer.consumer.accept(this);
 			}
 		}
