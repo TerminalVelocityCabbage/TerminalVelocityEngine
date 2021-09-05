@@ -6,7 +6,7 @@ import com.terminalvelocitycabbage.engine.debug.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class UnsafeContainerBuilder<T extends UnsafeContainerBuilder<T>> extends UIRenderableBuilder<T> {
+public abstract class UnsafeContainerBuilder<T extends UnsafeContainerBuilder<T>> extends UnsafeUIRenderableBuilder<T, Container> {
 
     public UIDimension width;
     public UIDimension height;
@@ -41,6 +41,24 @@ public abstract class UnsafeContainerBuilder<T extends UnsafeContainerBuilder<T>
         if (parent == null) Log.crash("Tried to instantiate Container without parent", new RuntimeException("Unspecified parent value"));
 
         Container container = new Container(parent);
+
+        container.backgroundRed = backgroundRed;
+        container.backgroundGreen = backgroundGreen;
+        container.backgroundBlue = backgroundBlue;
+        container.backgroundAlpha = backgroundAlpha;
+        container.borderRed = borderRed;
+        container.borderGreen = borderGreen;
+        container.borderBlue = borderBlue;
+        container.borderAlpha = borderAlpha;
+        container.borderRadius = borderRadius;
+        container.borderThickness = borderThickness;
+        container.margin = margin;
+
+        container.hoverConsumers = hoverConsumers;
+        container.unHoverConsumers = unHoverConsumers;
+        container.leftClickConsumers = leftClickConsumers;
+        container.rightClickConsumers = rightClickConsumers;
+        container.doubleClickConsumers = doubleClickConsumers;
 
         container.width = width;
         container.height = height;

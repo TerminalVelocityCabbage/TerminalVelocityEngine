@@ -2,7 +2,7 @@ package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.UIDimension;
 
-public abstract class UnsafeElementBuilder<T extends UnsafeElementBuilder<T>> extends UIRenderableBuilder<T> {
+public abstract class UnsafeElementBuilder<T extends UnsafeElementBuilder<T>> extends UnsafeUIRenderableBuilder<T, Element> {
 
     public UIDimension width;
     public UIDimension height;
@@ -18,6 +18,24 @@ public abstract class UnsafeElementBuilder<T extends UnsafeElementBuilder<T>> ex
     public Element build(Container parent) {
 
         Element element = new Element(parent);
+
+        element.backgroundRed = backgroundRed;
+        element.backgroundGreen = backgroundGreen;
+        element.backgroundBlue = backgroundBlue;
+        element.backgroundAlpha = backgroundAlpha;
+        element.borderRed = borderRed;
+        element.borderGreen = borderGreen;
+        element.borderBlue = borderBlue;
+        element.borderAlpha = borderAlpha;
+        element.borderRadius = borderRadius;
+        element.borderThickness = borderThickness;
+        element.margin = margin;
+
+        element.hoverConsumers = hoverConsumers;
+        element.unHoverConsumers = unHoverConsumers;
+        element.leftClickConsumers = leftClickConsumers;
+        element.rightClickConsumers = rightClickConsumers;
+        element.doubleClickConsumers = doubleClickConsumers;
 
         element.width = width;
         element.height = height;

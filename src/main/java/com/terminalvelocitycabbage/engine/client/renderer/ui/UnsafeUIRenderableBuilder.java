@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public abstract class UIRenderableBuilder<T extends UIRenderableBuilder<T>> {
+public abstract class UnsafeUIRenderableBuilder<T extends UnsafeUIRenderableBuilder<T, K>, K extends UIRenderable> {
 
     protected final T self = (T) this;
 
@@ -23,13 +23,13 @@ public abstract class UIRenderableBuilder<T extends UIRenderableBuilder<T>> {
     AnimatableUIValue borderThickness;
     Margin margin;
 
-    List<Consumer<T>> hoverConsumers;
-    List<Consumer<T>> unHoverConsumers;
-    List<Consumer<T>> leftClickConsumers;
-    List<Consumer<T>> rightClickConsumers;
+    List<Consumer<K>> hoverConsumers;
+    List<Consumer<K>> unHoverConsumers;
+    List<Consumer<K>> leftClickConsumers;
+    List<Consumer<K>> rightClickConsumers;
     List<DoubleClickRunnable> doubleClickConsumers;
 
-    public UIRenderableBuilder() {
+    public UnsafeUIRenderableBuilder() {
         backgroundRed = new AnimatableUIValue(1);
         backgroundGreen = new AnimatableUIValue(1);
         backgroundBlue = new AnimatableUIValue(1);
@@ -49,28 +49,28 @@ public abstract class UIRenderableBuilder<T extends UIRenderableBuilder<T>> {
         doubleClickConsumers = new ArrayList<>();
     }
 
-    public T onHover(Consumer<T> consumer) {
+    public T onHover(Consumer<K> consumer) {
         hoverConsumers.add(consumer);
         return this.self;
     }
 
-    public T onUnHover(Consumer<T> consumer) {
+    public T onUnHover(Consumer<K> consumer) {
         unHoverConsumers.add(consumer);
         return this.self;
     }
 
-    public T onClick(Consumer<T> consumer) {
+    public T onClick(Consumer<K> consumer) {
         leftClickConsumers.add(consumer);
         return this.self;
     }
 
-    public T onRightClick(Consumer<T> consumer) {
+    public T onRightClick(Consumer<K> consumer) {
         rightClickConsumers.add(consumer);
         return this.self;
     }
 
-    public T onDoubleClick(int tickTime, Consumer<T> consumer) {
-        doubleClickConsumers.add(new DoubleClickRunnable(tickTime, consumer));
+    public T onDoubleClick(int tickTime, Consumer<K> consumer) {
+        doubleClickConsumers.add(new DoubleClickRunnable<>(tickTime, consumer));
         return this.self;
     }
 

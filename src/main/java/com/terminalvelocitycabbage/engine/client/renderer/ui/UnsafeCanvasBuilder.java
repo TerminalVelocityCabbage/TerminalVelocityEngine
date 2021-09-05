@@ -7,7 +7,7 @@ import com.terminalvelocitycabbage.engine.events.EventContext;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class UnsafeCanvasBuilder<T extends UnsafeCanvasBuilder<T>> extends UIRenderableBuilder<T> {
+public abstract class UnsafeCanvasBuilder<T extends UnsafeCanvasBuilder<T>> extends UnsafeUIRenderableBuilder<T, Canvas> {
     
     Window window;
     List<UnsafeContainerBuilder> containers;
@@ -20,9 +20,29 @@ public abstract class UnsafeCanvasBuilder<T extends UnsafeCanvasBuilder<T>> exte
     }
 
     public Canvas build() {
+
         Canvas canvas = new Canvas(window);
+
         canvas.containers = new ArrayList<>();
         containers.forEach(containerBuilder -> canvas.containers.add(containerBuilder.build(canvas)));
+
+        canvas.backgroundRed = backgroundRed;
+        canvas.backgroundGreen = backgroundGreen;
+        canvas.backgroundBlue = backgroundBlue;
+        canvas.backgroundAlpha = backgroundAlpha;
+        canvas.borderRed = borderRed;
+        canvas.borderGreen = borderGreen;
+        canvas.borderBlue = borderBlue;
+        canvas.borderAlpha = borderAlpha;
+        canvas.borderRadius = borderRadius;
+        canvas.borderThickness = borderThickness;
+        canvas.margin = margin;
+
+        canvas.hoverConsumers = hoverConsumers;
+        canvas.unHoverConsumers = unHoverConsumers;
+        canvas.leftClickConsumers = leftClickConsumers;
+        canvas.rightClickConsumers = rightClickConsumers;
+        canvas.doubleClickConsumers = doubleClickConsumers;
 
         canvas.bind();
 
