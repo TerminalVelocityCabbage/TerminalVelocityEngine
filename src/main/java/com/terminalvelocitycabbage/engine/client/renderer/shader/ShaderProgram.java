@@ -172,6 +172,14 @@ public class ShaderProgram {
 		}
 	}
 
+	public void setUniform(String name, float x, float y) {
+		test();
+		int id = uniforms.computeIfAbsent(name, this::getUniformId);
+		if(id != -1) {
+			glUniform2f(id, x, y);
+		}
+	}
+
 	public void setUniform(String name, Vector3f value) {
 		test();
 		int id = uniforms.computeIfAbsent(name, this::getUniformId);
@@ -180,11 +188,27 @@ public class ShaderProgram {
 		}
 	}
 
+	public void setUniform(String name, float x, float y, float z) {
+		test();
+		int id = uniforms.computeIfAbsent(name, this::getUniformId);
+		if(id != -1) {
+			glUniform3f(id, x, y, z);
+		}
+	}
+
 	public void setUniform(String name, Vector4f value) {
 		test();
 		int id = uniforms.computeIfAbsent(name, this::getUniformId);
 		if(id != -1) {
 			glUniform4f(id, value.x, value.y, value.z, value.w);
+		}
+	}
+
+	public void setUniform(String name, float x, float y, float z, float w) {
+		test();
+		int id = uniforms.computeIfAbsent(name, this::getUniformId);
+		if(id != -1) {
+			glUniform4f(id, x, y, z, w);
 		}
 	}
 

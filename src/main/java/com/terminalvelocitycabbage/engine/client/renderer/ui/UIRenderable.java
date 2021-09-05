@@ -138,24 +138,20 @@ public abstract class UIRenderable<T extends UIRenderable> {
 		return needsUpdate;
 	}
 
-	public float getBackgroundRed() {
+	public float getBgRed() {
 		return backgroundRed.getValue();
 	}
 
-	public float getBackgroundGreen() {
+	public float getBgGreen() {
 		return backgroundGreen.getValue();
 	}
 
-	public float getBackgroundBlue() {
+	public float getBgBlue() {
 		return backgroundBlue.getValue();
 	}
 
-	public float getBackgroundAlpha() {
+	public float getBgAlpha() {
 		return backgroundAlpha.getValue();
-	}
-
-	public Vector4f getColor() {
-		return new Vector4f(getBackgroundRed(), getBackgroundGreen(), getBackgroundBlue(), getBackgroundAlpha());
 	}
 
 	public void resetColor() {
