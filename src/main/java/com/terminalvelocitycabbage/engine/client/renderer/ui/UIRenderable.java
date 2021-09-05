@@ -2,7 +2,6 @@ package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
 import com.terminalvelocitycabbage.engine.client.renderer.Vertex;
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
-import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
 import com.terminalvelocitycabbage.engine.client.renderer.model.RectangleModel;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Margin;
 import org.joml.Vector4f;
@@ -88,7 +87,7 @@ public abstract class UIRenderable<T extends UIRenderable> {
 		this.needsUpdate = true;
 	}
 
-	public Model getRectangle() {
+	public RectangleModel getRectangle() {
 		return rectangle;
 	}
 
