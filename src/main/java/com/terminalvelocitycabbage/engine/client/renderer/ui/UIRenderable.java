@@ -4,7 +4,6 @@ import com.terminalvelocitycabbage.engine.client.renderer.Vertex;
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
 import com.terminalvelocitycabbage.engine.client.renderer.model.RectangleModel;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Margin;
-import org.joml.Vector4f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,11 +35,11 @@ public abstract class UIRenderable<T extends UIRenderable> {
 
 	public UIRenderable() {
 		this.needsUpdate = false;
-		this.rectangle = new RectangleModel(RenderFormat.POSITION,
-			Vertex.position(0, 0, 0),
-			Vertex.position(0, 0, 0),
-			Vertex.position(0, 0, 0),
-			Vertex.position(0, 0, 0)
+		this.rectangle = new RectangleModel(RenderFormat.POSITION_UV,
+			Vertex.positionUv(0, 0, 0, 0, 1),
+			Vertex.positionUv(0, 0, 0, 0, 0),
+			Vertex.positionUv(0, 0, 0, 1, 1),
+			Vertex.positionUv(0, 0, 0, 1, 0)
 		);
 		hoverConsumers = new ArrayList<>();
 		lastHover = false;
@@ -174,10 +173,6 @@ public abstract class UIRenderable<T extends UIRenderable> {
 
 	public float getBorderAlpha() {
 		return borderAlpha.getValue();
-	}
-
-	public Vector4f getBorderColor() {
-		return new Vector4f(getBorderRed(), getBorderGreen(), getBorderBlue(), getBorderAlpha());
 	}
 
 	public void resetBorderColor() {

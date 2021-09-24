@@ -1,77 +1,59 @@
 #version 330
 
 in vec4 gl_FragCoord;
+in vec2 vertUV;
 
 out vec4 fragColor;
 
 uniform vec4 color;
 uniform vec2 screenRes;
-uniform mat3 cornerStuff;
 uniform vec4 borderColor;
 uniform int borderThickness;
+uniform int borderRadius;
+
+vec2 uv = vec2(0);
+
+float roundedRectangle (vec2 pos, vec2 size, float radius, float thickness, bool hasBorder) {
+    vec2 modSize = size;
+    if (hasBorder) { //Make the rectangle slightly smaller than the border
+        modSize = size - vec2(thickness / 10.0);
+    }
+    float d = length(max(abs(uv - pos),modSize) - modSize) - radius;
+    return smoothstep(0.66, 0.33, d / thickness * 5.0);
+}
+
+float roundedFrame (vec2 pos, vec2 size, float radius, float thickness) {
+    float d = length(max(abs(uv - pos),size) - size) - radius;
+    return smoothstep(0.66, 0.33, abs(d / thickness) * 5.0);
+}
 
 void main() {
 
-    //Make radius variable from uniform
-    float radius = cornerStuff[2][2];
-    float totalRadius = radius + borderThickness;
+    float intensity;
+    vec3 outCol;
 
-    //Create pixel coordinates from vertex positions
-    vec2 tlP = ((vec2(cornerStuff[0][0], cornerStuff[0][1]) + 1) / 2) * screenRes;
-    vec2 blP = ((vec2(cornerStuff[0][2], cornerStuff[1][0]) + 1) / 2) * screenRes;
-    vec2 brP = ((vec2(cornerStuff[1][1], cornerStuff[1][2]) + 1) / 2) * screenRes;
-    vec2 trP = ((vec2(cornerStuff[2][0], cornerStuff[2][1]) + 1) / 2) * screenRes;
+    //var values
+    vec2 pos = vec2(0.5, 0.6); //TODO make this a uniform (average of vertex positions)
+    vec2 npos = gl_FragCoord.xy / screenRes.xy;     // 0.0 .. 1.0
+    vec2 size = vec2(1, 0.1);  //TODO make this a uniform (dims/res/2)
+    // get uv position with origin at window center
+    float aspect = screenRes.x / screenRes.y;       // aspect ratio x/y
+    vec2 ratio = vec2(aspect, 1.0);                 // aspect ratio (x/y,1)
+    uv = (2.0 * npos - 1.0) * ratio;                // -1.0 .. 1.0
 
-    //Create reference coordinates for the center of the inner border radius circle
-    vec2 tlR = vec2(tlP.x + totalRadius, tlP.y - totalRadius);
-    vec2 blR = vec2(blP.x + totalRadius, blP.y + totalRadius);
-    vec2 brR = vec2(brP.x - totalRadius, brP.y + totalRadius);
-    vec2 trR = vec2(trP.x - totalRadius, trP.y - totalRadius);
+    bool hasBorder = borderThickness > 0;
 
-    //Rounded corners
-    //Top Left
-    if (distance(tlR, gl_FragCoord.xy) < totalRadius) {
-        fragColor = borderColor;
-        if (distance(tlR, gl_FragCoord.xy) < radius) {
-            fragColor = color;
-        }
-    }
-    //Bottom Left
-    if (distance(blR, gl_FragCoord.xy) < totalRadius) {
-        fragColor = borderColor;
-        if (distance(blR, gl_FragCoord.xy) < radius) {
-            fragColor = color;
-        }
-    }
-    //Bottom Right
-    if (distance(brR, gl_FragCoord.xy) < totalRadius) {
-        fragColor = borderColor;
-        if (distance(brR, gl_FragCoord.xy) < radius) {
-            fragColor = color;
-        }
-    }
-    //Top Right
-    if (distance(trR, gl_FragCoord.xy) < totalRadius) {
-        fragColor = borderColor;
-        if (distance(trR, gl_FragCoord.xy) < radius) {
-            fragColor = color;
-        }
+    //background
+    vec3 rectColor = color.rgb;
+    intensity = roundedRectangle(pos, size, 0.1, 0.1, hasBorder) * color.a;
+    outCol = mix(outCol, rectColor, intensity);
+
+    //frame
+    if (hasBorder) {
+        vec3 frameColor = borderColor.rgb;
+        intensity = roundedFrame(pos, size, 0.1, 0.1) * borderColor.a;
+        outCol = mix(outCol, frameColor, intensity);
     }
 
-    //Fill in the border stuff
-    if (gl_FragCoord.x > tlR.x && gl_FragCoord.x < trR.x) {
-        if (gl_FragCoord.y > tlP.y - borderThickness || gl_FragCoord.y < blP.y + borderThickness) {
-            fragColor = borderColor;
-        } else {
-            fragColor = color;
-        }
-    }
-    if (gl_FragCoord.y > blR.y && gl_FragCoord.y < tlR.y) {
-        if (gl_FragCoord.x < tlP.x + borderThickness || gl_FragCoord.x > brP.x - borderThickness) {
-            fragColor = borderColor;
-        } else {
-            fragColor = color;
-        }
-    }
-
+    fragColor = vec4(outCol, 1.0);
 }
