@@ -30,7 +30,7 @@ float roundedFrame (vec2 pos, vec2 size, float radius, float thickness) {
 void main() {
 
     float intensity;
-    vec3 outCol;
+    vec4 outCol;
 
     //var values
     vec2 pos = vec2(0, 0);
@@ -43,13 +43,13 @@ void main() {
 
     //background
     intensity = roundedRectangle(pos, size, borderRadius/200.0, borderThickness/80.0, true);
-    outCol = mix(outCol, color.xyz, intensity);
+    outCol = mix(outCol, color, intensity);
 
-    fragColor = vec4(outCol, intensity);
+    fragColor = outCol;
 
     //frame
     intensity = roundedFrame(pos, size, borderRadius/200.0, borderThickness/80.0);
-    outCol = mix(outCol, borderColor.xyz, intensity);
+    outCol = mix(outCol, borderColor, intensity);
 
-    fragColor = vec4(mix(fragColor, vec4(outCol, 1), intensity));
+    fragColor = mix(fragColor, outCol, intensity);
 }
