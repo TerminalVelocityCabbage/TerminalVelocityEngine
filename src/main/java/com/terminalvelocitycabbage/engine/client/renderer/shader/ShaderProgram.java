@@ -154,13 +154,13 @@ public class ShaderProgram {
 		}
 	}
 
-	public void setUniform(String name, float floatV, int position) {
+	public void setUniformArray(String name, float floatV, int position) {
 		setUniform(name + "[" + position + "]", floatV);
 	}
 
-	public void setUniform(String name, float[] floats) {
+	public void setUniformArray(String name, float[] floats) {
 		for (int i = 0; i < (floats != null ? floats.length : 0); i++) {
-			setUniform(name, floats[i], i);
+			setUniformArray(name, floats[i], i);
 		}
 	}
 
