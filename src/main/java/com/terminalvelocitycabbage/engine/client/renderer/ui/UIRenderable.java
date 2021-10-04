@@ -36,10 +36,10 @@ public abstract class UIRenderable<T extends UIRenderable> {
 	public UIRenderable() {
 		this.needsUpdate = false;
 		this.rectangle = new RectangleModel(RenderFormat.POSITION_UV,
-			Vertex.positionUv(0, 0, 0, 0, 1),
-			Vertex.positionUv(0, 0, 0, 0, 0),
+			Vertex.positionUv(0, 0, 0, -1, 1),
+			Vertex.positionUv(0, 0, 0, -1, -1),
 			Vertex.positionUv(0, 0, 0, 1, 1),
-			Vertex.positionUv(0, 0, 0, 1, 0)
+			Vertex.positionUv(0, 0, 0, 1, -1)
 		);
 		hoverConsumers = new ArrayList<>();
 		lastHover = false;
