@@ -27,7 +27,7 @@ void main() {
     //Filter Corners
     if (modPixelUV.y > 1 - r) {
         if (modPixelUV.x > aspect - r) {
-            if (distance(vec2(1 - r), pixelUV) > r) {
+            if (distance(vec2(1 - r), vec2(pixelUV.x * aspect + (1 - aspect), pixelUV.y)) > r) {
                 fragColor = vec4(1, 0, 0, 1);
             }
         }
