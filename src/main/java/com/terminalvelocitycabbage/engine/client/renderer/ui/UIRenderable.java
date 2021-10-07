@@ -182,8 +182,8 @@ public abstract class UIRenderable<T extends UIRenderable> {
 		this.borderAlpha.unsetTarget();
 	}
 
-	public int getBorderRadius() {
-		return (int)borderRadius.getValue();
+	public float getBorderRadius() {
+		return borderRadius.getValue();
 	}
 
 	public int getBorderThickness() {
