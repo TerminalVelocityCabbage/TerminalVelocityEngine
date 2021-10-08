@@ -124,8 +124,16 @@ public abstract class UIRenderable<T extends UIRenderable> {
 		}
 	}
 
+	public float getStartX() {
+		return rectangle.vertices[0].getX();
+	}
+
 	public float getWidth() {
 		return rectangle.vertices[3].getX() - rectangle.vertices[0].getX();
+	}
+
+	public float getStartY() {
+		return rectangle.vertices[1].getY();
 	}
 
 	public float getHeight() {
