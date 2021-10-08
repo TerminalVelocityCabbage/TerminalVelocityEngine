@@ -85,8 +85,8 @@ public abstract class UnsafeContainerBuilder<T extends UnsafeContainerBuilder<T>
         return this.self;
     }
 
-    public T anchorPoint(Anchor anchorPoint) {
-        this.anchorPoint = anchorPoint;
+    public T anchor(AnchorPoint anchorPoint, AnchorDirection anchorDirection) {
+        this.anchorPoint = new Anchor(anchorPoint, anchorDirection);
         return this.self;
     }
 

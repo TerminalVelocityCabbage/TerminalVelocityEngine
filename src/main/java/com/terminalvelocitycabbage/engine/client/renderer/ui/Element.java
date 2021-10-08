@@ -148,6 +148,10 @@ public class Element extends UIRenderable<Element> {
 		queueUpdate();
 	}
 
+	public boolean hasText() {
+		return innerText != null && !innerText.getString().equals("");
+	}
+
 	public int getPosition() {
 		return parent.elements.indexOf(this);
 	}

@@ -22,7 +22,7 @@ public class Text {
 
 	private Text() {
 		this.needsUpdate = true;
-		this.textString = null;
+		this.textString = "";
 		this.fontMeshPartStorage = null;
 		this.model = null;
 	}
@@ -64,7 +64,9 @@ public class Text {
 	}
 
 	public void bind() {
-		model.bind();
+		if (model != null) {
+			model.bind();
+		}
 	}
 
 	public void render() {
@@ -72,6 +74,10 @@ public class Text {
 	}
 
 	public void update(int lineWidth, Window window, float xCenter, float yCenter) {
+
+		if (model == null) {
+			return;
+		}
 
 		if (needsUpdate) {
 			//Divided by the window dimensions to make it the correct scale
