@@ -44,7 +44,7 @@ public abstract class UnsafeCanvasBuilder<T extends UnsafeCanvasBuilder<T>> exte
         canvas.rightClickConsumers = rightClickConsumers;
         canvas.doubleClickConsumers = doubleClickConsumers;
 
-        canvas.bind();
+        canvas.onPartsChange();
 
         return canvas;
     }

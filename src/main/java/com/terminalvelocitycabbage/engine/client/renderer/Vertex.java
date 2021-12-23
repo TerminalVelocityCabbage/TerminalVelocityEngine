@@ -112,6 +112,10 @@ public class Vertex {
         return new Vertex(new float[] { x, y, z, r, g, b, a });
     }
 
+    public static Vertex ui(float x, float y, float z, float u, float v, float r, float g, float b, float a, float borderRadius) {
+        return new Vertex(new float[]{ x, y, z, u, v, r, g, b, a, borderRadius });
+    }
+
     @Override
     public String toString() {
         return "Vertex{" +

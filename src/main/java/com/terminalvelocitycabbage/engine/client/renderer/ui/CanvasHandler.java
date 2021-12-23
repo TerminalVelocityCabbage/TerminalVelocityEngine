@@ -17,7 +17,6 @@ public class CanvasHandler {
 	public void addCanvas(String name, Canvas canvas) {
 		if (!canvases.containsKey(name)) {
 			this.canvases.put(name, canvas);
-			canvas.bind();
 			canvas.queueUpdate();
 		} else {
 			Log.crash("Canvas Addition Error", new RuntimeException("Could not add duplicate entry " + name + " to canvas handler."));
@@ -50,10 +49,12 @@ public class CanvasHandler {
 	}
 
 	public void tick(double posX, double posY, boolean leftClick, boolean rightClick, int timeSinceLastClick) {
-
+		for (Canvas canvas : getActiveCanvases()) {
+			canvas.update();
+		}
 		getActiveCanvases().forEach(canvas -> canvas.getAllChildren().forEach(element -> {
 
-			if (testPosition(element.rectangle.vertices, posX, posY)) {
+			if (testPosition(element.vertices, posX, posY)) {
 				element.callHoverable();
 				if (leftClick) {
 					element.callClick();
@@ -73,7 +74,7 @@ public class CanvasHandler {
 
 	public void cleanup() {
 		for (Canvas canvas : canvases.values()) {
-			canvas.destroy();
+			canvas.model.destroy();
 		}
 	}
 
@@ -81,11 +82,11 @@ public class CanvasHandler {
 		List<UIRenderable> inCanvases = new ArrayList<>();
 		Vertex[] currVertices;
 		for (Canvas canvas : getActiveCanvases()) {
-			currVertices = canvas.rectangle.vertices;
+			currVertices = canvas.vertices;
 			if (testPosition(currVertices, x, y)) {
 				inCanvases.add(canvas);
 				for (Container element : canvas.containers) {
-					currVertices = element.rectangle.vertices;
+					currVertices = element.vertices;
 					if (testPosition(currVertices, x, y)) {
 						inCanvases.add(element);
 					}

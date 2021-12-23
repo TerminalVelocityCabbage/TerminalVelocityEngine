@@ -41,7 +41,7 @@ public abstract class UnsafeElementBuilder<T extends UnsafeElementBuilder<T>> ex
         element.height = height;
         element.innerText = innerText;
 
-        element.bind();
+//        element.bind();
         innerText.bind();
 
         return element;

@@ -4,6 +4,7 @@ import com.terminalvelocitycabbage.engine.client.renderer.ui.components.*;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +35,11 @@ public class Container extends UIRenderable<Container> {
 		} else {
 			return ((Container)parent).getCanvas();
 		}
+	}
+
+	@Override
+	public void onPartsChange() {
+		this.parent.onPartsChange();
 	}
 
 	public void setParent(UIRenderable canvas) {
@@ -69,10 +75,10 @@ public class Container extends UIRenderable<Container> {
 			int screenHeight = getCanvas().getWindow().monitorHeight();
 
 			//Get boundaries of parent
-			float originXMin = parent.rectangle.vertices[0].getX() + ((float)parent.getBorderThickness() / windowWidth * 2);
-			float originYMin = parent.rectangle.vertices[1].getY() + ((float)parent.getBorderThickness() / windowHeight * 2);
-			float originXMax = parent.rectangle.vertices[2].getX() - ((float)parent.getBorderThickness() / windowWidth * 2);
-			float originYMax = parent.rectangle.vertices[0].getY() - ((float)parent.getBorderThickness() / windowHeight * 2);
+			float originXMin = parent.vertex1.getX() + ((float)parent.getBorderThickness() / windowWidth * 2);
+			float originYMin = parent.vertex2.getY() + ((float)parent.getBorderThickness() / windowHeight * 2);
+			float originXMax = parent.vertex3.getX() - ((float)parent.getBorderThickness() / windowWidth * 2);
+			float originYMax = parent.vertex1.getY() - ((float)parent.getBorderThickness() / windowHeight * 2);
 
 			//Get parent's unit dimensions
 			float uContainerWidth = originXMax - originXMin;
@@ -126,13 +132,13 @@ public class Container extends UIRenderable<Container> {
 			topY += yDirOffset;
 
 			//Set the vertexes based on the calculated positions
-			rectangle.vertices[0].setXYZ(leftX, topY, 0);
-			rectangle.vertices[1].setXYZ(leftX, bottomY, 0);
-			rectangle.vertices[2].setXYZ(rightX, bottomY, 0);
-			rectangle.vertices[3].setXYZ(rightX, topY, 0);
+			vertex1.setXYZ(leftX, topY, 0);
+			vertex2.setXYZ(leftX, bottomY, 0);
+			vertex3.setXYZ(rightX, bottomY, 0);
+			vertex4.setXYZ(rightX, topY, 0);
 
 			//Update the data that gets passed to the gpu
-			rectangle.update(new Vector3f(), new Quaternionf().identity(), new Vector3f(1F)); //TODO
+//			rectangle.update(new Vector3f(), new Quaternionf().identity(), new Vector3f(1F)); //TODO
 
 			for (Container container : childContainers) {
 				container.queueUpdate();
@@ -147,38 +153,38 @@ public class Container extends UIRenderable<Container> {
 			if (horizontalAlignment.equals(Alignment.Horizontal.CENTER)) {
 				//These temp vars save info about rows needed to update in index range
 				int tmpRowIndex = 0;
-				float tmpRowPos = elements.get(0).rectangle.vertices[0].getY();
+				float tmpRowPos = elements.get(0).vertex1.getY();
 				for (int i = 0; i < elements.size(); i++) {
 					//This element is on the next row, so move them based on remainder space and update temp vals
-					if (elements.get(i).rectangle.vertices[3].getY() < tmpRowPos) {
-						moveElementsHorizontal(tmpRowIndex, i, rectangle.vertices[2].getX() - elements.get(i - 1).rectangle.vertices[2].getX());
+					if (elements.get(i).vertex4.getY() < tmpRowPos) {
+						moveElementsHorizontal(tmpRowIndex, i, vertex3.getX() - elements.get(i - 1).vertex3.getX());
 						tmpRowIndex = i;
-						tmpRowPos = elements.get(i).rectangle.vertices[3].getY();
+						tmpRowPos = elements.get(i).vertex4.getY();
 					}
 				}
 				//Update the last row
-				moveElementsHorizontal(tmpRowIndex, elements.size(), (rectangle.vertices[2].getX() - elements.get(elements.size() - 1).rectangle.vertices[2].getX()));
+				moveElementsHorizontal(tmpRowIndex, elements.size(), (vertex3.getX() - elements.get(elements.size() - 1).vertex3.getX()));
 			}
 			if (verticalAlignment.equals(Alignment.Vertical.CENTER)) {
 				//These temp vars save info about columns needed to update in index range
 				int tmpColIndex = 0;
-				float tmpColPos = elements.get(0).rectangle.vertices[0].getX();
+				float tmpColPos = elements.get(0).vertex1.getX();
 				for (int i = 0; i < elements.size(); i++) {
 					//This element is on the next column, so move them based on remainder space and update temp vals
-					if (elements.get(i).rectangle.vertices[3].getX() < tmpColPos) {
-						moveElementsVertical(tmpColIndex, i, rectangle.vertices[2].getY() - elements.get(i - 1).rectangle.vertices[2].getY());
+					if (elements.get(i).vertex4.getX() < tmpColPos) {
+						moveElementsVertical(tmpColIndex, i, vertex3.getY() - elements.get(i - 1).vertex3.getY());
 						tmpColIndex = i;
-						tmpColPos = elements.get(i).rectangle.vertices[3].getX();
+						tmpColPos = elements.get(i).vertex4.getX();
 					}
 				}
 				//Update the last row
-				moveElementsVertical(tmpColIndex, elements.size(), (rectangle.vertices[2].getY() - elements.get(elements.size() - 1).rectangle.vertices[2].getY()));
+				moveElementsVertical(tmpColIndex, elements.size(), (vertex3.getY() - elements.get(elements.size() - 1).vertex3.getY()));
 			}
 
 			//Make sure text is updated with all these elements
 			for (Element element : elements) {
 				if (element.innerText != null) {
-					element.innerText.update(element.width.getPixelValue(this.getCanvas().getWindow().width()), this.getCanvas().getWindow(), element.rectangle.vertices[0].getX(), element.rectangle.vertices[0].getY());
+					element.innerText.update(element.width.getPixelValue(this.getCanvas().getWindow().width()), this.getCanvas().getWindow(), element.vertex1.getX(), element.vertex1.getY());
 				}
 			}
 
@@ -196,10 +202,10 @@ public class Container extends UIRenderable<Container> {
 		distance /= 2f;
 		distance -= (float)getBorderThickness() / (float)getCanvas().window.monitorWidth();
 		for (Element element : elements.subList(beginIndex, endIndex)) {
-			element.rectangle.vertices[0].addXYZ(distance, 0, 0);
-			element.rectangle.vertices[1].addXYZ(distance, 0, 0);
-			element.rectangle.vertices[2].addXYZ(distance, 0, 0);
-			element.rectangle.vertices[3].addXYZ(distance, 0, 0);
+			element.vertex1.addXYZ(distance, 0, 0);
+			element.vertex2.addXYZ(distance, 0, 0);
+			element.vertex3.addXYZ(distance, 0, 0);
+			element.vertex4.addXYZ(distance, 0, 0);
 		}
 	}
 
@@ -212,26 +218,28 @@ public class Container extends UIRenderable<Container> {
 		distance /= 2f;
 		distance -= (float)getBorderThickness() / (float)getCanvas().window.monitorHeight();
 		for (Element element : elements.subList(beginIndex, endIndex)) {
-			element.rectangle.vertices[0].addXYZ(0, distance, 0);
-			element.rectangle.vertices[1].addXYZ(0, distance, 0);
-			element.rectangle.vertices[2].addXYZ(0, distance, 0);
-			element.rectangle.vertices[3].addXYZ(0, distance, 0);
+			element.vertex1.addXYZ(0, distance, 0);
+			element.vertex2.addXYZ(0, distance, 0);
+			element.vertex3.addXYZ(0, distance, 0);
+			element.vertex4.addXYZ(0, distance, 0);
 		}
 	}
 
 	public Container addContainer(Container container) {
 		container.setParent(this);
-		container.bind();
+//		container.bind();
 		container.queueUpdate();
 		childContainers.add(container);
+		this.onPartsChange();
 		return this;
 	}
 
 	public Container addElement(Element element) {
 		element.setParent(this);
-		element.bind();
+//		element.bind();
 		element.queueUpdate();
 		elements.add(element);
+		this.onPartsChange();
 		return this;
 	}
 
@@ -252,33 +260,33 @@ public class Container extends UIRenderable<Container> {
 	}
 
 	public float getMinXOfElements(int beginIndex, int endIndex) {
-		float value = rectangle.vertices[2].getX();
+		float value = vertex3.getX();
 		for (Element element : elements.subList(beginIndex, endIndex)) {
-			value = Math.min(value, element.rectangle.vertices[0].getX());
+			value = Math.min(value, element.vertex1.getX());
 		}
 		return value;
 	}
 
 	public float getMaxXOfElements(int beginIndex, int endIndex) {
-		float value = rectangle.vertices[0].getX();
+		float value = vertex1.getX();
 		for (Element element : elements.subList(beginIndex, endIndex)) {
-			value = Math.max(value, element.rectangle.vertices[2].getX());
+			value = Math.max(value, element.vertex3.getX());
 		}
 		return value;
 	}
 
 	public float getMinYOfElements(int beginIndex, int endIndex) {
-		float value = rectangle.vertices[0].getY();
+		float value = vertex1.getY();
 		for (Element element : elements.subList(beginIndex, endIndex)) {
-			value = Math.min(value, element.rectangle.vertices[1].getY());
+			value = Math.min(value, element.vertex2.getY());
 		}
 		return value;
 	}
 
 	public float getMaxYOfElements(int beginIndex, int endIndex) {
-		float value = rectangle.vertices[2].getY();
+		float value = vertex3.getY();
 		for (Element element : elements.subList(beginIndex, endIndex)) {
-			value = Math.max(value, element.rectangle.vertices[0].getY());
+			value = Math.max(value, element.vertex1.getY());
 		}
 		return value;
 	}

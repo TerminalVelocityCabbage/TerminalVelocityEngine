@@ -2,9 +2,12 @@ package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
 import com.terminalvelocitycabbage.engine.client.renderer.Vertex;
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
+import com.terminalvelocitycabbage.engine.client.renderer.model.MeshPart;
+import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
 import com.terminalvelocitycabbage.engine.client.renderer.model.RectangleModel;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Margin;
 
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -12,7 +15,16 @@ import java.util.function.Consumer;
 public abstract class UIRenderable<T extends UIRenderable> {
 
 	boolean needsUpdate;
-	RectangleModel rectangle;
+
+	final Vertex vertex1;
+	final Vertex vertex2;
+	final Vertex vertex3;
+	final Vertex vertex4;
+
+	final Vertex[] vertices;
+
+	public final Model.Part part;
+
 
 	AnimatableUIValue backgroundRed;
 	AnimatableUIValue backgroundGreen;
@@ -35,12 +47,20 @@ public abstract class UIRenderable<T extends UIRenderable> {
 
 	public UIRenderable() {
 		this.needsUpdate = false;
-		this.rectangle = new RectangleModel(RenderFormat.POSITION_UV,
-			Vertex.positionUv(0, 0, 0, -1, 1),
-			Vertex.positionUv(0, 0, 0, -1, -1),
-			Vertex.positionUv(0, 0, 0, 1, 1),
-			Vertex.positionUv(0, 0, 0, 1, -1)
+
+		this.vertex1 = Vertex.ui(0, 0, 0, -1, 1, 1, 1, 1, 1, 0);
+		this.vertex2 = Vertex.ui(0, 0, 0, -1, -1, 1, 1, 1, 1, 0);
+		this.vertex3 = Vertex.ui(0, 0, 0, 1, 1, 1, 1, 1, 1, 0);
+		this.vertex4 = Vertex.ui(0, 0, 0, 1, -1, 1, 1, 1, 1, 0);
+
+		this.vertices = new Vertex[] {
+			this.vertex1, this.vertex2, this.vertex3, this.vertex4
+		};
+
+		this.part = new Model.Part(
+			new MeshPart(this.vertices, new int[] { 0, 1, 2, 2, 3, 0 })
 		);
+
 		hoverConsumers = new ArrayList<>();
 		lastHover = false;
 		unHoverConsumers = new ArrayList<>();
@@ -64,31 +84,17 @@ public abstract class UIRenderable<T extends UIRenderable> {
 		margin = new Margin();
 	}
 
-	public void bind() {
-		rectangle.bind();
-	}
-
 	public abstract void update();
 
 	public boolean isRoot() {
 		return false;
 	}
 
-	public void render() {
-		rectangle.render();
-	}
-
-	public void destroy() {
-		rectangle.destroy();
-	}
-
 	public void queueUpdate() {
 		this.needsUpdate = true;
 	}
 
-	public RectangleModel getRectangle() {
-		return rectangle;
-	}
+	public abstract void onPartsChange();
 
 	public void callHoverable() {
 		for (Consumer<T> consumer : hoverConsumers) {
@@ -125,19 +131,19 @@ public abstract class UIRenderable<T extends UIRenderable> {
 	}
 
 	public float getStartX() {
-		return rectangle.vertices[0].getX();
+		return this.vertex1.getX();
 	}
 
 	public float getWidth() {
-		return rectangle.vertices[3].getX() - rectangle.vertices[0].getX();
+		return this.vertex4.getX() - this.vertex1.getX();
 	}
 
 	public float getStartY() {
-		return rectangle.vertices[1].getY();
+		return this.vertex2.getY();
 	}
 
 	public float getHeight() {
-		return rectangle.vertices[0].getY() - rectangle.vertices[1].getY();
+		return this.vertex1.getY() - this.vertex2.getY();
 	}
 
 	public boolean needsUpdate() {

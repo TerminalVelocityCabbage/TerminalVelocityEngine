@@ -74,7 +74,7 @@ public abstract class UnsafeContainerBuilder<T extends UnsafeContainerBuilder<T>
         container.elements = new ArrayList<>();
         elements.forEach(elementBuilder -> container.elements.add(elementBuilder.build(container)));
 
-        container.bind();
+//        container.bind();
 
         return container;
     }

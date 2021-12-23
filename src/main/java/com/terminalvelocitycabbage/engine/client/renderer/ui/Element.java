@@ -3,8 +3,11 @@ package com.terminalvelocitycabbage.engine.client.renderer.ui;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.UIDimension;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.text.FontMeshPartStorage;
+import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+
+import java.nio.FloatBuffer;
 
 import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment.Horizontal.LEFT;
 import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment.Horizontal.RIGHT;
@@ -23,6 +26,8 @@ public class Element extends UIRenderable<Element> {
 		this.parent = parent;
 	}
 
+
+
 	@Override
 	public void update() {
 
@@ -40,10 +45,10 @@ public class Element extends UIRenderable<Element> {
 			int position = getPosition();
 
 			//Get boundaries of parent
-			float originXMin = parent.rectangle.vertices[0].getX() + ((float)parent.getBorderThickness() / windowWidth * 2);
-			float originXMax = parent.rectangle.vertices[2].getX() - ((float)parent.getBorderThickness() / windowWidth * 2);
-			float originYMin = parent.rectangle.vertices[1].getY() + ((float)parent.getBorderThickness() / windowHeight * 2);
-			float originYMax = parent.rectangle.vertices[0].getY() - ((float)parent.getBorderThickness() / windowHeight * 2);
+			float originXMin = parent.vertex1.getX() + ((float)parent.getBorderThickness() / windowWidth * 2);
+			float originXMax = parent.vertex3.getX() - ((float)parent.getBorderThickness() / windowWidth * 2);
+			float originYMin = parent.vertex2.getY() + ((float)parent.getBorderThickness() / windowHeight * 2);
+			float originYMax = parent.vertex1.getY() - ((float)parent.getBorderThickness() / windowHeight * 2);
 
 			//Create temp width and height vars in case of a responsive layout
 			float width = this.width.getUnitizedValue(screenWidth, windowWidth);
@@ -64,16 +69,16 @@ public class Element extends UIRenderable<Element> {
 			//If there is an element before this on in the parent's element list then use a start point relative to that instead.
 			if (position > 0) {
 				if (parent.alignmentDirection.equals(Alignment.Direction.HORIZONTAL)) {
-					if (horizontalAlignment.equals(LEFT)) startX = parent.elements.get(position - 1).rectangle.vertices[2].getX();
-					if (horizontalAlignment.equals(RIGHT)) startX = parent.elements.get(position - 1).rectangle.vertices[0].getX();
-					if (verticalAlignment.equals(TOP)) startY = parent.elements.get(position - 1).rectangle.vertices[0].getY();
-					if (verticalAlignment.equals(BOTTOM)) startY = parent.elements.get(position - 1).rectangle.vertices[1].getY();
+					if (horizontalAlignment.equals(LEFT)) startX = parent.elements.get(position - 1).vertex3.getX();
+					if (horizontalAlignment.equals(RIGHT)) startX = parent.elements.get(position - 1).vertex1.getX();
+					if (verticalAlignment.equals(TOP)) startY = parent.elements.get(position - 1).vertex1.getY();
+					if (verticalAlignment.equals(BOTTOM)) startY = parent.elements.get(position - 1).vertex2.getY();
 				}
 				if (parent.alignmentDirection.equals(Alignment.Direction.VERTICAL)) {
-					if (horizontalAlignment.equals(LEFT)) startX = parent.elements.get(position - 1).rectangle.vertices[0].getX();
-					if (horizontalAlignment.equals(RIGHT)) startX = parent.elements.get(position - 1).rectangle.vertices[2].getX();
-					if (verticalAlignment.equals(TOP)) startY = parent.elements.get(position - 1).rectangle.vertices[1].getY();
-					if (verticalAlignment.equals(BOTTOM)) startY = parent.elements.get(position - 1).rectangle.vertices[0].getY();
+					if (horizontalAlignment.equals(LEFT)) startX = parent.elements.get(position - 1).vertex1.getX();
+					if (horizontalAlignment.equals(RIGHT)) startX = parent.elements.get(position - 1).vertex3.getX();
+					if (verticalAlignment.equals(TOP)) startY = parent.elements.get(position - 1).vertex2.getY();
+					if (verticalAlignment.equals(BOTTOM)) startY = parent.elements.get(position - 1).vertex1.getY();
 				}
 			}
 
@@ -130,22 +135,24 @@ public class Element extends UIRenderable<Element> {
 			}
 
 			//Set the vertexes based on the calculated positions
-			rectangle.vertices[0].setXYZ(leftX, topY, 0);
-			rectangle.vertices[1].setXYZ(leftX, bottomY, 0);
-			rectangle.vertices[2].setXYZ(rightX, bottomY, 0);
-			rectangle.vertices[3].setXYZ(rightX, topY, 0);
+			vertex1.setXYZ(leftX, topY, 0);
+			vertex2.setXYZ(leftX, bottomY, 0);
+			vertex3.setXYZ(rightX, bottomY, 0);
+			vertex4.setXYZ(rightX, topY, 0);
 		}
 
 		//Pass the update to the text and let it determine if it's required
 		if (this.innerText != null) {
-			this.innerText.update(this.width.getPixelValue(this.getCanvas().getWindow().width()), this.getCanvas().getWindow(), rectangle.vertices[0].getX(), rectangle.vertices[0].getY());
+			this.innerText.update(this.width.getPixelValue(this.getCanvas().getWindow().width()), this.getCanvas().getWindow(), this.vertex1.getX(), this.vertex1.getY());
 		}
-
-		//Update the data that gets passed to the gpu
-		rectangle.update(new Vector3f(), new Quaternionf().identity(), new Vector3f(1F));
 
 		//Complete this update
 		queueUpdate();
+	}
+
+	@Override
+	public void onPartsChange() {
+		this.parent.onPartsChange();
 	}
 
 	public boolean hasText() {
