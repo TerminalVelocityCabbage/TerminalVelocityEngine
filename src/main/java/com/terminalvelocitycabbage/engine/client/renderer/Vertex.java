@@ -70,6 +70,32 @@ public class Vertex {
         }
     }
 
+    public void setRGBA(float r, float g, float b, float a) {
+        if(this.format != null) {
+            int off = this.format.getElementOffset(RenderElement.COLOUR_RGBA, 0);
+            this.data[off] = r;
+            this.data[off+1] = g;
+            this.data[off+2] = b;
+            this.data[off+3] = a;
+        }
+    }
+
+    public void setBorderRadius(float borderW, float borderH) {
+        if(this.format != null) {
+            int off = this.format.getElementOffset(RenderElement.BORDER_RADIUS, 0);
+            this.data[off] = borderW;
+            this.data[off+1] = borderH;
+        }
+    }
+
+    public void setBorderThickness(float borderW, float borderH) {
+        if(this.format != null) {
+            int off = this.format.getElementOffset(RenderElement.BORDER_THICKNESS, 0);
+            this.data[off] = borderW;
+            this.data[off+1] = borderH;
+        }
+    }
+
     public void setNormalXYZ(float x, float y, float z) {
         if(this.format != null) {
             int off = this.format.getElementOffset(RenderElement.NORMAL, 0);
@@ -112,8 +138,8 @@ public class Vertex {
         return new Vertex(new float[] { x, y, z, r, g, b, a });
     }
 
-    public static Vertex ui(float x, float y, float z, float u, float v, float r, float g, float b, float a, float borderRadius) {
-        return new Vertex(new float[]{ x, y, z, u, v, r, g, b, a, borderRadius });
+    public static Vertex ui(float x, float y, float z, float u, float v, float r, float g, float b, float a, float borderRadius, float borderThickness) {
+        return new Vertex(new float[]{ x, y, z, u, v, r, g, b, a, borderRadius, borderRadius, borderThickness, borderThickness });
     }
 
     @Override

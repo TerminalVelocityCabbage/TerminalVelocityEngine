@@ -1,13 +1,10 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
+import com.terminalvelocitycabbage.engine.client.renderer.Vertex;
+import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.UIDimension;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.text.FontMeshPartStorage;
-import org.joml.Matrix4f;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
-
-import java.nio.FloatBuffer;
 
 import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment.Horizontal.LEFT;
 import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment.Horizontal.RIGHT;
@@ -146,8 +143,23 @@ public class Element extends UIRenderable<Element> {
 			this.innerText.update(this.width.getPixelValue(this.getCanvas().getWindow().width()), this.getCanvas().getWindow(), this.vertex1.getX(), this.vertex1.getY());
 		}
 
+		int windowWidth = getCanvas().window.width();
+		int windowHeight = getCanvas().window.height();
+
+		for (Vertex vertex : this.vertices) {
+			vertex.setRGBA(this.backgroundRed.getValue(), this.backgroundGreen.getValue(), this.backgroundBlue.getValue(), this.backgroundAlpha.getValue());
+			vertex.setBorderRadius(
+				this.borderRadius.getValue() / this.getWidth() / windowWidth * 2,
+				this.borderRadius.getValue() / this.getHeight() / windowHeight * 2
+			);
+			vertex.setBorderThickness(
+				this.borderThickness.getValue() / this.getWidth() / windowWidth * 2,
+				this.borderThickness.getValue() / this.getHeight() / windowHeight * 2
+			);
+		}
+
 		//Complete this update
-		queueUpdate();
+		needsUpdate = false;
 	}
 
 	@Override

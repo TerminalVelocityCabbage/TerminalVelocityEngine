@@ -34,7 +34,8 @@ public class Canvas extends UIRenderable<Canvas> {
 		ClientBase.instance.addEventHandler(EventContext.CLIENT, this);
 		this.backgroundAlpha = new AnimatableUIValue(0);
 
-		this.model = new Model(RenderFormat.UI, new ArrayList<>(Collections.singletonList(this.part)));
+		this.model = new Model(RenderFormat.UI, new ArrayList<>());
+		this.part.setFormat(RenderFormat.UI);
 	}
 
 	public boolean isActive() {
@@ -52,7 +53,6 @@ public class Canvas extends UIRenderable<Canvas> {
 	@Override
 	public void onPartsChange() {
 		this.model.modelParts.clear();
-		this.model.modelParts.add(this.part);
 		for (UIRenderable child : this.getAllChildren()) {
 			this.model.modelParts.add(child.part);
 		}

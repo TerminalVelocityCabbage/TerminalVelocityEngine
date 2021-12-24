@@ -48,10 +48,10 @@ public abstract class UIRenderable<T extends UIRenderable> {
 	public UIRenderable() {
 		this.needsUpdate = false;
 
-		this.vertex1 = Vertex.ui(0, 0, 0, -1, 1, 1, 1, 1, 1, 0);
-		this.vertex2 = Vertex.ui(0, 0, 0, -1, -1, 1, 1, 1, 1, 0);
-		this.vertex3 = Vertex.ui(0, 0, 0, 1, 1, 1, 1, 1, 1, 0);
-		this.vertex4 = Vertex.ui(0, 0, 0, 1, -1, 1, 1, 1, 1, 0);
+		this.vertex1 = Vertex.ui(0, 0, 0, -1, -1, 1, 1, 1, 1, 0, 0);
+		this.vertex2 = Vertex.ui(0, 0, 0, -1, 1, 1, 1, 1, 1, 0, 0);
+		this.vertex3 = Vertex.ui(0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0);
+		this.vertex4 = Vertex.ui(0, 0, 0, 1, -1, 1, 1, 1, 1, 0, 0);
 
 		this.vertices = new Vertex[] {
 			this.vertex1, this.vertex2, this.vertex3, this.vertex4

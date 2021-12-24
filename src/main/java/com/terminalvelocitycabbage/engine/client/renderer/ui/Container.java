@@ -1,5 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
+import com.terminalvelocitycabbage.engine.client.renderer.Vertex;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.*;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -186,6 +187,20 @@ public class Container extends UIRenderable<Container> {
 				if (element.innerText != null) {
 					element.innerText.update(element.width.getPixelValue(this.getCanvas().getWindow().width()), this.getCanvas().getWindow(), element.vertex1.getX(), element.vertex1.getY());
 				}
+			}
+
+
+			//Update colour
+			for (Vertex vertex : this.vertices) {
+				vertex.setRGBA(this.backgroundRed.getValue(), this.backgroundGreen.getValue(), this.backgroundBlue.getValue(), this.backgroundAlpha.getValue());
+				vertex.setBorderRadius(
+					this.borderRadius.getValue() / this.getWidth() / windowWidth * 2,
+					this.borderRadius.getValue() / this.getHeight() / windowHeight * 2
+				);
+				vertex.setBorderThickness(
+					this.borderThickness.getValue() / this.getWidth() / windowWidth * 2,
+					this.borderThickness.getValue() / this.getHeight() / windowHeight * 2
+				);
 			}
 
 			//Complete this update

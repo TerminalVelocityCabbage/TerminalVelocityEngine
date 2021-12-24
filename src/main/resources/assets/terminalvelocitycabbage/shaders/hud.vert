@@ -3,14 +3,20 @@
 uniform vec2 screenRes;
 
 
-layout (location = 0) in vec3 position;
-layout (location = 1) in vec2 uv;
-layout (location = 1) in vec3 colour;
-layout (location = 1) in vec3 borderThickness;
+layout (location = 0) in vec3 a_position;
+layout (location = 1) in vec2 a_uv;
+layout (location = 2) in vec4 a_colour;
+layout (location = 3) in vec2 a_borderRadius;
+layout (location = 4) in vec2 a_borderThickness;
 
-out vec2 vertUV;
+smooth out vec2 uv;
+smooth out vec4 colour;
+smooth out vec2 borderRadius;
+smooth out vec2 borderThickness;
 
 void main() {
-    gl_Position = vec4(position * vec3(screenRes.xy, 1.0), 1.0);
-    vertUV = uv;
+    gl_Position = vec4(a_position, 1.0);
+    uv = a_uv;
+    colour = a_colour;
+    borderRadius = a_borderRadius;
 }

@@ -17,7 +17,8 @@ public class RenderElement {
     public static final RenderElement COLOUR_RGBA = new RenderElement("colour", 4, Float.BYTES);
 
     //UI stuff
-    public static final RenderElement BORDER_THICKNESS = new RenderElement("borderThickness", 1, Float.BYTES);
+    public static final RenderElement BORDER_RADIUS = new RenderElement("borderRadius", 2, Float.BYTES);
+    public static final RenderElement BORDER_THICKNESS = new RenderElement("borderThickness", 2, Float.BYTES);
 
     private final String debugName;
     private final int count;

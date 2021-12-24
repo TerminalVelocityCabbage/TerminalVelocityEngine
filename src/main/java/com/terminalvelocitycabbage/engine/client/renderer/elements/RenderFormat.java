@@ -14,7 +14,8 @@ public class RenderFormat {
     public static final RenderFormat POSITION_COLOUR = new RenderFormat(RenderElement.POSITION, RenderElement.COLOUR_RGBA);
 
     public static final RenderFormat UI = new RenderFormat(
-        RenderElement.POSITION, RenderElement.UV, RenderElement.COLOUR_RGBA, RenderElement.BORDER_THICKNESS
+        RenderElement.POSITION, RenderElement.UV, RenderElement.COLOUR_RGBA,
+        RenderElement.BORDER_RADIUS, RenderElement.BORDER_THICKNESS
     );
 
     private final List<RenderElement> elementList;
