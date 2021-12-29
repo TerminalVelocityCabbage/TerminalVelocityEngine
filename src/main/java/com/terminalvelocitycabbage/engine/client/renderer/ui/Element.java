@@ -1,7 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
 import com.terminalvelocitycabbage.engine.client.renderer.Vertex;
-import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.UIDimension;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.text.FontMeshPartStorage;
@@ -38,7 +37,7 @@ public class Element extends UIRenderable<Element> {
 			int screenWidth = getCanvas().window.monitorWidth();
 			int screenHeight = getCanvas().window.monitorHeight();
 
-			//Position this element is in it's parent's element list
+			//Position this element is in its parent's element list
 			int position = getPosition();
 
 			//Get boundaries of parent
@@ -48,8 +47,8 @@ public class Element extends UIRenderable<Element> {
 			float originYMax = parent.vertex1.getY() - ((float)parent.getBorderThickness() / windowHeight * 2);
 
 			//Create temp width and height vars in case of a responsive layout
-			float width = this.width.getUnitizedValue(screenWidth, windowWidth);
-			float height = this.height.getUnitizedValue(screenHeight, windowHeight);
+			float width = this.width.getUnitizedValue(screenWidth, windowWidth, originXMax - originXMin);
+			float height = this.height.getUnitizedValue(screenHeight, windowHeight, originYMax - originYMin);
 
 			//Create temp vars for the parent's alignment
 			Alignment.Horizontal horizontalAlignment = parent.horizontalAlignment;

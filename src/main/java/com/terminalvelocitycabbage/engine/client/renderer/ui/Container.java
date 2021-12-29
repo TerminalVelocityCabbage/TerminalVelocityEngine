@@ -2,10 +2,7 @@ package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
 import com.terminalvelocitycabbage.engine.client.renderer.Vertex;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.*;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
-import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -95,8 +92,8 @@ public class Container extends UIRenderable<Container> {
 
 			//Unit dimensions
 			//Create temp width and height vars in case of a responsive layout
-			float uWidth = width.getUnitDirect().equals(PERCENT) ? width.getValueDirect() / 100f * uContainerWidth : width.getUnitizedValue(screenWidth, windowWidth);
-			float uHeight = height.getUnitDirect().equals(PERCENT) ? height.getValueDirect() / 100f * uContainerHeight : height.getUnitizedValue(screenHeight, windowHeight);
+			float uWidth = width.getUnitDirect().equals(PERCENT) ? width.getValueDirect() / 100f * uContainerWidth : width.getUnitizedValue(screenWidth, windowWidth, originXMax - originXMin);
+			float uHeight = height.getUnitDirect().equals(PERCENT) ? height.getValueDirect() / 100f * uContainerHeight : height.getUnitizedValue(screenHeight, windowHeight, originYMax - originYMin);
 
 			//Place all vertices at the center of the parent
 			float leftX = containerCenterX;
@@ -115,10 +112,10 @@ public class Container extends UIRenderable<Container> {
 			topY += uHeight / 2;
 
 			//Apply margins
-			leftX += getMargin().left().getUnitizedValue(screenWidth, windowWidth);
-			rightX -= getMargin().right().getUnitizedValue(screenWidth, windowWidth);
-			bottomY += getMargin().bottom().getUnitizedValue(screenHeight, windowHeight);
-			topY -= getMargin().top().getUnitizedValue(screenHeight, windowHeight);
+			leftX += getMargin().left().getUnitizedValue(screenWidth, windowWidth, originXMax - originXMin);
+			rightX -= getMargin().right().getUnitizedValue(screenWidth, windowWidth, originXMax - originXMin);
+			bottomY += getMargin().bottom().getUnitizedValue(screenHeight, windowHeight, originYMax - originYMin);
+			topY -= getMargin().top().getUnitizedValue(screenHeight, windowHeight, originYMax - originYMin);
 
 			//Move this box to be centered on the anchor point
 			leftX += xOffset;

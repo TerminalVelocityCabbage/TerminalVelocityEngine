@@ -23,9 +23,9 @@ public class UIDimension {
 		return -1;
 	}
 
-	public float getUnitizedValue(int screenDimension, int windowDimension) {
+	public float getUnitizedValue(int screenDimension, int windowDimension, float parentDim) {
 		if (unit.equals(Unit.PERCENT)) {
-			return (value.getValue() / 50f);
+			return ((value.getValue() / 50f) * (parentDim / 2f));
 		} else if (unit.equals(Unit.PIXELS)) {
 			return ((value.getValue() / (float)screenDimension) * ((float)screenDimension / (float)windowDimension)) * 2f;
 		}

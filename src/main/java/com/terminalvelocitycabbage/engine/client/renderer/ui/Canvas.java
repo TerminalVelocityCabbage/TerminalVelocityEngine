@@ -3,19 +3,14 @@ package com.terminalvelocitycabbage.engine.client.renderer.ui;
 import com.terminalvelocitycabbage.engine.client.ClientBase;
 import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
-import com.terminalvelocitycabbage.engine.client.renderer.model.Mesh;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
-import com.terminalvelocitycabbage.engine.client.renderer.model.RectangleModel;
 import com.terminalvelocitycabbage.engine.events.EventContext;
 import com.terminalvelocitycabbage.engine.events.HandleEvent;
 import com.terminalvelocitycabbage.engine.events.client.WindowResizeEvent;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-import java.nio.FloatBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class Canvas extends UIRenderable<Canvas> {
@@ -108,10 +103,10 @@ public class Canvas extends UIRenderable<Canvas> {
 			int screenHeight = getWindow().monitorHeight();
 
 			//Offset based on margins
-			leftX += getMargin().left().getUnitizedValue(screenWidth, windowWidth);
-			rightX -= getMargin().right().getUnitizedValue(screenWidth, windowWidth);
-			topY -= getMargin().top().getUnitizedValue(screenHeight, windowHeight);
-			bottomY += getMargin().bottom().getUnitizedValue(screenHeight, windowHeight);
+			leftX += getMargin().left().getUnitizedValue(screenWidth, windowWidth, 2f);
+			rightX -= getMargin().right().getUnitizedValue(screenWidth, windowWidth, 2f);
+			topY -= getMargin().top().getUnitizedValue(screenHeight, windowHeight, 2f);
+			bottomY += getMargin().bottom().getUnitizedValue(screenHeight, windowHeight, 2f);
 
 			//Set the vertexes based on the calculated positions
 			vertex1.setXYZ(leftX, topY, 0);
