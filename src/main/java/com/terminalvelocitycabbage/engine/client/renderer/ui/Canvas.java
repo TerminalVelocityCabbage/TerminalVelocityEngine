@@ -126,7 +126,6 @@ public class Canvas extends UIRenderable<Canvas> {
 
 		this.model.bind();
 		this.model.update(new Vector3f(), new Quaternionf(), new Vector3f(1));
-		this.model.mesh.dumpAsObj();
 	}
 
 	@Override
