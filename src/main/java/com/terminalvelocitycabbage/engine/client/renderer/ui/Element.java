@@ -120,6 +120,17 @@ public class Element extends UIRenderable<Element> {
 			topY += (height / 2) * -verticalAlignment.getStart();
 			bottomY += (height / 2) * -verticalAlignment.getStart();
 
+			//Apply margins
+			leftX += getMargin().left().getUnitizedValue(screenWidth, windowWidth, originXMax - originXMin);
+			rightX -= getMargin().right().getUnitizedValue(screenWidth, windowWidth, originXMax - originXMin);
+			bottomY += getMargin().bottom().getUnitizedValue(screenHeight, windowHeight, originYMax - originYMin);
+			topY -= getMargin().top().getUnitizedValue(screenHeight, windowHeight, originYMax - originYMin);
+			//Move things if there is room
+			leftX -= getMargin().right().getUnitizedValue(screenWidth, windowWidth, originXMax - originXMin);
+			rightX += getMargin().left().getUnitizedValue(screenWidth, windowWidth, originXMax - originXMin);
+			bottomY -= getMargin().top().getUnitizedValue(screenHeight, windowHeight, originYMax - originYMin);
+			topY += getMargin().bottom().getUnitizedValue(screenHeight, windowHeight, originYMax - originYMin);
+
 			//Hide overflow if requested
 			if (parent.overflow.hideX()) {
 				if (leftX < originXMin) leftX = originXMin;

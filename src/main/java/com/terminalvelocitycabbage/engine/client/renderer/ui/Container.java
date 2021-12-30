@@ -186,7 +186,6 @@ public class Container extends UIRenderable<Container> {
 				}
 			}
 
-
 			//Update colour
 			for (Vertex vertex : this.vertices) {
 				vertex.setRGBA(this.backgroundRed.getValue(), this.backgroundGreen.getValue(), this.backgroundBlue.getValue(), this.backgroundAlpha.getValue());
