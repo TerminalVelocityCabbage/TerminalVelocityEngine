@@ -1,13 +1,10 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
 import com.terminalvelocitycabbage.engine.client.renderer.Vertex;
-import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
 import com.terminalvelocitycabbage.engine.client.renderer.model.MeshPart;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
-import com.terminalvelocitycabbage.engine.client.renderer.model.RectangleModel;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Margin;
 
-import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;

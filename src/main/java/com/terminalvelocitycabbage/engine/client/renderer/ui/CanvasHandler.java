@@ -53,7 +53,6 @@ public class CanvasHandler {
 			canvas.update();
 		}
 		getActiveCanvases().forEach(canvas -> canvas.getAllChildren().forEach(element -> {
-
 			if (testPosition(element.vertices, posX, posY)) {
 				element.callHoverable();
 				if (leftClick) {

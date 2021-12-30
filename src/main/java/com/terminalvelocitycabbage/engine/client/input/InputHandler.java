@@ -17,10 +17,23 @@ public abstract class InputHandler {
 
 	private boolean focused = false;
 
+	//Temp Vars for left mouse button
+	private boolean lastLeftButtonReleased = false;
+	private boolean leftButtonReleased = false;
 	private boolean lastLeftButtonPressed = false;
 	private boolean leftButtonPressed = false;
+	//Ref Vars for left mouse button
+	private boolean refLeftMouseClicked;
+	private short leftButtonHeldTime = -1;
+
+	//Temp Vars for right mouse button
+	private boolean lastRightButtonReleased = false;
+	private boolean rightButtonReleased = false;
 	private boolean lastRightButtonPressed = false;
 	private boolean rightButtonPressed = false;
+	//Ref Vars for right mouse button
+	private boolean refRightMouseClicked;
+	private short rightButtonHeldTime = -1;
 
 	private short ticksSinceLastClick = -1;
 
@@ -44,7 +57,9 @@ public abstract class InputHandler {
 		});
 		glfwSetCursorEnterCallback(window.getID(), (windowHandle, entered) -> focused = entered);
 		glfwSetMouseButtonCallback(window.getID(), (windowHandle, button, action, mode) -> {
+			leftButtonReleased = button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE;
 			leftButtonPressed = button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS;
+			rightButtonReleased = button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE;
 			rightButtonPressed = button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS;
 		});
 		glfwSetScrollCallback(window.getID(), (window1, xoffset, yoffset) -> {
@@ -78,18 +93,50 @@ public abstract class InputHandler {
 	}
 
 	public void updateMouseButtons() {
-		if (lastLeftButtonPressed && !leftButtonPressed) {
-			ticksSinceLastClick = -1;
+		if (leftButtonReleased) {
+			ticksSinceLastClick = 0;
 		}
-		lastLeftButtonPressed = leftButtonPressed;
-		lastRightButtonPressed = rightButtonPressed;
-		//Make sure this doesnt explode
-		if (ticksSinceLastClick >= Short.MAX_VALUE) {
-			ticksSinceLastClick = -2;
+		//Make sure this doesn't explode
+		if (ticksSinceLastClick >= Short.MAX_VALUE - 1) {
+			ticksSinceLastClick = Short.MAX_VALUE;
 		}
-		//If there was not a recent click dont increment
-		if (ticksSinceLastClick >= -1) {
-			ticksSinceLastClick++;
+
+		//Update left button stuff
+		if (lastLeftButtonReleased) {
+			leftButtonHeldTime = -1;
+			lastLeftButtonReleased = false;
+			leftButtonPressed = false;
+		}
+		if (leftButtonPressed && !leftButtonReleased) {
+			leftButtonHeldTime++;
+		}
+		if (refLeftMouseClicked) {
+			lastLeftButtonReleased = true;
+			refLeftMouseClicked = false;
+		}
+		if (leftButtonReleased) {
+			leftButtonPressed = false;
+			refLeftMouseClicked = true;
+			leftButtonReleased = false;
+		}
+
+		//Update right button stuff
+		if (lastRightButtonReleased) {
+			rightButtonHeldTime = -1;
+			lastRightButtonReleased = false;
+			rightButtonPressed = false;
+		}
+		if (rightButtonPressed && !rightButtonReleased) {
+			rightButtonHeldTime++;
+		}
+		if (refRightMouseClicked) {
+			lastRightButtonReleased = true;
+			refRightMouseClicked = false;
+		}
+		if (rightButtonReleased) {
+			rightButtonPressed = false;
+			refRightMouseClicked = true;
+			rightButtonReleased = false;
 		}
 	}
 
@@ -97,20 +144,28 @@ public abstract class InputHandler {
 		return ticksSinceLastClick;
 	}
 
-	public boolean isRightButtonPressed() {
-		return rightButtonPressed;
+	public boolean isLeftButtonClicked() {
+		return refLeftMouseClicked;
 	}
 
-	public boolean isRightButtonReleased() {
-		return !rightButtonPressed && lastRightButtonPressed;
+	public boolean isLeftButtonHeldFor(short time) {
+		return time >= leftButtonHeldTime;
 	}
 
-	public boolean isLeftButtonPressed() {
+	public boolean isLeftButtonHolding() {
 		return leftButtonPressed;
 	}
 
-	public boolean isLeftButtonReleased() {
-		return !leftButtonPressed && lastLeftButtonPressed;
+	public boolean isRightButtonClicked() {
+		return refRightMouseClicked;
+	}
+
+	public boolean isRightButtonHeldFor(short time) {
+		return time >= rightButtonHeldTime;
+	}
+
+	public boolean isRightButtonHolding() {
+		return rightButtonPressed;
 	}
 
 	public void setFocus(boolean focused) {
