@@ -55,10 +55,6 @@ public class Canvas extends UIRenderable<Canvas> {
 		this.model.bind();
 	}
 
-	public void uiChanged() {
-		this.model.bind();
-	}
-
 	public void addContainer(Container container) {
 		container.setParent(this);
 		containers.add(container);
