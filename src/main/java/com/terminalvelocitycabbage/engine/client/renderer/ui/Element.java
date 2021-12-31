@@ -1,29 +1,28 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
-import com.terminalvelocitycabbage.engine.client.renderer.ui.text.FontMeshPartStorage;
+import com.terminalvelocitycabbage.engine.client.renderer.Vertex;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.UIDimension;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
-
-import java.util.function.Consumer;
+import com.terminalvelocitycabbage.engine.client.renderer.ui.text.FontMeshPartStorage;
 
 import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment.Horizontal.LEFT;
 import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment.Horizontal.RIGHT;
 import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment.Vertical.BOTTOM;
 import static com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment.Vertical.TOP;
 
-public class Element extends UIRenderableWithText {
+public class Element extends UIRenderable<Element> {
+
+	public Container parent;
 
 	public UIDimension width;
 	public UIDimension height;
-	public Container parent;
 	public Text innerText;
 
-	public Element(UIDimension width, UIDimension height) {
-		this.width = width;
-		this.height = height;
+	public Element(Container parent) {
+		this.parent = parent;
 	}
+
+
 
 	@Override
 	public void update() {
@@ -38,18 +37,18 @@ public class Element extends UIRenderableWithText {
 			int screenWidth = getCanvas().window.monitorWidth();
 			int screenHeight = getCanvas().window.monitorHeight();
 
-			//Position this element is in it's parent's element list
+			//Position this element is in its parent's element list
 			int position = getPosition();
 
 			//Get boundaries of parent
-			float originXMin = parent.rectangle.vertices[0].getX() + ((float)parent.getBorderThickness() / windowWidth * 2);
-			float originXMax = parent.rectangle.vertices[2].getX() - ((float)parent.getBorderThickness() / windowWidth * 2);
-			float originYMin = parent.rectangle.vertices[1].getY() + ((float)parent.getBorderThickness() / windowHeight * 2);
-			float originYMax = parent.rectangle.vertices[0].getY() - ((float)parent.getBorderThickness() / windowHeight * 2);
+			float originXMin = parent.vertex1.getX() + ((float)parent.getBorderThickness() / windowWidth * 2);
+			float originXMax = parent.vertex3.getX() - ((float)parent.getBorderThickness() / windowWidth * 2);
+			float originYMin = parent.vertex2.getY() + ((float)parent.getBorderThickness() / windowHeight * 2);
+			float originYMax = parent.vertex1.getY() - ((float)parent.getBorderThickness() / windowHeight * 2);
 
 			//Create temp width and height vars in case of a responsive layout
-			float width = this.width.getUnitizedValue(screenWidth, windowWidth);
-			float height = this.height.getUnitizedValue(screenHeight, windowHeight);
+			float width = this.width.getUnitizedValue(screenWidth, windowWidth, originXMax - originXMin);
+			float height = this.height.getUnitizedValue(screenHeight, windowHeight, originYMax - originYMin);
 
 			//Create temp vars for the parent's alignment
 			Alignment.Horizontal horizontalAlignment = parent.horizontalAlignment;
@@ -66,16 +65,16 @@ public class Element extends UIRenderableWithText {
 			//If there is an element before this on in the parent's element list then use a start point relative to that instead.
 			if (position > 0) {
 				if (parent.alignmentDirection.equals(Alignment.Direction.HORIZONTAL)) {
-					if (horizontalAlignment.equals(LEFT)) startX = parent.elements.get(position - 1).rectangle.vertices[2].getX();
-					if (horizontalAlignment.equals(RIGHT)) startX = parent.elements.get(position - 1).rectangle.vertices[0].getX();
-					if (verticalAlignment.equals(TOP)) startY = parent.elements.get(position - 1).rectangle.vertices[0].getY();
-					if (verticalAlignment.equals(BOTTOM)) startY = parent.elements.get(position - 1).rectangle.vertices[1].getY();
+					if (horizontalAlignment.equals(LEFT)) startX = parent.elements.get(position - 1).vertex3.getX();
+					if (horizontalAlignment.equals(RIGHT)) startX = parent.elements.get(position - 1).vertex1.getX();
+					if (verticalAlignment.equals(TOP)) startY = parent.elements.get(position - 1).vertex1.getY();
+					if (verticalAlignment.equals(BOTTOM)) startY = parent.elements.get(position - 1).vertex2.getY();
 				}
 				if (parent.alignmentDirection.equals(Alignment.Direction.VERTICAL)) {
-					if (horizontalAlignment.equals(LEFT)) startX = parent.elements.get(position - 1).rectangle.vertices[0].getX();
-					if (horizontalAlignment.equals(RIGHT)) startX = parent.elements.get(position - 1).rectangle.vertices[2].getX();
-					if (verticalAlignment.equals(TOP)) startY = parent.elements.get(position - 1).rectangle.vertices[1].getY();
-					if (verticalAlignment.equals(BOTTOM)) startY = parent.elements.get(position - 1).rectangle.vertices[0].getY();
+					if (horizontalAlignment.equals(LEFT)) startX = parent.elements.get(position - 1).vertex1.getX();
+					if (horizontalAlignment.equals(RIGHT)) startX = parent.elements.get(position - 1).vertex3.getX();
+					if (verticalAlignment.equals(TOP)) startY = parent.elements.get(position - 1).vertex2.getY();
+					if (verticalAlignment.equals(BOTTOM)) startY = parent.elements.get(position - 1).vertex1.getY();
 				}
 			}
 
@@ -121,6 +120,17 @@ public class Element extends UIRenderableWithText {
 			topY += (height / 2) * -verticalAlignment.getStart();
 			bottomY += (height / 2) * -verticalAlignment.getStart();
 
+			//Apply margins
+			leftX += getMargin().left().getUnitizedValue(screenWidth, windowWidth, originXMax - originXMin);
+			rightX -= getMargin().right().getUnitizedValue(screenWidth, windowWidth, originXMax - originXMin);
+			bottomY += getMargin().bottom().getUnitizedValue(screenHeight, windowHeight, originYMax - originYMin);
+			topY -= getMargin().top().getUnitizedValue(screenHeight, windowHeight, originYMax - originYMin);
+			//Move things if there is room
+			leftX -= getMargin().right().getUnitizedValue(screenWidth, windowWidth, originXMax - originXMin);
+			rightX += getMargin().left().getUnitizedValue(screenWidth, windowWidth, originXMax - originXMin);
+			bottomY -= getMargin().top().getUnitizedValue(screenHeight, windowHeight, originYMax - originYMin);
+			topY += getMargin().bottom().getUnitizedValue(screenHeight, windowHeight, originYMax - originYMin);
+
 			//Hide overflow if requested
 			if (parent.overflow.hideX()) {
 				if (leftX < originXMin) leftX = originXMin;
@@ -132,22 +142,43 @@ public class Element extends UIRenderableWithText {
 			}
 
 			//Set the vertexes based on the calculated positions
-			rectangle.vertices[0].setXYZ(leftX, topY, 0);
-			rectangle.vertices[1].setXYZ(leftX, bottomY, 0);
-			rectangle.vertices[2].setXYZ(rightX, bottomY, 0);
-			rectangle.vertices[3].setXYZ(rightX, topY, 0);
+			vertex1.setXYZ(leftX, topY, 0);
+			vertex2.setXYZ(leftX, bottomY, 0);
+			vertex3.setXYZ(rightX, bottomY, 0);
+			vertex4.setXYZ(rightX, topY, 0);
 		}
 
 		//Pass the update to the text and let it determine if it's required
 		if (this.innerText != null) {
-			this.innerText.update(this.width.getPixelValue(this.getCanvas().getWindow().width()), this.getCanvas().getWindow(), rectangle.vertices[0].getX(), rectangle.vertices[0].getY());
+			this.innerText.update(this.width.getPixelValue(this.getCanvas().getWindow().width()), this.getCanvas().getWindow(), this.vertex1.getX(), this.vertex1.getY());
 		}
 
-		//Update the data that gets passed to the gpu
-		rectangle.update(new Vector3f(), new Quaternionf().identity(), new Vector3f(1F));
+		int windowWidth = getCanvas().window.width();
+		int windowHeight = getCanvas().window.height();
+
+		for (Vertex vertex : this.vertices) {
+			vertex.setRGBA(this.backgroundRed.getValue(), this.backgroundGreen.getValue(), this.backgroundBlue.getValue(), this.backgroundAlpha.getValue());
+			vertex.setBorderRadius(
+				this.borderRadius.getValue() / this.getWidth() / windowWidth * 2,
+				this.borderRadius.getValue() / this.getHeight() / windowHeight * 2
+			);
+			vertex.setBorderThickness(
+				this.borderThickness.getValue() / this.getWidth() / windowWidth * 2,
+				this.borderThickness.getValue() / this.getHeight() / windowHeight * 2
+			);
+		}
 
 		//Complete this update
-		queueUpdate();
+		needsUpdate = false;
+	}
+
+	@Override
+	public void onPartsChange() {
+		this.parent.onPartsChange();
+	}
+
+	public boolean hasText() {
+		return innerText != null && !innerText.getString().equals("");
 	}
 
 	public int getPosition() {
@@ -182,95 +213,13 @@ public class Element extends UIRenderableWithText {
 		return innerText;
 	}
 
-	@Override
-	public Element onHover(Consumer<UIRenderable> consumer) {
-		return (Element) super.onHover(consumer);
-	}
-
-	@Override
-	public Element onUnHover(Consumer<UIRenderable> consumer) {
-		return (Element) super.onUnHover(consumer);
-	}
-
-	@Override
-	public Element onClick(Consumer<UIRenderable> consumer) {
-		return (Element) super.onClick(consumer);
-	}
-
-	@Override
-	public Element onRightClick(Consumer<UIRenderable> consumer) {
-		return (Element) super.onRightClick(consumer);
-	}
-
-	@Override
-	public Element onDoubleClick(int tickTime, Consumer<UIRenderable> consumer) {
-		return (Element) super.onDoubleClick(tickTime, consumer);
-	}
-
-	@Override
 	public void renderText() {
 		if (this.innerText != null) {
 			this.innerText.render();
 		}
 	}
 
-	@Override
 	public Text getText() {
 		return this.innerText;
-	}
-
-	@Override
-	public Element color(float r, float g, float b, float a) {
-		return (Element) super.color(r, g, b, a);
-	}
-
-	@Override
-	public Element borderColor(float r, float g, float b, float a) {
-		return (Element) super.borderColor(r, g, b, a);
-	}
-
-	@Override
-	public Element borderRadius(int radius) {
-		return (Element) super.borderRadius(radius);
-	}
-
-	@Override
-	public Element borderThickness(int thickness) {
-		return (Element) super.borderThickness(thickness);
-	}
-
-	@Override
-	public Element margin(AnimatableUIValue value, UIDimension.Unit unit) {
-		return (Element) super.margin(value, unit);
-	}
-
-	@Override
-	public Element margins(AnimatableUIValue left, AnimatableUIValue right, AnimatableUIValue top, AnimatableUIValue bottom) {
-		return (Element) super.margins(left, right, top, bottom);
-	}
-
-	@Override
-	public Element marginUnits(UIDimension.Unit left, UIDimension.Unit right, UIDimension.Unit top, UIDimension.Unit bottom) {
-		return (Element) super.marginUnits(left, right, top, bottom);
-	}
-
-	@Override
-	public Element marginLeft(AnimatableUIValue value, UIDimension.Unit unit) {
-		return (Element) super.marginLeft(value, unit);
-	}
-
-	@Override
-	public Element marginRight(AnimatableUIValue value, UIDimension.Unit unit) {
-		return (Element) super.marginRight(value, unit);
-	}
-
-	@Override
-	public Element marginTop(AnimatableUIValue value, UIDimension.Unit unit) {
-		return (Element) super.marginTop(value, unit);
-	}
-
-	@Override
-	public Element marginBottom(AnimatableUIValue value, UIDimension.Unit unit) {
-		return (Element) super.marginBottom(value, unit);
 	}
 }

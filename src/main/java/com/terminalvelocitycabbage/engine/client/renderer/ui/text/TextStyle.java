@@ -1,24 +1,60 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui.text;
 
-import org.joml.Vector4f;
+import com.terminalvelocitycabbage.engine.client.renderer.ui.AnimatableUIValue;
 
 public class TextStyle {
 
-    private Vector4f color;
+    AnimatableUIValue colorRed;
+    AnimatableUIValue colorGreen;
+    AnimatableUIValue colorBlue;
+    AnimatableUIValue colorAlpha;
     private float size;
 
+    //TODO convert to proper builder like UIRenderable
     public TextStyle() {
-        this.color = new Vector4f(1, 1, 1, 1);
+        colorRed = new AnimatableUIValue(1);
+        colorGreen = new AnimatableUIValue(1);
+        colorBlue = new AnimatableUIValue(1);
+        colorAlpha = new AnimatableUIValue(1);
         this.size = -1f;
     }
 
-    public Vector4f getColor() {
-        return color;
+    public float getRed() {
+        return colorRed.getValue();
     }
 
-    public TextStyle setColor(Vector4f color) {
-        this.color = color;
+    public float getGreen() {
+        return colorGreen.getValue();
+    }
+
+    public float getBlue() {
+        return colorBlue.getValue();
+    }
+
+    public float getAlpha() {
+        return colorAlpha.getValue();
+    }
+
+    public TextStyle setBaseColor(float r, float g, float b, float a) {
+        colorRed = new AnimatableUIValue(r);
+        colorGreen = new AnimatableUIValue(g);
+        colorBlue = new AnimatableUIValue(b);
+        colorAlpha = new AnimatableUIValue(a);
         return this;
+    }
+
+    public void setColorTarget(float r, float g, float b, float a) {
+        colorRed.setTarget(r);
+        colorGreen.setTarget(g);
+        colorBlue.setTarget(b);
+        colorAlpha.setTarget(a);
+    }
+
+    public void resetColor() {
+        colorRed.unsetTarget();
+        colorGreen.unsetTarget();
+        colorBlue.unsetTarget();
+        colorAlpha.unsetTarget();
     }
 
     public float getSize() {

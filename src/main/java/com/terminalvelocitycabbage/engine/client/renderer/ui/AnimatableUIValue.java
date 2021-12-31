@@ -9,6 +9,7 @@ public class AnimatableUIValue {
     float progress;
     float delay;
     float duration;
+
     EasingUtil.Function function;
     EasingUtil.Direction direction;
 
@@ -22,27 +23,37 @@ public class AnimatableUIValue {
         this.direction = EasingUtil.Direction.IN_OUT;
     }
 
+    public AnimatableUIValue forceSetTarget(float target) {
+        this.progress = 1f;
+        this.baseValue = target;
+        this.targetValue = target;
+        return this;
+    }
+
     public AnimatableUIValue setTarget(float target) {
         this.progress = 0f;
         this.targetValue = target;
         return this;
     }
 
-    public AnimatableUIValue delay(float delay) {
-        this.delay = delay;
-        return this;
-    }
-
-    public AnimatableUIValue duration(float duration) {
-        this.duration = duration;
-        return this;
-    }
-
-    public AnimatableUIValue transition(EasingUtil.Function function, EasingUtil.Direction direction) {
-        this.function = function;
-        this.direction = direction;
-        return this;
-    }
+    //This will need to be redone, as we need to call `queueUpdate` on the element when the data changed
+    //When animated every frame, this will be done every frame, which is fine.
+//
+//    public AnimatableUIValue delay(float delay) {
+//        this.delay = delay;
+//        return this;
+//    }
+//
+//    public AnimatableUIValue duration(float duration) {
+//        this.duration = duration;
+//        return this;
+//    }
+//
+//    public AnimatableUIValue transition(EasingUtil.Function function, EasingUtil.Direction direction) {
+//        this.function = function;
+//        this.direction = direction;
+//        return this;
+//    }
 
     public float getValue() {
         return baseValue + (EasingUtil.ease(direction, function, progress) * (targetValue - baseValue));

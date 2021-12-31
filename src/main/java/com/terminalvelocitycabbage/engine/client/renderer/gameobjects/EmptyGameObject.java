@@ -37,6 +37,11 @@ public abstract class EmptyGameObject {
 		position.add(x, y, z);
 	}
 
+	public void setRotation(float x, float y, float z) {
+		this.rotation = new Quaternionf();
+		rotation.rotateXYZ(x, y, z);
+	}
+
 	public void rotate(float x, float y, float z) {
 		rotation.rotateXYZ(x, y, z);
 	}
@@ -73,9 +78,10 @@ public abstract class EmptyGameObject {
 	}
 
 	public Matrix4f getTransformationMatrix() {
-		transformationMatrix.identity().translate(position).
-				rotate(rotation).
-				scale(scale);
+		transformationMatrix.identity()
+				.translate(position)
+				.rotate(rotation)
+				.scale(scale);
 		return transformationMatrix;
 	}
 

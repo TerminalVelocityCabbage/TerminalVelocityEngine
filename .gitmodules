@@ -1,3 +1,3 @@
-[submodule "Studio Jar"]
-	path = studio_jar
+[submodule "StudioJar"]
+	path = StudioJar
 	url = https://github.com/Dumb-Code/Studio-Jar.git

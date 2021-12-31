@@ -52,7 +52,7 @@ dependencies {
 
 	implementation 'com.github.jhg023:SimpleNet:1.6.4'
 
-	implementation project(':studio_jar')
+	implementation project(':StudioJar')
 
 	implementation group: 'org.fusesource.jansi', name: 'jansi', version: '1.8'
 	implementation group: 'commons-io', name: 'commons-io', version: '2.5'

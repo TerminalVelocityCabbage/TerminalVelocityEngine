@@ -119,8 +119,6 @@ public abstract class Renderer {
 		return totalTime / 1e9f;
 	}
 
-
-
 	public void destroy() {
 		// Free the window callbacks and destroy the window
 		window.destroy();
@@ -143,7 +141,13 @@ public abstract class Renderer {
 		while (tickManager.hasTick()) {
 			sceneHandler.getActiveScene().tick(deltaTime);
 			sceneHandler.getActiveScene().getInputHandler().update();
-			canvasHandler.tick(getWindow().getCursorX(), getWindow().getCursorY(), sceneHandler.getActiveScene().getInputHandler().isLeftButtonReleased(), sceneHandler.getActiveScene().getInputHandler().isRightButtonReleased(), sceneHandler.getActiveScene().getInputHandler().getTicksSinceLastClick());
+			canvasHandler.tick(
+					getWindow().getCursorX(),
+					getWindow().getCursorY(),
+					sceneHandler.getActiveScene().getInputHandler().isLeftButtonClicked(),
+					sceneHandler.getActiveScene().getInputHandler().isRightButtonClicked(),
+					sceneHandler.getActiveScene().getInputHandler().getTicksSinceLastClick()
+			);
 		}
 
 		if (window.isResized()) {

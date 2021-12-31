@@ -2,6 +2,7 @@ package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
 import com.terminalvelocitycabbage.engine.client.ClientBase;
 import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
+import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
 import com.terminalvelocitycabbage.engine.events.EventContext;
 import com.terminalvelocitycabbage.engine.events.HandleEvent;
@@ -11,13 +12,14 @@ import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
-public class Canvas extends UIRenderable {
+public class Canvas extends UIRenderable<Canvas> {
 
 	Window window;
 	boolean active;
 	List<Container> containers;
+
+	public Model model;
 
 	public Canvas(Window window) {
 		super();
@@ -26,6 +28,9 @@ public class Canvas extends UIRenderable {
 		this.containers = new ArrayList<>();
 		ClientBase.instance.addEventHandler(EventContext.CLIENT, this);
 		this.backgroundAlpha = new AnimatableUIValue(0);
+
+		this.model = new Model(RenderFormat.UI, new ArrayList<>());
+		this.part.setFormat(RenderFormat.UI);
 	}
 
 	public boolean isActive() {
@@ -40,14 +45,20 @@ public class Canvas extends UIRenderable {
 		this.active = false;
 	}
 
+	@Override
+	public void onPartsChange() {
+		this.model.modelParts.clear();
+		for (UIRenderable child : this.getAllChildren()) {
+			this.model.modelParts.add(child.part);
+		}
+		this.model.onPartsChange();
+		this.model.bind();
+	}
+
 	public void addContainer(Container container) {
 		container.setParent(this);
 		containers.add(container);
-		container.bind();
-	}
-
-	public Model getRectangle() {
-		return rectangle;
+		this.onPartsChange();
 	}
 
 	@HandleEvent(WindowResizeEvent.EVENT)
@@ -55,9 +66,23 @@ public class Canvas extends UIRenderable {
 		queueUpdate();
 	}
 
+	private boolean needsRebinding() {
+		if(this.needsUpdate) {
+			return true;
+		}
+		for (UIRenderable child : this.getAllChildren()) {
+			if(child.needsUpdate) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	@Override
 	public void update() {
-
+		if(!this.needsRebinding()) {
+			return;
+		}
 		if (needsUpdate && isActive()) {
 
 			float leftX = -1f;
@@ -74,30 +99,29 @@ public class Canvas extends UIRenderable {
 			int screenHeight = getWindow().monitorHeight();
 
 			//Offset based on margins
-			leftX += getMargin().left().getUnitizedValue(screenWidth, windowWidth);
-			rightX -= getMargin().right().getUnitizedValue(screenWidth, windowWidth);
-			topY -= getMargin().top().getUnitizedValue(screenHeight, windowHeight);
-			bottomY += getMargin().bottom().getUnitizedValue(screenHeight, windowHeight);
+			leftX += getMargin().left().getUnitizedValue(screenWidth, windowWidth, 2f);
+			rightX -= getMargin().right().getUnitizedValue(screenWidth, windowWidth, 2f);
+			topY -= getMargin().top().getUnitizedValue(screenHeight, windowHeight, 2f);
+			bottomY += getMargin().bottom().getUnitizedValue(screenHeight, windowHeight, 2f);
 
 			//Set the vertexes based on the calculated positions
-			rectangle.vertices[0].setXYZ(leftX, topY, 0);
-			rectangle.vertices[1].setXYZ(leftX, bottomY, 0);
-			rectangle.vertices[2].setXYZ(rightX, bottomY, 0);
-			rectangle.vertices[3].setXYZ(rightX, topY, 0);
+			vertex1.setXYZ(leftX, topY, 0);
+			vertex2.setXYZ(leftX, bottomY, 0);
+			vertex3.setXYZ(rightX, bottomY, 0);
+			vertex4.setXYZ(rightX, topY, 0);
 
-			rectangle.update(new Vector3f(), new Quaternionf().identity(), new Vector3f(1F)); //TODO
 			for (Container container : containers) {
 				container.queueUpdate();
 			}
 			this.needsUpdate = false;
 		}
-	}
 
-	@Override
-	public void render() {
-		if (isActive()) {
-			super.render();
+		for (Container container : this.containers) {
+			container.update();
 		}
+
+		this.model.bind();
+		this.model.update(new Vector3f(), new Quaternionf(), new Vector3f(1));
 	}
 
 	@Override
@@ -117,39 +141,6 @@ public class Canvas extends UIRenderable {
 
 	public List<Container> getContainers() {
 		return containers;
-	}
-
-	@Override
-	public void destroy() {
-		super.destroy();
-		for (UIRenderable element : containers) {
-			element.destroy();
-		}
-	}
-
-	@Override
-	public Canvas onHover(Consumer<UIRenderable> consumer) {
-		return (Canvas) super.onHover(consumer);
-	}
-
-	@Override
-	public Canvas onUnHover(Consumer<UIRenderable> consumer) {
-		return (Canvas) super.onUnHover(consumer);
-	}
-
-	@Override
-	public Canvas onClick(Consumer<UIRenderable> consumer) {
-		return (Canvas) super.onClick(consumer);
-	}
-
-	@Override
-	public Canvas onRightClick(Consumer<UIRenderable> consumer) {
-		return (Canvas) super.onRightClick(consumer);
-	}
-
-	@Override
-	public Canvas onDoubleClick(int tickTime, Consumer<UIRenderable> consumer) {
-		return (Canvas) super.onDoubleClick(tickTime, consumer);
 	}
 
 	public List<UIRenderable> getAllChildren() {

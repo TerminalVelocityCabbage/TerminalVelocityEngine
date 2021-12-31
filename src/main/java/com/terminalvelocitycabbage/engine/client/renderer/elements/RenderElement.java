@@ -16,6 +16,10 @@ public class RenderElement {
     public static final RenderElement NORMAL = new RenderElement("normal", 3, Float.BYTES).setVec4Transformer((vector4f, matrix4f) -> vector4f.rotate(matrix4f.getUnnormalizedRotation(REUSABLE_QUATERNION)));
     public static final RenderElement COLOUR_RGBA = new RenderElement("colour", 4, Float.BYTES);
 
+    //UI stuff
+    public static final RenderElement BORDER_RADIUS = new RenderElement("borderRadius", 2, Float.BYTES);
+    public static final RenderElement BORDER_THICKNESS = new RenderElement("borderThickness", 2, Float.BYTES);
+
     private final String debugName;
     private final int count;
     private final int bytes;

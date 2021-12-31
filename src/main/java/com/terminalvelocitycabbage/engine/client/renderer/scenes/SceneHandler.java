@@ -20,6 +20,13 @@ public class SceneHandler {
 		sceneHandler.put(name, scene);
 	}
 
+	public Scene getScene(String name) {
+		if (!sceneHandler.containsKey(name)) {
+			Log.crash("Tried to get a scene with unregistered key " + name, new RuntimeException("Could not find a scene with that key"));
+		}
+		return sceneHandler.get(name);
+	}
+
 	public Scene getActiveScene() {
 		return sceneHandler.get(activeScene);
 	}

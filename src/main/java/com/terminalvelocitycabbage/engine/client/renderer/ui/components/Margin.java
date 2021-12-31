@@ -12,10 +12,10 @@ public class Margin {
 	UIDimension bottom;
 
 	public Margin() {
-		top = new UIDimension(new AnimatableUIValue(0), PIXELS);
-		left = new UIDimension(new AnimatableUIValue(0), PIXELS);
-		right = new UIDimension(new AnimatableUIValue(0), PIXELS);
-		bottom = new UIDimension(new AnimatableUIValue(0), PIXELS);
+		top = new UIDimension(0, PIXELS);
+		left = new UIDimension(0, PIXELS);
+		right = new UIDimension(0, PIXELS);
+		bottom = new UIDimension(0, PIXELS);
 	}
 
 	public void setMarginUnit(UIDimension.Unit unit) {

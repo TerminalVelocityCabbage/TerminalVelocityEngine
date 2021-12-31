@@ -98,9 +98,12 @@ public class Mesh {
 
 	public void destroy() {
 
-		glDisableVertexAttribArray(0);
-		glDisableVertexAttribArray(1);
-		glDisableVertexAttribArray(2);
+		glBindVertexArray(vaoID);
+		glBindBuffer(GL_ARRAY_BUFFER, vboID);
+
+		for (int i = 0; i < format.getElementList().size(); i++) {
+			glDisableVertexAttribArray(i);
+		}
 
 		glDeleteBuffers(vboID);
 		glDeleteBuffers(eboID);

@@ -1,2 +1,2 @@
-include 'studio_jar'
+include 'StudioJar'
 rootProject.name = 'TerminalVelocityEngine2'

@@ -1,21 +1,27 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
 import com.terminalvelocitycabbage.engine.client.renderer.Vertex;
-import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
+import com.terminalvelocitycabbage.engine.client.renderer.model.MeshPart;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
-import com.terminalvelocitycabbage.engine.client.renderer.model.RectangleModel;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Margin;
-import com.terminalvelocitycabbage.engine.client.renderer.ui.components.UIDimension;
-import org.joml.Vector4f;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public abstract class UIRenderable {
+public abstract class UIRenderable<T extends UIRenderable> {
 
 	boolean needsUpdate;
-	RectangleModel rectangle;
+
+	final Vertex vertex1;
+	final Vertex vertex2;
+	final Vertex vertex3;
+	final Vertex vertex4;
+
+	final Vertex[] vertices;
+
+	public final Model.Part part;
+
 
 	AnimatableUIValue backgroundRed;
 	AnimatableUIValue backgroundGreen;
@@ -29,21 +35,29 @@ public abstract class UIRenderable {
 	AnimatableUIValue borderThickness;
 	Margin margin;
 
-	List<Consumer<UIRenderable>> hoverConsumers;
+	List<Consumer<T>> hoverConsumers;
 	boolean lastHover;
-	List<Consumer<UIRenderable>> unHoverConsumers;
-	List<Consumer<UIRenderable>> leftClickConsumers;
-	List<Consumer<UIRenderable>> rightClickConsumers;
+	List<Consumer<T>> unHoverConsumers;
+	List<Consumer<T>> leftClickConsumers;
+	List<Consumer<T>> rightClickConsumers;
 	List<DoubleClickRunnable> doubleClickConsumers;
 
 	public UIRenderable() {
 		this.needsUpdate = false;
-		this.rectangle = new RectangleModel(RenderFormat.POSITION,
-			Vertex.position(0, 0, 0),
-			Vertex.position(0, 0, 0),
-			Vertex.position(0, 0, 0),
-			Vertex.position(0, 0, 0)
+
+		this.vertex1 = Vertex.ui(0, 0, 0, -1, -1, 1, 1, 1, 1, 0, 0);
+		this.vertex2 = Vertex.ui(0, 0, 0, -1, 1, 1, 1, 1, 1, 0, 0);
+		this.vertex3 = Vertex.ui(0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0);
+		this.vertex4 = Vertex.ui(0, 0, 0, 1, -1, 1, 1, 1, 1, 0, 0);
+
+		this.vertices = new Vertex[] {
+			this.vertex1, this.vertex2, this.vertex3, this.vertex4
+		};
+
+		this.part = new Model.Part(
+			new MeshPart(this.vertices, new int[] { 0, 1, 2, 2, 3, 0 })
 		);
+
 		hoverConsumers = new ArrayList<>();
 		lastHover = false;
 		unHoverConsumers = new ArrayList<>();
@@ -67,140 +81,86 @@ public abstract class UIRenderable {
 		margin = new Margin();
 	}
 
-	public void bind() {
-		rectangle.bind();
-	}
-
 	public abstract void update();
 
 	public boolean isRoot() {
 		return false;
 	}
 
-	public void render() {
-		rectangle.render();
-	}
-
-	public void destroy() {
-		rectangle.destroy();
-	}
-
 	public void queueUpdate() {
 		this.needsUpdate = true;
 	}
 
-	public Model getRectangle() {
-		return rectangle;
-	}
+	public abstract void onPartsChange();
 
 	public void callHoverable() {
-		for (Consumer<UIRenderable> consumer : hoverConsumers) {
-			consumer.accept(this);
+		for (Consumer<T> consumer : hoverConsumers) {
+			consumer.accept((T)this);
 		}
 		lastHover = true;
 	}
 
-	public UIRenderable onHover(Consumer<UIRenderable> consumer) {
-		hoverConsumers.add(consumer);
-		return this;
-	}
-
 	public void callUnHover() {
-		for (Consumer<UIRenderable> consumer : unHoverConsumers) {
-			consumer.accept(this);
+		for (Consumer<T> consumer : unHoverConsumers) {
+			consumer.accept((T)this);
 		}
 		lastHover = false;
 	}
 
-	public UIRenderable onUnHover(Consumer<UIRenderable> consumer) {
-		unHoverConsumers.add(consumer);
-		return this;
-	}
-
 	public void callClick() {
-		for (Consumer<UIRenderable> consumer : leftClickConsumers) {
-			consumer.accept(this);
+		for (Consumer<T> consumer : leftClickConsumers) {
+			consumer.accept((T)this);
 		}
-	}
-
-	public UIRenderable onClick(Consumer<UIRenderable> consumer) {
-		leftClickConsumers.add(consumer);
-		return this;
 	}
 
 	public void callRightClick() {
-		for (Consumer<UIRenderable> consumer : rightClickConsumers) {
-			consumer.accept(this);
+		for (Consumer<T> consumer : rightClickConsumers) {
+			consumer.accept((T)this);
 		}
-	}
-
-	public UIRenderable onRightClick(Consumer<UIRenderable> consumer) {
-		rightClickConsumers.add(consumer);
-		return this;
 	}
 
 	public void callDoubleCLick(int time) {
 		for (DoubleClickRunnable consumer : doubleClickConsumers) {
-			if (consumer.tickTime >= time && time > 0) {
+			if (consumer.shouldAccept(time)) {
 				consumer.consumer.accept(this);
 			}
 		}
 	}
 
-	public UIRenderable onDoubleClick(int tickTime, Consumer<UIRenderable> consumer) {
-		doubleClickConsumers.add(new DoubleClickRunnable(tickTime, consumer));
-		return this;
-	}
-
-	private static class DoubleClickRunnable {
-
-		int tickTime;
-		Consumer<UIRenderable> consumer;
-
-		public DoubleClickRunnable(int tickTime, Consumer<UIRenderable> consumer) {
-			this.tickTime = tickTime;
-			this.consumer = consumer;
-		}
+	public float getStartX() {
+		return this.vertex1.getX();
 	}
 
 	public float getWidth() {
-		return rectangle.vertices[3].getX() - rectangle.vertices[0].getX();
+		return this.vertex4.getX() - this.vertex1.getX();
+	}
+
+	public float getStartY() {
+		return this.vertex2.getY();
 	}
 
 	public float getHeight() {
-		return rectangle.vertices[0].getY() - rectangle.vertices[1].getY();
+		return this.vertex1.getY() - this.vertex2.getY();
 	}
 
 	public boolean needsUpdate() {
 		return needsUpdate;
 	}
 
-	public float getBackgroundRed() {
+	public float getBgRed() {
 		return backgroundRed.getValue();
 	}
 
-	public float getBackgroundGreen() {
+	public float getBgGreen() {
 		return backgroundGreen.getValue();
 	}
 
-	public float getBackgroundBlue() {
+	public float getBgBlue() {
 		return backgroundBlue.getValue();
 	}
 
-	public float getBackgroundAlpha() {
+	public float getBgAlpha() {
 		return backgroundAlpha.getValue();
-	}
-
-	public Vector4f getColor() {
-		return new Vector4f(getBackgroundRed(), getBackgroundGreen(), getBackgroundBlue(), getBackgroundAlpha());
-	}
-
-	public UIRenderable color(float r, float g, float b, float a) {
-		this.backgroundRed.setTarget(r);
-		this.backgroundGreen.setTarget(g);
-		this.backgroundBlue.setTarget(b);
-		this.backgroundAlpha.setTarget(a);
-		return this;
 	}
 
 	public void resetColor() {
@@ -226,18 +186,6 @@ public abstract class UIRenderable {
 		return borderAlpha.getValue();
 	}
 
-	public Vector4f getBorderColor() {
-		return new Vector4f(getBorderRed(), getBorderGreen(), getBorderBlue(), getBorderAlpha());
-	}
-
-	public UIRenderable borderColor(float r, float g, float b, float a) {
-		this.borderRed.setTarget(r);
-		this.borderGreen.setTarget(g);
-		this.borderBlue.setTarget(b);
-		this.borderAlpha.setTarget(a);
-		return this;
-	}
-
 	public void resetBorderColor() {
 		this.borderRed.unsetTarget();
 		this.borderGreen.unsetTarget();
@@ -245,56 +193,12 @@ public abstract class UIRenderable {
 		this.borderAlpha.unsetTarget();
 	}
 
-	public int getBorderRadius() {
-		return (int)borderRadius.getValue();
-	}
-
-	public UIRenderable borderRadius(int radius) {
-		this.borderRadius.setTarget(radius);
-		return this;
+	public float getBorderRadius() {
+		return borderRadius.getValue();
 	}
 
 	public int getBorderThickness() {
 		return (int)borderThickness.getValue();
-	}
-
-	public UIRenderable borderThickness(int thickness) {
-		this.borderThickness.setTarget(thickness);
-		return this;
-	}
-
-	public UIRenderable margin(AnimatableUIValue value, UIDimension.Unit unit) {
-		return margins(value, value, value, value).marginUnits(unit, unit, unit, unit);
-	}
-
-	public UIRenderable margins(AnimatableUIValue left, AnimatableUIValue right, AnimatableUIValue top, AnimatableUIValue bottom) {
-		this.margin.setMargins(left, right, top, bottom);
-		return this;
-	}
-
-	public UIRenderable marginUnits(UIDimension.Unit left, UIDimension.Unit right, UIDimension.Unit top, UIDimension.Unit bottom) {
-		this.margin.setMarginUnits(left, right, top, bottom);
-		return this;
-	}
-
-	public UIRenderable marginLeft(AnimatableUIValue value, UIDimension.Unit unit) {
-		this.margin.setLeft(value, unit);
-		return this;
-	}
-
-	public UIRenderable marginRight(AnimatableUIValue value, UIDimension.Unit unit) {
-		this.margin.setRight(value, unit);
-		return this;
-	}
-
-	public UIRenderable marginTop(AnimatableUIValue value, UIDimension.Unit unit) {
-		this.margin.setTop(value, unit);
-		return this;
-	}
-
-	public UIRenderable marginBottom(AnimatableUIValue value, UIDimension.Unit unit) {
-		this.margin.setBottom(value, unit);
-		return this;
 	}
 
 	public Margin getMargin() {
