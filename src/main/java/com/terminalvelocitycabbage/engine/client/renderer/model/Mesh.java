@@ -101,9 +101,9 @@ public class Mesh {
 		glBindVertexArray(vaoID);
 		glBindBuffer(GL_ARRAY_BUFFER, vboID);
 
-		glDisableVertexAttribArray(0);
-		glDisableVertexAttribArray(1);
-		glDisableVertexAttribArray(2);
+		for (int i = 0; i < format.getElementList().size(); i++) {
+			glDisableVertexAttribArray(i);
+		}
 
 		glDeleteBuffers(vboID);
 		glDeleteBuffers(eboID);
