@@ -3,7 +3,7 @@ package com.terminalvelocitycabbage.engine.client.renderer.shapes;
 import com.terminalvelocitycabbage.engine.client.renderer.Vertex;
 import com.terminalvelocitycabbage.engine.client.renderer.model.MeshPart;
 
-public class Rectangle {
+public class RectangleShape {
 
 	public static MeshPart createRectangle(Vertex topLeft, Vertex bottomLeft, Vertex bottomRight, Vertex topRight) {
 		return new MeshPart(

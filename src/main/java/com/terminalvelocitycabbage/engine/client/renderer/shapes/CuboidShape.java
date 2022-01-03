@@ -3,7 +3,7 @@ package com.terminalvelocitycabbage.engine.client.renderer.shapes;
 import com.terminalvelocitycabbage.engine.client.renderer.Vertex;
 import com.terminalvelocitycabbage.engine.client.renderer.model.MeshPart;
 
-public class Cuboid {
+public class CuboidShape {
 
 	public static MeshPart createCuboid(Vertex frontTL, Vertex frontBL, Vertex frontBR, Vertex frontTR,
 										Vertex rightTL, Vertex rightBL, Vertex rightBR, Vertex rightTR,

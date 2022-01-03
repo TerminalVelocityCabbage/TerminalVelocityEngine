@@ -70,7 +70,7 @@ public abstract class Renderer {
 
 		//Transparent stuff
 		glEnable(GL_BLEND);
-		//TODO make ways to swap between blend functions like render layers
+		//TODO make ways to swap between blend functions like render modes
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 

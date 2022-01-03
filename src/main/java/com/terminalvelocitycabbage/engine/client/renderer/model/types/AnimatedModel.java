@@ -1,7 +1,8 @@
-package com.terminalvelocitycabbage.engine.client.renderer.model;
+package com.terminalvelocitycabbage.engine.client.renderer.model.types;
 
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderMode;
+import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
 import com.terminalvelocitycabbage.engine.client.renderer.model.loader.AnimatedModelLoader;
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;

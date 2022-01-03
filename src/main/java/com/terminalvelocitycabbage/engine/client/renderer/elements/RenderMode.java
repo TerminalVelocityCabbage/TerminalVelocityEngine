@@ -41,8 +41,8 @@ public class RenderMode {
     }
 
     public void applyWidth() {
-        if (getMode().equals(Modes.TRIANGLES) || getMode().equals(Modes.LINES)) glLineWidth(width);
-        if (getMode().equals(Modes.POINTS)) glPointSize(width);
+        glLineWidth(width);
+        glPointSize(width);
     }
 
     public enum Modes {
