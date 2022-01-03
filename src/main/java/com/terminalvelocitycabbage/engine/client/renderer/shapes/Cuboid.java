@@ -3,14 +3,14 @@ package com.terminalvelocitycabbage.engine.client.renderer.shapes;
 import com.terminalvelocitycabbage.engine.client.renderer.Vertex;
 import com.terminalvelocitycabbage.engine.client.renderer.model.MeshPart;
 
-public class TexturedModelCuboid {
+public class Cuboid {
 
-	public static MeshPart createTexturedCuboid(Vertex frontTL, Vertex frontBL, Vertex frontBR, Vertex frontTR,
-												Vertex rightTL, Vertex rightBL, Vertex rightBR, Vertex rightTR,
-												Vertex backTL, Vertex backBL, Vertex backBR, Vertex backTR,
-												Vertex leftTL, Vertex leftBL, Vertex leftBR, Vertex leftTR,
-												Vertex topTL, Vertex topBL, Vertex topBR, Vertex topTR,
-												Vertex bottomTL, Vertex bottomBL, Vertex bottomBR, Vertex bottomTR) {
+	public static MeshPart createCuboid(Vertex frontTL, Vertex frontBL, Vertex frontBR, Vertex frontTR,
+										Vertex rightTL, Vertex rightBL, Vertex rightBR, Vertex rightTR,
+										Vertex backTL, Vertex backBL, Vertex backBR, Vertex backTR,
+										Vertex leftTL, Vertex leftBL, Vertex leftBR, Vertex leftTR,
+										Vertex topTL, Vertex topBL, Vertex topBR, Vertex topTR,
+										Vertex bottomTL, Vertex bottomBL, Vertex bottomBR, Vertex bottomTR) {
 		return new MeshPart(
 			new Vertex[]{
 				frontTL, frontBL, frontBR, frontTR,
