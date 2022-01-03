@@ -1,6 +1,7 @@
 package com.terminalvelocitycabbage.engine.client.renderer.model;
 
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
+import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderMode;
 import com.terminalvelocitycabbage.engine.client.renderer.model.loader.AnimatedModelLoader;
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
@@ -24,7 +25,7 @@ public class AnimatedModel extends Model {
     private ArrayList<AnimatedModelLoader.Part> parts;
 
     public AnimatedModel(ModelInfo model) {
-        super(RenderFormat.POSITION_UV_NORMAL, model.getRoots().stream().map(AnimatedModelLoader.Part::createPart).collect(Collectors.toList()));
+        super(RenderFormat.POSITION_UV_NORMAL, new RenderMode(RenderMode.Modes.TRIANGLES), model.getRoots().stream().map(AnimatedModelLoader.Part::createPart).collect(Collectors.toList()));
 
         this.animations = new HashMap<>();
         this.activeAnimations = new HashMap<>();

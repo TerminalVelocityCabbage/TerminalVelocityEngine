@@ -2,6 +2,7 @@ package com.terminalvelocitycabbage.engine.client.renderer.model;
 
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderElement;
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
+import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderMode;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
@@ -12,7 +13,6 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
 
-import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.glDrawElements;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
@@ -21,6 +21,7 @@ import static org.lwjgl.opengl.GL30.*;
 public class Mesh {
 
 	private final RenderFormat format;
+	private final RenderMode mode;
 
 	private int vaoID;
 	private int vboID;
@@ -33,8 +34,9 @@ public class Mesh {
 	protected IntBuffer indexBuffer;
 	private Material material;
 
-	public Mesh(RenderFormat format) {
+	public Mesh(RenderFormat format, RenderMode mode) {
 		this.format = format;
+		this.mode = mode;
 	}
 
 	//TODO note that these translations have to be done in a specific order so we should make it clear and make an API that dummi-proofs it
@@ -90,7 +92,8 @@ public class Mesh {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
 
 		// Draw the vertices
-		glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
+		mode.applyWidth();
+		glDrawElements(mode.getGlType(), indexCount, GL_UNSIGNED_INT, 0);
 
 		// Put everything back to default (deselect)
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);

@@ -1,6 +1,7 @@
 package com.terminalvelocitycabbage.engine.client.renderer.model;
 
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
+import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderMode;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -22,9 +23,9 @@ public class Model {
 	//To avoid creating a new one every part render call
 	Matrix4f transformationMatrix;
 
-	public Model(RenderFormat format, List<Model.Part> modelParts) {
+	public Model(RenderFormat format, RenderMode mode, List<Model.Part> modelParts) {
 		this.modelParts = modelParts;
-		this.mesh = new Mesh(format);
+		this.mesh = new Mesh(format, mode);
 		this.transformationMatrix = new Matrix4f();
 		this.onPartsChange();
 	}
