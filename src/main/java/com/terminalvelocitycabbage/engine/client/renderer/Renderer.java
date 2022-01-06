@@ -2,6 +2,7 @@ package com.terminalvelocitycabbage.engine.client.renderer;
 
 import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
 import com.terminalvelocitycabbage.engine.client.renderer.scenes.SceneHandler;
+import com.terminalvelocitycabbage.engine.client.renderer.shader.ShaderHandler;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.CanvasHandler;
 import com.terminalvelocitycabbage.engine.debug.Log;
 import com.terminalvelocitycabbage.engine.debug.SystemInfo;
@@ -26,8 +27,10 @@ public abstract class Renderer {
 	private static long totalTime = 0;
 
 	private final TickManager tickManager;
-	public SceneHandler sceneHandler = new SceneHandler();
-	public CanvasHandler canvasHandler = new CanvasHandler();
+
+	public final ShaderHandler shaderHandler = new ShaderHandler();
+	public final SceneHandler sceneHandler = new SceneHandler();
+	public final CanvasHandler canvasHandler = new CanvasHandler();
 
 	public Renderer(int width, int height, String title, float tickRate) {
 		window = new Window(width, height, title, false, true, true);
@@ -126,6 +129,11 @@ public abstract class Renderer {
 		// Terminate GLFW and free the error callback
 		glfwTerminate();
 		Objects.requireNonNull(glfwSetErrorCallback(null)).free();
+
+		//Cleanup handlers
+		shaderHandler.cleanup();
+		canvasHandler.cleanup();
+		sceneHandler.cleanup();
 	}
 
 	public static Window getWindow() {
