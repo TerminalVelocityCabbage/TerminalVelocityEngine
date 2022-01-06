@@ -1,6 +1,5 @@
-package com.terminalvelocitycabbage.engine.client.renderer.gameobjects.entity;
+package com.terminalvelocitycabbage.engine.client.renderer.gameobjects;
 
-import com.terminalvelocitycabbage.engine.client.renderer.gameobjects.EmptyGameObject;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
 import com.terminalvelocitycabbage.engine.debug.Log;
 import org.joml.Quaternionf;

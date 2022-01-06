@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 //Modified from: "https://github.com/mwohlf/lwjgl-basics/blob/master/src/main/java/net/wohlfart/gl/elements/debug/Icosphere.java"
-public class Icosphere {
+public class IcosphereShape {
 
     //Create the 3 intersecting planes that make up a Icosahedron
     private static final float T = (1.0f + ((float) Math.sqrt(5))) / 2.0f;

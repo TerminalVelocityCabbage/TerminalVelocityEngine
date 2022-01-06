@@ -3,6 +3,7 @@ package com.terminalvelocitycabbage.engine.client.renderer.ui;
 import com.terminalvelocitycabbage.engine.client.ClientBase;
 import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
+import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderMode;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
 import com.terminalvelocitycabbage.engine.events.EventContext;
 import com.terminalvelocitycabbage.engine.events.HandleEvent;
@@ -29,7 +30,7 @@ public class Canvas extends UIRenderable<Canvas> {
 		ClientBase.instance.addEventHandler(EventContext.CLIENT, this);
 		this.backgroundAlpha = new AnimatableUIValue(0);
 
-		this.model = new Model(RenderFormat.UI, new ArrayList<>());
+		this.model = new Model(RenderFormat.UI, new RenderMode(RenderMode.Modes.TRIANGLES), new ArrayList<>());
 		this.part.setFormat(RenderFormat.UI);
 	}
 

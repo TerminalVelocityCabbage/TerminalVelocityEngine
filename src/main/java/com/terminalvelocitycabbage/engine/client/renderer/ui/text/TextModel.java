@@ -1,6 +1,7 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui.text;
 
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
+import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderMode;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
 
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ public class TextModel extends Model {
     public int width;
 
     public TextModel(FontMaterial material) {
-        super(RenderFormat.POSITION_UV, new ArrayList<>());
+        super(RenderFormat.POSITION_UV, new RenderMode(RenderMode.Modes.TRIANGLES), new ArrayList<>());
         this.setMaterial(material);
     }
 

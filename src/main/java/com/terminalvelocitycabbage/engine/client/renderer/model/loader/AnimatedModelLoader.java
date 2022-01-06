@@ -1,9 +1,9 @@
 package com.terminalvelocitycabbage.engine.client.renderer.model.loader;
 
 import com.terminalvelocitycabbage.engine.client.renderer.Vertex;
-import com.terminalvelocitycabbage.engine.client.renderer.model.AnimatedModel;
+import com.terminalvelocitycabbage.engine.client.renderer.model.types.AnimatedModel;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
-import com.terminalvelocitycabbage.engine.client.renderer.shapes.TexturedModelCuboid;
+import com.terminalvelocitycabbage.engine.client.renderer.shapes.CuboidShape;
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
 import com.terminalvelocitycabbage.engine.debug.Log;
@@ -25,7 +25,7 @@ public class AnimatedModelLoader {
 
 		public Part(CubeInfo cube, float[][] uv) {
 			super(
-					TexturedModelCuboid.createTexturedCuboid(
+					CuboidShape.createCuboid(
 						Vertex.positionUvNormal(1, 1, 0, uv[0][0], uv[0][3], 1, 0, 0),
 						Vertex.positionUvNormal(1, 1, 1, uv[0][2], uv[0][3], 1, 0, 0),
 						Vertex.positionUvNormal(1, 0, 1, uv[0][2], uv[0][1], 1, 0, 0),
