@@ -11,7 +11,7 @@ public abstract class InputHandler {
 
 	private static long window;
 
-	private Vector2d previousPos;
+	private final Vector2d previousPos;
 	protected final Vector2f deltaMouseVector;
 	protected final Vector2i deltaScrollVector;
 
@@ -78,6 +78,18 @@ public abstract class InputHandler {
 
 	public Vector2f getDeltaMouseVector(float sensitivity) {
 		return deltaMouseVector.mul(sensitivity);
+	}
+
+	public Vector2d getMousePos() {
+		return previousPos;
+	}
+
+	public float getMouseX() {
+		return (float) previousPos.x;
+	}
+
+	public float getMouseY() {
+		return (float) previousPos.y;
 	}
 
 	public float getMouseDeltaX() {

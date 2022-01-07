@@ -1,6 +1,7 @@
 package com.terminalvelocitycabbage.engine.client.renderer.util;
 
 import com.terminalvelocitycabbage.engine.client.renderer.gameobjects.EmptyGameObject;
+import com.terminalvelocitycabbage.engine.client.renderer.gameobjects.ModeledGameObject;
 import com.terminalvelocitycabbage.engine.debug.Log;
 
 import java.util.ArrayList;
@@ -45,5 +46,18 @@ public class SceneObjectHandler {
 	@SuppressWarnings("unchecked")
 	public <T extends EmptyGameObject>T getObject(String name) {
 		return (T)gameObjects.get(name);
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T extends EmptyGameObject>T replaceObject(String name, T newObject) {
+		T oldObject = (T)gameObjects.get(name);
+		if (oldObject instanceof ModeledGameObject o) {
+			o.destroy();
+		}
+		if (newObject instanceof ModeledGameObject m) {
+			m.bind();
+		}
+		gameObjects.put(name, newObject);
+		return newObject;
 	}
 }
