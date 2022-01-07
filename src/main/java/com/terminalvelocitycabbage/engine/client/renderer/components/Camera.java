@@ -2,6 +2,7 @@ package com.terminalvelocitycabbage.engine.client.renderer.components;
 
 import com.terminalvelocitycabbage.engine.client.renderer.Renderer;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 public abstract class Camera {
 
@@ -31,4 +32,8 @@ public abstract class Camera {
 	}
 
 	public abstract Matrix4f getViewMatrix();
+
+	public Vector3f getWorldPosition() {
+		return getViewMatrix().origin(new Vector3f());
+	}
 }
