@@ -4,7 +4,6 @@ import com.terminalvelocitycabbage.engine.client.input.InputHandler;
 import com.terminalvelocitycabbage.engine.client.renderer.components.Camera;
 import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
 import com.terminalvelocitycabbage.engine.client.renderer.gameobjects.EmptyGameObject;
-import com.terminalvelocitycabbage.engine.client.renderer.util.SceneObjectHandler;
 
 import java.util.List;
 
