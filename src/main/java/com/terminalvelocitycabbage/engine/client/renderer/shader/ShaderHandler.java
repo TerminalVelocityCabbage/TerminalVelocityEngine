@@ -12,7 +12,7 @@ import static org.lwjgl.opengl.GL20.glUseProgram;
 public class ShaderHandler {
 
 	private Map<String, ShaderProgram> programs = new HashMap<>();
-
+	private Map<String, UniformBufferObject> ubos = new HashMap<>();
 
 	public ShaderProgram newProgram(String name) {
 		if (programs.containsKey(name)) {
@@ -31,11 +31,13 @@ public class ShaderHandler {
 	}
 
 	@Deprecated
+	//Reason: Moved to ShaderProgram Method Call. This method delegates to it but is marked to be removed
 	public void queueShader(String name, Shader.Type type, ResourceManager resourceManager, Identifier identifier) {
 		programs.get(name).queueShader(type.getGLType(), resourceManager, identifier);
 	}
 
 	@Deprecated
+	//Reason: Moved to ShaderProgram Method Call. This method delegates to it but is marked to be removed
 	public void build(String name) {
 		programs.get(name).build();
 	}

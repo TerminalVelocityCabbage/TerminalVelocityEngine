@@ -6,7 +6,8 @@ import java.nio.Buffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
-import static org.lwjgl.opengl.GL15.glBufferSubData;
+import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL30.glBindBufferBase;
 import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
 
 /**
@@ -25,33 +26,62 @@ import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
 
 public class UniformBufferObject {
 
+    private int bufferBindingSlot;
     private int bufferID;
     private Buffer buffer;
 
-    private UniformBufferObject() {
-
+    private UniformBufferObject(int bindingSlot) {
+        bufferID = glGenBuffers();
+        bufferBindingSlot = bindingSlot;
     }
 
-    public UniformBufferObject createFloatArrayUBO(float[] data) {
+    /**
+     * @param data the data to be inserted into the ubo
+     * @param usage one of GL_(freq of access)_(nature of access)
+     *            Frequency
+     *              STREAM  - The data store contents will be modified once and used at most a few times.
+     *              STATIC  - The data store contents will be modified once and used many times.
+     *              DYNAMIC - The data store contents will be modified repeatedly and used many times.
+     *            Nature
+     *              DRAW    - The data store contents are modified by the application, and used as the source for GL drawing and image specification commands.
+     *              READ    - The data store contents are modified by reading data from the GL, and used to return that data when queried by the application.
+     *              COPY    - The data store contents are modified by reading data from the GL, and used as the source for GL drawing and image specification commands.
+     * @return
+     */
+    public UniformBufferObject createFloatArrayUBO(int bindingSlot, float[] data, int usage) {
 
         //Create UniformBufferObject to store data in
-        UniformBufferObject ubo = new UniformBufferObject();
+        UniformBufferObject ubo = new UniformBufferObject(bindingSlot);
 
         //Create Data Allocation
         //Floats are 4 bytes
         int size = data.length * 4;
         ubo.buffer = BufferUtils.createFloatBuffer(size).put(data).flip();
 
+        //Bind to the current buffer
+        glBindBuffer(GL_UNIFORM_BUFFER, bufferID);
+
+        //Allocate buffer space with opengl
+        glBufferData(GL_UNIFORM_BUFFER, ubo.buffer.capacity(), usage);
+
+        //Set the initial data of the buffer
+        updateBufferData(0, this.buffer);
+
+        //Bind the buffer to the desired binding slot target
+        glBindBufferBase(GL_UNIFORM_BUFFER, bufferBindingSlot, bufferID);
+        //Below is equivalent to above, but since we're not combining buffers at this time we will just use base
+        //glBindBufferRange(GL_UNIFORM_BUFFER, bufferSlot, bufferID, 0, size);
+
         return ubo;
     }
 
-    public void bindUBO() {
+    //TODO double or triple buffering options so that we don't stall out the rendering pipeline by waiting for opengl to finish reading the data issued to the previous frame
+    public void updateBufferData(int offset, Buffer data) {
 
-    }
+        //The Offset is basically where you want to start setting the data
 
-    public void setBufferData(int offset, Buffer data) {
-
-        bindUBO();
+        //Bind to the current buffer
+        glBindBuffer(GL_UNIFORM_BUFFER, bufferID);
 
         if (data instanceof FloatBuffer) {
             glBufferSubData(GL_UNIFORM_BUFFER, offset, (FloatBuffer)data);
@@ -61,16 +91,12 @@ public class UniformBufferObject {
         }
     }
 
-    public void bindToBindingPoint(int bindingPoint) {
-
-    }
-
     public int getBufferID() {
         return bufferID;
     }
 
     public void destroy() {
-
+        glDeleteBuffers(bufferID);
     }
 
 }
