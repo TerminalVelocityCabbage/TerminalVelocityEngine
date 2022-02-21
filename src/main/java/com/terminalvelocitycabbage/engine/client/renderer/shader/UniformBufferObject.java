@@ -48,7 +48,7 @@ public class UniformBufferObject {
      *              COPY    - The data store contents are modified by reading data from the GL, and used as the source for GL drawing and image specification commands.
      * @return
      */
-    public UniformBufferObject createFloatArrayUBO(int bindingSlot, float[] data, int usage) {
+    public static UniformBufferObject createFloatArrayUBO(int bindingSlot, float[] data, int usage) {
 
         //Create UniformBufferObject to store data in
         UniformBufferObject ubo = new UniformBufferObject(bindingSlot);
@@ -59,16 +59,16 @@ public class UniformBufferObject {
         ubo.buffer = BufferUtils.createFloatBuffer(size).put(data).flip();
 
         //Bind to the current buffer
-        glBindBuffer(GL_UNIFORM_BUFFER, bufferID);
+        glBindBuffer(GL_UNIFORM_BUFFER, ubo.bufferID);
 
         //Allocate buffer space with opengl
         glBufferData(GL_UNIFORM_BUFFER, ubo.buffer.capacity(), usage);
 
         //Set the initial data of the buffer
-        updateBufferData(0, this.buffer);
+        ubo.updateBufferData(0, ubo.buffer);
 
         //Bind the buffer to the desired binding slot target
-        glBindBufferBase(GL_UNIFORM_BUFFER, bufferBindingSlot, bufferID);
+        glBindBufferBase(GL_UNIFORM_BUFFER, ubo.bufferBindingSlot, ubo.bufferID);
         //Below is equivalent to above, but since we're not combining buffers at this time we will just use base
         //glBindBufferRange(GL_UNIFORM_BUFFER, bufferSlot, bufferID, 0, size);
 
