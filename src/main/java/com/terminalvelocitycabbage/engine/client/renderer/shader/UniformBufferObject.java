@@ -62,15 +62,15 @@ public class UniformBufferObject {
         glBindBuffer(GL_UNIFORM_BUFFER, ubo.bufferID);
 
         //Allocate buffer space with opengl
-        glBufferData(GL_UNIFORM_BUFFER, ubo.buffer.capacity(), usage);
-
-        //Set the initial data of the buffer
-        ubo.updateBufferData(0, ubo.buffer);
+        glBufferData(GL_UNIFORM_BUFFER, size, usage);
 
         //Bind the buffer to the desired binding slot target
         glBindBufferBase(GL_UNIFORM_BUFFER, ubo.bufferBindingSlot, ubo.bufferID);
         //Below is equivalent to above, but since we're not combining buffers at this time we will just use base
         //glBindBufferRange(GL_UNIFORM_BUFFER, bufferSlot, bufferID, 0, size);
+
+        //Set the initial data of the buffer
+        ubo.updateBufferData(0, ubo.buffer);
 
         return ubo;
     }
@@ -82,6 +82,8 @@ public class UniformBufferObject {
 
         //Bind to the current buffer
         glBindBuffer(GL_UNIFORM_BUFFER, bufferID);
+
+        buffer = data;
 
         if (data instanceof FloatBuffer) {
             glBufferSubData(GL_UNIFORM_BUFFER, offset, (FloatBuffer)data);

@@ -42,7 +42,8 @@ public class Text {
 		this.fontMeshPartStorage = fontMeshPartStorage;
 		this.style = style;
 		this.model = new TextModel(fontMeshPartStorage.getFontMaterial());
-		this.model.resizeBuffer();
+		//bind();
+		this.model.resizeBuffer(); //TODO this crashes the game because it's not bound, but binding it doesn't not crash so error tbd
 	}
 
 	public String getString() {
