@@ -2,6 +2,7 @@ package com.terminalvelocitycabbage.engine.client.sound;
 
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
+import com.terminalvelocitycabbage.engine.debug.Log;
 import org.lwjgl.stb.STBVorbisInfo;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
@@ -31,6 +32,8 @@ public class Sound {
         ByteBuffer vorbis = null;
         if (resourceManager.getResource(identifier).isPresent()) {
             vorbis = resourceManager.getResource(identifier).get().asByteBuffer().orElseThrow();
+        } else {
+            Log.crash("Could not read sound " + identifier.toString(), new RuntimeException("Sound Read Error, sound not found: " + identifier));
         }
 
         //Read the ogg format into PCM, so we can use it with OPENAL

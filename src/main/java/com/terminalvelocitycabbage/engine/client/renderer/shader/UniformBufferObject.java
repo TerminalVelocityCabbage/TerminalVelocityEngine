@@ -56,7 +56,7 @@ public class UniformBufferObject {
         //Create Data Allocation
         //Floats are 4 bytes
         int size = data.length * 4;
-        ubo.buffer = BufferUtils.createFloatBuffer(size).put(data).flip();
+        ubo.buffer = BufferUtils.createFloatBuffer(data.length).put(data).flip();
 
         //Bind to the current buffer
         glBindBuffer(GL_UNIFORM_BUFFER, ubo.bufferID);
