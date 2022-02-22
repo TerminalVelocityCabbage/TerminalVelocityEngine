@@ -9,8 +9,6 @@ import com.terminalvelocitycabbage.engine.debug.SystemInfo;
 import com.terminalvelocitycabbage.engine.utils.TickManager;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
-import org.lwjgl.opengl.GLUtil;
-import org.lwjgl.opengl.KHRDebug;
 import org.lwjgl.system.Callback;
 
 import java.util.Objects;
@@ -65,7 +63,7 @@ public abstract class Renderer {
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 		//TODO make this gated behind a "debug mode" later
-		glfwWindowHint( GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE );
+		//glfwWindowHint( GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE );
 
 		window.create();
 		window.init();
@@ -74,9 +72,9 @@ public abstract class Renderer {
 		GL.createCapabilities();
 
 		//TODO make this gated behind a "debug mode" later
-		glEnable(KHRDebug.GL_DEBUG_OUTPUT_SYNCHRONOUS);
+		//glEnable(KHRDebug.GL_DEBUG_OUTPUT_SYNCHRONOUS);
 		// Store this callback somewhere so the GC doesn't free it
-		debugCallback = GLUtil.setupDebugMessageCallback();
+		//debugCallback = GLUtil.setupDebugMessageCallback();
 
 		//Tell the system information tracker what gpu we are working with here
 		SystemInfo.gpuVendor = glGetString(GL_VENDOR);

@@ -55,7 +55,7 @@ public class UniformBufferObject {
 
         //Create Data Allocation
         //Floats are 4 bytes
-        int size = (data.length + (4 - (data.length % 4))) * 4;
+        int size = data.length * 4;
         ubo.buffer = BufferUtils.createFloatBuffer(data.length).put(data).flip();
 
         //Bind to the current buffer

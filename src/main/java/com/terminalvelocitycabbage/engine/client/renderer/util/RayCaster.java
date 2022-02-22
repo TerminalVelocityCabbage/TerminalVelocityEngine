@@ -14,6 +14,7 @@ public class RayCaster {
     public RayCaster() {
         rayStart = new Vector3f();
         rayEnd = new Vector3f();
+        rayDirection = new Vector3f();
     }
 
     public void cast(Camera camera, float mouseX, float mouseY, float distance) {
