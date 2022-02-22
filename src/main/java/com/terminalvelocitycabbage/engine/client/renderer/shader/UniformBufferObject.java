@@ -53,16 +53,13 @@ public class UniformBufferObject {
         //Create UniformBufferObject to store data in
         UniformBufferObject ubo = new UniformBufferObject(bindingSlot);
 
-        //Create Data Allocation
-        //Floats are 4 bytes
-        int size = data.length * 4;
-        ubo.buffer = BufferUtils.createFloatBuffer(data.length).put(data).flip();
+        ubo.buffer = std140izeFloatArrayToBuffer(data);
 
         //Bind to the current buffer
         glBindBuffer(GL_UNIFORM_BUFFER, ubo.bufferID);
 
         //Allocate buffer space with opengl
-        glBufferData(GL_UNIFORM_BUFFER, size, usage);
+        glBufferData(GL_UNIFORM_BUFFER, data.length * 16L, usage);
 
         //Bind the buffer to the desired binding slot target
         glBindBufferBase(GL_UNIFORM_BUFFER, ubo.bufferBindingSlot, ubo.bufferID);
@@ -73,6 +70,20 @@ public class UniformBufferObject {
         ubo.updateBufferData(0, ubo.buffer);
 
         return ubo;
+    }
+
+    public static FloatBuffer std140izeFloatArrayToBuffer(float[] data) {
+        //Create Data Allocation
+        //Floats are 4 bytes
+        int size = data.length * 16;
+        float[] std140data = new float[data.length * 4];
+        for (int i = 0; i < data.length; i++) {
+            std140data[i * 4] = data[i];
+            std140data[i * 4 + 1] = 0;
+            std140data[i * 4 + 2] = 0;
+            std140data[i * 4 + 3] = 0;
+        }
+        return BufferUtils.createFloatBuffer(std140data.length).put(std140data).flip();
     }
 
     //TODO double or triple buffering options so that we don't stall out the rendering pipeline by waiting for opengl to finish reading the data issued to the previous frame
