@@ -68,7 +68,7 @@ public class UrlResource implements Resource {
 	public Optional<java.nio.ByteBuffer> asByteBuffer() {
 
 		java.nio.ByteBuffer buffer = null;
-		Path path = Paths.get(url.getPath().replaceFirst("/", ""));
+		Path path = Paths.get(url.getPath().replaceFirst("/", "").replaceFirst("file:", ""));
 
 		if(Files.isReadable(path)) {
 			try(SeekableByteChannel sbc = Files.newByteChannel(path)) {
