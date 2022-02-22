@@ -30,9 +30,4 @@ public class ClassLoaderResourceManager implements ResourceManager {
 	public Collection<Identifier> findResources(Predicate<Identifier> predicate) {
 		return Collections.emptyList();
 	}
-
-	@Override
-	public void invalidate() {
-		loadedResources.removeIf(UrlResource::isInvalid);
-	}
 }
