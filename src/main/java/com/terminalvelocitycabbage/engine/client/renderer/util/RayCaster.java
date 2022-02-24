@@ -32,7 +32,7 @@ public class RayCaster {
         rayDirection.normalize();
 
         //Get the end of the ray
-        camera.getWorldPosition().add(rayDirection.mul(distance), rayEnd);
+        camera.getWorldPosition().add(rayDirection.mul(distance, rayEnd), rayEnd);
     }
 
     public Vector3f getRayStart() {
