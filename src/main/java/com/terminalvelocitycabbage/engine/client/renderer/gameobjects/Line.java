@@ -20,4 +20,14 @@ public class Line extends ModeledGameObject {
         //TODO make it so you don't need a material to do things, default to vertex color n stuff
         getModel().setMaterial(Material.builder().color(color.x, color.y, color.z, color.w).build());
     }
+
+    public Vector3f getStartPoint() {
+        float[] vertexPosition = model.modelParts.get(0).meshPart.getVertex(0).getXYZ();
+        return new Vector3f(vertexPosition[0], vertexPosition[1], vertexPosition[2]);
+    }
+
+    public Vector3f getEndPoint() {
+        float[] vertexPosition = model.modelParts.get(0).meshPart.getVertex(1).getXYZ();
+        return new Vector3f(vertexPosition[0], vertexPosition[1], vertexPosition[2]);
+    }
 }
