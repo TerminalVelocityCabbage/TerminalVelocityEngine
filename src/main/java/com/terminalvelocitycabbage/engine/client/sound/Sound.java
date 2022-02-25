@@ -44,8 +44,9 @@ public class Sound {
         }
     }
 
-    public void init() {
+    public Sound init() {
         alBufferData(soundID, stereo ? AL_FORMAT_STEREO16 : AL_FORMAT_MONO16, pcm, sampleRate);
+        return this;
     }
 
     private ShortBuffer readVorbis(ByteBuffer vorbis, STBVorbisInfo info) {

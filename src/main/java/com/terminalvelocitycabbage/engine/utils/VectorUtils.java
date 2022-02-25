@@ -5,9 +5,9 @@ import org.joml.Vector3f;
 public class VectorUtils {
 
     /**
-     * @param v1 the first vector of the line
-     * @param v2 the last vector of the line
-     * @return a new Vector3f at the middle of the line drawn between v1 and v2
+     * @param v1 a Vector3f representing a line endpoint
+     * @param v2 a Vector3f representing the other line endpoint
+     * @return a new Vector3f at the middle of the line
      */
     public static Vector3f find2Vec3Mid(final Vector3f v1, final Vector3f v2) {
         return new Vector3f((v1.x + v2.x) / 2f, (v1.y + v2.y) / 2f, (v1.z + v2.z) / 2f);

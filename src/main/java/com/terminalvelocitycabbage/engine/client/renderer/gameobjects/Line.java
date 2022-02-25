@@ -30,4 +30,8 @@ public class Line extends ModeledGameObject {
         float[] vertexPosition = model.modelParts.get(0).meshPart.getVertex(1).getXYZ();
         return new Vector3f(vertexPosition[0], vertexPosition[1], vertexPosition[2]);
     }
+
+    public Vector3f getDirection() {
+        return getStartPoint().sub(getEndPoint(), new Vector3f());
+    }
 }

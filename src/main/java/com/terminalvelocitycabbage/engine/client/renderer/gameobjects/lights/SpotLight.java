@@ -51,8 +51,10 @@ public class SpotLight extends EmptyGameObject {
 		return position;
 	}
 
-	public void setPosition(Vector3f position) {
+	@Override
+	public SpotLight setPosition(Vector3f position) {
 		this.position = position;
+		return this;
 	}
 
 	public Vector4f getColor() {
