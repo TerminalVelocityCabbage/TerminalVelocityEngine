@@ -14,6 +14,7 @@ public class RayCaster {
     public RayCaster() {
         rayStart = new Vector3f();
         rayEnd = new Vector3f();
+        rayDirection = new Vector3f();
     }
 
     public void cast(Camera camera, float mouseX, float mouseY, float distance) {
@@ -31,7 +32,7 @@ public class RayCaster {
         rayDirection.normalize();
 
         //Get the end of the ray
-        camera.getWorldPosition().add(rayDirection.mul(distance), rayEnd);
+        camera.getWorldPosition().add(rayDirection.mul(distance, rayEnd), rayEnd);
     }
 
     public Vector3f getRayStart() {

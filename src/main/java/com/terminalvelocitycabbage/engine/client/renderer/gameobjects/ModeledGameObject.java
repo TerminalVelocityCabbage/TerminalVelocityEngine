@@ -35,12 +35,13 @@ public class ModeledGameObject extends EmptyGameObject {
 		return model;
 	}
 
-	public void bind() {
+	public ModeledGameObject bind() {
 		if (model != null) {
 			model.bind();
 		} else {
 			Log.crash("Model Bind Error", new RuntimeException("Could not bind ModeledGameObject without model."));
 		}
+		return this;
 	}
 
 	public void render() {

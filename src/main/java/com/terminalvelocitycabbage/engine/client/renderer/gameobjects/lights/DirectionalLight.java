@@ -20,12 +20,15 @@ public class DirectionalLight extends EmptyGameObject {
 		return direction;
 	}
 
-	public void setDirection(Vector3f direction) {
+	public DirectionalLight setDirection(Vector3f direction) {
 		this.direction = direction;
+		return this;
 	}
 
-	public void rotate(float x, float y, float z) {
+	@Override
+	public DirectionalLight rotate(float x, float y, float z) {
 		this.direction.add(x, y, z);
+		return this;
 	}
 
 	@Override
@@ -36,15 +39,17 @@ public class DirectionalLight extends EmptyGameObject {
 		return color;
 	}
 
-	public void setColor(Vector4f color) {
+	public DirectionalLight setColor(Vector4f color) {
 		this.color = color;
+		return this;
 	}
 
 	public float getIntensity() {
 		return intensity;
 	}
 
-	public void setIntensity(float intensity) {
+	public DirectionalLight setIntensity(float intensity) {
 		this.intensity = intensity;
+		return this;
 	}
 }

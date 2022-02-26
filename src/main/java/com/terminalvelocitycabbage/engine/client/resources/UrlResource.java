@@ -21,7 +21,6 @@ public class UrlResource implements Resource {
 
 	private final Identifier identifier;
 	private final URL url;
-	private boolean invalid;
 
 	protected UrlResource(Identifier identifier, URL url) {
 		this.identifier = identifier;
@@ -34,24 +33,24 @@ public class UrlResource implements Resource {
 	}
 
 	@Override
-	public InputStream openStream() throws IOException {
-		if (invalid) {
-			Log.crash("Resource Loading Error", new RuntimeException("Invalid Resource for url: " + url.toString()));
+	public InputStream openStream() {
+		try {
+			return url.openStream();
+		} catch (IOException e) {
+			Log.crash("Resource Loading Error could not open Stream", new RuntimeException(e));
+			return null;
 		}
-		return url.openStream();
 	}
 
 	@Override
 	public Optional<DataInputStream> asDataStream() {
-		if (invalid) {
-			Log.crash("Resource Loading Error", new RuntimeException("Invalid Resource for url: " + url.toString()));
-		}
+		Optional<DataInputStream> out = Optional.empty();
 		try {
-			return Optional.of(new DataInputStream(url.openStream()));
+			out = Optional.of(new DataInputStream(url.openStream()));
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.crash("Resource Loading Error, could not get DataStream", new RuntimeException(e));
 		}
-		return Optional.empty();
+		return out;
 	}
 
 	@Override
@@ -60,7 +59,7 @@ public class UrlResource implements Resource {
 		try {
 			out = Optional.of(IOUtils.toString(openStream(), StandardCharsets.UTF_8.name()));
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.crash("Resource Loading Error, could not get as String", new RuntimeException(e));
 		}
 		return out;
 	}
@@ -69,7 +68,7 @@ public class UrlResource implements Resource {
 	public Optional<java.nio.ByteBuffer> asByteBuffer() {
 
 		java.nio.ByteBuffer buffer = null;
-		Path path = Paths.get(url.getPath().replaceFirst("/", ""));
+		Path path = Paths.get(url.getPath().replaceFirst("/", "").replaceFirst("file:", ""));
 
 		if(Files.isReadable(path)) {
 			try(SeekableByteChannel sbc = Files.newByteChannel(path)) {
@@ -108,9 +107,5 @@ public class UrlResource implements Resource {
 		newBuffer.put(buffer);
 
 		return newBuffer;
-	}
-
-	public boolean isInvalid() {
-		return invalid;
 	}
 }

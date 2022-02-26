@@ -29,33 +29,49 @@ public abstract class EmptyGameObject {
 		this.transformationMatrix = new Matrix4f();
 	}
 
-	public void setPosition(float x, float y, float z) {
+	public EmptyGameObject setPosition(float x, float y, float z) {
 		this.position = this.position.set(x, y, z);
+		return this;
 	}
 
-	public void move(float x, float y, float z) {
+	public EmptyGameObject setPosition(Vector3f newPosition) {
+		this.position = newPosition;
+		return this;
+	}
+
+	public EmptyGameObject move(float x, float y, float z) {
 		position.add(x, y, z);
+		return this;
 	}
 
-	public void setRotation(float x, float y, float z) {
+	public EmptyGameObject setRotation(float x, float y, float z) {
 		this.rotation = new Quaternionf();
 		rotation.rotateXYZ(x, y, z);
+		return this;
 	}
 
-	public void rotate(float x, float y, float z) {
+	public EmptyGameObject rotate(float x, float y, float z) {
 		rotation.rotateXYZ(x, y, z);
+		return this;
 	}
 
-	public void scale(float x, float y, float z) {
+	public EmptyGameObject scale(float x, float y, float z) {
 		scale.add(x, y, z);
+		return this;
 	}
 
-	public void disable() {
+	public EmptyGameObject disable() {
 		render = false;
+		return this;
 	}
 
-	public void enable() {
+	public EmptyGameObject enable() {
 		render = true;
+		return this;
+	}
+
+	public boolean isEnabled() {
+		return render;
 	}
 
 	public void queueUpdate() {
@@ -87,5 +103,17 @@ public abstract class EmptyGameObject {
 
 	public Matrix4f getOrthoProjModelMatrix(Matrix4f orthoMatrix) {
 		return orthoMatrix.mulLocal(getTransformationMatrix());
+	}
+
+	public Vector3f getPosition() {
+		return position;
+	}
+
+	public Quaternionf getRotation() {
+		return rotation;
+	}
+
+	public Vector3f getScale() {
+		return scale;
 	}
 }

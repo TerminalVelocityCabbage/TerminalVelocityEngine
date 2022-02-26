@@ -1,8 +1,5 @@
 #version 330
 
-uniform vec2 screenRes;
-
-
 layout (location = 0) in vec3 a_position;
 layout (location = 1) in vec2 a_uv;
 layout (location = 2) in vec4 a_colour;
@@ -19,4 +16,5 @@ void main() {
     uv = a_uv;
     colour = a_colour;
     borderRadius = a_borderRadius;
+    borderThickness = a_borderThickness;
 }

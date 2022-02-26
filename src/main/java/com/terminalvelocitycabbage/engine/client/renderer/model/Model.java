@@ -77,7 +77,7 @@ public class Model {
 
 	public void bind() {
 		this.mesh.bind();
-		this.resizeBuffer();
+		resizeBuffer();
 	}
 
 	public void render() {

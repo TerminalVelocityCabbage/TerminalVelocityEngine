@@ -9,6 +9,9 @@ import com.terminalvelocitycabbage.engine.debug.SystemInfo;
 import com.terminalvelocitycabbage.engine.utils.TickManager;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GLUtil;
+import org.lwjgl.opengl.KHRDebug;
+import org.lwjgl.system.Callback;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -32,7 +35,10 @@ public abstract class Renderer {
 	public final SceneHandler sceneHandler = new SceneHandler();
 	public final CanvasHandler canvasHandler = new CanvasHandler();
 
-	public Renderer(int width, int height, String title, float tickRate) {
+	private boolean debugMode;
+	private static Callback debugCallback;
+
+	public Renderer(int width, int height, String title, float tickRate, boolean debugMode) {
 		window = new Window(width, height, title, false, true, true);
 		tickManager = new TickManager(tickRate);
 	}
@@ -59,12 +65,21 @@ public abstract class Renderer {
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+		if (debugMode) {
+			glfwWindowHint( GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE );
+		}
 
 		window.create();
 		window.init();
 		window.show();
 		// creates the GLCapabilities instance and makes the OpenGL bindings available for use.
 		GL.createCapabilities();
+
+		if (debugMode) {
+			glEnable(KHRDebug.GL_DEBUG_OUTPUT_SYNCHRONOUS);
+			// Store this callback somewhere so the GC doesn't free it
+			debugCallback = GLUtil.setupDebugMessageCallback();
+		}
 
 		//Tell the system information tracker what gpu we are working with here
 		SystemInfo.gpuVendor = glGetString(GL_VENDOR);

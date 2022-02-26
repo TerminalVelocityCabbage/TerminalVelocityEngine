@@ -31,8 +31,10 @@ public class PointLight extends EmptyGameObject {
 		return position;
 	}
 
-	public void setPosition(Vector3f position) {
+	@Override
+	public PointLight setPosition(Vector3f position) {
 		this.position = position;
+		return this;
 	}
 
 	public Vector4f getColor() {

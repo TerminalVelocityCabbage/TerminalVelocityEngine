@@ -4,6 +4,7 @@ import com.terminalvelocitycabbage.engine.client.ClientBase;
 import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderMode;
+import com.terminalvelocitycabbage.engine.client.renderer.model.Material;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
 import com.terminalvelocitycabbage.engine.events.EventContext;
 import com.terminalvelocitycabbage.engine.events.HandleEvent;
@@ -31,6 +32,7 @@ public class Canvas extends UIRenderable<Canvas> {
 		this.backgroundAlpha = new AnimatableUIValue(0);
 
 		this.model = new Model(RenderFormat.UI, new RenderMode(RenderMode.Modes.TRIANGLES), new ArrayList<>());
+		this.model.setMaterial(Material.builder().build());
 		this.part.setFormat(RenderFormat.UI);
 	}
 
@@ -122,6 +124,7 @@ public class Canvas extends UIRenderable<Canvas> {
 		}
 
 		this.model.bind();
+		this.model.setMaterial(Material.builder().build());
 		this.model.update(new Vector3f(), new Quaternionf(), new Vector3f(1));
 	}
 

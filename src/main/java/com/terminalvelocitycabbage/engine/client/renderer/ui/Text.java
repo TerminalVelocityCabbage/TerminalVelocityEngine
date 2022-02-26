@@ -20,6 +20,8 @@ public class Text {
 	private TextModel model;
 	private TextStyle style;
 
+	private boolean bound = false;
+
 	private Text() {
 		this.needsUpdate = true;
 		this.textString = "";
@@ -42,7 +44,9 @@ public class Text {
 		this.fontMeshPartStorage = fontMeshPartStorage;
 		this.style = style;
 		this.model = new TextModel(fontMeshPartStorage.getFontMaterial());
-		this.model.resizeBuffer();
+		if (bound) {
+			this.model.resizeBuffer();
+		}
 	}
 
 	public String getString() {
@@ -65,6 +69,7 @@ public class Text {
 
 	public void bind() {
 		if (model != null) {
+			bound = true;
 			model.bind();
 		}
 	}
