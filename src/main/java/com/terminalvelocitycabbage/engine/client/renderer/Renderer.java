@@ -65,8 +65,9 @@ public abstract class Renderer {
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-		//TODO make this gated behind a "debug mode" later
-		//glfwWindowHint( GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE );
+		if (debugMode) {
+			glfwWindowHint( GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE );
+		}
 
 		window.create();
 		window.init();
