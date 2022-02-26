@@ -34,6 +34,9 @@ public class FontMeshPartStorage {
 	}
 
 	public FontMaterial getFontMaterial() {
+		if (fontMaterial == null) {
+			Log.crash("No Material Applied to Font Mesh", new RuntimeException("Font Material is Null"));
+		}
 		return fontMaterial;
 	}
 

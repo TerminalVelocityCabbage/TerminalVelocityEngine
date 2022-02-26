@@ -20,6 +20,8 @@ public class Text {
 	private TextModel model;
 	private TextStyle style;
 
+	private boolean bound = false;
+
 	private Text() {
 		this.needsUpdate = true;
 		this.textString = "";
@@ -43,7 +45,10 @@ public class Text {
 		this.style = style;
 		this.model = new TextModel(fontMeshPartStorage.getFontMaterial());
 		//bind();
-		this.model.resizeBuffer(); //TODO this crashes the game because it's not bound, but binding it doesn't not crash so error tbd
+		//TODO this crashes the game because it's not bound, but binding it doesn't not crash so error tbd
+		if (bound) {
+			this.model.resizeBuffer();
+		}
 	}
 
 	public String getString() {
@@ -66,6 +71,7 @@ public class Text {
 
 	public void bind() {
 		if (model != null) {
+			bound = true;
 			model.bind();
 		}
 	}

@@ -9,6 +9,8 @@ import com.terminalvelocitycabbage.engine.debug.SystemInfo;
 import com.terminalvelocitycabbage.engine.utils.TickManager;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GLUtil;
+import org.lwjgl.opengl.KHRDebug;
 import org.lwjgl.system.Callback;
 
 import java.util.Objects;
@@ -33,9 +35,10 @@ public abstract class Renderer {
 	public final SceneHandler sceneHandler = new SceneHandler();
 	public final CanvasHandler canvasHandler = new CanvasHandler();
 
+	private boolean debugMode;
 	private static Callback debugCallback;
 
-	public Renderer(int width, int height, String title, float tickRate) {
+	public Renderer(int width, int height, String title, float tickRate, boolean debugMode) {
 		window = new Window(width, height, title, false, true, true);
 		tickManager = new TickManager(tickRate);
 	}
@@ -71,10 +74,11 @@ public abstract class Renderer {
 		// creates the GLCapabilities instance and makes the OpenGL bindings available for use.
 		GL.createCapabilities();
 
-		//TODO make this gated behind a "debug mode" later
-		//glEnable(KHRDebug.GL_DEBUG_OUTPUT_SYNCHRONOUS);
-		// Store this callback somewhere so the GC doesn't free it
-		//debugCallback = GLUtil.setupDebugMessageCallback();
+		if (debugMode) {
+			glEnable(KHRDebug.GL_DEBUG_OUTPUT_SYNCHRONOUS);
+			// Store this callback somewhere so the GC doesn't free it
+			debugCallback = GLUtil.setupDebugMessageCallback();
+		}
 
 		//Tell the system information tracker what gpu we are working with here
 		SystemInfo.gpuVendor = glGetString(GL_VENDOR);
