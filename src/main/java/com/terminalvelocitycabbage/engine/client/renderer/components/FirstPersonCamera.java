@@ -46,12 +46,14 @@ public class FirstPersonCamera extends Camera {
         move(deltaTime);
     }
 
-    public void queueRotate(float x, float y) {
+    public FirstPersonCamera queueRotate(float x, float y) {
         deltaRotation.add(y, x);
+        return this;
     }
 
-    public void queueMove(float x, float y, float z) {
+    public FirstPersonCamera queueMove(float x, float y, float z) {
         deltaPosition.add(x, y, z);
+        return this;
     }
 
     public void resetDeltas() {

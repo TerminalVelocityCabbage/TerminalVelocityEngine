@@ -183,4 +183,8 @@ public class Window {
 		this.title = title;
 		glfwSetWindowTitle(windowID, title);
 	}
+
+	public void focus() {
+		glfwFocusWindow(windowID);
+	}
 }
