@@ -95,9 +95,9 @@ public abstract class EmptyGameObject {
 
 	public Matrix4f getTransformationMatrix() {
 		transformationMatrix.identity()
+				.scale(scale)
 				.translate(position)
-				.rotate(rotation)
-				.scale(scale);
+				.rotate(rotation);
 		return transformationMatrix;
 	}
 

@@ -80,6 +80,9 @@ public class Mesh {
 	}
 
 	public void render() {
+
+		if (vertexCount < 1) return;
+
 		// Bind to the VAO that has all the information about the vertices
 		glBindVertexArray(vaoID);
 

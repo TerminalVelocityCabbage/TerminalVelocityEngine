@@ -42,7 +42,7 @@ public class RenderMode {
 
     public void applyWidth() {
         //TODO these don't work so we should just remove them and implement our own methods for viewing these
-        glLineWidth(width);
+        //glLineWidth(width);
         glPointSize(width);
     }
 
