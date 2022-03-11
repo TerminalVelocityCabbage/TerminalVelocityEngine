@@ -35,12 +35,6 @@ public class PNGDecoder2 {
             IntBuffer h    = stack.mallocInt(1);
             IntBuffer comp = stack.mallocInt(1);
 
-            // Use info to read image metadata without decoding the entire image.
-            // We don't need this for this demo, just testing the API.
-            if (!stbi_info_from_memory(imageBuffer, w, h, comp)) {
-                Log.crash("Image Loading Error", new RuntimeException("Failed to read image information: " + stbi_failure_reason()));
-            }
-
             // Decode the image
             image = stbi_load_from_memory(imageBuffer, w, h, comp, 0);
             if (image == null) {

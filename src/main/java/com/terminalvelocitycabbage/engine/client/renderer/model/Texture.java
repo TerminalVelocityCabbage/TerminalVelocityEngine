@@ -7,7 +7,6 @@ import com.terminalvelocitycabbage.engine.utils.BufferUtils;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 import static org.lwjgl.opengl.GL11.*;

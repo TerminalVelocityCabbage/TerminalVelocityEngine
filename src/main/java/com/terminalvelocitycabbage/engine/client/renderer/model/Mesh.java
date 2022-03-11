@@ -121,6 +121,8 @@ public class Mesh {
 	}
 
 	public void updateVertexData() {
+		if (vertexCount < 1) return;
+
 		vertexBuffer.position(vertexCount * this.format.getStride());
 		vertexBuffer.flip();
 
@@ -129,6 +131,8 @@ public class Mesh {
 	}
 
 	public void updateIndexData() {
+		if (indexCount < 1) return;
+
 		indexBuffer.position(indexCount);
 		indexBuffer.flip();
 
