@@ -3,6 +3,7 @@ package com.terminalvelocitycabbage.engine.client.renderer.model;
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderElement;
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderMode;
+import com.terminalvelocitycabbage.engine.debug.Log;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
@@ -11,6 +12,7 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL11.glDrawElements;
@@ -187,5 +189,19 @@ public class Mesh {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void printBuffers() {
+		int stride = this.format.getStride();
+		float[] vertex = new float[this.vertexCount * stride];
+		this.vertexBuffer.position(0);
+		this.vertexBuffer.get(vertex);
+
+		int[] index = new int[this.indexCount];
+		this.indexBuffer.position(0);
+		this.indexBuffer.get(index);
+
+		Log.info("vertices " + Arrays.toString(vertex));
+		Log.info("indices " + Arrays.toString(index));
 	}
 }
