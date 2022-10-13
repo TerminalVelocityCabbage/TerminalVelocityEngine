@@ -58,6 +58,10 @@ public class EasingUtil {
         }
     }
 
+    public static float lerp(float start, float end, float progress, Direction direction, Function function) {
+        return (start + (end - start) * ease(direction, function, progress));
+    }
+
     public static float ease(Direction direction, Function function, float progress) {
         return switch (direction) {
             case IN -> easeIn(function, progress);
