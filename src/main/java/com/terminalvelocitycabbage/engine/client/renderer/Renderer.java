@@ -40,6 +40,7 @@ public abstract class Renderer {
 
 	public Renderer(int width, int height, String title, float tickRate, boolean debugMode) {
 		window = new Window(width, height, title, false, true, true);
+		this.debugMode = debugMode;
 		tickManager = new TickManager(tickRate);
 	}
 
@@ -149,6 +150,11 @@ public abstract class Renderer {
 		shaderHandler.cleanup();
 		canvasHandler.cleanup();
 		sceneHandler.cleanup();
+
+		//Free debug
+		if (debugMode) {
+			debugCallback.free();
+		}
 	}
 
 	public static Window getWindow() {
