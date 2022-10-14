@@ -23,7 +23,7 @@ public class FontInfo {
         FontInfo info = new FontInfo();
         Optional<Resource> resource = resourceManager.getResource(identifier);
         if (resource.isPresent()) {
-            DataInputStream dataIn = resource.get().asDataStream().orElseThrow();
+            DataInputStream dataIn = resource.get().asDataStream();
             try {
                 info.setHeight(dataIn.readInt());
                 while (dataIn.available() > 0) {

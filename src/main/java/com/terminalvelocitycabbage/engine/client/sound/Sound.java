@@ -31,7 +31,7 @@ public class Sound {
         //Load its resource into something we can read
         ByteBuffer vorbis = null;
         if (resourceManager.getResource(identifier).isPresent()) {
-            vorbis = resourceManager.getResource(identifier).get().asByteBuffer().orElseThrow();
+            vorbis = resourceManager.getResource(identifier).get().asByteBuffer();
         } else {
             Log.crash("Could not read sound " + identifier.toString(), new RuntimeException("Sound Read Error, sound not found: " + identifier));
         }

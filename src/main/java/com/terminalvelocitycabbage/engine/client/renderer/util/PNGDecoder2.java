@@ -23,7 +23,7 @@ public class PNGDecoder2 {
 
     public PNGDecoder2(ResourceManager resourceManager, Identifier identifier) throws IOException {
         if (resourceManager.getResource(identifier).isPresent()) {
-            imageBuffer = resourceManager.getResource(identifier).get().asByteBuffer().orElseThrow();
+            imageBuffer = resourceManager.getResource(identifier).get().asByteBuffer();
         }
     }
 

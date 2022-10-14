@@ -30,7 +30,7 @@ public class Shader {
 
 	public void create() {
 		Optional<Resource> resource = resourceManager.getResource(identifier);
-		String src = resource.flatMap(Resource::asString).orElseThrow();
+		String src = resource.orElseThrow().asString();
 		while (src.contains("#include")) {
 			src = parseInclusions(src);
 		}
@@ -66,7 +66,7 @@ public class Shader {
 		}
 
 		//Attempt to insert the included shader source in place of the requested.
-		return source.replace("#include \"" + importName + "\";", resource.flatMap(Resource::asString).orElseThrow());
+		return source.replace("#include \"" + importName + "\";", resource.orElseThrow().asString());
 	}
 
 	public enum Type {
