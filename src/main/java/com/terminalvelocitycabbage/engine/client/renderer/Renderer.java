@@ -139,12 +139,6 @@ public abstract class Renderer {
 	}
 
 	public void destroy() {
-		// Free the window callbacks and destroy the window
-		window.destroy();
-
-		// Terminate GLFW and free the error callback
-		glfwTerminate();
-		Objects.requireNonNull(glfwSetErrorCallback(null)).free();
 
 		//Cleanup handlers
 		shaderHandler.cleanup();
@@ -155,6 +149,13 @@ public abstract class Renderer {
 		if (debugMode) {
 			debugCallback.free();
 		}
+
+		// Free the window callbacks and destroy the window
+		window.destroy();
+
+		// Terminate GLFW and free the error callback
+		glfwTerminate();
+		Objects.requireNonNull(glfwSetErrorCallback(null)).free();
 	}
 
 	public static Window getWindow() {
