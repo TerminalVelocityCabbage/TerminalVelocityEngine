@@ -60,6 +60,11 @@ public abstract class EmptyGameObject {
 		return this;
 	}
 
+	public EmptyGameObject scale(float scale) {
+		this.scale.add(scale, scale, scale);
+		return this;
+	}
+
 	public EmptyGameObject disable() {
 		render = false;
 		return this;
