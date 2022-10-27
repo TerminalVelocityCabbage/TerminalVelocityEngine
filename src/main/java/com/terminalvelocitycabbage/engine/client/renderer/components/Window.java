@@ -95,6 +95,10 @@ public class Window {
 		}
 	}
 
+	public void queueClose() {
+		glfwSetWindowShouldClose(windowID, true);
+	}
+
 	public boolean isResized() {
 		return isResized;
 	}

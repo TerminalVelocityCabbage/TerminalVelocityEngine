@@ -1,12 +1,13 @@
 package com.terminalvelocitycabbage.engine.client.input;
 
 import com.terminalvelocitycabbage.engine.client.renderer.Renderer;
+import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
 
 import static org.lwjgl.glfw.GLFW.*;
 
 public class KeyBind {
 
-	long window;
+	Window window;
 	int keyCode;
 	int scancode;
 	int action;
@@ -16,7 +17,7 @@ public class KeyBind {
 	public static final int NONE = 0;
 
 	public KeyBind(int key) {
-		this.window = Renderer.getWindow().getID();
+		this.window = Renderer.getWindow();
 		this.keyCode = key;
 		this.scancode = ANY;
 		this.action = ANY;
@@ -24,7 +25,7 @@ public class KeyBind {
 	}
 
 	public KeyBind(int key, int scancode, int action, int modifiers) {
-		this.window = Renderer.getWindow().getID();
+		this.window = Renderer.getWindow();
 		this.keyCode = key;
 		this.scancode = scancode;
 		this.action = action;
@@ -32,19 +33,23 @@ public class KeyBind {
 	}
 
 	public boolean isKeyPressed() {
-		return glfwGetKey(window, this.getKeyCode()) == GLFW_PRESS;
+		return glfwGetKey(window.getID(), this.getKeyCode()) == GLFW_PRESS;
 	}
 
 	public boolean isKeyReleased() {
-		return glfwGetKey(window, this.getKeyCode()) == GLFW_RELEASE;
+		return glfwGetKey(window.getID(), this.getKeyCode()) == GLFW_RELEASE;
 	}
 
 	public boolean isKeyRepeated() {
-		return glfwGetKey(window, this.getKeyCode()) == GLFW_REPEAT;
+		return glfwGetKey(window.getID(), this.getKeyCode()) == GLFW_REPEAT;
 	}
 
-	public long getWindow() {
+	public Window getWindow() {
 		return window;
+	}
+
+	public long getWindowID() {
+		return window.getID();
 	}
 
 	public int getKeyCode() {
