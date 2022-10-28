@@ -1,7 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.input;
 
 import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
-import com.terminalvelocitycabbage.engine.debug.Log;
 import org.joml.Vector2d;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
@@ -74,19 +73,8 @@ public abstract class InputHandler {
 			deltaScrollVector.x += (float)xoffset;
 			deltaScrollVector.y += (float)yoffset;
 		});
-		glfwSetKeyCallback(window.getID(), (win, key, scancode, action, mods) -> {
-			processInput(new KeyBind(win, key, scancode, action, mods));
-			updateKeys(key);
-			Log.info(mods);
-		});
+		glfwSetKeyCallback(window.getID(), (win, key, scancode, action, mods) -> processInput(new KeyBind(win, key, scancode, action, mods)));
 	}
-
-	private void updateKeys(int key) {
-		//Sets the current key to having been last press 0 ticks ago
-		keyTimerMap.put(key, 0);
-	}
-
-
 
 	public abstract void processInput(KeyBind keyBind);
 

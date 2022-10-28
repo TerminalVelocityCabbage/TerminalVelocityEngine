@@ -34,19 +34,26 @@ public record KeyBind(long window, int keyCode, int scancode, int action, int mo
         return glfwGetKey(window, keyCode) == GLFW_REPEAT;
     }
 
-    public boolean equalsKeyAndAction(Object o) {
+
+    public boolean equalsKeyAction(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         KeyBind keyBind = (KeyBind) o;
-        return keyCode == keyBind.keyCode &&
-                action == keyBind.action;
+        return window == keyBind.window && keyCode == keyBind.keyCode && action == keyBind.action;
+    }
+
+    public boolean equalsKeyModifiersAction(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        KeyBind keyBind = (KeyBind) o;
+        return window == keyBind.window && keyCode == keyBind.keyCode && action == keyBind.action && modifiers == keyBind.modifiers;
     }
 
     public boolean equalsKey(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         KeyBind keyBind = (KeyBind) o;
-        return keyCode == keyBind.keyCode;
+        return window == keyBind.window && keyCode == keyBind.keyCode;
     }
 
     //TODO make enum instead

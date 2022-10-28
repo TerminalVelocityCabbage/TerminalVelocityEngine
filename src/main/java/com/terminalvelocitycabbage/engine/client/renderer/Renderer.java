@@ -9,6 +9,7 @@ import com.terminalvelocitycabbage.engine.debug.SystemInfo;
 import com.terminalvelocitycabbage.engine.utils.TickManager;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLUtil;
 import org.lwjgl.opengl.KHRDebug;
 import org.lwjgl.system.Callback;
@@ -37,6 +38,11 @@ public abstract class Renderer {
 
 	private boolean debugMode;
 	private static Callback debugCallback;
+
+	private static int drawBufferMode;
+	private int lastDrawBufferMode;
+	private static int polygonMode;
+	private int lastPolygonMode;
 
 	public Renderer(int width, int height, String title, float tickRate, boolean debugMode) {
 		window = new Window(width, height, title, false, true, true);
@@ -91,6 +97,9 @@ public abstract class Renderer {
 		glEnable(GL_BLEND);
 		//TODO make ways to swap between blend functions like render modes
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		setBeginMode(PolygonMode.FILL);
+		setDrawBufferMode(DrawBufferMode.FRONT_AND_BACK);
 	}
 
 	private void start() {
@@ -187,11 +196,71 @@ public abstract class Renderer {
 	}
 
 	public void push() {
+
+		if (lastDrawBufferMode != drawBufferMode || lastPolygonMode != polygonMode) {
+			glPolygonMode(drawBufferMode, polygonMode);
+		}
+		lastDrawBufferMode = drawBufferMode;
+		lastPolygonMode = polygonMode;
+
 		glfwSwapBuffers(window.getID());
 		glfwPollEvents();
 	}
 
+	public static void setDrawBufferMode(DrawBufferMode mode) {
+		drawBufferMode = mode.getMode();
+	}
+
+	public static void setBeginMode(PolygonMode mode) {
+		polygonMode = mode.getMode();
+	}
+
 	public SceneHandler getSceneHandler() {
 		return sceneHandler;
+	}
+	
+	enum DrawBufferMode {
+
+		NONE(GL11.GL_NONE),
+		FRONT_LEFT(GL11.GL_FRONT_LEFT),
+		FRONT_RIGHT(GL11.GL_FRONT_RIGHT),
+		BACK_LEFT(GL11.GL_BACK_LEFT),
+		BACK_RIGHT(GL11.GL_BACK_RIGHT),
+		FRONT(GL11.GL_FRONT),
+		BACK(GL11.GL_BACK),
+		LEFT(GL11.GL_LEFT),
+		RIGHT(GL11.GL_RIGHT),
+		FRONT_AND_BACK(GL11.GL_FRONT_AND_BACK),
+		AUX0(GL11.GL_AUX0),
+		AUX1(GL11.GL_AUX1),
+		AUX2(GL11.GL_AUX2),
+		AUX3(GL11.GL_AUX3);
+
+		final int bufferMode;
+
+		DrawBufferMode(int mode) {
+			this.bufferMode = mode;
+		}
+
+		public int getMode() {
+			return bufferMode;
+		}
+	}
+
+	public enum PolygonMode {
+
+		POINT(GL_POINT),
+		LINE(GL_LINE),
+		FILL(GL_FILL);
+
+		final int polygonMode;
+
+		PolygonMode(int mode) {
+			this.polygonMode = mode;
+		}
+
+		public int getMode() {
+			return polygonMode;
+		}
 	}
 }
