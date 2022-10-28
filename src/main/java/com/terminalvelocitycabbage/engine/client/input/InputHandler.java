@@ -1,9 +1,13 @@
 package com.terminalvelocitycabbage.engine.client.input;
 
 import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
+import com.terminalvelocitycabbage.engine.debug.Log;
 import org.joml.Vector2d;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -37,10 +41,14 @@ public abstract class InputHandler {
 
 	private short ticksSinceLastClick = -1;
 
+	private Map<Integer, Integer> keyTimerMap;
+
 	public InputHandler() {
 		previousPos = new Vector2d(-10, -10);
 		deltaMouseVector = new Vector2f(0, 0);
 		deltaScrollVector = new Vector2i(0, 0);
+
+		keyTimerMap = new HashMap<>();
 	}
 
 	public void init(Window window) {
@@ -66,8 +74,19 @@ public abstract class InputHandler {
 			deltaScrollVector.x += (float)xoffset;
 			deltaScrollVector.y += (float)yoffset;
 		});
-		glfwSetKeyCallback(window.getID(), (win, key, scancode, action, mods) -> processInput(new KeyBind(key, scancode, action, mods)));
+		glfwSetKeyCallback(window.getID(), (win, key, scancode, action, mods) -> {
+			processInput(new KeyBind(win, key, scancode, action, mods));
+			updateKeys(key);
+			Log.info(mods);
+		});
 	}
+
+	private void updateKeys(int key) {
+		//Sets the current key to having been last press 0 ticks ago
+		keyTimerMap.put(key, 0);
+	}
+
+
 
 	public abstract void processInput(KeyBind keyBind);
 
@@ -100,8 +119,10 @@ public abstract class InputHandler {
 		return deltaMouseVector.y();
 	}
 
-	public void update() {
+	public void tick() {
 		updateMouseButtons();
+		//Increment the timer for each key since last press
+		keyTimerMap.replaceAll((k, v) -> keyTimerMap.get(k) + 1);
 	}
 
 	public void updateMouseButtons() {

@@ -1,85 +1,75 @@
 package com.terminalvelocitycabbage.engine.client.input;
 
 import com.terminalvelocitycabbage.engine.client.renderer.Renderer;
-import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
 
 import static org.lwjgl.glfw.GLFW.*;
 
-public class KeyBind {
+public record KeyBind(long window, int keyCode, int scancode, int action, int modifiers) {
 
-	Window window;
-	int keyCode;
-	int scancode;
-	int action;
-	int modifiers;
+    public KeyBind(int keyCode, int scancode, int action, int modifiers) {
+        this(Renderer.getWindow().getID(), keyCode, scancode, action, modifiers);
+    }
 
-	public static final int ANY = -1;
-	public static final int NONE = 0;
+    public KeyBind(int keyCode, int action, int modifiers) {
+        this(Renderer.getWindow().getID(), keyCode, Scancodes.ANY, action, modifiers);
+    }
 
-	public KeyBind(int key) {
-		this.window = Renderer.getWindow();
-		this.keyCode = key;
-		this.scancode = ANY;
-		this.action = ANY;
-		this.modifiers = NONE;
-	}
+    public KeyBind(int keyCode, int modifiers) {
+        this(Renderer.getWindow().getID(), keyCode, Scancodes.ANY, Actions.PRESS, modifiers);
+    }
 
-	public KeyBind(int key, int scancode, int action, int modifiers) {
-		this.window = Renderer.getWindow();
-		this.keyCode = key;
-		this.scancode = scancode;
-		this.action = action;
-		this.modifiers = modifiers;
-	}
+    public KeyBind(int keyCode) {
+        this(Renderer.getWindow().getID(), keyCode, Scancodes.ANY, Actions.PRESS, Modifiers.NONE);
+    }
 
-	public boolean isKeyPressed() {
-		return glfwGetKey(window.getID(), this.getKeyCode()) == GLFW_PRESS;
-	}
+    public boolean isKeyPressed() {
+        return glfwGetKey(window, keyCode) == GLFW_PRESS;
+    }
 
-	public boolean isKeyReleased() {
-		return glfwGetKey(window.getID(), this.getKeyCode()) == GLFW_RELEASE;
-	}
+    public boolean isKeyReleased() {
+        return glfwGetKey(window, keyCode) == GLFW_RELEASE;
+    }
 
-	public boolean isKeyRepeated() {
-		return glfwGetKey(window.getID(), this.getKeyCode()) == GLFW_REPEAT;
-	}
+    public boolean isKeyRepeated() {
+        return glfwGetKey(window, keyCode) == GLFW_REPEAT;
+    }
 
-	public Window getWindow() {
-		return window;
-	}
+    public boolean equalsKeyAndAction(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        KeyBind keyBind = (KeyBind) o;
+        return keyCode == keyBind.keyCode &&
+                action == keyBind.action;
+    }
 
-	public long getWindowID() {
-		return window.getID();
-	}
+    public boolean equalsKey(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        KeyBind keyBind = (KeyBind) o;
+        return keyCode == keyBind.keyCode;
+    }
 
-	public int getKeyCode() {
-		return keyCode;
-	}
+    //TODO make enum instead
+    public static class Actions {
+        public static final int PRESS = 0;
+        public static final int RELEASE = 1;
+    }
 
-	public int getScancode() {
-		return scancode;
-	}
+    //TODO make enum instead
+    public static class Scancodes {
+        public static final int NONE = 0;
+        public static final int ANY = 1;
+    }
 
-	public int getAction() {
-		return action;
-	}
-
-	public int getModifiers() {
-		return modifiers;
-	}
-
-	public boolean equalsKeyAndAction(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		KeyBind keyBind = (KeyBind) o;
-		return keyCode == keyBind.keyCode &&
-				action == keyBind.action;
-	}
-
-	public boolean equalsKey(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		KeyBind keyBind = (KeyBind) o;
-		return keyCode == keyBind.keyCode;
-	}
+    //TODO make enum instead
+    //To combine modifiers just add them together
+    public static class Modifiers {
+        public static final byte NONE = 0;
+        public static final byte SHIFT = 1;
+        public static final byte CONTROL = 2;
+        public static final byte ALT = 4;
+        public static final byte SUPER = 8;
+        public static final byte CAPS_LOCK = 16;
+        public static final byte NUM_LOCK = 32;
+    }
 }

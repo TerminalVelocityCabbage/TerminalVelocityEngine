@@ -1,5 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.renderer.components;
 
+import com.terminalvelocitycabbage.engine.client.input.InputHandler;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -28,10 +29,8 @@ public class FreeCamera extends Camera {
         super(fov, clippingPlane, farPlane);
     }
 
-    /**
-     * @param deltaTime in seconds
-     */
-    public void update(float deltaTime) {
+    @Override
+    public void update(InputHandler inputHandler, float deltaTime) {
 
         //Update velocity based on accelerations
         linearVelocity.fma(deltaTime, linearAcceleration);

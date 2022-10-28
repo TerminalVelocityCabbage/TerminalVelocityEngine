@@ -170,7 +170,7 @@ public abstract class Renderer {
 		//tick as many time as needed
 		while (tickManager.hasTick()) {
 			sceneHandler.getActiveScene().tick(deltaTime);
-			sceneHandler.getActiveScene().getInputHandler().update();
+			sceneHandler.getActiveScene().getInputHandler().tick();
 			canvasHandler.tick(
 					getWindow().getCursorX(),
 					getWindow().getCursorY(),
