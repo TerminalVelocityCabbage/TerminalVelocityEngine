@@ -40,14 +40,10 @@ public abstract class InputHandler {
 
 	private short ticksSinceLastClick = -1;
 
-	private Map<Integer, Integer> keyTimerMap;
-
 	public InputHandler() {
 		previousPos = new Vector2d(-10, -10);
 		deltaMouseVector = new Vector2f(0, 0);
 		deltaScrollVector = new Vector2i(0, 0);
-
-		keyTimerMap = new HashMap<>();
 	}
 
 	public void init(Window window) {
@@ -83,8 +79,8 @@ public abstract class InputHandler {
 		deltaScrollVector.zero();
 	}
 
-	public Vector2f getDeltaMouseVector(float sensitivity) {
-		return deltaMouseVector.mul(sensitivity);
+	public Vector2f getDeltaMouseVector() {
+		return deltaMouseVector;
 	}
 
 	public Vector2d getMousePos() {
@@ -109,8 +105,6 @@ public abstract class InputHandler {
 
 	public void tick() {
 		updateMouseButtons();
-		//Increment the timer for each key since last press
-		keyTimerMap.replaceAll((k, v) -> keyTimerMap.get(k) + 1);
 	}
 
 	public void updateMouseButtons() {

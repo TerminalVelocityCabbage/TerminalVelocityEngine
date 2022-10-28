@@ -1,79 +1,107 @@
 package com.terminalvelocitycabbage.engine.prefabs.camera.firstperson.firstperson;
 
-import com.terminalvelocitycabbage.engine.client.renderer.components.Camera;
 import com.terminalvelocitycabbage.engine.client.input.InputHandler;
+import com.terminalvelocitycabbage.engine.client.renderer.components.Camera;
+import com.terminalvelocitycabbage.engine.utils.EasingUtil;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
+import static com.terminalvelocitycabbage.engine.prefabs.camera.firstperson.firstperson.FirstPersonInputHandler.*;
+import static com.terminalvelocitycabbage.engine.utils.EasingUtil.Direction.OUT;
+import static com.terminalvelocitycabbage.engine.utils.EasingUtil.Function.CIRCULAR;
+
 public class FirstPersonCamera extends Camera {
 
-    private final float moveModifier = 60f;
-    private final float rotateModifier = 1f;
+    private Vector2f rotateTarget = new Vector2f(0f, 0f);
+    private Vector2f currentRotation = new Vector2f(0f, 0f);
+    private float rotateProgress = 1f;
+    private static final float rotateSpeed = .06f;
 
-    //For adding movement queues
-    private final Vector3f deltaPosition = new Vector3f();
-    private final Vector2f deltaRotation = new Vector2f();
-
-    private final Vector3f position;
-    private float pitch;
-    private float yaw;
+    private Vector3f moveTarget = new Vector3f(0f, 0f, 0f);
+    private Vector3f currentPosition = new Vector3f(0f, 0f, 0f);
+    private float moveProgress = 1f;
+    private static final float movementSpeed = .6f;
 
     public FirstPersonCamera(int fov, float clippingPlane, float farPlane) {
         super(fov, clippingPlane, farPlane);
-
-        position = new Vector3f(0, 0, 0);
     }
 
     @Override
     public <T extends InputHandler> void update(T inputHandler, float deltaTime) {
 
-        deltaPosition.zero();
-        deltaRotation.zero();
+        //Avoid division by 0
+        if (deltaTime == 0) deltaTime = 0.01f;
 
-        if (FirstPersonInputHandler.FORWARD.isKeyPressed()) deltaPosition.add(0, 0, -1);
-        if (FirstPersonInputHandler.BACKWARDS.isKeyPressed()) deltaPosition.add(0, 0, 1);
-        if (FirstPersonInputHandler.LEFT.isKeyPressed()) deltaPosition.add(-1, 0, 0);
-        if (FirstPersonInputHandler.RIGHT.isKeyPressed()) deltaPosition.add(1, 0, 0);
-        if (FirstPersonInputHandler.UP.isKeyPressed()) deltaPosition.add(0, 1, 0);
-        if (FirstPersonInputHandler.DOWN.isKeyPressed()) deltaPosition.add(0, -1, 0);
-
+        //Update Target Rotations
         if (inputHandler.isRightButtonHolding()) {
-            deltaRotation.add(inputHandler.getMouseDeltaX(), inputHandler.getMouseDeltaY());
+            modifyRotateTarget(inputHandler.getMouseDeltaY(), inputHandler.getMouseDeltaX(), deltaTime);
         }
 
-        rotate(deltaTime);
-        move(deltaTime);
+        //Update the rotations
+        updateRotations(deltaTime);
+
+        int xInput = LEFT.isKeyPressed() ? RIGHT.isKeyPressed() ? 0 : 1 : -1;
+        int yInput = UP.isKeyPressed() ? DOWN.isKeyPressed() ? 0 : 1 : -1;
+        int zInput = FORWARD.isKeyPressed() ? BACKWARDS.isKeyPressed() ? 0 : 1 : -1;
+
+        float xMovement = movementSpeed * xInput / deltaTime;
+        float yMovement = movementSpeed * yInput / deltaTime;
+        float zMovement = movementSpeed * zInput / deltaTime;
+
+        moveTarget.add(
+                ((float)Math.sin(currentRotation.y) * zMovement) + (float)Math.sin(currentRotation.y - Math.toRadians(90)) * xMovement,
+                -yMovement,
+                ((float)Math.cos(currentRotation.y) * -zMovement) + (float)Math.cos(currentRotation.y - Math.toRadians(90)) * -xMovement
+        );
+
+        updateMovements(deltaTime);
     }
 
-    public void rotate(float deltaTime) {
-        deltaRotation.mul(deltaTime);
-        pitch += deltaRotation.x;
-        yaw += deltaRotation.y;
+    public void modifyRotateTarget(float deltaVelocityX, float deltaVelocityY, float deltaTime) {
+        if (deltaVelocityX != 0 || deltaVelocityY != 0) {
+            rotateTarget.add(rotateSpeed * deltaVelocityX / deltaTime, rotateSpeed * deltaVelocityY / deltaTime);
+            rotateProgress = 0;
+        }
     }
 
-    public void move(float deltaTime) {
-        deltaPosition.mul(deltaTime);
-        position.add(
-                ((float)Math.sin(yaw) * deltaPosition.z) + ((float)Math.sin(yaw - Math.toRadians(90)) * deltaPosition.x) * deltaTime * moveModifier,
-                -deltaPosition.y,
-                ((float)Math.cos(yaw) * -deltaPosition.z) + ((float)Math.cos(yaw - Math.toRadians(90)) * -deltaPosition.x) * deltaTime * moveModifier);
+    public void updateRotations(float deltaTime) {
+        rotateProgress += 0.6 / deltaTime;
+        rotateProgress = Math.min(rotateProgress, 1);
+        if (deltaTime > 0 && rotateTarget.x != currentRotation.x && rotateTarget.y != currentRotation.y) {
+            currentRotation.set(
+                    EasingUtil.lerp(currentRotation.x, rotateTarget.x, rotateProgress, OUT, CIRCULAR),
+                    EasingUtil.lerp(currentRotation.y, rotateTarget.y, rotateProgress, OUT, CIRCULAR)
+            );
+        }
+    }
+
+    public void updateMovements(float deltaTime) {
+        moveProgress += movementSpeed / deltaTime;
+        moveProgress = Math.min(moveProgress, 1);
+        if (deltaTime > 0 && (moveTarget.x != currentPosition.x || moveTarget.y != currentPosition.y || moveTarget.z != currentPosition.z)) {
+            currentPosition.set(
+                    EasingUtil.lerp(currentPosition.x, moveTarget.x, moveProgress, OUT, CIRCULAR),
+                    EasingUtil.lerp(currentPosition.y, moveTarget.y, moveProgress, OUT, CIRCULAR),
+                    EasingUtil.lerp(currentPosition.z, moveTarget.z, moveProgress, OUT, CIRCULAR)
+            );
+        }
     }
 
     @Override
     public Matrix4f getViewMatrix() {
-        return viewMatrix.identity().rotateX(pitch).rotateY(yaw).translate(position);
+        return viewMatrix.identity().rotateX(currentRotation.x).rotateY(currentRotation.y).translate(currentPosition);
     }
 
     public Vector3f getPosition() {
-        return position;
+        return currentPosition;
     }
 
     public float getPitch() {
-        return pitch;
+        return currentRotation.x;
     }
 
     public float getYaw() {
-        return yaw;
+        return currentRotation.y;
     }
 }
