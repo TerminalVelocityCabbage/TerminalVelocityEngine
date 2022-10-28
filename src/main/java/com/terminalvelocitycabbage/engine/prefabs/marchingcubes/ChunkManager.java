@@ -1,4 +1,4 @@
-package com.terminalvelocitycabbage.engine.marchingcubes;
+package com.terminalvelocitycabbage.engine.prefabs.marchingcubes;
 
 import com.terminalvelocitycabbage.engine.client.renderer.gameobjects.EmptyGameObject;
 import com.terminalvelocitycabbage.engine.client.renderer.shader.ShaderProgram;

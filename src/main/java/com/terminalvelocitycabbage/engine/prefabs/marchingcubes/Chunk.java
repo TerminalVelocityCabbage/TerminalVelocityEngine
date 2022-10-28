@@ -1,9 +1,9 @@
-package com.terminalvelocitycabbage.engine.marchingcubes;
+package com.terminalvelocitycabbage.engine.prefabs.marchingcubes;
 
-import com.terminalvelocitycabbage.engine.client.renderer.Vertex;
+import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderMode;
-import com.terminalvelocitycabbage.engine.client.renderer.gameobjects.BoxLine;
+import com.terminalvelocitycabbage.engine.prefabs.gameobjects.BoxLine;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Material;
 import com.terminalvelocitycabbage.engine.client.renderer.model.MeshPart;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Model;

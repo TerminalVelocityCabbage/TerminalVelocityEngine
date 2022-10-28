@@ -1,4 +1,4 @@
-package com.terminalvelocitycabbage.engine.client.renderer.shapes;
+package com.terminalvelocitycabbage.engine.prefabs.gameobjects.shapes;
 
 import com.terminalvelocitycabbage.engine.utils.VectorUtils;
 import org.joml.Vector3f;

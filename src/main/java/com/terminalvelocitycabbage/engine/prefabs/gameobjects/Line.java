@@ -1,10 +1,11 @@
-package com.terminalvelocitycabbage.engine.client.renderer.gameobjects;
+package com.terminalvelocitycabbage.engine.prefabs.gameobjects;
 
-import com.terminalvelocitycabbage.engine.client.renderer.Vertex;
+import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderMode;
+import com.terminalvelocitycabbage.engine.client.renderer.gameobjects.ModeledGameObject;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Material;
-import com.terminalvelocitycabbage.engine.client.renderer.model.types.LineModel;
+import com.terminalvelocitycabbage.engine.prefabs.gameobjects.models.LineModel;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 

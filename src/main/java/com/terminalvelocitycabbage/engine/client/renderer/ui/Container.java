@@ -1,6 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
-import com.terminalvelocitycabbage.engine.client.renderer.Vertex;
+import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.*;
 
 import java.util.ArrayList;

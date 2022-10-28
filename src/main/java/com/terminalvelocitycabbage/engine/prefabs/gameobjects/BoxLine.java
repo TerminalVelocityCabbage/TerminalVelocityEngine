@@ -1,6 +1,7 @@
-package com.terminalvelocitycabbage.engine.client.renderer.gameobjects;
+package com.terminalvelocitycabbage.engine.prefabs.gameobjects;
 
-import com.terminalvelocitycabbage.engine.client.renderer.model.types.BoxLineModel;
+import com.terminalvelocitycabbage.engine.client.renderer.gameobjects.ModeledGameObject;
+import com.terminalvelocitycabbage.engine.prefabs.gameobjects.models.BoxLineModel;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 

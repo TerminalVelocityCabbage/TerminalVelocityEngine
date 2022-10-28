@@ -1,6 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
-import com.terminalvelocitycabbage.engine.client.renderer.Vertex;
+import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.Alignment;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.components.UIDimension;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.text.FontMeshPartStorage;

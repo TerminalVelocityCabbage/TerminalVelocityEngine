@@ -1,6 +1,6 @@
-package com.terminalvelocitycabbage.engine.client.renderer.components;
+package com.terminalvelocitycabbage.engine.prefabs.camera.firstperson.firstperson;
 
-import com.terminalvelocitycabbage.engine.client.input.FirstPersonInputHandler;
+import com.terminalvelocitycabbage.engine.client.renderer.components.Camera;
 import com.terminalvelocitycabbage.engine.client.input.InputHandler;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;

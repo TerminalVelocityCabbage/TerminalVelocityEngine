@@ -1,10 +1,10 @@
-package com.terminalvelocitycabbage.engine.client.renderer.model.types;
+package com.terminalvelocitycabbage.engine.prefabs.gameobjects.models;
 
-import com.terminalvelocitycabbage.engine.client.renderer.Vertex;
+import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderMode;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
-import com.terminalvelocitycabbage.engine.client.renderer.shapes.PointShape;
+import com.terminalvelocitycabbage.engine.prefabs.gameobjects.shapes.PointShape;
 
 import java.util.Collections;
 

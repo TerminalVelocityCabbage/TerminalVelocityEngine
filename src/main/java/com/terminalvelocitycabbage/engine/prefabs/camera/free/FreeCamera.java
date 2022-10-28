@@ -1,6 +1,7 @@
-package com.terminalvelocitycabbage.engine.client.renderer.components;
+package com.terminalvelocitycabbage.engine.prefabs.camera.free;
 
 import com.terminalvelocitycabbage.engine.client.input.InputHandler;
+import com.terminalvelocitycabbage.engine.client.renderer.components.Camera;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;

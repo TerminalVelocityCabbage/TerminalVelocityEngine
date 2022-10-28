@@ -1,6 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.renderer.model;
 
-import com.terminalvelocitycabbage.engine.client.renderer.util.PNGDecoder2;
+import com.terminalvelocitycabbage.engine.client.renderer.util.PNGDecoder;
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
 import com.terminalvelocitycabbage.engine.utils.BufferUtils;
@@ -53,7 +53,7 @@ public class Texture {
 		ByteBuffer buf = null;
 		try {
 			// Link the PNG decoder to this stream
-			PNGDecoder2 decoder = new PNGDecoder2(resourceManager, identifier);
+			PNGDecoder decoder = new PNGDecoder(resourceManager, identifier);
 
 			// Decode the PNG file in a ByteBuffer
 			buf = decoder.decode();

@@ -1,4 +1,4 @@
-package com.terminalvelocitycabbage.engine.client.renderer.model.types;
+package com.terminalvelocitycabbage.engine.client.renderer.model;
 
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderMode;

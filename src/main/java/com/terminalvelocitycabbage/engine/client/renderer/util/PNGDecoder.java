@@ -12,7 +12,7 @@ import java.nio.IntBuffer;
 import static org.lwjgl.stb.STBImage.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
-public class PNGDecoder2 {
+public class PNGDecoder {
 
     int width;
     int height;
@@ -21,7 +21,7 @@ public class PNGDecoder2 {
 
     ByteBuffer imageBuffer;
 
-    public PNGDecoder2(ResourceManager resourceManager, Identifier identifier) throws IOException {
+    public PNGDecoder(ResourceManager resourceManager, Identifier identifier) throws IOException {
         if (resourceManager.getResource(identifier).isPresent()) {
             imageBuffer = resourceManager.getResource(identifier).get().asByteBuffer();
         }

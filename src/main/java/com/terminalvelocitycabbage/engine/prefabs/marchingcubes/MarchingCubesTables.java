@@ -1,4 +1,4 @@
-package com.terminalvelocitycabbage.engine.marchingcubes;
+package com.terminalvelocitycabbage.engine.prefabs.marchingcubes;
 
 public class MarchingCubesTables {
     public static int[] EDGE_TABLE = {

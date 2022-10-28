@@ -1,6 +1,5 @@
 package com.terminalvelocitycabbage.engine.client.renderer.model;
 
-import com.terminalvelocitycabbage.engine.client.renderer.Vertex;
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderElement;
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
 import com.terminalvelocitycabbage.engine.debug.Log;

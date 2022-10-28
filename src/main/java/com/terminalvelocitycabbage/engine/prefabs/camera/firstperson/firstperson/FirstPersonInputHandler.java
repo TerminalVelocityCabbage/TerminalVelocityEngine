@@ -1,5 +1,7 @@
-package com.terminalvelocitycabbage.engine.client.input;
+package com.terminalvelocitycabbage.engine.prefabs.camera.firstperson.firstperson;
 
+import com.terminalvelocitycabbage.engine.client.input.InputHandler;
+import com.terminalvelocitycabbage.engine.client.input.KeyBind;
 import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
 
 import static org.lwjgl.glfw.GLFW.*;
