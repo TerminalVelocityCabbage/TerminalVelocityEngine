@@ -23,12 +23,12 @@ public class Line extends ModeledGameObject {
     }
 
     public Vector3f getStartPoint() {
-        float[] vertexPosition = model.modelParts.get(0).meshPart.getVertex(0).getXYZ();
+        float[] vertexPosition = getModel().modelParts.get(0).meshPart.getVertex(0).getXYZ();
         return new Vector3f(vertexPosition[0], vertexPosition[1], vertexPosition[2]);
     }
 
     public Vector3f getEndPoint() {
-        float[] vertexPosition = model.modelParts.get(0).meshPart.getVertex(1).getXYZ();
+        float[] vertexPosition = getModel().modelParts.get(0).meshPart.getVertex(1).getXYZ();
         return new Vector3f(vertexPosition[0], vertexPosition[1], vertexPosition[2]);
     }
 
