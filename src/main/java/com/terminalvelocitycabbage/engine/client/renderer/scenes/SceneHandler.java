@@ -38,6 +38,7 @@ public class SceneHandler {
 			}
 			activeScene = name;
 			sceneHandler.get(name).init(Renderer.getWindow());
+			Renderer.getWindow().focus();
 		} else {
 			Log.crash("Scene Load Exception", new RuntimeException("Could not load scene " + name + " not present in scene handler."));
 		}

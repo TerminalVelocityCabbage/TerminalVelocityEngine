@@ -5,9 +5,6 @@ import org.joml.Vector2d;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static org.lwjgl.glfw.GLFW.*;
 
 public abstract class InputHandler {
@@ -19,6 +16,7 @@ public abstract class InputHandler {
 	protected final Vector2i deltaScrollVector;
 
 	private boolean focused = false;
+	private boolean inside = false;
 
 	//Temp Vars for left mouse button
 	private boolean lastLeftButtonReleased = false;
@@ -58,12 +56,13 @@ public abstract class InputHandler {
 			previousPos.x = xPos;
 			previousPos.y = yPos;
 		});
-		glfwSetCursorEnterCallback(window.getID(), (windowHandle, entered) -> focused = entered);
+		glfwSetCursorEnterCallback(window.getID(), (windowHandle, entered) -> inside = entered);
 		glfwSetMouseButtonCallback(window.getID(), (windowHandle, button, action, mode) -> {
 			leftButtonReleased = button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE;
 			leftButtonPressed = button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS;
 			rightButtonReleased = button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE;
 			rightButtonPressed = button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS;
+			setFocus(true);
 		});
 		glfwSetScrollCallback(window.getID(), (window1, xoffset, yoffset) -> {
 			deltaScrollVector.x += (float)xoffset;
@@ -189,6 +188,10 @@ public abstract class InputHandler {
 
 	public boolean isFocused() {
 		return focused;
+	}
+
+	public boolean isCursorInside() {
+		return inside;
 	}
 
 	public static long getWindow() {

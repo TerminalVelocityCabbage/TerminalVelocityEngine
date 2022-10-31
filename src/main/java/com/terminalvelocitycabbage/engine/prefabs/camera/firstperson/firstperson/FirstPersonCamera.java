@@ -8,20 +8,22 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import static com.terminalvelocitycabbage.engine.prefabs.camera.firstperson.firstperson.FirstPersonInputHandler.*;
+import static com.terminalvelocitycabbage.engine.prefabs.camera.firstperson.firstperson.FirstPersonInputHandler.BACKWARDS;
 import static com.terminalvelocitycabbage.engine.utils.EasingUtil.Direction.OUT;
 import static com.terminalvelocitycabbage.engine.utils.EasingUtil.Function.CIRCULAR;
 
 public class FirstPersonCamera extends Camera {
 
+    private final float moveModifier = 100f;
+    private final float rotateModifier = .05f;
+
     private Vector2f rotateTarget = new Vector2f(0f, 0f);
     private Vector2f currentRotation = new Vector2f(0f, 0f);
     private float rotateProgress = 1f;
-    private static final float rotateSpeed = .06f;
 
     private Vector3f moveTarget = new Vector3f(0f, 0f, 0f);
     private Vector3f currentPosition = new Vector3f(0f, 0f, 0f);
     private float moveProgress = 1f;
-    private static final float movementSpeed = .6f;
 
     public FirstPersonCamera(int fov, float clippingPlane, float farPlane) {
         super(fov, clippingPlane, farPlane);
@@ -31,7 +33,7 @@ public class FirstPersonCamera extends Camera {
     public <T extends InputHandler> void update(T inputHandler, float deltaTime) {
 
         //Avoid division by 0
-        if (deltaTime == 0) deltaTime = 0.01f;
+        if (deltaTime == 0) deltaTime += 0.01f;
 
         //Update Target Rotations
         if (inputHandler.isRightButtonHolding()) {
@@ -41,51 +43,61 @@ public class FirstPersonCamera extends Camera {
         //Update the rotations
         updateRotations(deltaTime);
 
-        int xInput = LEFT.isKeyPressed() ? RIGHT.isKeyPressed() ? 0 : 1 : -1;
-        int yInput = UP.isKeyPressed() ? DOWN.isKeyPressed() ? 0 : 1 : -1;
-        int zInput = FORWARD.isKeyPressed() ? BACKWARDS.isKeyPressed() ? 0 : 1 : -1;
+        //Update Target Movement
+        modifyMoveTarget(deltaTime);
 
-        float xMovement = movementSpeed * xInput / deltaTime;
-        float yMovement = movementSpeed * yInput / deltaTime;
-        float zMovement = movementSpeed * zInput / deltaTime;
+        //Update current rotations
+        updateMovements(deltaTime);
+    }
+
+    public void modifyRotateTarget(float deltaVelocityX, float deltaVelocityY, float deltaTime) {
+        rotateTarget.add(rotateModifier * deltaVelocityX / deltaTime, rotateModifier * deltaVelocityY / deltaTime);
+        rotateProgress = 0;
+    }
+
+    public void updateRotations(float deltaTime) {
+        rotateProgress += 5 / deltaTime;
+        rotateProgress = Math.min(rotateProgress, 1);
+        currentRotation.set(
+                EasingUtil.lerp(currentRotation.x, rotateTarget.x, rotateProgress, OUT, CIRCULAR),
+                EasingUtil.lerp(currentRotation.y, rotateTarget.y, rotateProgress, OUT, CIRCULAR)
+        );
+    }
+
+    public void modifyMoveTarget(float deltaTime) {
+
+        moveProgress = 0f;
+
+        int xInput = 0;
+        int yInput = 0;
+        int zInput = 0;
+
+        if(LEFT.isKeyPressed()) xInput--;
+        if(RIGHT.isKeyPressed()) xInput++;
+        if(UP.isKeyPressed()) yInput++;
+        if(DOWN.isKeyPressed()) yInput--;
+        if(FORWARD.isKeyPressed()) zInput--;
+        if(BACKWARDS.isKeyPressed()) zInput++;
+
+        float xMovement = moveModifier * xInput / deltaTime;
+        float yMovement = moveModifier * yInput / deltaTime;
+        float zMovement = moveModifier * zInput / deltaTime;
 
         moveTarget.add(
                 ((float)Math.sin(currentRotation.y) * zMovement) + (float)Math.sin(currentRotation.y - Math.toRadians(90)) * xMovement,
                 -yMovement,
                 ((float)Math.cos(currentRotation.y) * -zMovement) + (float)Math.cos(currentRotation.y - Math.toRadians(90)) * -xMovement
         );
-
-        updateMovements(deltaTime);
-    }
-
-    public void modifyRotateTarget(float deltaVelocityX, float deltaVelocityY, float deltaTime) {
-        if (deltaVelocityX != 0 || deltaVelocityY != 0) {
-            rotateTarget.add(rotateSpeed * deltaVelocityX / deltaTime, rotateSpeed * deltaVelocityY / deltaTime);
-            rotateProgress = 0;
-        }
-    }
-
-    public void updateRotations(float deltaTime) {
-        rotateProgress += 0.6 / deltaTime;
-        rotateProgress = Math.min(rotateProgress, 1);
-        if (deltaTime > 0 && rotateTarget.x != currentRotation.x && rotateTarget.y != currentRotation.y) {
-            currentRotation.set(
-                    EasingUtil.lerp(currentRotation.x, rotateTarget.x, rotateProgress, OUT, CIRCULAR),
-                    EasingUtil.lerp(currentRotation.y, rotateTarget.y, rotateProgress, OUT, CIRCULAR)
-            );
-        }
     }
 
     public void updateMovements(float deltaTime) {
-        moveProgress += movementSpeed / deltaTime;
+        moveProgress += (moveModifier / deltaTime) / 2000f;
         moveProgress = Math.min(moveProgress, 1);
-        if (deltaTime > 0 && (moveTarget.x != currentPosition.x || moveTarget.y != currentPosition.y || moveTarget.z != currentPosition.z)) {
-            currentPosition.set(
-                    EasingUtil.lerp(currentPosition.x, moveTarget.x, moveProgress, OUT, CIRCULAR),
-                    EasingUtil.lerp(currentPosition.y, moveTarget.y, moveProgress, OUT, CIRCULAR),
-                    EasingUtil.lerp(currentPosition.z, moveTarget.z, moveProgress, OUT, CIRCULAR)
-            );
-        }
+        currentPosition.set(
+                EasingUtil.lerp(currentPosition.x, moveTarget.x, moveProgress, OUT, CIRCULAR),
+                EasingUtil.lerp(currentPosition.y, moveTarget.y, moveProgress, OUT, CIRCULAR),
+                EasingUtil.lerp(currentPosition.z, moveTarget.z, moveProgress, OUT, CIRCULAR)
+        );
     }
 
     @Override
@@ -97,11 +109,9 @@ public class FirstPersonCamera extends Camera {
         return currentPosition;
     }
 
-    public float getPitch() {
-        return currentRotation.x;
-    }
-
-    public float getYaw() {
-        return currentRotation.y;
+    public void setCurrentPosition(float x, float y, float z) {
+        this.moveTarget.set(x, y, z);
+        this.currentPosition.set(x, y, z);
+        moveProgress = 1f;
     }
 }
