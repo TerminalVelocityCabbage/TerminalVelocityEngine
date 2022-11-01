@@ -134,6 +134,10 @@ public class Vertex {
         return new Vertex(new float[]{ x, y, z, u, v, nx, ny, nz, r, g, b, a });
     }
 
+    public static Vertex positionNormalColour(float x, float y, float z, float nx, float ny, float nz, float r, float g, float b, float a) {
+        return new Vertex(new float[]{ x, y, z, nx, ny, nz, r, g, b, a });
+    }
+
     public static Vertex positionColour(float x, float y, float z, float r, float g, float b, float a) {
         return new Vertex(new float[] { x, y, z, r, g, b, a });
     }

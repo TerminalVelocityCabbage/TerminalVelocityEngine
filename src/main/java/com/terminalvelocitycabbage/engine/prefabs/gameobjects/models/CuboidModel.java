@@ -16,11 +16,11 @@ public class CuboidModel extends Model {
         super(format, mode, Collections.singletonList(new Model.Part(
                 CuboidShape.createCuboid(
                         frontTL, frontBL, frontBR, frontTR,
-                        frontTR, frontBL, backBL, backTL,
+                        frontTR, frontBR, backBR, backTR,
                         backTL, backBL, backBR, backTR,
-                        backTR, backBR, frontBL, frontTL,
-                        backTR, frontTL, frontTR, backTL,
-                        frontBL, backBR, backBL, frontBR
+                        backTL, backBL, frontBL, frontTL,
+                        backTL, frontTL, frontTR, backTR,
+                        frontBL, backBL, backBR, frontBR
                 )
         )));
     }
