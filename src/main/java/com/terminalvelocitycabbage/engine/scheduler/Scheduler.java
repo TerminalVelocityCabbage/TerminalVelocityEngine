@@ -23,7 +23,7 @@ public class Scheduler {
             Task task = taskList.get(i);
             if (task.remove() && task.hasSubsequentTasks()) {
                 task.subsequentTasks().forEach((task1) -> {
-                    scheduleTask(task1, task.context().value().or(Optional::empty));
+                    scheduleTask(task1, task.context().value());
                 });
             }
         }
