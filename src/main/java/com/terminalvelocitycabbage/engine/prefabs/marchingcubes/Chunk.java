@@ -1,15 +1,12 @@
 package com.terminalvelocitycabbage.engine.prefabs.marchingcubes;
 
-import com.terminalvelocitycabbage.engine.client.ClientBase;
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderMode;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Material;
 import com.terminalvelocitycabbage.engine.client.renderer.model.MeshPart;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
-import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 import com.terminalvelocitycabbage.engine.prefabs.gameobjects.BoxLine;
-import com.terminalvelocitycabbage.engine.scheduler.TaskBuilder;
 import org.joml.Math;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -17,8 +14,6 @@ import org.joml.Vector4f;
 
 import java.util.*;
 import java.util.function.Function;
-
-import static com.terminalvelocitycabbage.engine.Engine.ID;
 
 public class Chunk {
 
@@ -54,11 +49,14 @@ public class Chunk {
     }
 
     public void initializeChunkWith(ChunkInitializer initializer) {
-        for (int x = -1; x <= VOXELS_PER_CHUNK_AXIS+1; x++) {
-            float[][] yz = this.data[x+1];
-            for (int y = -1; y <= VOXELS_PER_CHUNK_AXIS+1; y++) {
-                float[] arr = yz[y+1];
-                for (int z = -1; z <= VOXELS_PER_CHUNK_AXIS+1; z++) {
+        float[][] yz;
+        float[] arr;
+        int x, y, z;
+        for (x = -1; x <= VOXELS_PER_CHUNK_AXIS+1; x++) {
+            yz = this.data[x+1];
+            for (y = -1; y <= VOXELS_PER_CHUNK_AXIS+1; y++) {
+                arr = yz[y+1];
+                for (z = -1; z <= VOXELS_PER_CHUNK_AXIS+1; z++) {
                     arr[z+1] = initializer.getValueAt(
                             this.chunkX*SIZE_PER_CHUNK + x*SIZE_PER_VOXEL_AXIS,
                             this.chunkY*SIZE_PER_CHUNK + y*SIZE_PER_VOXEL_AXIS,
@@ -67,34 +65,15 @@ public class Chunk {
                 }
             }
         }
-        this.marchCubes();
     }
 
-    public void marchCubes() {
-
-        var bindChunkTask = TaskBuilder.builder()
-                .identifier(new Identifier(ID, "bind-chunk-[" + chunkX + "]-[" + chunkY + "]-[" + chunkZ + "]"))
-                .executes((taskContext) -> bindChunk((MeshPart) taskContext.previous()))
-                .build();
-
-        var initChunkTask = TaskBuilder.builder()
-                .identifier(new Identifier(ID, "init-chunk-[" + chunkX + "]-[" + chunkY + "]-[" + chunkZ + "]"))
-                .async()
-                .executes((taskContext) -> taskContext.setReturn(this.generateMarchingMesh()))
-                .then(bindChunkTask)
-                .build();
-
-        ClientBase.getScheduler().scheduleTask(initChunkTask);
-//        this.chunkModel.mesh.dumpAsObj();
-    }
-
-    private void bindChunk(MeshPart mesh) {
+    public void bindChunk(MeshPart mesh) {
         this.chunkModel.modelParts.clear();
         this.chunkModel.modelParts.add(new Model.Part(mesh));
-        this.chunkModel.resizeBuffer();
+        this.chunkModel.resizeBuffer();                         //Has gl calls
         this.chunkModel.onPartsChange();
         this.chunkModel.update(new Vector3f(this.chunkX, this.chunkY, this.chunkZ).mul(SIZE_PER_CHUNK), new Quaternionf(), new Vector3f(1));
-        boundary.bind();
+        boundary.bind();                                        //Has gl calls
         boundary.queueAndUpdate();
         this.generated = true;
     }
@@ -117,7 +96,7 @@ public class Chunk {
         this.chunkModel.destroy();
     }
 
-    private MeshPart generateMarchingMesh() {
+    public MeshPart generateMarchingMesh() {
         //We need to make it Integer, instead of int, as we want un-added entries to be null, not 0.
         int size = (VOXELS_PER_CHUNK_AXIS+3)*(VOXELS_PER_CHUNK_AXIS+3)*(VOXELS_PER_CHUNK_AXIS+3);
         Integer[] xEdgeCache = new Integer[size];
