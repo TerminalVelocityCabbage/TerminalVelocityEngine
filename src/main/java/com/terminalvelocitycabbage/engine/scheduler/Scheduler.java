@@ -6,6 +6,7 @@ import com.terminalvelocitycabbage.engine.debug.Log;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 public class Scheduler {
 
@@ -20,6 +21,8 @@ public class Scheduler {
         //Remove all of those tasks marked as such
         taskList.removeIf(Task::remove);
         taskList.forEach(task -> {
+            //Some tasks like async tasks might get called more than once if we don't track their status
+            if (task.running()) return;
             //Check that the tasks here are initialized and error if not
             if (!task.initialized()) Log.crash("Task not initialized error", new IllegalStateException("Schedulers can only execute initialized tasks"));
             //Skip this task if it's delayed and not time to execute yet
@@ -28,10 +31,14 @@ public class Scheduler {
             if (task.repeat()) {
                 if (System.currentTimeMillis() - task.lastExecuteTimeMillis() >= task.repeatInterval()) task.execute();
             } else {
-                task.execute();
+                if (task.async()) {
+                    CompletableFuture.supplyAsync(() -> task).thenAcceptAsync(task.getAndMarkConsumerRunning()).thenRun(task::markRemove);
+                } else {
+                    task.execute();
+                }
             }
             //If this is not a task marked at an interval we need to not run it next time, so mark for removal
-            if (!task.repeat()) task.markRemove();
+            if (!task.repeat() && !task.running()) task.markRemove();
         });
     }
 

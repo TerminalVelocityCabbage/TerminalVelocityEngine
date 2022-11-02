@@ -14,10 +14,12 @@ public class TaskBuilder {
     private long repeatInterval;
     private boolean delay;
     private long delayInMilis;
+    private boolean async;
 
     private TaskBuilder() {
         repeat = false;
         delay = false;
+        async = false;
     }
 
     public static TaskBuilder builder() {
@@ -46,6 +48,11 @@ public class TaskBuilder {
         return this;
     }
 
+    public TaskBuilder async() {
+        async = true;
+        return this;
+    }
+
     public Task build() {
 
         if (identifier == null) {
@@ -61,6 +68,6 @@ public class TaskBuilder {
                     new IllegalStateException("tried to build task with no identifier"));
         }
 
-        return new Task(identifier, consumer, repeat, repeatInterval, delay, delayInMilis);
+        return new Task(identifier, consumer, repeat, repeatInterval, delay, delayInMilis, async);
     }
 }

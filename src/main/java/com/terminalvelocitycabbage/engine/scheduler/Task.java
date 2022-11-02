@@ -17,8 +17,10 @@ public final class Task {
     private boolean delay;
     private long delayInMilis;
     private long executeTime;
+    private final boolean async;
+    private boolean running;
 
-    public Task(Identifier identifier, Consumer<Task> consumer, boolean repeat, long repeatInterval, boolean delay, long delayInMillis) {
+    public Task(Identifier identifier, Consumer<Task> consumer, boolean repeat, long repeatInterval, boolean delay, long delayInMillis, boolean async) {
         this.identifier = identifier;
         this.consumer = consumer;
         this.remove = false;
@@ -26,6 +28,8 @@ public final class Task {
         this.repeatInterval = repeatInterval;
         this.delay = delay;
         this.delayInMilis = delayInMillis;
+        this.async = async;
+        this.running = false;
     }
 
     //Used to set times for execute and such
@@ -44,6 +48,11 @@ public final class Task {
         return consumer;
     }
 
+    public Consumer<Task> getAndMarkConsumerRunning() {
+        markRunning();
+        return consumer;
+    }
+
     public long lastExecuteTimeMillis() {
         return lastExecuteTimeMillis;
     }
@@ -59,6 +68,7 @@ public final class Task {
 
     public void markRemove() {
         remove = true;
+        running = false;
     }
 
     public boolean repeat() {
@@ -79,5 +89,17 @@ public final class Task {
 
     public boolean initialized() {
         return initialized;
+    }
+
+    public boolean async() {
+        return async;
+    }
+
+    public void markRunning() {
+        this.running = true;
+    }
+
+    public boolean running() {
+        return running;
     }
 }
