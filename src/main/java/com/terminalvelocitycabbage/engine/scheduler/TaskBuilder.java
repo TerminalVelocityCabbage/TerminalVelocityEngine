@@ -3,6 +3,8 @@ package com.terminalvelocitycabbage.engine.scheduler;
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 import com.terminalvelocitycabbage.engine.debug.Log;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -13,13 +15,15 @@ public class TaskBuilder {
     private boolean repeat;
     private long repeatInterval;
     private boolean delay;
-    private long delayInMilis;
+    private long delayInMillis;
     private boolean async;
+    private final List<Task> subsequentTasks;
 
     private TaskBuilder() {
         repeat = false;
         delay = false;
         async = false;
+        subsequentTasks = new ArrayList<>();
     }
 
     public static TaskBuilder builder() {
@@ -44,12 +48,17 @@ public class TaskBuilder {
 
     public TaskBuilder delay(int interval, TimeUnit timeUnit) {
         delay = true;
-        delayInMilis = TimeUnit.MILLISECONDS.convert(interval, timeUnit);
+        delayInMillis = TimeUnit.MILLISECONDS.convert(interval, timeUnit);
         return this;
     }
 
     public TaskBuilder async() {
         async = true;
+        return this;
+    }
+
+    public TaskBuilder then(Task task) {
+        subsequentTasks.add(task);
         return this;
     }
 
@@ -68,6 +77,6 @@ public class TaskBuilder {
                     new IllegalStateException("tried to build task with no identifier"));
         }
 
-        return new Task(identifier, consumer, repeat, repeatInterval, delay, delayInMilis, async);
+        return new Task(identifier, consumer, repeat, repeatInterval, delay, delayInMillis, async, subsequentTasks);
     }
 }

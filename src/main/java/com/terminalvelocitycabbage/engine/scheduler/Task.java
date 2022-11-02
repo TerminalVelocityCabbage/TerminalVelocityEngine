@@ -2,6 +2,7 @@ package com.terminalvelocitycabbage.engine.scheduler;
 
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 //TODO make this a record and create a class that has execute and init methods on it for the scheduler to run
@@ -20,8 +21,9 @@ public final class Task {
     private final boolean async;
     private boolean running;
     private TaskContext context;
+    private final List<Task> subsequentTasks;
 
-    public Task(Identifier identifier, Consumer<TaskContext> consumer, boolean repeat, long repeatInterval, boolean delay, long delayInMillis, boolean async) {
+    public Task(Identifier identifier, Consumer<TaskContext> consumer, boolean repeat, long repeatInterval, boolean delay, long delayInMillis, boolean async, List<Task> subsequentTasks) {
         this.identifier = identifier;
         this.consumer = consumer;
         this.remove = false;
@@ -32,6 +34,7 @@ public final class Task {
         this.async = async;
         this.running = false;
         this.context = new TaskContext(this);
+        this.subsequentTasks = subsequentTasks;
     }
 
     //Used to set times for execute and such
@@ -40,6 +43,12 @@ public final class Task {
         if (repeat) lastExecuteTimeMillis = System.currentTimeMillis() - repeatInterval;
         initialized = true;
         return this;
+    }
+
+    //Used to set times for execute and such with a previous return value in context
+    public Task init(Object previousReturn) {
+        this.context.previousReturnValue = previousReturn;
+        return init();
     }
 
     public Identifier identifier() {
@@ -107,5 +116,13 @@ public final class Task {
 
     public TaskContext context() {
         return this.context;
+    }
+
+    public boolean hasSubsequentTasks() {
+        return subsequentTasks.size() > 0;
+    }
+
+    public List<Task> subsequentTasks() {
+        return subsequentTasks;
     }
 }

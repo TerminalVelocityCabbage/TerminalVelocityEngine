@@ -18,7 +18,16 @@ public class Scheduler {
 
     public void tick() {
         //Some tasks may have been marked for removal since the last tick
-        //Remove all of those tasks marked as such
+        //Those marked for removal with subsequent tasks need those to be scheduled for this run
+        for (int i = 0; i < taskList.size(); i++) {
+            Task task = taskList.get(i);
+            if (task.remove() && task.hasSubsequentTasks()) {
+                task.subsequentTasks().forEach((task1) -> {
+                    scheduleTask(task1, task.context().value().or(Optional::empty));
+                });
+            }
+        }
+        //Remove all of those tasks marked as removed now that their subsequent tasks have been scheduled
         taskList.removeIf(Task::remove);
         taskList.forEach(task -> {
             //Some tasks like async tasks might get called more than once if we don't track their status
@@ -54,6 +63,21 @@ public class Scheduler {
             return;
         }
         taskList.add(task.init());
+    }
+
+    /**
+     * Schedules a given task for execution upon this scheduler's tick method being called if the conditions
+     * for execution are met by the executor
+     *
+     * @param task the task to be added to the scheduler
+     * @param previousReturn the return value of the previous run task
+     */
+    public void scheduleTask(Task task, Object previousReturn) {
+        if (getTask(task.identifier()).isPresent()) {
+            Log.error("Tried to schedule task of same identifier: " + task.identifier().toString());
+            return;
+        }
+        taskList.add(task.init(previousReturn));
     }
 
     /**
