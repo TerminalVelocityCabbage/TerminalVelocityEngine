@@ -1,12 +1,15 @@
 package com.terminalvelocitycabbage.engine.prefabs.marchingcubes;
 
-import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
+import com.terminalvelocitycabbage.engine.client.ClientBase;
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderMode;
-import com.terminalvelocitycabbage.engine.prefabs.gameobjects.BoxLine;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Material;
 import com.terminalvelocitycabbage.engine.client.renderer.model.MeshPart;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
+import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
+import com.terminalvelocitycabbage.engine.client.resources.Identifier;
+import com.terminalvelocitycabbage.engine.prefabs.gameobjects.BoxLine;
+import com.terminalvelocitycabbage.engine.scheduler.TaskBuilder;
 import org.joml.Math;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -14,6 +17,8 @@ import org.joml.Vector4f;
 
 import java.util.*;
 import java.util.function.Function;
+
+import static com.terminalvelocitycabbage.engine.Engine.ID;
 
 public class Chunk {
 
@@ -30,6 +35,7 @@ public class Chunk {
     private final BoxLine boundary;
 
     private final ColourGetter colourGetter;
+    private boolean generated;
 
     public Chunk(int x, int y, int z, ColourGetter colourGetter) {
         this.chunkX = x;
@@ -43,6 +49,8 @@ public class Chunk {
         this.chunkModel.bind();
 
         this.boundary = new BoxLine(new Vector3f(x * SIZE_PER_CHUNK, y * SIZE_PER_CHUNK, z * SIZE_PER_CHUNK), SIZE_PER_CHUNK, SIZE_PER_CHUNK, SIZE_PER_CHUNK, new Vector4f(1, 0, 0, 1));
+
+        this.generated = false;
     }
 
     public void initializeChunkWith(ChunkInitializer initializer) {
@@ -60,17 +68,35 @@ public class Chunk {
             }
         }
         this.marchCubes();
-        boundary.bind();
-        boundary.queueAndUpdate();
     }
 
     public void marchCubes() {
+
+        var bindChunkTask = TaskBuilder.builder()
+                .identifier(new Identifier(ID, "bind-chunk-[" + chunkX + "]-[" + chunkY + "]-[" + chunkZ + "]"))
+                .executes((taskContext) -> bindChunk((MeshPart) taskContext.previous()))
+                .build();
+
+        var initChunkTask = TaskBuilder.builder()
+                .identifier(new Identifier(ID, "init-chunk-[" + chunkX + "]-[" + chunkY + "]-[" + chunkZ + "]"))
+                .async()
+                .executes((taskContext) -> taskContext.setReturn(this.generateMarchingMesh()))
+                .then(bindChunkTask)
+                .build();
+
+        ClientBase.getScheduler().scheduleTask(initChunkTask);
+//        this.chunkModel.mesh.dumpAsObj();
+    }
+
+    private void bindChunk(MeshPart mesh) {
         this.chunkModel.modelParts.clear();
-        this.chunkModel.modelParts.add(new Model.Part(this.generateMarchingMesh()));
+        this.chunkModel.modelParts.add(new Model.Part(mesh));
         this.chunkModel.resizeBuffer();
         this.chunkModel.onPartsChange();
         this.chunkModel.update(new Vector3f(this.chunkX, this.chunkY, this.chunkZ).mul(SIZE_PER_CHUNK), new Quaternionf(), new Vector3f(1));
-//        this.chunkModel.mesh.dumpAsObj();
+        boundary.bind();
+        boundary.queueAndUpdate();
+        this.generated = true;
     }
 
     public Material getMaterial() {
@@ -78,7 +104,9 @@ public class Chunk {
     }
 
     public void render() {
-        this.chunkModel.render();
+        if (generated) {
+            this.chunkModel.render();
+        }
     }
 
     public BoxLine getBoundary() {
