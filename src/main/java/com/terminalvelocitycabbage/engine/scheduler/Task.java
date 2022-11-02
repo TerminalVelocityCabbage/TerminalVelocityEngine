@@ -9,7 +9,7 @@ public final class Task {
 
     private boolean initialized;
     private final Identifier identifier;
-    private final Consumer<Task> consumer;
+    private final Consumer<TaskContext> consumer;
     private boolean remove;
     private final boolean repeat;
     private final long repeatInterval; //In millis
@@ -19,8 +19,9 @@ public final class Task {
     private long executeTime;
     private final boolean async;
     private boolean running;
+    private TaskContext context;
 
-    public Task(Identifier identifier, Consumer<Task> consumer, boolean repeat, long repeatInterval, boolean delay, long delayInMillis, boolean async) {
+    public Task(Identifier identifier, Consumer<TaskContext> consumer, boolean repeat, long repeatInterval, boolean delay, long delayInMillis, boolean async) {
         this.identifier = identifier;
         this.consumer = consumer;
         this.remove = false;
@@ -30,6 +31,7 @@ public final class Task {
         this.delayInMilis = delayInMillis;
         this.async = async;
         this.running = false;
+        this.context = new TaskContext(this);
     }
 
     //Used to set times for execute and such
@@ -44,11 +46,11 @@ public final class Task {
         return identifier;
     }
 
-    public Consumer<Task> consumer() {
+    public Consumer<TaskContext> consumer() {
         return consumer;
     }
 
-    public Consumer<Task> getAndMarkConsumerRunning() {
+    public Consumer<TaskContext> getAndMarkConsumerRunning() {
         markRunning();
         return consumer;
     }
@@ -58,7 +60,7 @@ public final class Task {
     }
 
     public void execute() {
-        consumer().accept(this);
+        consumer().accept(this.context());
         lastExecuteTimeMillis = System.currentTimeMillis();
     }
 
@@ -101,5 +103,9 @@ public final class Task {
 
     public boolean running() {
         return running;
+    }
+
+    public TaskContext context() {
+        return this.context;
     }
 }

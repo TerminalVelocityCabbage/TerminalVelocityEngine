@@ -32,7 +32,7 @@ public class Scheduler {
                 if (System.currentTimeMillis() - task.lastExecuteTimeMillis() >= task.repeatInterval()) task.execute();
             } else {
                 if (task.async()) {
-                    CompletableFuture.supplyAsync(() -> task).thenAcceptAsync(task.getAndMarkConsumerRunning()).thenRun(task::markRemove);
+                    CompletableFuture.supplyAsync(task::context).thenAcceptAsync(task.getAndMarkConsumerRunning()).thenRun(task::markRemove);
                 } else {
                     task.execute();
                 }

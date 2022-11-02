@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 public class TaskBuilder {
 
     private Identifier identifier;
-    private Consumer<Task> consumer;
+    private Consumer<TaskContext> consumer;
     private boolean repeat;
     private long repeatInterval;
     private boolean delay;
@@ -31,7 +31,7 @@ public class TaskBuilder {
         return this;
     }
 
-    public TaskBuilder executes(Consumer<Task> taskConsumer) {
+    public TaskBuilder executes(Consumer<TaskContext> taskConsumer) {
         consumer = taskConsumer;
         return this;
     }
