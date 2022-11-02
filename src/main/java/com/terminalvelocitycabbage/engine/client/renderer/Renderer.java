@@ -1,5 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.renderer;
 
+import com.terminalvelocitycabbage.engine.client.ClientBase;
 import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
 import com.terminalvelocitycabbage.engine.client.renderer.scenes.SceneHandler;
 import com.terminalvelocitycabbage.engine.client.renderer.shader.ShaderHandler;
@@ -178,6 +179,7 @@ public abstract class Renderer {
 
 		//tick as many time as needed
 		while (tickManager.hasTick()) {
+			ClientBase.getScheduler().tick();
 			sceneHandler.getActiveScene().tick(deltaTime);
 			sceneHandler.getActiveScene().getInputHandler().tick();
 			canvasHandler.tick(
