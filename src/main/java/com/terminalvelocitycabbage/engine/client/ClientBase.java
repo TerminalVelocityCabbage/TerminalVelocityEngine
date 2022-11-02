@@ -8,6 +8,7 @@ import com.terminalvelocitycabbage.engine.debug.Logger;
 import com.terminalvelocitycabbage.engine.events.EventDispatcher;
 import com.terminalvelocitycabbage.engine.events.client.ClientConnectionEvent;
 import com.terminalvelocitycabbage.engine.events.client.ClientStartEvent;
+import com.terminalvelocitycabbage.engine.scheduler.Scheduler;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -21,11 +22,13 @@ public abstract class ClientBase extends EventDispatcher {
 	private Logger logger;
 	private static Renderer renderer;
 	private static SoundDeviceManager soundDeviceManager;
+	private static Scheduler scheduler;
 
 	public ClientBase(Logger logger, Renderer renderer) {
 		this.logger = logger;
 		ClientBase.soundDeviceManager = new SoundDeviceManager();
 		ClientBase.renderer = renderer;
+		scheduler = new Scheduler();
 	}
 
 	public void init() {
@@ -113,5 +116,9 @@ public abstract class ClientBase extends EventDispatcher {
 
 	public static Renderer getRenderer() {
 		return renderer;
+	}
+
+	public static Scheduler getScheduler() {
+		return scheduler;
 	}
 }

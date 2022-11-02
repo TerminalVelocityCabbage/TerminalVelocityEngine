@@ -3,7 +3,9 @@ package com.terminalvelocitycabbage.engine.server;
 import com.github.simplenet.Server;
 import com.terminalvelocitycabbage.engine.events.EventDispatcher;
 import com.terminalvelocitycabbage.engine.events.server.*;
+import com.terminalvelocitycabbage.engine.scheduler.Scheduler;
 import com.terminalvelocitycabbage.engine.server.packet.PacketTypes;
+import com.terminalvelocitycabbage.engine.utils.TickManager;
 
 public abstract class ServerBase extends EventDispatcher {
 
@@ -12,9 +14,14 @@ public abstract class ServerBase extends EventDispatcher {
 	private boolean shouldClose;
 	String address;
 	int port;
+	private static Scheduler scheduler;
+	private TickManager tickManager;
+	long lastTime;
 
-	public ServerBase() {
+	public ServerBase(int ticksPerSecond) {
 		shouldClose = false;
+		scheduler = new Scheduler();
+		tickManager = new TickManager(ticksPerSecond);
 	}
 
 	public void init() {
@@ -78,6 +85,15 @@ public abstract class ServerBase extends EventDispatcher {
 		dispatchEvent(new ServerBindEvent(ServerBindEvent.POST, getServer()));
 
 		dispatchEvent(new ServerStartEvent(ServerStartEvent.START, getServer()));
+
+		//Run the Server
+		while (!shouldClose) {
+			tickManager.apply(System.currentTimeMillis() - lastTime);
+			while (tickManager.hasTick()) {
+				scheduler.tick();
+			}
+			lastTime = System.currentTimeMillis();
+		}
 	}
 
 	public Server getServer() {
@@ -102,5 +118,9 @@ public abstract class ServerBase extends EventDispatcher {
 
 	public void setShouldClose(boolean shouldClose) {
 		this.shouldClose = shouldClose;
+	}
+
+	public static Scheduler getScheduler() {
+		return scheduler;
 	}
 }
