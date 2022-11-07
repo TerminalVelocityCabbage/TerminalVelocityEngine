@@ -1,12 +1,12 @@
 package com.terminalvelocitycabbage.engine.prefabs.marchingcubes;
 
-import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderMode;
-import com.terminalvelocitycabbage.engine.prefabs.gameobjects.BoxLine;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Material;
 import com.terminalvelocitycabbage.engine.client.renderer.model.MeshPart;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
+import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
+import com.terminalvelocitycabbage.engine.prefabs.gameobjects.BoxLine;
 import org.joml.Math;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -30,6 +30,7 @@ public class Chunk {
     private final BoxLine boundary;
 
     private final ColourGetter colourGetter;
+    private boolean generated;
 
     public Chunk(int x, int y, int z, ColourGetter colourGetter) {
         this.chunkX = x;
@@ -43,14 +44,19 @@ public class Chunk {
         this.chunkModel.bind();
 
         this.boundary = new BoxLine(new Vector3f(x * SIZE_PER_CHUNK, y * SIZE_PER_CHUNK, z * SIZE_PER_CHUNK), SIZE_PER_CHUNK, SIZE_PER_CHUNK, SIZE_PER_CHUNK, new Vector4f(1, 0, 0, 1));
+
+        this.generated = false;
     }
 
     public void initializeChunkWith(ChunkInitializer initializer) {
-        for (int x = -1; x <= VOXELS_PER_CHUNK_AXIS+1; x++) {
-            float[][] yz = this.data[x+1];
-            for (int y = -1; y <= VOXELS_PER_CHUNK_AXIS+1; y++) {
-                float[] arr = yz[y+1];
-                for (int z = -1; z <= VOXELS_PER_CHUNK_AXIS+1; z++) {
+        float[][] yz;
+        float[] arr;
+        int x, y, z;
+        for (x = -1; x <= VOXELS_PER_CHUNK_AXIS+1; x++) {
+            yz = this.data[x+1];
+            for (y = -1; y <= VOXELS_PER_CHUNK_AXIS+1; y++) {
+                arr = yz[y+1];
+                for (z = -1; z <= VOXELS_PER_CHUNK_AXIS+1; z++) {
                     arr[z+1] = initializer.getValueAt(
                             this.chunkX*SIZE_PER_CHUNK + x*SIZE_PER_VOXEL_AXIS,
                             this.chunkY*SIZE_PER_CHUNK + y*SIZE_PER_VOXEL_AXIS,
@@ -59,18 +65,17 @@ public class Chunk {
                 }
             }
         }
-        this.marchCubes();
-        boundary.bind();
-        boundary.queueAndUpdate();
     }
 
-    public void marchCubes() {
+    public void bindChunk(MeshPart mesh) {
         this.chunkModel.modelParts.clear();
-        this.chunkModel.modelParts.add(new Model.Part(this.generateMarchingMesh()));
-        this.chunkModel.resizeBuffer();
+        this.chunkModel.modelParts.add(new Model.Part(mesh));
+        this.chunkModel.resizeBuffer();                         //Has gl calls
         this.chunkModel.onPartsChange();
         this.chunkModel.update(new Vector3f(this.chunkX, this.chunkY, this.chunkZ).mul(SIZE_PER_CHUNK), new Quaternionf(), new Vector3f(1));
-//        this.chunkModel.mesh.dumpAsObj();
+        boundary.bind();                                        //Has gl calls
+        boundary.queueAndUpdate();
+        this.generated = true;
     }
 
     public Material getMaterial() {
@@ -78,7 +83,9 @@ public class Chunk {
     }
 
     public void render() {
-        this.chunkModel.render();
+        if (generated) {
+            this.chunkModel.render();
+        }
     }
 
     public BoxLine getBoundary() {
@@ -89,7 +96,7 @@ public class Chunk {
         this.chunkModel.destroy();
     }
 
-    private MeshPart generateMarchingMesh() {
+    public MeshPart generateMarchingMesh() {
         //We need to make it Integer, instead of int, as we want un-added entries to be null, not 0.
         int size = (VOXELS_PER_CHUNK_AXIS+3)*(VOXELS_PER_CHUNK_AXIS+3)*(VOXELS_PER_CHUNK_AXIS+3);
         Integer[] xEdgeCache = new Integer[size];
@@ -404,4 +411,8 @@ public class Chunk {
         void fillColours(float[] colours, float x, float y, float z);
     }
 
+    @Override
+    public String toString() {
+        return "Chunk{" + "X=" + chunkX + ", Y=" + chunkY + ", Z=" + chunkZ + '}';
+    }
 }

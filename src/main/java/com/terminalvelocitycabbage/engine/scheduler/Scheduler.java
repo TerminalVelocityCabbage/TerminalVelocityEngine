@@ -10,28 +10,57 @@ import java.util.concurrent.CompletableFuture;
 
 public class Scheduler {
 
+    //Stores all tasks that need to be added to the taskList.
+    //Allow tasks to be scheduled by other tasks without concurrent modification exceptions.
+    private final List<Task> taskQueue;
+    //The current task list that is being executed
     private final List<Task> taskList;
+    //The list of tasks that need to be removed, empty expect turing task processing
+    private final List<Task> toRemove;
 
     public Scheduler() {
-        this.taskList = new ArrayList<>();
+        taskList = new ArrayList<>();
+        toRemove = new ArrayList<>();
+        taskQueue = new ArrayList<>();
     }
 
+    /**
+     * To be called every game tick, processes all the task queues and processes all tasks.
+     */
     public void tick() {
-        //Some tasks may have been marked for removal since the last tick
-        //Those marked for removal with subsequent tasks need those to be scheduled for this run
-        for (int i = 0; i < taskList.size(); i++) {
-            Task task = taskList.get(i);
-            if (task.remove() && task.hasSubsequentTasks()) {
-                task.subsequentTasks().forEach((task1) -> {
-                    scheduleTask(task1, task.context().value());
-                });
+
+        //Add tasks scheduled for execution last tick and reset the queue for this tick
+        taskList.addAll(taskQueue);
+        taskQueue.clear();
+
+        //Those tasks marked for removal with subsequent tasks need those to be scheduled for this run
+        taskList.forEach(task -> {
+            long l = task.getLock().readLock();
+            if (task.remove()) {
+                toRemove.add(task);
+                if (task.hasSubsequentTasks()) {
+                    task.subsequentTasks().forEach((task1) -> {
+                        scheduleTask(task1, task.context().value());
+                    });
+                }
             }
-        }
-        //Remove all of those tasks marked as removed now that their subsequent tasks have been scheduled
-        taskList.removeIf(Task::remove);
+            task.getLock().unlockRead(l);
+        });
+
+        //Remove tasks that need to be removed and reset list for next tick
+        taskList.removeAll(toRemove);
+        toRemove.clear();
+
+        //Process all the tasks
         taskList.forEach(task -> {
             //Some tasks like async tasks might get called more than once if we don't track their status
-            if (task.running()) return;
+            long l = task.getLock().readLock();
+            if (task.running() || task.remove()) {
+                task.getLock().unlockRead(l);
+                return;
+            }
+
+            task.getLock().unlockRead(l);
             //Check that the tasks here are initialized and error if not
             if (!task.initialized()) Log.crash("Task not initialized error", new IllegalStateException("Schedulers can only execute initialized tasks"));
             //Skip this task if it's delayed and not time to execute yet
@@ -41,7 +70,9 @@ public class Scheduler {
                 if (System.currentTimeMillis() - task.lastExecuteTimeMillis() >= task.repeatInterval()) task.execute();
             } else {
                 if (task.async()) {
-                    CompletableFuture.supplyAsync(task::context).thenAcceptAsync(task.getAndMarkConsumerRunning()).thenRun(task::markRemove);
+                    CompletableFuture.supplyAsync(task::context)
+                            .thenAcceptAsync(task.getAndMarkConsumerRunning())
+                            .thenRunAsync(task::markRemove);
                 } else {
                     task.execute();
                 }
@@ -62,7 +93,7 @@ public class Scheduler {
             Log.error("Tried to schedule task of same identifier: " + task.identifier().toString());
             return;
         }
-        taskList.add(task.init());
+        taskQueue.add(task.init());
     }
 
     /**
@@ -77,7 +108,7 @@ public class Scheduler {
             Log.error("Tried to schedule task of same identifier: " + task.identifier().toString());
             return;
         }
-        taskList.add(task.init(previousReturn));
+        taskQueue.add(task.init(previousReturn));
     }
 
     /**
@@ -88,6 +119,11 @@ public class Scheduler {
      */
     public Optional<Task> getTask(Identifier identifier) {
         for (Task task : taskList) {
+            if (task.identifier().equals(identifier)) {
+                return Optional.of(task);
+            }
+        }
+        for (Task task : taskQueue) {
             if (task.identifier().equals(identifier)) {
                 return Optional.of(task);
             }

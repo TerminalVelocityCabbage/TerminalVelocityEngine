@@ -3,24 +3,25 @@ package com.terminalvelocitycabbage.engine.scheduler;
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 
 import java.util.List;
+import java.util.concurrent.locks.StampedLock;
 import java.util.function.Consumer;
 
-//TODO make this a record and create a class that has execute and init methods on it for the scheduler to run
 public final class Task {
 
+    private final StampedLock lock = new StampedLock();
     private boolean initialized;
     private final Identifier identifier;
     private final Consumer<TaskContext> consumer;
-    private boolean remove;
+    private volatile boolean remove;
     private final boolean repeat;
     private final long repeatInterval; //In millis
     private long lastExecuteTimeMillis;
     private boolean delay;
-    private long delayInMilis;
+    private final long delayTime; //In millis
     private long executeTime;
     private final boolean async;
-    private boolean running;
-    private TaskContext context;
+    private volatile boolean running;
+    private final TaskContext context;
     private final List<Task> subsequentTasks;
 
     public Task(Identifier identifier, Consumer<TaskContext> consumer, boolean repeat, long repeatInterval, boolean delay, long delayInMillis, boolean async, List<Task> subsequentTasks) {
@@ -30,7 +31,7 @@ public final class Task {
         this.repeat = repeat;
         this.repeatInterval = repeatInterval;
         this.delay = delay;
-        this.delayInMilis = delayInMillis;
+        this.delayTime = delayInMillis;
         this.async = async;
         this.running = false;
         this.context = new TaskContext(this);
@@ -39,7 +40,7 @@ public final class Task {
 
     //Used to set times for execute and such
     public Task init() {
-        if (delay) executeTime = System.currentTimeMillis() + delayInMilis;
+        if (delay) executeTime = System.currentTimeMillis() + delayTime;
         if (repeat) lastExecuteTimeMillis = System.currentTimeMillis() - repeatInterval;
         initialized = true;
         return this;
@@ -60,7 +61,9 @@ public final class Task {
     }
 
     public Consumer<TaskContext> getAndMarkConsumerRunning() {
+        long l = lock.writeLock();
         markRunning();
+        lock.unlockWrite(l);
         return consumer;
     }
 
@@ -78,8 +81,10 @@ public final class Task {
     }
 
     public void markRemove() {
+        long l = lock.writeLock();
         remove = true;
         running = false;
+        lock.unlockWrite(l);
     }
 
     public boolean repeat() {
@@ -124,5 +129,9 @@ public final class Task {
 
     public List<Task> subsequentTasks() {
         return subsequentTasks;
+    }
+
+    public StampedLock getLock() {
+        return lock;
     }
 }

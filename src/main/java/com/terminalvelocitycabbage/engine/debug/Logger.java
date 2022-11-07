@@ -165,7 +165,8 @@ public class Logger {
             //Create a new file
             boolean createSuccess = logFile.createNewFile();
             if (!createSuccess) {
-                Log.crash("Could not create log file", new IOException());
+                Log.error("Could not create log file");
+                return;
             }
             //Write the new file nicely
             FileWriter fileWriter = new FileWriter(logFile);
@@ -175,7 +176,7 @@ public class Logger {
             fileWriter.flush();
             fileWriter.close();
         } catch (IOException e) {
-            Log.crash("Could not write latest log file", e);
+            Log.error("Could not write latest log file" + e);
         }
     }
 }

@@ -1,13 +1,20 @@
 package com.terminalvelocitycabbage.engine.prefabs.marchingcubes;
 
+import com.terminalvelocitycabbage.engine.client.ClientBase;
 import com.terminalvelocitycabbage.engine.client.renderer.gameobjects.EmptyGameObject;
+import com.terminalvelocitycabbage.engine.client.renderer.model.MeshPart;
 import com.terminalvelocitycabbage.engine.client.renderer.shader.ShaderProgram;
+import com.terminalvelocitycabbage.engine.client.resources.Identifier;
+import com.terminalvelocitycabbage.engine.debug.Log;
+import com.terminalvelocitycabbage.engine.scheduler.TaskBuilder;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.terminalvelocitycabbage.engine.Engine.ID;
 
 public class ChunkManager extends EmptyGameObject {
 
@@ -39,9 +46,48 @@ public class ChunkManager extends EmptyGameObject {
     }
 
     public void startChunk(int x, int y, int z, Chunk.ChunkInitializer initializer, Chunk.ColourGetter colourGetter) {
+
         Chunk chunk = new Chunk(x, y, z, colourGetter);
         this.chunks.add(chunk);
-        chunk.initializeChunkWith(initializer);
+
+        var bindChunkTask = TaskBuilder.builder()
+                .identifier(new Identifier(ID, "bind-chunk-[" + x + "]-[" + y + "]-[" + z + "]"))
+                .executes((taskContext) -> {
+                    try {
+                        chunk.bindChunk((MeshPart) taskContext.previous());
+                    } catch (Exception e) {
+                        Log.error(e);
+                    }
+                })
+                .build();
+
+        var marchTask  = TaskBuilder.builder()
+                .identifier(new Identifier(ID, "march-chunk-with-[" + x + "]-[" + y + "]-[" + z + "]"))
+                .async()
+                .executes((taskContext) -> {
+                    try {
+                        taskContext.setReturn(chunk.generateMarchingMesh());
+                    } catch (Exception e) {
+                        Log.error(e);
+                    }
+                })
+                .then(bindChunkTask)
+                .build();
+
+        var initChunkTask = TaskBuilder.builder()
+                .identifier(new Identifier(ID, "init-chunk-with-[" + x + "]-[" + y + "]-[" + z + "]"))
+                .async()
+                .executes((taskContext) -> {
+                    try {
+                        chunk.initializeChunkWith(initializer);
+                    } catch (Exception e) {
+                        Log.error(e);
+                    }
+                })
+                .then(marchTask)
+                .build();
+
+        ClientBase.getScheduler().scheduleTask(initChunkTask);
     }
 
     @Override
