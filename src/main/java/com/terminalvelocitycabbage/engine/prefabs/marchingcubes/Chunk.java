@@ -411,4 +411,8 @@ public class Chunk {
         void fillColours(float[] colours, float x, float y, float z);
     }
 
+    @Override
+    public String toString() {
+        return "Chunk{" + "X=" + chunkX + ", Y=" + chunkY + ", Z=" + chunkZ + '}';
+    }
 }

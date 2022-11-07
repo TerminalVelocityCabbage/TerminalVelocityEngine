@@ -3,15 +3,17 @@ package com.terminalvelocitycabbage.engine.scheduler;
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 
 import java.util.List;
+import java.util.concurrent.locks.StampedLock;
 import java.util.function.Consumer;
 
 //TODO make this a record and create a class that has execute and init methods on it for the scheduler to run
 public final class Task {
 
+    private final StampedLock lock = new StampedLock();
     private boolean initialized;
     private final Identifier identifier;
     private final Consumer<TaskContext> consumer;
-    private boolean remove;
+    private volatile boolean remove;
     private final boolean repeat;
     private final long repeatInterval; //In millis
     private long lastExecuteTimeMillis;
@@ -19,7 +21,7 @@ public final class Task {
     private long delayInMilis;
     private long executeTime;
     private final boolean async;
-    private boolean running;
+    private volatile boolean running;
     private TaskContext context;
     private final List<Task> subsequentTasks;
 
@@ -60,7 +62,9 @@ public final class Task {
     }
 
     public Consumer<TaskContext> getAndMarkConsumerRunning() {
+        long l = lock.writeLock();
         markRunning();
+        lock.unlockWrite(l);
         return consumer;
     }
 
@@ -78,8 +82,10 @@ public final class Task {
     }
 
     public void markRemove() {
+        long l = lock.writeLock();
         remove = true;
         running = false;
+        lock.unlockWrite(l);
     }
 
     public boolean repeat() {
@@ -124,5 +130,9 @@ public final class Task {
 
     public List<Task> subsequentTasks() {
         return subsequentTasks;
+    }
+
+    public StampedLock getLock() {
+        return lock;
     }
 }

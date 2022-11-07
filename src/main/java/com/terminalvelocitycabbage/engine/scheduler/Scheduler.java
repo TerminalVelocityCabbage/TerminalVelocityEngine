@@ -3,9 +3,7 @@ package com.terminalvelocitycabbage.engine.scheduler;
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 import com.terminalvelocitycabbage.engine.debug.Log;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public class Scheduler {
@@ -19,19 +17,38 @@ public class Scheduler {
     public void tick() {
         //Some tasks may have been marked for removal since the last tick
         //Those marked for removal with subsequent tasks need those to be scheduled for this run
-        for (int i = 0; i < taskList.size(); i++) {
+        int size = taskList.size();
+        List<Task> toRemove = new ArrayList<>();
+
+        for (int i = 0; i < size; i++) {
             Task task = taskList.get(i);
-            if (task.remove() && task.hasSubsequentTasks()) {
-                task.subsequentTasks().forEach((task1) -> {
-                    scheduleTask(task1, task.context().value());
-                });
+
+            long l = task.getLock().readLock();
+            boolean remove = task.remove();
+
+            if (remove) {
+                toRemove.add(task);
+                if (task.hasSubsequentTasks()) {
+                    task.subsequentTasks().forEach((task1) -> {
+                        scheduleTask(task1, task.context().value());
+                    });
+                }
             }
+
+            task.getLock().unlockRead(l);
         }
-        //Remove all of those tasks marked as removed now that their subsequent tasks have been scheduled
-        taskList.removeIf(Task::remove);
+
+        taskList.removeAll(toRemove);
+
         taskList.forEach(task -> {
             //Some tasks like async tasks might get called more than once if we don't track their status
-            if (task.running()) return;
+            long l = task.getLock().readLock();
+            if (task.running() || task.remove()) {
+                task.getLock().unlockRead(l);
+                return;
+            }
+
+            task.getLock().unlockRead(l);
             //Check that the tasks here are initialized and error if not
             if (!task.initialized()) Log.crash("Task not initialized error", new IllegalStateException("Schedulers can only execute initialized tasks"));
             //Skip this task if it's delayed and not time to execute yet
@@ -41,7 +58,9 @@ public class Scheduler {
                 if (System.currentTimeMillis() - task.lastExecuteTimeMillis() >= task.repeatInterval()) task.execute();
             } else {
                 if (task.async()) {
-                    CompletableFuture.supplyAsync(task::context).thenAcceptAsync(task.getAndMarkConsumerRunning()).thenRun(task::markRemove);
+                    CompletableFuture.supplyAsync(task::context)
+                            .thenAcceptAsync(task.getAndMarkConsumerRunning())
+                            .thenRunAsync(task::markRemove);
                 } else {
                     task.execute();
                 }
