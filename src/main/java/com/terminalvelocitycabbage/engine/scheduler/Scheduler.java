@@ -3,30 +3,40 @@ package com.terminalvelocitycabbage.engine.scheduler;
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 import com.terminalvelocitycabbage.engine.debug.Log;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 public class Scheduler {
 
+    //Stores all tasks that need to be added to the taskList.
+    //Allow tasks to be scheduled by other tasks without concurrent modification exceptions.
+    private final List<Task> taskQueue;
+    //The current task list that is being executed
     private final List<Task> taskList;
+    //The list of tasks that need to be removed, empty expect turing task processing
+    private final List<Task> toRemove;
 
     public Scheduler() {
-        this.taskList = new ArrayList<>();
+        taskList = new ArrayList<>();
+        toRemove = new ArrayList<>();
+        taskQueue = new ArrayList<>();
     }
 
+    /**
+     * To be called every game tick, processes all the task queues and processes all tasks.
+     */
     public void tick() {
-        //Some tasks may have been marked for removal since the last tick
-        //Those marked for removal with subsequent tasks need those to be scheduled for this run
-        int size = taskList.size();
-        List<Task> toRemove = new ArrayList<>();
 
-        for (int i = 0; i < size; i++) {
-            Task task = taskList.get(i);
+        //Add tasks scheduled for execution last tick and reset the queue for this tick
+        taskList.addAll(taskQueue);
+        taskQueue.clear();
 
+        //Those tasks marked for removal with subsequent tasks need those to be scheduled for this run
+        taskList.forEach(task -> {
             long l = task.getLock().readLock();
-            boolean remove = task.remove();
-
-            if (remove) {
+            if (task.remove()) {
                 toRemove.add(task);
                 if (task.hasSubsequentTasks()) {
                     task.subsequentTasks().forEach((task1) -> {
@@ -34,12 +44,14 @@ public class Scheduler {
                     });
                 }
             }
-
             task.getLock().unlockRead(l);
-        }
+        });
 
+        //Remove tasks that need to be removed and reset list for next tick
         taskList.removeAll(toRemove);
+        toRemove.clear();
 
+        //Process all the tasks
         taskList.forEach(task -> {
             //Some tasks like async tasks might get called more than once if we don't track their status
             long l = task.getLock().readLock();
@@ -81,7 +93,7 @@ public class Scheduler {
             Log.error("Tried to schedule task of same identifier: " + task.identifier().toString());
             return;
         }
-        taskList.add(task.init());
+        taskQueue.add(task.init());
     }
 
     /**
@@ -96,7 +108,7 @@ public class Scheduler {
             Log.error("Tried to schedule task of same identifier: " + task.identifier().toString());
             return;
         }
-        taskList.add(task.init(previousReturn));
+        taskQueue.add(task.init(previousReturn));
     }
 
     /**
@@ -107,6 +119,11 @@ public class Scheduler {
      */
     public Optional<Task> getTask(Identifier identifier) {
         for (Task task : taskList) {
+            if (task.identifier().equals(identifier)) {
+                return Optional.of(task);
+            }
+        }
+        for (Task task : taskQueue) {
             if (task.identifier().equals(identifier)) {
                 return Optional.of(task);
             }

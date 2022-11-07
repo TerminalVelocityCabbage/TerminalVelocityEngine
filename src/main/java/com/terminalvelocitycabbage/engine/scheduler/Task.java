@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.concurrent.locks.StampedLock;
 import java.util.function.Consumer;
 
-//TODO make this a record and create a class that has execute and init methods on it for the scheduler to run
 public final class Task {
 
     private final StampedLock lock = new StampedLock();
@@ -18,11 +17,11 @@ public final class Task {
     private final long repeatInterval; //In millis
     private long lastExecuteTimeMillis;
     private boolean delay;
-    private long delayInMilis;
+    private final long delayTime; //In millis
     private long executeTime;
     private final boolean async;
     private volatile boolean running;
-    private TaskContext context;
+    private final TaskContext context;
     private final List<Task> subsequentTasks;
 
     public Task(Identifier identifier, Consumer<TaskContext> consumer, boolean repeat, long repeatInterval, boolean delay, long delayInMillis, boolean async, List<Task> subsequentTasks) {
@@ -32,7 +31,7 @@ public final class Task {
         this.repeat = repeat;
         this.repeatInterval = repeatInterval;
         this.delay = delay;
-        this.delayInMilis = delayInMillis;
+        this.delayTime = delayInMillis;
         this.async = async;
         this.running = false;
         this.context = new TaskContext(this);
@@ -41,7 +40,7 @@ public final class Task {
 
     //Used to set times for execute and such
     public Task init() {
-        if (delay) executeTime = System.currentTimeMillis() + delayInMilis;
+        if (delay) executeTime = System.currentTimeMillis() + delayTime;
         if (repeat) lastExecuteTimeMillis = System.currentTimeMillis() - repeatInterval;
         initialized = true;
         return this;
