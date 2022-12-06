@@ -13,9 +13,9 @@ import java.util.Set;
 public class Manager {
 
     //The list of created components that can be added to any entity
-    Set<Component> componentSet;
+    Set<Component> componentTypeSet;
     //The list of entity types that can be "spawned" or added to the activeEntities List
-    Set<Entity> entitySet;
+    Set<Entity> entityTypeSet;
 
     //The list of active entities in this manager
     List<Entity> activeEntities;
@@ -27,26 +27,26 @@ public class Manager {
     //TODO component pool
 
     /**
-     * Adds a component to the componentSet
+     * Adds a component to the componentTypeSet
      * @param componentType the class of the component you wish to add to the pool
      * @param <T> The type of the component, must extend {@link Component}
      */
     public <T extends Component> void createComponent(Class<T> componentType) {
         try {
-            componentSet.add(componentType.getDeclaredConstructor().newInstance());
+            componentTypeSet.add(componentType.getDeclaredConstructor().newInstance());
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             Log.crash("Could not Create Component", new RuntimeException(e));
         }
     }
 
     /**
-     * Gets a component of the type requested from the componentSet
+     * Gets a component of the type requested from the componentTypeSet
      * @param type the class of the component you wish to retrieve
      * @param <T> any component which extends {@link Component}
-     * @return a component object from the componentSet of the type requested.
+     * @return a component object from the componentTypeSet of the type requested.
      */
     public <T extends Component> T getComponent(Class<T> type) {
-        List<T> list = componentSet.stream().filter(type::isInstance).map(component -> (T) component).toList();
+        List<T> list = componentTypeSet.stream().filter(type::isInstance).map(component -> (T) component).toList();
         if (list.size() > 1) Log.warn("Multiple components of same type exist in component collection");
         if (list.size() == 1) return list.get(0); //TODO init the component with default values
         return null;

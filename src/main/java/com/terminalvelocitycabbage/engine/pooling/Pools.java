@@ -13,6 +13,10 @@ public class Pools {
     //The list of pools mapped by type
     private final Map<Class, Pool> pools = new HashMap<>();
 
+    public <T extends Pool> void create(Class<T> type) {
+        //TODO create a pool with class reflection of type specified
+    }
+
     /**
      * @param type the type of the pool requested
      * @param <T> The type of the pool requested

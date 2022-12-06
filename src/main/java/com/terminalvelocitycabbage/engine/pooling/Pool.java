@@ -1,6 +1,7 @@
 package com.terminalvelocitycabbage.engine.pooling;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -24,6 +25,40 @@ public abstract class Pool<T> {
     }
 
     /**
+     * Creates a new object to represent the type of item in this pool
+     * Needs to be implemented when this pool is created
+     * @return a new instance of the type of object that this pool contains
+     */
+    abstract protected T createObject();
+
+    /**
+     * Creates a number of free objects in the freeObjects pool
+     * @param quantity the number of objects to be created in this pool
+     */
+    public void create(int quantity) {
+        for (int i = 0; i < quantity; i++) {
+            if (freeObjects.size() < maxObjects) {
+                freeObjects.add(createObject());
+            }
+        }
+    }
+
+    /**
+     * Resets a poolable item to its defaults so that it can be used right away when obtained from this pool
+     * @param item The item that is to be reset
+     */
+    public void reset(T item) {
+        if (item instanceof Poolable) ((Poolable)item).reset();
+    }
+
+    /**
+     * Clears the object pool of al free objects
+     */
+    public void clear() {
+        freeObjects.clear();
+    }
+
+    /**
      * gets an object from this pool that is free
      * @return a free object from freeObjects in this pool
      */
@@ -33,9 +68,22 @@ public abstract class Pool<T> {
 
     /**
      * frees the current item as not used
+     * resets the item, and adds it to the free objects pool
      * @param item the item you wish to free
      */
     public void free(T item) {
-        //TODO add to free objects and reset item from Poolable interface method
+        if (item == null) return;
+        if (freeObjects.size() < maxObjects) {
+            reset(item);
+            freeObjects.add(item);
+        }
+    }
+
+    /**
+     * frees the specified items for reuse in this pool
+     * @param items the items you wish to free
+     */
+    public void free(T... items) {
+        Arrays.stream(items).forEach(this::free);
     }
 }
