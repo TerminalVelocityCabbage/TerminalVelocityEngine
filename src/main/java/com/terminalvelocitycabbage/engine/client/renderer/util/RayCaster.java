@@ -1,7 +1,7 @@
 package com.terminalvelocitycabbage.engine.client.renderer.util;
 
 import com.terminalvelocitycabbage.engine.client.renderer.Renderer;
-import com.terminalvelocitycabbage.engine.client.renderer.components.Camera;
+import com.terminalvelocitycabbage.engine.client.renderer.Camera;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 

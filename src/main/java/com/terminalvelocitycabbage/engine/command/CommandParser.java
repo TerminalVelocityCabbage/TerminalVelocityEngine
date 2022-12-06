@@ -1,6 +1,6 @@
 package com.terminalvelocitycabbage.engine.command;
 
-import com.terminalvelocitycabbage.engine.entity.Player;
+import com.terminalvelocitycabbage.templates.entity.Player;
 
 import java.util.Arrays;
 import java.util.List;

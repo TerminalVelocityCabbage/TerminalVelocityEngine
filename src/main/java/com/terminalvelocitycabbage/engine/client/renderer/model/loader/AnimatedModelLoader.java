@@ -3,7 +3,7 @@ package com.terminalvelocitycabbage.engine.client.renderer.model.loader;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
 import com.terminalvelocitycabbage.engine.client.renderer.model.AnimatedModel;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
-import com.terminalvelocitycabbage.engine.prefabs.gameobjects.shapes.CuboidShape;
+import com.terminalvelocitycabbage.templates.gameobjects.shapes.CuboidShape;
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
 import com.terminalvelocitycabbage.engine.debug.Log;

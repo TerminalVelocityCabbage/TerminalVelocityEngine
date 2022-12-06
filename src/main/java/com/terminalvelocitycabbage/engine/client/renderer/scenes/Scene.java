@@ -1,8 +1,8 @@
 package com.terminalvelocitycabbage.engine.client.renderer.scenes;
 
 import com.terminalvelocitycabbage.engine.client.input.InputHandler;
-import com.terminalvelocitycabbage.engine.client.renderer.components.Camera;
-import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
+import com.terminalvelocitycabbage.engine.client.renderer.Camera;
+import com.terminalvelocitycabbage.engine.client.renderer.Window;
 import com.terminalvelocitycabbage.engine.client.renderer.gameobjects.EmptyGameObject;
 
 import java.util.List;

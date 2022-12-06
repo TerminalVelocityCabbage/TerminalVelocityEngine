@@ -1,7 +1,7 @@
 package com.terminalvelocitycabbage.engine.client.renderer.ui;
 
 import com.terminalvelocitycabbage.engine.client.ClientBase;
-import com.terminalvelocitycabbage.engine.client.renderer.components.Window;
+import com.terminalvelocitycabbage.engine.client.renderer.Window;
 import com.terminalvelocitycabbage.engine.events.EventContext;
 
 import java.util.ArrayList;

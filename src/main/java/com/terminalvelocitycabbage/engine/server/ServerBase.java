@@ -6,6 +6,7 @@ import com.terminalvelocitycabbage.engine.events.server.*;
 import com.terminalvelocitycabbage.engine.scheduler.Scheduler;
 import com.terminalvelocitycabbage.engine.server.packet.PacketTypes;
 import com.terminalvelocitycabbage.engine.utils.TickManager;
+import com.terminalvelocitycabbage.templates.events.server.*;
 
 public abstract class ServerBase extends EventDispatcher {
 

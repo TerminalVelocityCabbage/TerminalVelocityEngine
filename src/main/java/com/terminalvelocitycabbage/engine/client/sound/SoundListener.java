@@ -1,6 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.sound;
 
-import com.terminalvelocitycabbage.engine.client.renderer.components.Camera;
+import com.terminalvelocitycabbage.engine.client.renderer.Camera;
 import org.joml.Vector3f;
 
 import static org.lwjgl.openal.AL10.*;
