@@ -267,10 +267,20 @@ public class ComponentFilter {
         }
 
         /**
+         * Builds this builder into a new instance of a ComponentFilter
+         *
          * @return a new ComponentFilter instance based on this builder's match requirements
          */
         public ComponentFilter build() {
-            return new ComponentFilter(excludedComponents, requiredAllOfComponents, requiredOneOfComponents, requiredOnlyOneOfComponents); //TODO
+            return new ComponentFilter(
+                    excludedComponents,
+                    requiredAllOfComponents,
+                    requiredOneOfComponents,
+                    requiredOnlyOneOfComponents,
+                    excludedFilters,
+                    requiredAllOfFilters,
+                    requiredOneOfFilters,
+                    requiredOnlyOneOfFilters);
         }
 
     }
