@@ -195,11 +195,11 @@ public class ComponentFilter {
         }
 
         /**
-         * @param required the filters which you only want exactly one of to match
+         * @param requiredFilters the filters which you only want exactly one of to match
          * @return the current builder
          */
-        public Builder onlyOneOfFilter(ComponentFilter... required) {
-            //TODO
+        public Builder onlyOneOfFilter(ComponentFilter... requiredFilters) {
+            this.requiredOnlyOneOfFilters.addAll(Arrays.stream(requiredFilters).toList());
             return this;
         }
 
@@ -216,11 +216,11 @@ public class ComponentFilter {
         }
 
         /**
-         * @param required the filters you want at least one of to match
+         * @param requiredFilters the filters you want at least one of to match
          * @return the current builder
          */
-        public Builder anyOfFilter(ComponentFilter... required) {
-            //TODO
+        public Builder anyOfFilter(ComponentFilter... requiredFilters) {
+            this.requiredOneOfFilters.addAll(Arrays.stream(requiredFilters).toList());
             return this;
         }
 
@@ -237,11 +237,11 @@ public class ComponentFilter {
         }
 
         /**
-         * @param required the filters that must all exist to match
+         * @param requiredFilters the filters that must all exist to match
          * @return the current builder
          */
-        public Builder allOfFilter(ComponentFilter... required) {
-            //TODO
+        public Builder allOfFilter(ComponentFilter... requiredFilters) {
+            this.requiredAllOfFilters.addAll(Arrays.stream(requiredFilters).toList());
             return this;
         }
 
@@ -258,11 +258,11 @@ public class ComponentFilter {
         }
 
         /**
-         * @param excluded A filters you want none of to match
+         * @param excludedFilters A filters you want none of to match
          * @return the current builder
          */
-        public Builder excludesFilter(ComponentFilter... excluded) {
-            //TODO
+        public Builder excludesFilter(ComponentFilter... excludedFilters) {
+            this.excludedFilters.addAll(Arrays.stream(excludedFilters).toList());
             return this;
         }
 
