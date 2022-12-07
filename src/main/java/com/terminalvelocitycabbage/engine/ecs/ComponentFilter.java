@@ -15,32 +15,15 @@ public class ComponentFilter {
     //List of components from the .onlyOneOf(...) node
     List<Class<? extends Component>> requiredOnlyOneOfComponents;
 
-    //List of components from the .excludesFilter(...) node
-    List<ComponentFilter> excludedFilters;
-    //List of components from the .allOfFilter(...) node
-    List<ComponentFilter> requiredAllOfFilters;
-    //List of components from the .oneOfFilter(...) node
-    List<ComponentFilter> requiredOneOfFilters;
-    //List of components from the .onlyOneOfFilter(...) node
-    List<ComponentFilter> requiredOnlyOneOfFilters;
-
     private ComponentFilter(
             List<Class<? extends Component>> excludedComponents,
             List<Class<? extends Component>> requiredAllOfComponents,
             List<Class<? extends Component>> requiredOneOfComponents,
-            List<Class<? extends Component>> requiredOnlyOneOfComponents,
-            List<ComponentFilter> excludedFilters,
-            List<ComponentFilter> requiredAllOfFilters,
-            List<ComponentFilter> requiredOneOfFilters,
-            List<ComponentFilter> requiredOnlyOneOfFilters) {
+            List<Class<? extends Component>> requiredOnlyOneOfComponents) {
         this.excludedComponents = excludedComponents;
         this.requiredAllOfComponents = requiredAllOfComponents;
         this.requiredOneOfComponents = requiredOneOfComponents;
         this.requiredOnlyOneOfComponents = requiredOnlyOneOfComponents;
-        this.excludedFilters = excludedFilters;
-        this.requiredAllOfFilters = requiredAllOfFilters;
-        this.requiredOneOfFilters = requiredOneOfFilters;
-        this.requiredOnlyOneOfFilters = requiredOnlyOneOfFilters;
     }
 
     /**
@@ -100,13 +83,6 @@ public class ComponentFilter {
             return alreadyFoundOneMatch;
         }).toList();
 
-        //TODO verify that this section covers all 4 built filter types
-        //Sort out entities that don't match all the filters specified
-        List<ComponentFilter> requiredAllOfFilters1 = getAllFilters();
-        for (ComponentFilter filter : requiredAllOfFilters1) {
-            sortedEntities.retainAll(filter.filter(sortedEntities));
-        }
-
         return sortedEntities;
     }
 
@@ -126,31 +102,6 @@ public class ComponentFilter {
         return requiredOnlyOneOfComponents;
     }
 
-    public List<ComponentFilter> getAllFilters() {
-        List<ComponentFilter> filters = new ArrayList<>();
-        filters.addAll(getExcludedFilters());
-        filters.addAll(getRequiredAllOfFilters());
-        filters.addAll(getRequiredOneOfFilters());
-        filters.addAll(getRequiredOnlyOneOfFilters());
-        return filters;
-    }
-
-    public List<ComponentFilter> getExcludedFilters() {
-        return excludedFilters;
-    }
-
-    public List<ComponentFilter> getRequiredAllOfFilters() {
-        return requiredAllOfFilters;
-    }
-
-    public List<ComponentFilter> getRequiredOneOfFilters() {
-        return requiredOneOfFilters;
-    }
-
-    public List<ComponentFilter> getRequiredOnlyOneOfFilters() {
-        return requiredOnlyOneOfFilters;
-    }
-
     public static class Builder {
 
         //List of components from the .excludes(...) node
@@ -162,24 +113,11 @@ public class ComponentFilter {
         //List of components from the .onlyOneOf(...) node
         List<Class<? extends Component>> requiredOnlyOneOfComponents;
 
-        //List of components from the .excludesFilter(...) node
-        List<ComponentFilter> excludedFilters;
-        //List of components from the .allOfFilter(...) node
-        List<ComponentFilter> requiredAllOfFilters;
-        //List of components from the .oneOfFilter(...) node
-        List<ComponentFilter> requiredOneOfFilters;
-        //List of components from the .onlyOneOfFilter(...) node
-        List<ComponentFilter> requiredOnlyOneOfFilters;
-
         private Builder() {
             excludedComponents = new ArrayList<>();
             requiredAllOfComponents = new ArrayList<>();
             requiredOneOfComponents = new ArrayList<>();
             requiredOnlyOneOfComponents = new ArrayList<>();
-            excludedFilters = new ArrayList<>();
-            requiredAllOfFilters = new ArrayList<>();
-            requiredOneOfFilters = new ArrayList<>();
-            requiredOnlyOneOfFilters = new ArrayList<>();
         }
 
         /**
@@ -191,15 +129,6 @@ public class ComponentFilter {
          */
         public Builder onlyOneOf(Class<? extends Component>... requiredComponents) {
             this.requiredOnlyOneOfComponents.addAll(Arrays.stream(requiredComponents).toList());
-            return this;
-        }
-
-        /**
-         * @param requiredFilters the filters which you only want exactly one of to match
-         * @return the current builder
-         */
-        public Builder onlyOneOfFilter(ComponentFilter... requiredFilters) {
-            this.requiredOnlyOneOfFilters.addAll(Arrays.stream(requiredFilters).toList());
             return this;
         }
 
@@ -216,15 +145,6 @@ public class ComponentFilter {
         }
 
         /**
-         * @param requiredFilters the filters you want at least one of to match
-         * @return the current builder
-         */
-        public Builder anyOfFilter(ComponentFilter... requiredFilters) {
-            this.requiredOneOfFilters.addAll(Arrays.stream(requiredFilters).toList());
-            return this;
-        }
-
-        /**
          * Adds the specified components to the required components list, when used to filter any entities which do not
          * contain ALL of the specified components will not be added to the filtered list
          *
@@ -233,15 +153,6 @@ public class ComponentFilter {
          */
         public Builder allOf(Class<? extends Component>... requiredComponents) {
             this.requiredAllOfComponents.addAll(Arrays.stream(requiredComponents).toList());
-            return this;
-        }
-
-        /**
-         * @param requiredFilters the filters that must all exist to match
-         * @return the current builder
-         */
-        public Builder allOfFilter(ComponentFilter... requiredFilters) {
-            this.requiredAllOfFilters.addAll(Arrays.stream(requiredFilters).toList());
             return this;
         }
 
@@ -258,15 +169,6 @@ public class ComponentFilter {
         }
 
         /**
-         * @param excludedFilters A filters you want none of to match
-         * @return the current builder
-         */
-        public Builder excludesFilter(ComponentFilter... excludedFilters) {
-            this.excludedFilters.addAll(Arrays.stream(excludedFilters).toList());
-            return this;
-        }
-
-        /**
          * Builds this builder into a new instance of a ComponentFilter
          *
          * @return a new ComponentFilter instance based on this builder's match requirements
@@ -276,11 +178,7 @@ public class ComponentFilter {
                     excludedComponents,
                     requiredAllOfComponents,
                     requiredOneOfComponents,
-                    requiredOnlyOneOfComponents,
-                    excludedFilters,
-                    requiredAllOfFilters,
-                    requiredOneOfFilters,
-                    requiredOnlyOneOfFilters);
+                    requiredOnlyOneOfComponents);
         }
 
     }
