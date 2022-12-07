@@ -25,6 +25,10 @@ public class Entity implements Poolable {
         return (T) components.get(componentClass);
     }
 
+    public <T extends Component> boolean containsComponent(Class<T> componentClass) {
+        return components.containsKey(componentClass);
+    }
+
     public <T extends Component> void remove(Class<T> componentClass) {
         components.remove(componentClass);
     }

@@ -68,6 +68,6 @@ public class Manager {
      * @return a List of entities that match the filter provided
      */
     public List<Entity> getMatchingEntities(ComponentFilter filter) {
-        return ComponentFilter.filter(activeEntities, filter);
+        return filter.filter(activeEntities);
     }
 }
