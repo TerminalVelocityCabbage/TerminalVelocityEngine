@@ -15,16 +15,32 @@ public class ComponentFilter {
     //List of components from the .onlyOneOf(...) node
     List<Class<? extends Component>> requiredOnlyOneOfComponents;
 
+    //List of components from the .excludesFilter(...) node
+    List<ComponentFilter> excludedFilters;
+    //List of components from the .allOfFilter(...) node
+    List<ComponentFilter> requiredAllOfFilters;
+    //List of components from the .oneOfFilter(...) node
+    List<ComponentFilter> requiredOneOfFilters;
+    //List of components from the .onlyOneOfFilter(...) node
+    List<ComponentFilter> requiredOnlyOneOfFilters;
+
     private ComponentFilter(
             List<Class<? extends Component>> excludedComponents,
             List<Class<? extends Component>> requiredAllOfComponents,
             List<Class<? extends Component>> requiredOneOfComponents,
-            List<Class<? extends Component>> requiredOnlyOneOfComponents) {
-        //TODO
+            List<Class<? extends Component>> requiredOnlyOneOfComponents,
+            List<ComponentFilter> excludedFilters,
+            List<ComponentFilter> requiredAllOfFilters,
+            List<ComponentFilter> requiredOneOfFilters,
+            List<ComponentFilter> requiredOnlyOneOfFilters) {
         this.excludedComponents = excludedComponents;
         this.requiredAllOfComponents = requiredAllOfComponents;
         this.requiredOneOfComponents = requiredOneOfComponents;
         this.requiredOnlyOneOfComponents = requiredOnlyOneOfComponents;
+        this.excludedFilters = excludedFilters;
+        this.requiredAllOfFilters = requiredAllOfFilters;
+        this.requiredOneOfFilters = requiredOneOfFilters;
+        this.requiredOnlyOneOfFilters = requiredOnlyOneOfFilters;
     }
 
     /**
@@ -84,7 +100,12 @@ public class ComponentFilter {
             return alreadyFoundOneMatch;
         }).toList();
 
-        //TODO filter from nested filters
+        //TODO verify that this section covers all 4 built filter types
+        //Sort out entities that don't match all the filters specified
+        List<ComponentFilter> requiredAllOfFilters1 = getAllFilters();
+        for (ComponentFilter filter : requiredAllOfFilters1) {
+            sortedEntities.retainAll(filter.filter(sortedEntities));
+        }
 
         return sortedEntities;
     }
@@ -105,6 +126,31 @@ public class ComponentFilter {
         return requiredOnlyOneOfComponents;
     }
 
+    public List<ComponentFilter> getAllFilters() {
+        List<ComponentFilter> filters = new ArrayList<>();
+        filters.addAll(getExcludedFilters());
+        filters.addAll(getRequiredAllOfFilters());
+        filters.addAll(getRequiredOneOfFilters());
+        filters.addAll(getRequiredOnlyOneOfFilters());
+        return filters;
+    }
+
+    public List<ComponentFilter> getExcludedFilters() {
+        return excludedFilters;
+    }
+
+    public List<ComponentFilter> getRequiredAllOfFilters() {
+        return requiredAllOfFilters;
+    }
+
+    public List<ComponentFilter> getRequiredOneOfFilters() {
+        return requiredOneOfFilters;
+    }
+
+    public List<ComponentFilter> getRequiredOnlyOneOfFilters() {
+        return requiredOnlyOneOfFilters;
+    }
+
     public static class Builder {
 
         //List of components from the .excludes(...) node
@@ -116,11 +162,24 @@ public class ComponentFilter {
         //List of components from the .onlyOneOf(...) node
         List<Class<? extends Component>> requiredOnlyOneOfComponents;
 
+        //List of components from the .excludesFilter(...) node
+        List<ComponentFilter> excludedFilters;
+        //List of components from the .allOfFilter(...) node
+        List<ComponentFilter> requiredAllOfFilters;
+        //List of components from the .oneOfFilter(...) node
+        List<ComponentFilter> requiredOneOfFilters;
+        //List of components from the .onlyOneOfFilter(...) node
+        List<ComponentFilter> requiredOnlyOneOfFilters;
+
         private Builder() {
             excludedComponents = new ArrayList<>();
             requiredAllOfComponents = new ArrayList<>();
             requiredOneOfComponents = new ArrayList<>();
             requiredOnlyOneOfComponents = new ArrayList<>();
+            excludedFilters = new ArrayList<>();
+            requiredAllOfFilters = new ArrayList<>();
+            requiredOneOfFilters = new ArrayList<>();
+            requiredOnlyOneOfFilters = new ArrayList<>();
         }
 
         /**

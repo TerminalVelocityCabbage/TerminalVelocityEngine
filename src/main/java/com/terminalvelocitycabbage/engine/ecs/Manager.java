@@ -5,6 +5,7 @@ import com.terminalvelocitycabbage.engine.debug.Log;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * The Manager is what any implementation should interact with to "manage" their entities components and systems.
@@ -69,5 +70,18 @@ public class Manager {
      */
     public List<Entity> getMatchingEntities(ComponentFilter filter) {
         return filter.filter(activeEntities);
+    }
+
+    /**
+     * Gets the entity in this Manager with the specified ID if it exists
+     *
+     * @param id the UUID of this entity (you can use UUID.fromString() to get this if you only have a string)
+     * @return the entity requested or null
+     */
+    public Entity getEntityWithID(UUID id) {
+        for (Entity entity : activeEntities) {
+            if (entity.getID().equals(id)) return entity;
+        }
+        return null;
     }
 }
