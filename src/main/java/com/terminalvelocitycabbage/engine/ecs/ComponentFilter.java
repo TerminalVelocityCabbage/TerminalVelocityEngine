@@ -11,18 +11,18 @@ public class ComponentFilter {
     //List of components from the .allOf(...) node
     List<Class<? extends Component>> requiredAllOfComponents;
     //List of components from the .oneOf(...) node
-    List<Class<? extends Component>> requiredOneOfComponents;
+    List<List<Class<? extends Component>>> requiredAnyOfComponents;
     //List of components from the .onlyOneOf(...) node
-    List<Class<? extends Component>> requiredOnlyOneOfComponents;
+    List<List<Class<? extends Component>>> requiredOnlyOneOfComponents;
 
     private ComponentFilter(
             List<Class<? extends Component>> excludedComponents,
             List<Class<? extends Component>> requiredAllOfComponents,
-            List<Class<? extends Component>> requiredOneOfComponents,
-            List<Class<? extends Component>> requiredOnlyOneOfComponents) {
+            List<List<Class<? extends Component>>> requiredAnyOfComponents,
+            List<List<Class<? extends Component>>> requiredOnlyOneOfComponents) {
         this.excludedComponents = excludedComponents;
         this.requiredAllOfComponents = requiredAllOfComponents;
-        this.requiredOneOfComponents = requiredOneOfComponents;
+        this.requiredAnyOfComponents = requiredAnyOfComponents;
         this.requiredOnlyOneOfComponents = requiredOnlyOneOfComponents;
     }
 
@@ -59,29 +59,33 @@ public class ComponentFilter {
             return hasRequiredComponent;
         }).toList();
 
-        //Sort out entities that dont contain any of the one of list
-        sortedEntities = sortedEntities.stream().filter(entity -> {
-            for (Class<? extends Component> component : getRequiredOneOfComponents()) {
-                if (entity.containsComponent(component)) return true;
-            }
-            return false;
-        }).toList();
+        //Sort out entities that don't contain any of the one of list
+        for (List<Class<? extends Component>> componentAnyComparisons : getRequiredAnyOfComponents()) {
+            sortedEntities = sortedEntities.stream().filter(entity -> {
+                for (Class<? extends Component> component : componentAnyComparisons) {
+                    if (entity.containsComponent(component)) return true;
+                }
+                return false;
+            }).toList();
+        }
 
         //Sort out entities that have more than one matching from only one of components
-        sortedEntities = sortedEntities.stream().filter(entity -> {
-            boolean alreadyFoundOneMatch = false;
-            for (Class<? extends Component> component : getRequiredOnlyOneOfComponents()) {
-                if (entity.containsComponent(component)) {
-                    if (alreadyFoundOneMatch) {
-                        return false;
-                    } else {
-                        alreadyFoundOneMatch = true;
+        for (List<Class<? extends Component>> componentOneOfComparisons : getRequiredOnlyOneOfComponents()) {
+            sortedEntities = sortedEntities.stream().filter(entity -> {
+                boolean alreadyFoundOneMatch = false;
+                for (Class<? extends Component> component : componentOneOfComparisons) {
+                    if (entity.containsComponent(component)) {
+                        if (alreadyFoundOneMatch) {
+                            return false;
+                        } else {
+                            alreadyFoundOneMatch = true;
+                        }
                     }
                 }
-            }
-            //Because exactly one match must be found so this must be true
-            return alreadyFoundOneMatch;
-        }).toList();
+                //Because exactly one match must be found so this must be true
+                return alreadyFoundOneMatch;
+            }).toList();
+        }
 
         return sortedEntities;
     }
@@ -94,11 +98,11 @@ public class ComponentFilter {
         return requiredAllOfComponents;
     }
 
-    public List<Class<? extends Component>> getRequiredOneOfComponents() {
-        return requiredOneOfComponents;
+    public List<List<Class<? extends Component>>> getRequiredAnyOfComponents() {
+        return requiredAnyOfComponents;
     }
 
-    public List<Class<? extends Component>> getRequiredOnlyOneOfComponents() {
+    public List<List<Class<? extends Component>>> getRequiredOnlyOneOfComponents() {
         return requiredOnlyOneOfComponents;
     }
 
@@ -109,14 +113,14 @@ public class ComponentFilter {
         //List of components from the .allOf(...) node
         List<Class<? extends Component>> requiredAllOfComponents;
         //List of components from the .oneOf(...) node
-        List<Class<? extends Component>> requiredOneOfComponents;
+        List<List<Class<? extends Component>>> requiredAnyOfComponents;
         //List of components from the .onlyOneOf(...) node
-        List<Class<? extends Component>> requiredOnlyOneOfComponents;
+        List<List<Class<? extends Component>>> requiredOnlyOneOfComponents;
 
         private Builder() {
             excludedComponents = new ArrayList<>();
             requiredAllOfComponents = new ArrayList<>();
-            requiredOneOfComponents = new ArrayList<>();
+            requiredAnyOfComponents = new ArrayList<>();
             requiredOnlyOneOfComponents = new ArrayList<>();
         }
 
@@ -128,7 +132,7 @@ public class ComponentFilter {
          * @return the current builder
          */
         public Builder onlyOneOf(Class<? extends Component>... requiredComponents) {
-            this.requiredOnlyOneOfComponents.addAll(Arrays.stream(requiredComponents).toList());
+            this.requiredOnlyOneOfComponents.add(new ArrayList<>(Arrays.stream(requiredComponents).toList()));
             return this;
         }
 
@@ -140,7 +144,7 @@ public class ComponentFilter {
          * @return the current builder
          */
         public Builder anyOf(Class<? extends Component>... requiredComponents) {
-            this.requiredOneOfComponents.addAll(Arrays.stream(requiredComponents).toList());
+            this.requiredAnyOfComponents.add(new ArrayList<>(Arrays.stream(requiredComponents).toList()));
             return this;
         }
 
@@ -177,7 +181,7 @@ public class ComponentFilter {
             return new ComponentFilter(
                     excludedComponents,
                     requiredAllOfComponents,
-                    requiredOneOfComponents,
+                    requiredAnyOfComponents,
                     requiredOnlyOneOfComponents);
         }
 
