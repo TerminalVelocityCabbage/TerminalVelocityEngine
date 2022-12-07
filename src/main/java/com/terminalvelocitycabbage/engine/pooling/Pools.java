@@ -1,5 +1,9 @@
 package com.terminalvelocitycabbage.engine.pooling;
 
+import com.terminalvelocitycabbage.engine.debug.Log;
+import com.terminalvelocitycabbage.engine.utils.ClassUtils;
+
+import javax.management.ReflectionException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,8 +17,16 @@ public class Pools {
     //The list of pools mapped by type
     private final Map<Class, Pool> pools = new HashMap<>();
 
-    public <T extends Pool> void create(Class<T> type) {
-        //TODO create a pool with class reflection of type specified
+    @SuppressWarnings("unchecked")
+    public <T extends Pool> Pool<T> getOrMakePool(Class<T> type) {
+        if (!pools.containsKey(type)) {
+            try {
+                set(type, ClassUtils.createInstance(type));
+            } catch (ReflectionException e) {
+                Log.crash("Could not create pool", new RuntimeException(e));
+            }
+        }
+        return getPool(type);
     }
 
     /**
@@ -22,7 +34,8 @@ public class Pools {
      * @param <T> The type of the pool requested
      * @return the pool of the given type requested
      */
-    public <T> Pool<T> get(Class<T> type) {
+    @SuppressWarnings("unchecked")
+    public <T> Pool<T> getPool(Class<T> type) {
        return pools.get(type);
     }
 
@@ -41,7 +54,7 @@ public class Pools {
      * @return a free object in the pool of the type specified
      */
     public <T> T obtain(Class<T> type) {
-        return get(type).obtain();
+        return getPool(type).obtain();
     }
 
     /**

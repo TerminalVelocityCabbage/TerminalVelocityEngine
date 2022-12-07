@@ -6,4 +6,5 @@ package com.terminalvelocitycabbage.engine.ecs;
  */
 public interface Component {
     //Any data a user may want to store on that component.
+    //This requires a 0 args constructor, so the component should have default values.
 }

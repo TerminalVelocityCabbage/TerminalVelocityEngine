@@ -35,7 +35,7 @@ public abstract class Pool<T> {
      * Creates a number of free objects in the freeObjects pool
      * @param quantity the number of objects to be created in this pool
      */
-    public void create(int quantity) {
+    public void fill(int quantity) {
         for (int i = 0; i < quantity; i++) {
             if (freeObjects.size() < maxObjects) {
                 freeObjects.add(createObject());

@@ -13,7 +13,7 @@ import java.util.Set;
 public class Manager {
 
     //The list of created components that can be added to any entity
-    Set<Component> componentTypeSet;
+    Set<Component> componentTypeSet; //TODO make this un-editable once the manager is done initializing as to
     //The list of entity types that can be "spawned" or added to the activeEntities List
     Set<Entity> entityTypeSet;
 
@@ -53,11 +53,21 @@ public class Manager {
     }
 
     /**
-     * Updates all of the systems
+     * updates all {@link System}s in this manager
+     * @param deltaTime the amount of time in milliseconds that has passed since the last update
      */
-    public void update() {
+    public void update(float deltaTime) {
         systems.forEach(system -> {
-            //TODO run the system
+            system.update(deltaTime);
         });
+    }
+
+    /**
+     * Gets all entities that match the provided filter
+     * @param filter the filter for which you want to get matching entities
+     * @return a List of entities that match the filter provided
+     */
+    public List<Entity> getMatchingEntities(ComponentFilter filter) {
+        return ComponentFilter.filter(activeEntities, filter);
     }
 }
