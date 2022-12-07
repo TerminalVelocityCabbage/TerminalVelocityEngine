@@ -2,6 +2,7 @@ package com.terminalvelocitycabbage.engine.ecs;
 
 import com.terminalvelocitycabbage.engine.pooling.Poolable;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -15,6 +16,11 @@ public class Entity implements Poolable {
     private UUID uniqueID;
     //The container of components that defined this entity
     private Map<Class<?>, Component> components;
+
+    public Entity() {
+        components = new HashMap<>();
+        reset();
+    }
 
     /**
      * Adds a component to this entity

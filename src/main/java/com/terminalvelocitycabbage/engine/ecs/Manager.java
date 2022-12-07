@@ -3,9 +3,7 @@ package com.terminalvelocitycabbage.engine.ecs;
 import com.terminalvelocitycabbage.engine.debug.Log;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * The Manager is what any implementation should interact with to "manage" their entities components and systems.
@@ -26,6 +24,13 @@ public class Manager {
 
     //TODO entity pool
     //TODO component pool
+
+    public Manager() {
+        componentTypeSet = new HashSet<>();
+        entityTypeSet = new HashSet<>();
+        activeEntities = new ArrayList<>();
+        systems = new ArrayList<>();
+    }
 
     /**
      * Adds a component to the componentTypeSet
