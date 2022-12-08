@@ -1,0 +1,167 @@
+package com.terminalvelocitycabbage.engine.ecs;
+
+import com.terminalvelocitycabbage.engine.debug.Log;
+import com.terminalvelocitycabbage.engine.pooling.MultiPool;
+import com.terminalvelocitycabbage.engine.pooling.ReflectionPool;
+import com.terminalvelocitycabbage.engine.utils.ClassUtils;
+
+import javax.management.ReflectionException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
+
+/**
+ * The Manager is what any implementation should interact with to "manage" their entities components and systems.
+ * This is where you register your systems, add your entities, and store your components.
+ */
+public class Manager {
+
+    //The list of created components that can be added to any entity
+    Set<Component> componentTypeSet;
+    //The pool of free components
+    MultiPool componentPool;
+
+    //The pool of free entities
+    ReflectionPool entityPool;
+    //The list of active entities
+    List<Entity> activeEntities;
+
+    //The list of systems that runs on this manager
+    Map<Class<? extends System>, System> systems;
+
+    public Manager() {
+        componentTypeSet = new HashSet<>();
+        activeEntities = new ArrayList<>();
+        systems = new HashMap<>();
+
+        componentPool = new MultiPool();
+        entityPool = new ReflectionPool(Entity.class, 0);
+    }
+
+    /**
+     * Adds a component to the componentTypeSet
+     * @param componentType the class of the component you wish to add to the pool
+     * @param <T> The type of the component, must extend {@link Component}
+     */
+    public <T extends Component> void registerComponent(Class<T> componentType) {
+        try {
+            componentTypeSet.add(componentType.getDeclaredConstructor().newInstance());
+            componentPool.getPool(componentType, true);
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            Log.crash("Could not Create Component", new RuntimeException(e));
+        }
+    }
+
+    /**
+     * Adds a component to the componentTypeSet
+     * @param componentType the class of the component you wish to add to the pool
+     * @param initialPoolSize The number of empty component to fill this pool with
+     * @param <T> The type of the component, must extend {@link Component}
+     */
+    public <T extends Component> void registerComponent(Class<T> componentType, int initialPoolSize) {
+        try {
+            componentTypeSet.add(componentType.getDeclaredConstructor().newInstance());
+            componentPool.getPool(componentType, true, initialPoolSize);
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            Log.crash("Could not Create Component", new RuntimeException(e));
+        }
+    }
+
+    /**
+     * Gets a component of the type requested from the componentTypeSet
+     * @param type the class of the component you wish to retrieve
+     * @param <T> any component which extends {@link Component}
+     * @return a component object from the componentTypeSet of the type requested.
+     */
+    public <T extends Component> T obtainComponent(Class<T> type) {
+        return componentPool.obtain(type);
+    }
+
+    /**
+     * creates a new entity and adds it to the active entities list for modification later
+     *
+     * @return the newly created entity
+     */
+    public Entity createEntity() {
+        Entity entity = (Entity)entityPool.obtain();
+        entity.setManager(this);
+        activeEntities.add(entity);
+        return entity;
+    }
+
+    /**
+     * Removes the entity from the active entity list and adds it back to the entity pool for later use
+     * @param entity The entity that is no longer in use
+     */
+    public void freeEntity(Entity entity) {
+        activeEntities.remove(entity);
+        entityPool.free(entity);
+    }
+
+    /**
+     * @return the list of active entities on this manager
+     */
+    public List<Entity> getEntities() {
+        return activeEntities;
+    }
+
+    /**
+     * Gets all entities that match the provided filter
+     * @param filter the filter for which you want to get matching entities
+     * @return a List of entities that match the filter provided
+     */
+    public List<Entity> getMatchingEntities(ComponentFilter filter) {
+        return filter.filter(activeEntities);
+    }
+
+    /**
+     * Gets the entity in this Manager with the specified ID if it exists
+     *
+     * @param id the UUID of this entity (you can use UUID.fromString() to get this if you only have a string)
+     * @return the entity requested or null
+     */
+    public Entity getEntityWithID(UUID id) {
+        for (Entity entity : activeEntities) {
+            if (entity.getID().equals(id)) return entity;
+        }
+        return null;
+    }
+
+    /**
+     * Creates and registers a system of class type specified
+     *
+     * @param systemClass The class for the type of system you wish to create
+     * @param <T> The class for the type of system you want to create
+     * @param priority The priority that this system takes (the order it executes in). Lower numbers execute first.
+     * @return The system you just created
+     */
+    public <T extends System> T createSystem(Class<T> systemClass, int priority) {
+        try {
+            T system = ClassUtils.createInstance(systemClass);
+            systems.put(systemClass, system);
+            system.setManager(this);
+            system.setPriority(priority);
+            return system;
+        } catch (ReflectionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Creates and registers a system of class type specified
+     *
+     * @param systemClass The class for the type of system you wish to create
+     * @param <T> The class for the type of system you want to create
+     * @return The system you just created
+     */
+    public <T extends System> T createSystem(Class<T> systemClass) {
+        return createSystem(systemClass, 1);
+    }
+
+    /**
+     * updates all {@link System}s in this manager in order of their priority
+     * @param deltaTime the amount of time in milliseconds that has passed since the last update
+     */
+    public void update(float deltaTime) {
+        systems.values().stream().sorted(System::compareTo).forEach(system -> system.update(deltaTime));
+    }
+}
