@@ -5,5 +5,5 @@ package com.terminalvelocitycabbage.engine.pooling;
  */
 public interface Poolable {
     //Resets the current pooled object to its default values
-    public void reset();
+    public void setDefaults();
 }

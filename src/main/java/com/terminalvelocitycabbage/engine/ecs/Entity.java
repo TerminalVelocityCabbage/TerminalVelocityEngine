@@ -1,5 +1,6 @@
 package com.terminalvelocitycabbage.engine.ecs;
 
+import com.terminalvelocitycabbage.engine.debug.Log;
 import com.terminalvelocitycabbage.engine.pooling.Poolable;
 
 import java.util.HashMap;
@@ -9,6 +10,7 @@ import java.util.UUID;
 /**
  * An entity is meant to be a container for components, provided is a Collection for your components
  * the entity also carries a unique identifier in case you need to retrieve a specific entity at any point in time.
+ * Should be created with the {@link Manager#createEntity()} method to ensure that this entity is properly managed.
  */
 public class Entity implements Poolable {
 
@@ -35,12 +37,12 @@ public class Entity implements Poolable {
         this.manager = manager;
     }
 
-    /**
-     * Adds a component to this entity
-     * @param component The component to be added to this entity
-     */
-    public void addComponent(Component component) {
-        components.put(component.getClass(), component);
+    public <T extends Component> void addComponent(Class<T> componentClass) {
+        if (containsComponent(componentClass)) {
+            Log.warn("Tried to add component " + componentClass.getName() + " to entity with id " + getID() + " which already contains it");
+            return;
+        }
+        components.put(componentClass, manager.obtainComponent(componentClass));
     }
 
     /**
@@ -72,6 +74,8 @@ public class Entity implements Poolable {
      * @param <T> Any class that implements {@link Component}
      */
     public <T extends Component> void removeComponent(Class<T> componentClass) {
+        Component component = getComponent(componentClass);
+        component.setDefaults();
         manager.componentPool.free(getComponent(componentClass));
         components.remove(componentClass);
     }
@@ -92,19 +96,19 @@ public class Entity implements Poolable {
     }
 
     /**
-     * resets this entity to it's empty usable state. This usually occurs when this entity is added back to the
-     * entity pool for later use. It assigns this entity a new uuid and clears all components
-     */
-    @Override
-    public void reset() {
-        uniqueID = UUID.randomUUID();
-        removeAllComponents();
-    }
-
-    /**
      * @return a boolean to represent whether this entity has any components
      */
     public boolean isEmpty() {
         return components.size() == 0;
+    }
+
+    /**
+     * resets this entity to it's empty usable state. This usually occurs when this entity is added back to the
+     * entity pool for later use. It assigns this entity a new uuid and clears all components
+     */
+    @Override
+    public void setDefaults() {
+        uniqueID = UUID.randomUUID();
+        removeAllComponents();
     }
 }

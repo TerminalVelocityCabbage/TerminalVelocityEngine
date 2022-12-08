@@ -8,7 +8,7 @@ import java.util.List;
  * A pool of objects that can be re-used when needed
  * @param <T> The type that this pool stores
  */
-public abstract class TypePool<T> {
+public abstract class TypePool<T extends Poolable> {
 
     //The max allowed objects in this pool
     public int maxObjects;
@@ -62,14 +62,6 @@ public abstract class TypePool<T> {
     }
 
     /**
-     * Resets a poolable item to its defaults so that it can be used right away when obtained from this pool
-     * @param item The item that is to be reset
-     */
-    public void reset(T item) {
-        if (item instanceof Poolable) ((Poolable)item).reset();
-    }
-
-    /**
      * Clears the object pool of al free objects
      */
     public void clear() {
@@ -90,11 +82,11 @@ public abstract class TypePool<T> {
      * resets the item, and adds it to the free objects pool
      * @param item the item you wish to free
      */
-    public void free(T item) {
+    public void free(Poolable item) {
         if (item == null) return;
         if (freeObjects.size() < maxObjects) {
-            reset(item);
-            freeObjects.add(item);
+            item.setDefaults();
+            freeObjects.add((T) item);
         }
     }
 

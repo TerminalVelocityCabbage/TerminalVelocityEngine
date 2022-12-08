@@ -4,7 +4,7 @@ import com.terminalvelocitycabbage.engine.utils.ClassUtils;
 
 import java.lang.reflect.Constructor;
 
-public class ReflectionPool<T> extends TypePool<T> {
+public class ReflectionPool<T extends Poolable> extends TypePool<T> {
 
     Constructor constructor;
 

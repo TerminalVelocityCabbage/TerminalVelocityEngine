@@ -72,7 +72,7 @@ public class Manager {
      * @param <T> any component which extends {@link Component}
      * @return a component object from the componentTypeSet of the type requested.
      */
-    public <T extends Component> T getComponent(Class<T> type) {
+    public <T extends Component> T obtainComponent(Class<T> type) {
         return componentPool.obtain(type);
     }
 

@@ -20,7 +20,7 @@ public class MultiPool {
      * @return the pool that stores the type requested
      */
     @SuppressWarnings("unchecked")
-    public <T> TypePool<T> getPool(Class<T> type, boolean createIfNull, int initialCountIfCreated) {
+    public <T extends Poolable> TypePool<T> getPool(Class<T> type, boolean createIfNull, int initialCountIfCreated) {
         if (!pools.containsKey(type) && createIfNull) {
             createPool(type, new ReflectionPool<>(type), initialCountIfCreated);
         }
@@ -34,7 +34,7 @@ public class MultiPool {
      * @return the pool that stores the type requested
      */
     @SuppressWarnings("unchecked")
-    public <T> TypePool<T> getPool(Class<T> type, boolean createIfNull) {
+    public <T extends Poolable> TypePool<T> getPool(Class<T> type, boolean createIfNull) {
         if (!pools.containsKey(type) && createIfNull) {
             createPool(type, new ReflectionPool<>(type));
         }
@@ -47,7 +47,7 @@ public class MultiPool {
      * @return the pool of the given type requested
      */
     @SuppressWarnings("unchecked")
-    public <T> TypePool<T> getPool(Class<T> type) {
+    public <T extends Poolable> TypePool<T> getPool(Class<T> type) {
        return pools.get(type);
     }
 
@@ -56,7 +56,7 @@ public class MultiPool {
      * @param pool the pool you want to replace the current pool of type with
      * @param <T> the type of the pool requested
      */
-    public <T> void createPool(Class<T> type, TypePool<T> pool) {
+    public <T extends Poolable> void createPool(Class<T> type, TypePool<T> pool) {
         pools.put(type, pool);
     }
 
@@ -66,7 +66,7 @@ public class MultiPool {
      * @param initialCount The number of objects you want to fill this pool with initially
      * @param <T> the type of the pool requested
      */
-    public <T> void createPool(Class<T> type, TypePool<T> pool, int initialCount) {
+    public <T extends Poolable> void createPool(Class<T> type, TypePool<T> pool, int initialCount) {
         pool.fill(initialCount);
         pools.put(type, pool);
     }
@@ -76,14 +76,14 @@ public class MultiPool {
      * @param <T> The type of the pool requested
      * @return a free object in the pool of the type specified
      */
-    public <T> T obtain(Class<T> type) {
+    public <T extends Poolable> T obtain(Class<T> type) {
         return getPool(type).obtain();
     }
 
     /**
      * @param object the object you wish to free from one of the pools in pools
      */
-    public void free(Object object) {
+    public void free(Poolable object) {
         TypePool pool = pools.get(object.getClass());
         pool.free(object);
     }

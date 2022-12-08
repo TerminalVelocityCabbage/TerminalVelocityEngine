@@ -3,7 +3,9 @@ package com.terminalvelocitycabbage.engine.ecs;
 import java.util.List;
 
 /**
- * A system that operates on any family of components.
+ * A system that operates on any family of components. Should be extended into a useful system then added to your
+ * {@link Manager} with {@link Manager#createSystem(Class)} to operate on the filtered entities which are retrieved in
+ * the user specified {@link System#getEntities()} method using an {@link ComponentFilter}.
  */
 public abstract class System implements Comparable<System> {
 
