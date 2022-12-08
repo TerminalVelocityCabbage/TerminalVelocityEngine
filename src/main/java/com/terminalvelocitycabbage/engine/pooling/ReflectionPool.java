@@ -3,10 +3,9 @@ package com.terminalvelocitycabbage.engine.pooling;
 import com.terminalvelocitycabbage.engine.utils.ClassUtils;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 
 public class ReflectionPool<T> extends TypePool<T> {
-    
+
     Constructor constructor;
 
     public ReflectionPool(Class<T> type, int initialCapacity, int maxCapacity) {
@@ -24,11 +23,19 @@ public class ReflectionPool<T> extends TypePool<T> {
         setConstructorOrError(type);
     }
 
+    /**
+     * Sets the constructor for the type of object in this pool to one found by ClassUtils
+     * @param type the type of object that this reflection pool stores
+     */
     private void setConstructorOrError(Class<T> type) {
         constructor = ClassUtils.findConstructor(type);
         if (constructor == null) throw new RuntimeException("Could not find no-arg constructor for type: " + type.getName());
     }
 
+    /**
+     * an internal method for creating objects within this class by type using a no-arg constructor
+     * @return a new object in this reflection pool
+     */
     @Override
     protected T createObject() {
         try {

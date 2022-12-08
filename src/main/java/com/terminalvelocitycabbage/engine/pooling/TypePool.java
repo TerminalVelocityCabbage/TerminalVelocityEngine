@@ -39,7 +39,7 @@ public abstract class TypePool<T> {
      * ...
      */
     public TypePool() {
-        this(16);
+        this(1);
     }
 
     /**
@@ -77,10 +77,11 @@ public abstract class TypePool<T> {
     }
 
     /**
-     * gets an object from this pool that is free
+     * gets an object from this pool that is free or creates a new object if there isn't one
      * @return a free object from freeObjects in this pool
      */
     public T obtain() {
+        if (freeObjects.size() == 0) return createObject();
         return freeObjects.remove(freeObjects.size() - 1);
     }
 

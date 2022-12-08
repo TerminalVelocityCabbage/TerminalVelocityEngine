@@ -12,14 +12,27 @@ import java.util.UUID;
  */
 public class Entity implements Poolable {
 
+    //The manager that manages this entity
+    private Manager manager;
     //The unique identifier of this entity
     private UUID uniqueID;
     //The container of components that defined this entity
     private Map<Class<?>, Component> components;
 
-    public Entity() {
+    /**
+     * Creates a new entity object, this should not be instantiated on its own but should rather be created with
+     * the {@link Manager#createEntity()} method so that the entity can interact with the manager's pools.
+     */
+    protected Entity() {
         components = new HashMap<>();
-        reset();
+        uniqueID = UUID.randomUUID();
+    }
+
+    /**
+     * @param manager the manager of this entity
+     */
+    public void setManager(Manager manager) {
+        this.manager = manager;
     }
 
     /**
@@ -59,6 +72,7 @@ public class Entity implements Poolable {
      * @param <T> Any class that implements {@link Component}
      */
     public <T extends Component> void removeComponent(Class<T> componentClass) {
+        manager.componentPool.free(getComponent(componentClass));
         components.remove(componentClass);
     }
 
@@ -66,6 +80,7 @@ public class Entity implements Poolable {
      * Removes all components from this entity
      */
     public void removeAllComponents() {
+        manager.componentPool.free(components);
         components.clear();
     }
 

@@ -1,6 +1,8 @@
 package com.terminalvelocitycabbage.engine.ecs;
 
 import com.terminalvelocitycabbage.engine.debug.Log;
+import com.terminalvelocitycabbage.engine.pooling.MultiPool;
+import com.terminalvelocitycabbage.engine.pooling.ReflectionPool;
 import com.terminalvelocitycabbage.engine.utils.ClassUtils;
 
 import javax.management.ReflectionException;
@@ -14,21 +16,25 @@ import java.util.*;
 public class Manager {
 
     //The list of created components that can be added to any entity
-    Set<Component> componentTypeSet; //TODO make this un-editable once the manager is done initializing as to
+    Set<Component> componentTypeSet;
+    //The pool of free components
+    MultiPool componentPool;
 
-    //The list of active entities in this manager
+    //The pool of free entities
+    ReflectionPool entityPool;
+    //The list of active entities
     List<Entity> activeEntities;
 
     //The list of systems that runs on this manager
     Map<Class<? extends System>, System> systems;
 
-    //TODO entity pool
-    //TODO component pool
-
     public Manager() {
         componentTypeSet = new HashSet<>();
         activeEntities = new ArrayList<>();
         systems = new HashMap<>();
+
+        componentPool = new MultiPool();
+        entityPool = new ReflectionPool(Entity.class, 0);
     }
 
     /**
@@ -39,6 +45,22 @@ public class Manager {
     public <T extends Component> void registerComponent(Class<T> componentType) {
         try {
             componentTypeSet.add(componentType.getDeclaredConstructor().newInstance());
+            componentPool.getPool(componentType, true);
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            Log.crash("Could not Create Component", new RuntimeException(e));
+        }
+    }
+
+    /**
+     * Adds a component to the componentTypeSet
+     * @param componentType the class of the component you wish to add to the pool
+     * @param initialPoolSize The number of empty component to fill this pool with
+     * @param <T> The type of the component, must extend {@link Component}
+     */
+    public <T extends Component> void registerComponent(Class<T> componentType, int initialPoolSize) {
+        try {
+            componentTypeSet.add(componentType.getDeclaredConstructor().newInstance());
+            componentPool.getPool(componentType, true, initialPoolSize);
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             Log.crash("Could not Create Component", new RuntimeException(e));
         }
@@ -51,10 +73,7 @@ public class Manager {
      * @return a component object from the componentTypeSet of the type requested.
      */
     public <T extends Component> T getComponent(Class<T> type) {
-        List<T> list = componentTypeSet.stream().filter(type::isInstance).map(component -> (T) component).toList();
-        if (list.size() > 1) Log.warn("Multiple components of same type exist in component collection");
-        if (list.size() == 1) return list.get(0); //TODO init the component with default values
-        return null;
+        return componentPool.obtain(type);
     }
 
     /**
@@ -63,9 +82,26 @@ public class Manager {
      * @return the newly created entity
      */
     public Entity createEntity() {
-        Entity entity = new Entity(); //TODO obtain from pool
+        Entity entity = (Entity)entityPool.obtain();
+        entity.setManager(this);
         activeEntities.add(entity);
         return entity;
+    }
+
+    /**
+     * Removes the entity from the active entity list and adds it back to the entity pool for later use
+     * @param entity The entity that is no longer in use
+     */
+    public void freeEntity(Entity entity) {
+        activeEntities.remove(entity);
+        entityPool.free(entity);
+    }
+
+    /**
+     * @return the list of active entities on this manager
+     */
+    public List<Entity> getEntities() {
+        return activeEntities;
     }
 
     /**
