@@ -264,4 +264,8 @@ public abstract class Renderer {
 			return polygonMode;
 		}
 	}
+
+	public void setVsync(boolean vsyncOn) {
+		window.setvSync(vsyncOn);
+	}
 }
