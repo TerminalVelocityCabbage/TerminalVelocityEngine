@@ -94,4 +94,15 @@ public class MultiPool {
     public void free(Object... objects) {
         Arrays.stream(objects).toList().forEach(this::free);
     }
+
+    /**
+     * Shrinks the specified pool of freeObjects down to the maxSize, unless it is already smaller than that.
+     *
+     * @param type The type for the pool you want to shrink
+     * @param maxSize the maximum size that the pool should be resized to
+     * @param <T> The type of object that the requested pool contains
+     */
+    public <T extends Poolable> void shrink(Class<T> type, int maxSize) {
+        getPool(type).shrink(maxSize);
+    }
 }

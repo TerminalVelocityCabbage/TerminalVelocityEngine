@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.lang.Math.min;
+
 /**
  * A pool of objects that can be re-used when needed
  * @param <T> The type that this pool stores
@@ -13,7 +15,7 @@ public abstract class TypePool<T extends Poolable> {
     //The max allowed objects in this pool
     public int maxObjects;
     //The current list of available free objects
-    private final List<T> freeObjects;
+    private List<T> freeObjects;
 
     /**
      * @param initialCapacity The number of objects wanted to be initialized in the freeObjects array
@@ -96,5 +98,14 @@ public abstract class TypePool<T extends Poolable> {
      */
     public void free(T... items) {
         Arrays.stream(items).forEach(this::free);
+    }
+
+    /**
+     * Shrinks the number fo free objects down to the specified size, if the number is less than specified
+     * nothing will happen.
+     * @param maxSize the maximum number of free elements in this list
+     */
+    public void shrink(int maxSize) {
+        freeObjects = new ArrayList<>(freeObjects.subList(0, min(freeObjects.size(), maxSize)));
     }
 }
