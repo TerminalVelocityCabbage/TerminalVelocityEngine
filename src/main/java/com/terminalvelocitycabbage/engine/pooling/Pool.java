@@ -1,89 +1,74 @@
 package com.terminalvelocitycabbage.engine.pooling;
 
-import java.util.ArrayList;
+import com.terminalvelocitycabbage.engine.debug.Log;
+import com.terminalvelocitycabbage.engine.utils.ClassUtils;
+
+import javax.management.ReflectionException;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * A pool of objects that can be re-used when needed
- * @param <T> The type that this pool stores
+ * Since {@link TypePool}s are of one type, this is a way to have a whole pool for multiple types of pool, allows you to
+ * search more than one pool at a time.
  */
-public abstract class Pool<T> {
+public class Pool {
 
-    //The max allowed objects in this pool
-    public int maxObjects;
-    //The current list of available free objects
-    private final List<T> freeObjects;
+    //The list of pools mapped by type
+    private final Map<Class, TypePool> pools = new HashMap<>();
 
-    /**
-     * @param initialCapacity The number of objects wanted to be initialized in the freeObjects array
-     * @param maxCapacity the maximum number of objects allowed in this pool
-     */
-    public Pool(int initialCapacity, int maxCapacity) {
-        this.freeObjects = new ArrayList<>();
-        maxObjects = maxCapacity;
-    }
-
-    /**
-     * Creates a new object to represent the type of item in this pool
-     * Needs to be implemented when this pool is created
-     * @return a new instance of the type of object that this pool contains
-     */
-    abstract protected T createObject();
-
-    /**
-     * Creates a number of free objects in the freeObjects pool
-     * @param quantity the number of objects to be created in this pool
-     */
-    public void fill(int quantity) {
-        for (int i = 0; i < quantity; i++) {
-            if (freeObjects.size() < maxObjects) {
-                freeObjects.add(createObject());
+    @SuppressWarnings("unchecked")
+    public <T extends TypePool> TypePool<T> getOrMakePool(Class<T> type) {
+        if (!pools.containsKey(type)) {
+            try {
+                set(type, ClassUtils.createInstance(type));
+            } catch (ReflectionException e) {
+                Log.crash("Could not create pool", new RuntimeException(e));
             }
         }
+        return getPool(type);
     }
 
     /**
-     * Resets a poolable item to its defaults so that it can be used right away when obtained from this pool
-     * @param item The item that is to be reset
+     * @param type the type of the pool requested
+     * @param <T> The type of the pool requested
+     * @return the pool of the given type requested
      */
-    public void reset(T item) {
-        if (item instanceof Poolable) ((Poolable)item).reset();
+    @SuppressWarnings("unchecked")
+    public <T> TypePool<T> getPool(Class<T> type) {
+       return pools.get(type);
     }
 
     /**
-     * Clears the object pool of al free objects
+     * @param type the type of the pool requested
+     * @param pool the pool you want to replace the current pool of type with
+     * @param <T> the type of the pool requested
      */
-    public void clear() {
-        freeObjects.clear();
+    public <T> void set(Class<T> type, TypePool<T> pool) {
+        pools.put(type, pool);
     }
 
     /**
-     * gets an object from this pool that is free
-     * @return a free object from freeObjects in this pool
+     * @param type the type of the pool requested
+     * @param <T> The type of the pool requested
+     * @return a free object in the pool of the type specified
      */
-    public T obtain() {
-        return freeObjects.remove(freeObjects.size() - 1);
+    public <T> T obtain(Class<T> type) {
+        return getPool(type).obtain();
     }
 
     /**
-     * frees the current item as not used
-     * resets the item, and adds it to the free objects pool
-     * @param item the item you wish to free
+     * @param object the object you wish to free from one of the pools in pools
      */
-    public void free(T item) {
-        if (item == null) return;
-        if (freeObjects.size() < maxObjects) {
-            reset(item);
-            freeObjects.add(item);
-        }
+    public void free(Object object) {
+        TypePool pool = pools.get(object.getClass());
+        pool.free(object);
     }
 
     /**
-     * frees the specified items for reuse in this pool
-     * @param items the items you wish to free
+     * @param objects the objects you with to free from one or many of the pools in pools
      */
-    public void free(T... items) {
-        Arrays.stream(items).forEach(this::free);
+    public void free(Object... objects) {
+        Arrays.stream(objects).toList().forEach(this::free);
     }
 }

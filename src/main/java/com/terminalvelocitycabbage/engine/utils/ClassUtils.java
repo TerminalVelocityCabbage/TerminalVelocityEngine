@@ -1,6 +1,7 @@
 package com.terminalvelocitycabbage.engine.utils;
 
 import javax.management.ReflectionException;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -22,6 +23,36 @@ public class ClassUtils {
 			return clazz.getDeclaredConstructor().newInstance();
 		} catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 			throw new ReflectionException(e, "Could not instantiate instance of class: " + clazz.getName());
+		}
+	}
+
+	public static Constructor getConstructor(Class clazz) throws ReflectionException {
+		try {
+			return clazz.getConstructor();
+		} catch (NoSuchMethodException e) {
+			throw new ReflectionException(e, "Could not fond constructor for class: " + clazz.getName());
+		}
+	}
+
+	public static Constructor getDeclaredConstructor(Class clazz) throws ReflectionException {
+		try {
+			return clazz.getDeclaredConstructor();
+		} catch (NoSuchMethodException e) {
+			throw new ReflectionException(e, "Could not fond constructor for class: " + clazz.getName());
+		}
+	}
+
+	public static Constructor findConstructor(Class clazz) {
+		try {
+			return getConstructor(clazz);
+		} catch (ReflectionException e) {
+			try {
+				Constructor constructor = getDeclaredConstructor(clazz);
+				constructor.setAccessible(true);
+				return constructor;
+			} catch (ReflectionException ex) {
+				return null;
+			}
 		}
 	}
 
