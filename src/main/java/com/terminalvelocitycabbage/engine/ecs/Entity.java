@@ -85,4 +85,11 @@ public class Entity implements Poolable {
         uniqueID = UUID.randomUUID();
         removeAllComponents();
     }
+
+    /**
+     * @return a boolean to represent whether this entity has any components
+     */
+    public boolean isEmpty() {
+        return components.size() == 0;
+    }
 }

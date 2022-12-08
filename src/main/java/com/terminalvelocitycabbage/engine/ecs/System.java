@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * A system that operates on any family of components.
  */
-public abstract class System {
+public abstract class System implements Comparable<System> {
 
     //The manager of this system
     private Manager manager;
@@ -14,15 +14,7 @@ public abstract class System {
     //Whether this system is currently processing
     private boolean processing;
 
-    /**
-     * Creates a system with the given priority. 0 is the highest priority
-     * @param manager the ecs manager that maintains the update cycle of this system
-     * @param priority the priority or order that this system takes in the pool of systems
-     */
-    public System(Manager manager, int priority) {
-        this.manager = manager;
-        this.priority = priority;
-    }
+    public System() { }
 
     /**
      * @return a list of entities that match the requirements of this entity
@@ -64,5 +56,14 @@ public abstract class System {
 
     public Manager getManager() {
         return manager;
+    }
+
+    public void setManager(Manager manager) {
+        this.manager = manager;
+    }
+
+    @Override
+    public int compareTo(System system) {
+        return this.priority - system.priority;
     }
 }
