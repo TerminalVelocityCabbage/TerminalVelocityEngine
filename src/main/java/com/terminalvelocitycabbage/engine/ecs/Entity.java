@@ -33,7 +33,7 @@ public class Entity implements Poolable {
     /**
      * @param manager the manager of this entity
      */
-    public void setManager(Manager manager) {
+    protected void setManager(Manager manager) {
         this.manager = manager;
     }
 
@@ -74,8 +74,7 @@ public class Entity implements Poolable {
      * @param <T> Any class that implements {@link Component}
      */
     public <T extends Component> void removeComponent(Class<T> componentClass) {
-        Component component = getComponent(componentClass);
-        component.setDefaults();
+        getComponent(componentClass).setDefaults();
         manager.componentPool.free(getComponent(componentClass));
         components.remove(componentClass);
     }

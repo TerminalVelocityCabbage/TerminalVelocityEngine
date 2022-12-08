@@ -16,7 +16,7 @@ public abstract class System implements Comparable<System> {
     //Whether this system is currently processing
     private boolean processing;
 
-    public System() { }
+    protected System() { }
 
     /**
      * @return a list of entities that match the requirements of this entity
@@ -60,7 +60,7 @@ public abstract class System implements Comparable<System> {
         return manager;
     }
 
-    public void setManager(Manager manager) {
+    protected void setManager(Manager manager) {
         this.manager = manager;
     }
 
