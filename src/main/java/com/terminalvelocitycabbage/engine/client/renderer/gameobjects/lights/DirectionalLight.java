@@ -6,7 +6,7 @@ import org.joml.Vector4f;
 
 public class DirectionalLight extends EmptyGameObject {
 
-	Vector3f direction;
+	Vector3f direction; //TODO replace with rotation component
 	Vector4f color;
 	float intensity;
 

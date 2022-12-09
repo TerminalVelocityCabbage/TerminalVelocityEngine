@@ -6,6 +6,7 @@ import com.terminalvelocitycabbage.engine.client.renderer.shader.ShaderHandler;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.CanvasHandler;
 import com.terminalvelocitycabbage.engine.debug.Log;
 import com.terminalvelocitycabbage.engine.debug.SystemInfo;
+import com.terminalvelocitycabbage.engine.ecs.Manager;
 import com.terminalvelocitycabbage.engine.utils.TickManager;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
@@ -44,10 +45,13 @@ public abstract class Renderer {
 	private static int polygonMode;
 	private int lastPolygonMode;
 
+	Manager manager;
+
 	public Renderer(int width, int height, String title, float tickRate, boolean debugMode) {
 		window = new Window(width, height, title, false, true, true);
 		this.debugMode = debugMode;
 		tickManager = new TickManager(tickRate);
+		manager = new Manager();
 	}
 
 	public void run() {
@@ -100,6 +104,8 @@ public abstract class Renderer {
 
 		setBeginMode(PolygonMode.FILL);
 		setDrawBufferMode(DrawBufferMode.FRONT_AND_BACK);
+
+		getManager().registerComponent(ClientRenderableComponent.class);
 	}
 
 	private void start() {
@@ -267,5 +273,13 @@ public abstract class Renderer {
 
 	public void setVsync(boolean vsyncOn) {
 		window.setvSync(vsyncOn);
+	}
+
+	public Manager getManager() {
+		return manager;
+	}
+
+	public ShaderHandler getShaderHandler() {
+		return shaderHandler;
 	}
 }

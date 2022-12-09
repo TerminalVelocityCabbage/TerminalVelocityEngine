@@ -37,12 +37,12 @@ public class Entity implements Poolable {
         this.manager = manager;
     }
 
-    public <T extends Component> void addComponent(Class<T> componentClass) {
+    public <T extends Component> T addComponent(Class<T> componentClass) {
         if (containsComponent(componentClass)) {
             Log.warn("Tried to add component " + componentClass.getName() + " to entity with id " + getID() + " which already contains it");
-            return;
         }
         components.put(componentClass, manager.obtainComponent(componentClass));
+        return getComponent(componentClass);
     }
 
     /**
@@ -83,6 +83,7 @@ public class Entity implements Poolable {
      * Removes all components from this entity
      */
     public void removeAllComponents() {
+        //if (manager != null)
         manager.componentPool.free(components);
         components.clear();
     }
@@ -108,6 +109,5 @@ public class Entity implements Poolable {
     @Override
     public void setDefaults() {
         uniqueID = UUID.randomUUID();
-        removeAllComponents();
     }
 }

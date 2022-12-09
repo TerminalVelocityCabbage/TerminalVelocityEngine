@@ -93,6 +93,7 @@ public class Manager {
      * @param entity The entity that is no longer in use
      */
     public void freeEntity(Entity entity) {
+        entity.removeAllComponents();
         activeEntities.remove(entity);
         entityPool.free(entity);
     }
@@ -111,6 +112,15 @@ public class Manager {
      */
     public List<Entity> getMatchingEntities(ComponentFilter filter) {
         return filter.filter(activeEntities);
+    }
+
+    /**
+     * Gets all entities that match the provided filter
+     * @param filter the filter for which you want to get matching entities
+     * @return a List of entities that match the filter provided
+     */
+    public Entity getFirstMatchingEntity(ComponentFilter filter) {
+        return filter.filter(activeEntities).get(0);
     }
 
     /**
@@ -161,7 +171,11 @@ public class Manager {
      * updates all {@link System}s in this manager in order of their priority
      * @param deltaTime the amount of time in milliseconds that has passed since the last update
      */
-    public void update(float deltaTime) {
-        systems.values().stream().sorted(System::compareTo).forEach(system -> system.update(deltaTime));
+    @SafeVarargs
+    public final void update(float deltaTime, Class<? extends System>... system) {
+        systems.values().stream()
+                .filter(system1 -> Arrays.stream(system).toList().contains(system1.getClass()))
+                .sorted(System::compareTo)
+                .forEach(system2 -> system2.update(deltaTime));
     }
 }

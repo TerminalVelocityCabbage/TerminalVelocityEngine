@@ -1,7 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.renderer.model.loader;
 
 import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
-import com.terminalvelocitycabbage.engine.client.renderer.model.AnimatedModel;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
 import com.terminalvelocitycabbage.templates.gameobjects.shapes.CuboidShape;
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
@@ -90,7 +89,7 @@ public class AnimatedModelLoader {
 		}
 	}
 
-	public static AnimatedModel load(ResourceManager resourceManager, Identifier model) {
+	public static Model load(ResourceManager resourceManager, Identifier model) {
 		return resourceManager.getResource(model)
 				.map(resource -> {
 					try {
@@ -108,7 +107,7 @@ public class AnimatedModelLoader {
 						return null;
 					}
 				})
-				.map(AnimatedModel::new)
+				.map(Model::new)
 				.orElseThrow();
 	}
 }
