@@ -178,4 +178,8 @@ public class Model {
 	public Material getMaterial() {
 		return this.mesh.getMaterial();
 	}
+
+	public Matrix4f getTransformationMatrix() {
+		return transformationMatrix;
+	}
 }

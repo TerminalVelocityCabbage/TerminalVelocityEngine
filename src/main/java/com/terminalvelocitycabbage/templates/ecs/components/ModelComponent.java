@@ -23,6 +23,11 @@ public class ModelComponent implements Component {
         this.model = model;
     }
 
+    public void replaceModel(Model model) {
+        this.model.destroy();
+        this.model = model;
+    }
+
     public Model getModel() {
         return model;
     }

@@ -16,5 +16,4 @@ public class LineEntity extends Entity {
         addComponent(ModelComponent.class).setModel(new LineModel(start, end, thickness));
         addComponent(MaterialComponent.class).setMaterial(Material.builder().color(color.x, color.y, color.z, color.w).build());
     }
-
 }

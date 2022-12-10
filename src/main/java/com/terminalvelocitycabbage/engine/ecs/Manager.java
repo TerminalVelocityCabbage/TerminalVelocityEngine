@@ -89,6 +89,19 @@ public class Manager {
     }
 
     /**
+     * creates a new entity and adds it to the active entities list for modification later
+     *
+     * @return the newly created entity
+     */
+    public Entity createEntity(Entity template) {
+        Entity entity = (Entity)entityPool.obtain();
+        entity.setManager(this);
+        entity.copyFrom(template);
+        activeEntities.add(entity);
+        return entity;
+    }
+
+    /**
      * Removes the entity from the active entity list and adds it back to the entity pool for later use
      * @param entity The entity that is no longer in use
      */

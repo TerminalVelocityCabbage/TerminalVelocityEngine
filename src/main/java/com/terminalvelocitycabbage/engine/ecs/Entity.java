@@ -2,6 +2,7 @@ package com.terminalvelocitycabbage.engine.ecs;
 
 import com.terminalvelocitycabbage.engine.debug.Log;
 import com.terminalvelocitycabbage.engine.pooling.Poolable;
+import com.terminalvelocitycabbage.engine.utils.FieldMapper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,6 +44,26 @@ public class Entity implements Poolable {
         }
         components.put(componentClass, manager.obtainComponent(componentClass));
         return getComponent(componentClass);
+    }
+
+    protected void copyFrom(Entity entity) {
+        for (Component component : entity.components.values()) {
+            this.addConfiguredComponent(component);
+        }
+    }
+
+    private void addConfiguredComponent(Component component) {
+        Class<? extends Component> componentClass = component.getClass();
+        if (containsComponent(componentClass)) {
+            Log.warn("Tried to add component " + componentClass.getName() + " to entity with id " + getID() + " which already contains it");
+        }
+        Component obtained = manager.obtainComponent(componentClass);
+        try {
+            FieldMapper.copy(component, obtained);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        components.put(componentClass, obtained);
     }
 
     /**
