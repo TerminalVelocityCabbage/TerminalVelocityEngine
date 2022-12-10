@@ -170,11 +170,15 @@ public class Manager {
     /**
      * updates all {@link System}s in this manager in order of their priority
      * @param deltaTime the amount of time in milliseconds that has passed since the last update
+     * @param systems the list of systems you wish to update with this call. Some systems need to update every frame
+     *               others only every tick, so this allows you to only update the systems when they need to be updated,
+     *               no need to update all systems at once.
      */
     @SafeVarargs
-    public final void update(float deltaTime, Class<? extends System>... system) {
-        systems.values().stream()
-                .filter(system1 -> Arrays.stream(system).toList().contains(system1.getClass()))
+    public final void update(float deltaTime, Class<? extends System>... systems) {
+        if (systems.length < 1) Log.warn("Tried to update 0 systems with update call, specify systems you want to update");
+        this.systems.values().stream()
+                .filter(system1 -> Arrays.stream(systems).toList().contains(system1.getClass()))
                 .sorted(System::compareTo)
                 .forEach(system2 -> system2.update(deltaTime));
     }

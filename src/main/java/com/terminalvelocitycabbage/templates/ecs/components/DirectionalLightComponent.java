@@ -1,6 +1,6 @@
 package com.terminalvelocitycabbage.templates.ecs.components;
 
-import com.terminalvelocitycabbage.engine.client.renderer.gameobjects.lights.DirectionalLight;
+import com.terminalvelocitycabbage.engine.client.renderer.lights.DirectionalLight;
 import com.terminalvelocitycabbage.engine.ecs.Component;
 
 public class DirectionalLightComponent implements Component {

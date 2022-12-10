@@ -6,11 +6,9 @@ import com.terminalvelocitycabbage.engine.client.renderer.model.Material;
 import com.terminalvelocitycabbage.engine.client.renderer.model.MeshPart;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
-import com.terminalvelocitycabbage.templates.gameobjects.BoxLine;
 import org.joml.Math;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-import org.joml.Vector4f;
 
 import java.util.*;
 import java.util.function.Function;
@@ -27,7 +25,7 @@ public class Chunk {
     private final float[][][] data = new float[VOXELS_PER_CHUNK_AXIS+3][VOXELS_PER_CHUNK_AXIS+3][VOXELS_PER_CHUNK_AXIS+3];
 
     private final Model chunkModel;
-    private final BoxLine boundary;
+    //private final BoxLine boundary;
 
     private final ColourGetter colourGetter;
     private boolean generated;
@@ -43,7 +41,7 @@ public class Chunk {
         this.chunkModel.setMaterial(Material.builder().build());
         this.chunkModel.bind();
 
-        this.boundary = new BoxLine(new Vector3f(x * SIZE_PER_CHUNK, y * SIZE_PER_CHUNK, z * SIZE_PER_CHUNK), SIZE_PER_CHUNK, SIZE_PER_CHUNK, SIZE_PER_CHUNK, new Vector4f(1, 0, 0, 1));
+        //this.boundary = new BoxLine(new Vector3f(x * SIZE_PER_CHUNK, y * SIZE_PER_CHUNK, z * SIZE_PER_CHUNK), SIZE_PER_CHUNK, SIZE_PER_CHUNK, SIZE_PER_CHUNK, new Vector4f(1, 0, 0, 1));
 
         this.generated = false;
     }
@@ -73,8 +71,8 @@ public class Chunk {
         this.chunkModel.resizeBuffer();                         //Has gl calls
         this.chunkModel.onPartsChange();
         this.chunkModel.update(new Vector3f(this.chunkX, this.chunkY, this.chunkZ).mul(SIZE_PER_CHUNK), new Quaternionf(), new Vector3f(1));
-        boundary.bind();                                        //Has gl calls
-        boundary.queueAndUpdate();
+        //boundary.bind();                                        //Has gl calls
+        //boundary.queueAndUpdate();
         this.generated = true;
     }
 
@@ -88,9 +86,11 @@ public class Chunk {
         }
     }
 
+    /*
     public BoxLine getBoundary() {
         return boundary;
     }
+     */
 
     public void destroy() {
         this.chunkModel.destroy();

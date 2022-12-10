@@ -104,8 +104,6 @@ public abstract class Renderer {
 
 		setBeginMode(PolygonMode.FILL);
 		setDrawBufferMode(DrawBufferMode.FRONT_AND_BACK);
-
-		getManager().registerComponent(ClientRenderableComponent.class);
 	}
 
 	private void start() {
