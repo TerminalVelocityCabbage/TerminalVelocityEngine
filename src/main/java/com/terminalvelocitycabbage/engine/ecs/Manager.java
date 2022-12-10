@@ -137,6 +137,15 @@ public class Manager {
     }
 
     /**
+     * Gets all entities that match the provided filter
+     * @param filter the filter for which you want to get matching entities
+     * @return a List of entities that match the filter provided
+     */
+    public <T extends Component> T getComponentOfFirstMatchingEntity(Class<T> componentClass) {
+        return getFirstMatchingEntity(ComponentFilter.builder().oneOf(componentClass).build()).getComponent(componentClass);
+    }
+
+    /**
      * Gets the entity in this Manager with the specified ID if it exists
      *
      * @param id the UUID of this entity (you can use UUID.fromString() to get this if you only have a string)

@@ -33,9 +33,9 @@ public abstract class Renderer {
 
 	private final TickManager tickManager;
 
-	public final ShaderHandler shaderHandler = new ShaderHandler();
-	public final SceneHandler sceneHandler = new SceneHandler();
-	public final CanvasHandler canvasHandler = new CanvasHandler();
+	private final ShaderHandler shaderHandler = new ShaderHandler();
+	private final SceneHandler sceneHandler = new SceneHandler();
+	private final CanvasHandler canvasHandler = new CanvasHandler();
 
 	private boolean debugMode;
 	private static Callback debugCallback;
@@ -279,5 +279,9 @@ public abstract class Renderer {
 
 	public ShaderHandler getShaderHandler() {
 		return shaderHandler;
+	}
+
+	public CanvasHandler getCanvasHandler() {
+		return canvasHandler;
 	}
 }
