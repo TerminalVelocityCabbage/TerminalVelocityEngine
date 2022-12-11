@@ -73,6 +73,7 @@ public class Manager {
      * @return a component object from the componentTypeSet of the type requested.
      */
     public <T extends Component> T obtainComponent(Class<T> type) {
+        if (!componentPool.hasType(type)) Log.crash("Could not retrieve pool of type " + type.getName() + " has this pool been added?", new RuntimeException("No pool exists of type " + type.getName()));
         return componentPool.obtain(type);
     }
 

@@ -31,6 +31,11 @@ public class Entity implements Poolable {
         uniqueID = UUID.randomUUID();
     }
 
+    protected Entity(Manager manager) {
+        this();
+        setManager(manager);
+    }
+
     /**
      * @param manager the manager of this entity
      */
@@ -73,7 +78,10 @@ public class Entity implements Poolable {
      */
     @SuppressWarnings("unchecked")
     public <T extends Component> T getComponent(Class<T> componentClass) {
-        if (!containsComponent(componentClass)) return null;
+        if (!containsComponent(componentClass)) {
+            Log.warn("Entity does not contain component " + componentClass.getName() + " but it was attempted to be retrieved.");
+            return null;
+        }
         return (T) components.get(componentClass);
     }
 

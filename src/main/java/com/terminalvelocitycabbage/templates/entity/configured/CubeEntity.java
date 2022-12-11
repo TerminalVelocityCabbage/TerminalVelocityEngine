@@ -5,6 +5,7 @@ import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderMode;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Material;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
 import com.terminalvelocitycabbage.engine.ecs.Entity;
+import com.terminalvelocitycabbage.engine.ecs.Manager;
 import com.terminalvelocitycabbage.templates.ecs.components.*;
 import com.terminalvelocitycabbage.templates.entity.models.CuboidModel;
 import org.joml.Vector3f;
@@ -12,7 +13,8 @@ import org.joml.Vector4f;
 
 public class CubeEntity extends Entity {
 
-    public CubeEntity(Vector3f location, Vector4f color, Vector3f size) {
+    public CubeEntity(Manager manager, Vector3f location, Vector4f color, Vector3f size) {
+        super(manager);
         addComponent(PositionComponent.class).setPosition(location);
         addComponent(RotationComponent.class);
         addComponent(ScaleComponent.class).setScale(size);

@@ -105,4 +105,8 @@ public class MultiPool {
     public <T extends Poolable> void shrink(Class<T> type, int maxSize) {
         getPool(type).shrink(maxSize);
     }
+
+    public <T extends Poolable> boolean hasType(Class<T> type) {
+        return pools.containsKey(type);
+    }
 }
