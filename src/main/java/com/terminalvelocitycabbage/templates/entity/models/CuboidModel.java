@@ -1,10 +1,10 @@
-package com.terminalvelocitycabbage.templates.gameobjects.models;
+package com.terminalvelocitycabbage.templates.entity.models;
 
 import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderMode;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
-import com.terminalvelocitycabbage.templates.gameobjects.shapes.CuboidShape;
+import com.terminalvelocitycabbage.templates.entity.shapes.CuboidShape;
 
 import java.util.Collections;
 

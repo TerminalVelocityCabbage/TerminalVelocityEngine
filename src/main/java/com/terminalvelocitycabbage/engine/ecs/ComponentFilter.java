@@ -152,6 +152,18 @@ public class ComponentFilter {
          * Adds the specified components to the required components list, when used to filter any entities which do not
          * contain ALL of the specified components will not be added to the filtered list
          *
+         * @param requiredComponent the component that must exist to match
+         * @return the current builder
+         */
+        public Builder oneOf(Class<? extends Component> requiredComponent) {
+            this.requiredAllOfComponents.add(requiredComponent);
+            return this;
+        }
+
+        /**
+         * Adds the specified components to the required components list, when used to filter any entities which do not
+         * contain ALL of the specified components will not be added to the filtered list
+         *
          * @param requiredComponents the components that must all exist to match
          * @return the current builder
          */

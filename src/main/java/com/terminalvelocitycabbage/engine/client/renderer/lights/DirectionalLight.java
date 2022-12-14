@@ -1,12 +1,11 @@
-package com.terminalvelocitycabbage.engine.client.renderer.gameobjects.lights;
+package com.terminalvelocitycabbage.engine.client.renderer.lights;
 
-import com.terminalvelocitycabbage.engine.client.renderer.gameobjects.EmptyGameObject;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
-public class DirectionalLight extends EmptyGameObject {
+public class DirectionalLight {
 
-	Vector3f direction;
+	Vector3f direction; //TODO replace with rotation component
 	Vector4f color;
 	float intensity;
 
@@ -23,16 +22,6 @@ public class DirectionalLight extends EmptyGameObject {
 	public DirectionalLight setDirection(Vector3f direction) {
 		this.direction = direction;
 		return this;
-	}
-
-	@Override
-	public DirectionalLight rotate(float x, float y, float z) {
-		this.direction.add(x, y, z);
-		return this;
-	}
-
-	@Override
-	public void update() {
 	}
 
 	public Vector4f getColor() {

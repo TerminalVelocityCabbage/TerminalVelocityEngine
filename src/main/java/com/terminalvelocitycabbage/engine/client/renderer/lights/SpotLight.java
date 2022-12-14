@@ -1,13 +1,13 @@
-package com.terminalvelocitycabbage.engine.client.renderer.gameobjects.lights;
+package com.terminalvelocitycabbage.engine.client.renderer.lights;
 
-import com.terminalvelocitycabbage.engine.client.renderer.gameobjects.EmptyGameObject;
 import com.terminalvelocitycabbage.engine.debug.Log;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
-public class SpotLight extends EmptyGameObject {
+public class SpotLight {
 
+	private Vector3f position;
 	private Vector3f coneDirection;
 	private float cutoff;
 	private Vector4f color;
@@ -51,10 +51,8 @@ public class SpotLight extends EmptyGameObject {
 		return position;
 	}
 
-	@Override
-	public SpotLight setPosition(Vector3f position) {
+	public void setPosition(Vector3f position) {
 		this.position = position;
-		return this;
 	}
 
 	public Vector4f getColor() {
@@ -84,10 +82,5 @@ public class SpotLight extends EmptyGameObject {
 
 	public void setAttenuation(Attenuation attenuation) {
 		this.attenuation = attenuation;
-	}
-
-	@Override
-	public void update() {
-
 	}
 }

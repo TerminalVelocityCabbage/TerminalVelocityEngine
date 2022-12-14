@@ -2,6 +2,7 @@ package com.terminalvelocitycabbage.engine.ecs;
 
 import com.terminalvelocitycabbage.engine.debug.Log;
 import com.terminalvelocitycabbage.engine.pooling.Poolable;
+import com.terminalvelocitycabbage.engine.utils.FieldMapper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,6 +31,11 @@ public class Entity implements Poolable {
         uniqueID = UUID.randomUUID();
     }
 
+    protected Entity(Manager manager) {
+        this();
+        setManager(manager);
+    }
+
     /**
      * @param manager the manager of this entity
      */
@@ -37,12 +43,32 @@ public class Entity implements Poolable {
         this.manager = manager;
     }
 
-    public <T extends Component> void addComponent(Class<T> componentClass) {
+    public <T extends Component> T addComponent(Class<T> componentClass) {
         if (containsComponent(componentClass)) {
             Log.warn("Tried to add component " + componentClass.getName() + " to entity with id " + getID() + " which already contains it");
-            return;
         }
         components.put(componentClass, manager.obtainComponent(componentClass));
+        return getComponent(componentClass);
+    }
+
+    protected void copyFrom(Entity entity) {
+        for (Component component : entity.components.values()) {
+            this.addConfiguredComponent(component);
+        }
+    }
+
+    private void addConfiguredComponent(Component component) {
+        Class<? extends Component> componentClass = component.getClass();
+        if (containsComponent(componentClass)) {
+            Log.warn("Tried to add component " + componentClass.getName() + " to entity with id " + getID() + " which already contains it");
+        }
+        Component obtained = manager.obtainComponent(componentClass);
+        try {
+            FieldMapper.copy(component, obtained);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        components.put(componentClass, obtained);
     }
 
     /**
@@ -52,7 +78,10 @@ public class Entity implements Poolable {
      */
     @SuppressWarnings("unchecked")
     public <T extends Component> T getComponent(Class<T> componentClass) {
-        if (!containsComponent(componentClass)) return null;
+        if (!containsComponent(componentClass)) {
+            Log.warn("Entity does not contain component " + componentClass.getName() + " but it was attempted to be retrieved.");
+            return null;
+        }
         return (T) components.get(componentClass);
     }
 
@@ -83,6 +112,7 @@ public class Entity implements Poolable {
      * Removes all components from this entity
      */
     public void removeAllComponents() {
+        //if (manager != null)
         manager.componentPool.free(components);
         components.clear();
     }
@@ -108,6 +138,5 @@ public class Entity implements Poolable {
     @Override
     public void setDefaults() {
         uniqueID = UUID.randomUUID();
-        removeAllComponents();
     }
 }

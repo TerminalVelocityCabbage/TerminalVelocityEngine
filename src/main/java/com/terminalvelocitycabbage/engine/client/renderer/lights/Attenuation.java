@@ -1,4 +1,4 @@
-package com.terminalvelocitycabbage.engine.client.renderer.gameobjects.lights;
+package com.terminalvelocitycabbage.engine.client.renderer.lights;
 
 public class Attenuation {
 

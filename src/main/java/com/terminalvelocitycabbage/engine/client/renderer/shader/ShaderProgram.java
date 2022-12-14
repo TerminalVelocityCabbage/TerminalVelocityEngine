@@ -1,9 +1,9 @@
 package com.terminalvelocitycabbage.engine.client.renderer.shader;
 
-import com.terminalvelocitycabbage.engine.client.renderer.gameobjects.lights.DirectionalLight;
-import com.terminalvelocitycabbage.engine.client.renderer.gameobjects.lights.PointLight;
-import com.terminalvelocitycabbage.engine.client.renderer.gameobjects.lights.SpotLight;
-import com.terminalvelocitycabbage.engine.client.renderer.gameobjects.lights.Attenuation;
+import com.terminalvelocitycabbage.engine.client.renderer.lights.DirectionalLight;
+import com.terminalvelocitycabbage.engine.client.renderer.lights.PointLight;
+import com.terminalvelocitycabbage.engine.client.renderer.lights.SpotLight;
+import com.terminalvelocitycabbage.engine.client.renderer.lights.Attenuation;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Material;
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;

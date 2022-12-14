@@ -39,7 +39,9 @@ public class ReflectionPool<T extends Poolable> extends TypePool<T> {
     @Override
     protected T createObject() {
         try {
-            return (T) constructor.newInstance((Object[])null);
+            T object = (T) constructor.newInstance((Object[])null);
+            object.setDefaults();
+            return object;
         } catch (Exception e) {
             throw new RuntimeException("Could not create instance of: " + constructor.getDeclaringClass().getName(), e);
         }

@@ -73,6 +73,7 @@ public class Manager {
      * @return a component object from the componentTypeSet of the type requested.
      */
     public <T extends Component> T obtainComponent(Class<T> type) {
+        if (!componentPool.hasType(type)) Log.crash("Could not retrieve pool of type " + type.getName() + " has this pool been added?", new RuntimeException("No pool exists of type " + type.getName()));
         return componentPool.obtain(type);
     }
 
@@ -89,10 +90,24 @@ public class Manager {
     }
 
     /**
+     * creates a new entity and adds it to the active entities list for modification later
+     *
+     * @return the newly created entity
+     */
+    public Entity createEntity(Entity template) {
+        Entity entity = (Entity)entityPool.obtain();
+        entity.setManager(this);
+        entity.copyFrom(template);
+        activeEntities.add(entity);
+        return entity;
+    }
+
+    /**
      * Removes the entity from the active entity list and adds it back to the entity pool for later use
      * @param entity The entity that is no longer in use
      */
     public void freeEntity(Entity entity) {
+        entity.removeAllComponents();
         activeEntities.remove(entity);
         entityPool.free(entity);
     }
@@ -111,6 +126,24 @@ public class Manager {
      */
     public List<Entity> getMatchingEntities(ComponentFilter filter) {
         return filter.filter(activeEntities);
+    }
+
+    /**
+     * Gets all entities that match the provided filter
+     * @param filter the filter for which you want to get matching entities
+     * @return a List of entities that match the filter provided
+     */
+    public Entity getFirstMatchingEntity(ComponentFilter filter) {
+        return filter.filter(activeEntities).get(0);
+    }
+
+    /**
+     * Gets all entities that match the provided filter
+     * @param filter the filter for which you want to get matching entities
+     * @return a List of entities that match the filter provided
+     */
+    public <T extends Component> T getComponentOfFirstMatchingEntity(Class<T> componentClass) {
+        return getFirstMatchingEntity(ComponentFilter.builder().oneOf(componentClass).build()).getComponent(componentClass);
     }
 
     /**
@@ -160,8 +193,16 @@ public class Manager {
     /**
      * updates all {@link System}s in this manager in order of their priority
      * @param deltaTime the amount of time in milliseconds that has passed since the last update
+     * @param systems the list of systems you wish to update with this call. Some systems need to update every frame
+     *               others only every tick, so this allows you to only update the systems when they need to be updated,
+     *               no need to update all systems at once.
      */
-    public void update(float deltaTime) {
-        systems.values().stream().sorted(System::compareTo).forEach(system -> system.update(deltaTime));
+    @SafeVarargs
+    public final void update(float deltaTime, Class<? extends System>... systems) {
+        if (systems.length < 1) Log.warn("Tried to update 0 systems with update call, specify systems you want to update");
+        this.systems.values().stream()
+                .filter(system1 -> Arrays.stream(systems).toList().contains(system1.getClass()))
+                .sorted(System::compareTo)
+                .forEach(system2 -> system2.update(deltaTime));
     }
 }

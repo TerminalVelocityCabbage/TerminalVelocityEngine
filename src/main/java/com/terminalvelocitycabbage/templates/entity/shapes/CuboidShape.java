@@ -1,4 +1,4 @@
-package com.terminalvelocitycabbage.templates.gameobjects.shapes;
+package com.terminalvelocitycabbage.templates.entity.shapes;
 
 import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
 import com.terminalvelocitycabbage.engine.client.renderer.model.MeshPart;

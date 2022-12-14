@@ -2,6 +2,8 @@ package com.terminalvelocitycabbage.engine.client.renderer.model;
 
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderMode;
+import com.terminalvelocitycabbage.engine.client.renderer.model.loader.AnimatedModelLoader;
+import net.dumbcode.studio.model.ModelInfo;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -10,6 +12,7 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * The Model class is only a container for a list of model parts
@@ -22,6 +25,10 @@ public class Model {
 	public Mesh mesh;
 	//To avoid creating a new one every part render call
 	Matrix4f transformationMatrix;
+
+	public Model(ModelInfo model) {
+		this(RenderFormat.POSITION_UV_NORMAL, new RenderMode(RenderMode.Modes.TRIANGLES), model.getRoots().stream().map(AnimatedModelLoader.Part::createPart).collect(Collectors.toList()));
+	}
 
 	public Model(RenderFormat format, RenderMode mode, List<Model.Part> modelParts) {
 		this.modelParts = modelParts;
@@ -170,5 +177,9 @@ public class Model {
 
 	public Material getMaterial() {
 		return this.mesh.getMaterial();
+	}
+
+	public Matrix4f getTransformationMatrix() {
+		return transformationMatrix;
 	}
 }

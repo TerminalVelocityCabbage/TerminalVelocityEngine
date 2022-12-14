@@ -1,39 +1,40 @@
-package com.terminalvelocitycabbage.engine.client.renderer.model;
+package com.terminalvelocitycabbage.templates.ecs.components;
 
-import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
-import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderMode;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
 import com.terminalvelocitycabbage.engine.client.renderer.model.loader.AnimatedModelLoader;
 import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
 import com.terminalvelocitycabbage.engine.debug.Log;
+import com.terminalvelocitycabbage.engine.ecs.Component;
+import com.terminalvelocitycabbage.engine.ecs.Entity;
 import net.dumbcode.studio.animation.info.AnimationEntryData;
 import net.dumbcode.studio.animation.info.AnimationInfo;
 import net.dumbcode.studio.animation.info.AnimationLoader;
 import net.dumbcode.studio.animation.instance.ModelAnimationHandler;
-import net.dumbcode.studio.model.ModelInfo;
 
 import java.io.IOException;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
-public class AnimatedModel extends Model {
+public class AnimatedComponent implements Component {
 
-    public Map<String, AnimationInfo> animations;
-    public final ModelAnimationHandler handler;
+    private Map<String, AnimationInfo> animations;
+    private ModelAnimationHandler handler;
     private Map<String, UUID> activeAnimations;
     private ArrayList<AnimatedModelLoader.Part> parts;
 
-    public AnimatedModel(ModelInfo model) {
-        super(RenderFormat.POSITION_UV_NORMAL, new RenderMode(RenderMode.Modes.TRIANGLES), model.getRoots().stream().map(AnimatedModelLoader.Part::createPart).collect(Collectors.toList()));
+    @Override
+    public void setDefaults() {
+        animations = new HashMap<>();
+        activeAnimations = new HashMap<>();
+        parts = new ArrayList<>();
+        handler = new ModelAnimationHandler(); //setSrc need to be called on this with the model as the source.
+    }
 
-        this.animations = new HashMap<>();
-        this.activeAnimations = new HashMap<>();
-
-        this.parts = new ArrayList<>();
-        recursiveOnPart(modelParts, parts::add);
-        this.handler = new ModelAnimationHandler(model.getOrder());
+    public AnimatedComponent initWithModel(Model model, Entity source) {
+        recursiveOnPart(model.modelParts, parts::add);
+        handler.setSrc(source); //TODO verify that this doesn't really matter what the source is
+        return this;
     }
 
     public <T extends Model.Part>void recursiveOnPart(List<T> modelParts, Consumer<AnimatedModelLoader.Part> consumer) {
@@ -63,11 +64,10 @@ public class AnimatedModel extends Model {
         }
     }
 
-    public AnimationInfo addAnimation(String name, ResourceManager resourceManager, Identifier identifier) {
+    public AnimatedComponent addAnimation(String name, ResourceManager resourceManager, Identifier identifier) {
         try {
-            AnimationInfo info = AnimationLoader.loadAnimation(resourceManager.getResource(identifier).orElseThrow().openStream());
-            animations.put(name, info);
-            return info;
+            animations.put(name, AnimationLoader.loadAnimation(resourceManager.getResource(identifier).orElseThrow().openStream()));
+            return this;
         } catch (IOException e) {
             Log.crash("Animation Error", new RuntimeException("Animation not found " + name, e));
         }

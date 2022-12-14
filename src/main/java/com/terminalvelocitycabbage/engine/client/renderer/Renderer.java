@@ -6,6 +6,7 @@ import com.terminalvelocitycabbage.engine.client.renderer.shader.ShaderHandler;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.CanvasHandler;
 import com.terminalvelocitycabbage.engine.debug.Log;
 import com.terminalvelocitycabbage.engine.debug.SystemInfo;
+import com.terminalvelocitycabbage.engine.ecs.Manager;
 import com.terminalvelocitycabbage.engine.utils.TickManager;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
@@ -32,9 +33,9 @@ public abstract class Renderer {
 
 	private final TickManager tickManager;
 
-	public final ShaderHandler shaderHandler = new ShaderHandler();
-	public final SceneHandler sceneHandler = new SceneHandler();
-	public final CanvasHandler canvasHandler = new CanvasHandler();
+	private final ShaderHandler shaderHandler = new ShaderHandler();
+	private final SceneHandler sceneHandler = new SceneHandler();
+	private final CanvasHandler canvasHandler = new CanvasHandler();
 
 	private boolean debugMode;
 	private static Callback debugCallback;
@@ -44,10 +45,13 @@ public abstract class Renderer {
 	private static int polygonMode;
 	private int lastPolygonMode;
 
+	Manager manager;
+
 	public Renderer(int width, int height, String title, float tickRate, boolean debugMode) {
 		window = new Window(width, height, title, false, true, true);
 		this.debugMode = debugMode;
 		tickManager = new TickManager(tickRate);
+		manager = new Manager();
 	}
 
 	public void run() {
@@ -267,5 +271,17 @@ public abstract class Renderer {
 
 	public void setVsync(boolean vsyncOn) {
 		window.setvSync(vsyncOn);
+	}
+
+	public Manager getManager() {
+		return manager;
+	}
+
+	public ShaderHandler getShaderHandler() {
+		return shaderHandler;
+	}
+
+	public CanvasHandler getCanvasHandler() {
+		return canvasHandler;
 	}
 }
