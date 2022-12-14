@@ -205,4 +205,16 @@ public abstract class InputHandler {
 	public int getDeltaScrollHorizontal() {
 		return deltaScrollVector.x;
 	}
+
+	public boolean isKeyPressed(KeyBind keyBind) {
+		return glfwGetKey(window, keyBind.keyCode()) == GLFW_PRESS;
+	}
+
+	public boolean isKeyReleased(KeyBind keyBind) {
+		return glfwGetKey(window, keyBind.keyCode()) == GLFW_RELEASE;
+	}
+
+	public boolean isKeyRepeated(KeyBind keyBind) {
+		return glfwGetKey(window, keyBind.keyCode()) == GLFW_REPEAT;
+	}
 }

@@ -1,4 +1,4 @@
-package com.terminalvelocitycabbage.templates.camera.firstperson.firstperson;
+package com.terminalvelocitycabbage.templates.camera.firstperson;
 
 import com.terminalvelocitycabbage.engine.client.input.InputHandler;
 import com.terminalvelocitycabbage.engine.client.input.KeyBind;
@@ -19,12 +19,12 @@ public class FirstPersonInputHandler extends InputHandler {
     @Override
     public void init(Window window) {
         super.init(window);
-        FORWARD = new KeyBind(GLFW_KEY_W);
-        BACKWARDS = new KeyBind(GLFW_KEY_S);
-        LEFT = new KeyBind(GLFW_KEY_A);
-        RIGHT = new KeyBind(GLFW_KEY_D);
-        UP = new KeyBind(GLFW_KEY_SPACE);
-        DOWN = new KeyBind(GLFW_KEY_LEFT_SHIFT);
+        FORWARD = KeyBind.builder().key(GLFW_KEY_W).build();
+        BACKWARDS = KeyBind.builder().key(GLFW_KEY_S).build();
+        LEFT = KeyBind.builder().key(GLFW_KEY_A).build();
+        RIGHT = KeyBind.builder().key(GLFW_KEY_D).build();
+        UP = KeyBind.builder().key(GLFW_KEY_SPACE).build();
+        DOWN = KeyBind.builder().key(GLFW_KEY_LEFT_SHIFT).build();
     }
 
     @Override

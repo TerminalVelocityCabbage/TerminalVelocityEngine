@@ -1,82 +1,134 @@
 package com.terminalvelocitycabbage.engine.client.input;
 
 import com.terminalvelocitycabbage.engine.client.renderer.Renderer;
+import org.lwjgl.system.CallbackI;
+
+import java.util.Arrays;
 
 import static org.lwjgl.glfw.GLFW.*;
 
 public record KeyBind(long window, int keyCode, int scancode, int action, int modifiers) {
 
+    /**
+     * Manually creates a keybind for comparison later, this constructor is intended for Engine use only and should not
+     * be used by the user, instead use the keybind builder for your own keybinds.
+     *
+     * @param keyCode The GLFW key code assigned to this keybind
+     * @param scancode one of {@link KeyScanCodes}
+     * @param action one of {@link KeyActions}
+     * @param modifiers one of {@link KeyModifiers}
+     */
+    @Deprecated()
     public KeyBind(int keyCode, int scancode, int action, int modifiers) {
         this(Renderer.getWindow().getID(), keyCode, scancode, action, modifiers);
     }
 
-    public KeyBind(int keyCode, int action, int modifiers) {
-        this(Renderer.getWindow().getID(), keyCode, Scancodes.ANY, action, modifiers);
+    public static Builder builder() {
+        return new Builder();
     }
 
-    public KeyBind(int keyCode, int modifiers) {
-        this(Renderer.getWindow().getID(), keyCode, Scancodes.ANY, Actions.PRESS, modifiers);
+    public boolean matches(KeyBind keyBind) {
+        return matches(keyBind, true, false);
     }
 
-    public KeyBind(int keyCode) {
-        this(Renderer.getWindow().getID(), keyCode, Scancodes.ANY, Actions.PRESS, Modifiers.NONE);
+    public boolean matches(KeyBind keyBind, boolean matchAction) {
+        return matches(keyBind, matchAction, false);
     }
 
-    public boolean isKeyPressed() {
-        return glfwGetKey(window, keyCode) == GLFW_PRESS;
+    public boolean matches(KeyBind keyBind, boolean matchAction, boolean matchModifiers) {
+        if (matchAction) {
+            if (matchModifiers) return equalsKeyModifiersAction(keyBind);
+            else return equalsKeyAction(keyBind);
+        } else {
+            if (matchModifiers) return equalsKeyModifiers(keyBind);
+            else return equalsKey(keyBind);
+        }
     }
 
-    public boolean isKeyReleased() {
-        return glfwGetKey(window, keyCode) == GLFW_RELEASE;
-    }
-
-    public boolean isKeyRepeated() {
-        return glfwGetKey(window, keyCode) == GLFW_REPEAT;
-    }
-
-
-    public boolean equalsKeyAction(Object o) {
+    /**
+     * @param o the keybind you want to compare this to
+     * @return a boolean whether this key and action match that of the provided o
+     */
+    private boolean equalsKeyAction(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         KeyBind keyBind = (KeyBind) o;
         return window == keyBind.window && keyCode == keyBind.keyCode && action == keyBind.action;
     }
 
-    public boolean equalsKeyModifiersAction(Object o) {
+    /**
+     * @param o the keybind you want to compare this to
+     * @return a boolean whether this key and modifiers and action match that of the provided o
+     */
+    private boolean equalsKeyModifiersAction(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         KeyBind keyBind = (KeyBind) o;
         return window == keyBind.window && keyCode == keyBind.keyCode && action == keyBind.action && modifiers == keyBind.modifiers;
     }
 
-    public boolean equalsKey(Object o) {
+    /**
+     * @param o the keybind you want to compare this to
+     * @return a boolean whether this key and modifiers match that of the provided o
+     */
+    private boolean equalsKeyModifiers(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        KeyBind keyBind = (KeyBind) o;
+        return window == keyBind.window && keyCode == keyBind.keyCode && modifiers == keyBind.modifiers;
+    }
+
+    /**
+     * @param o the keybind you want to compare this to
+     * @return a boolean whether this key match that of the provided o
+     */
+    private boolean equalsKey(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         KeyBind keyBind = (KeyBind) o;
         return window == keyBind.window && keyCode == keyBind.keyCode;
     }
 
-    //TODO make enum instead
-    public static class Actions {
-        public static final int PRESS = 0;
-        public static final int RELEASE = 1;
-    }
+    public static class Builder {
 
-    //TODO make enum instead
-    public static class Scancodes {
-        public static final int NONE = 0;
-        public static final int ANY = 1;
-    }
+        int keyBind;
+        int keyAction;
+        int keyScanCode;
+        byte keyModifiers;
 
-    //TODO make enum instead
-    //To combine modifiers just add them together
-    public static class Modifiers {
-        public static final byte NONE = 0;
-        public static final byte SHIFT = 1;
-        public static final byte CONTROL = 2;
-        public static final byte ALT = 4;
-        public static final byte SUPER = 8;
-        public static final byte CAPS_LOCK = 16;
-        public static final byte NUM_LOCK = 32;
+        Builder() {
+            keyBind = -1;
+            keyAction = KeyActions.PRESS.getActionInt();
+            keyScanCode = KeyScanCodes.ANY.getScanCodeInt();
+            keyModifiers = KeyModifiers.NONE.getModifierByte();
+        }
+
+        public Builder key(int key) {
+            keyBind = key;
+            return this;
+        }
+
+        public Builder  action(KeyActions action) {
+            keyAction = action.getActionInt();
+            return this;
+        }
+
+        public Builder modifiers(KeyModifiers... modifiers) {
+            byte modifiersByte = 0;
+            for (KeyModifiers keyModifiers1 : modifiers) {
+                modifiersByte += keyModifiers1.getModifierByte();
+            }
+            keyModifiers = modifiersByte;
+            return this;
+        }
+
+        public Builder scanCodes(KeyScanCodes scanCode) {
+            keyScanCode = scanCode.getScanCodeInt();
+            return this;
+        }
+
+        public KeyBind build() {
+            return new KeyBind(keyBind, keyScanCode, keyAction, keyModifiers);
+        }
     }
 }

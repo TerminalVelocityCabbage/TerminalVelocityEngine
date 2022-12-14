@@ -1,4 +1,4 @@
-package com.terminalvelocitycabbage.templates.camera.firstperson.firstperson;
+package com.terminalvelocitycabbage.templates.camera.firstperson;
 
 import com.terminalvelocitycabbage.engine.client.input.InputHandler;
 import com.terminalvelocitycabbage.engine.client.renderer.Camera;
@@ -42,7 +42,7 @@ public class FirstPersonCamera extends Camera {
         updateRotations(deltaTime);
 
         //Update Target Movement
-        modifyMoveTarget(deltaTime);
+        modifyMoveTarget(deltaTime, inputHandler);
 
         //Update current rotations
         updateMovements(deltaTime);
@@ -62,7 +62,7 @@ public class FirstPersonCamera extends Camera {
         );
     }
 
-    public void modifyMoveTarget(float deltaTime) {
+    public void modifyMoveTarget(float deltaTime, InputHandler inputHandler) {
 
         moveProgress = 0f;
 
@@ -70,12 +70,13 @@ public class FirstPersonCamera extends Camera {
         int yInput = 0;
         int zInput = 0;
 
-        if(FirstPersonInputHandler.LEFT.isKeyPressed()) xInput--;
-        if(FirstPersonInputHandler.RIGHT.isKeyPressed()) xInput++;
-        if(FirstPersonInputHandler.UP.isKeyPressed()) yInput++;
-        if(FirstPersonInputHandler.DOWN.isKeyPressed()) yInput--;
-        if(FirstPersonInputHandler.FORWARD.isKeyPressed()) zInput--;
-        if(FirstPersonInputHandler.BACKWARDS.isKeyPressed()) zInput++;
+        if (inputHandler.isKeyPressed(FirstPersonInputHandler.LEFT)) xInput--;
+        if (inputHandler.isKeyPressed(FirstPersonInputHandler.LEFT)) xInput--;
+        if (inputHandler.isKeyPressed(FirstPersonInputHandler.RIGHT)) xInput++;
+        if (inputHandler.isKeyPressed(FirstPersonInputHandler.UP)) yInput++;
+        if (inputHandler.isKeyPressed(FirstPersonInputHandler.DOWN)) yInput--;
+        if (inputHandler.isKeyPressed(FirstPersonInputHandler.FORWARD)) zInput--;
+        if (inputHandler.isKeyPressed(FirstPersonInputHandler.BACKWARDS)) zInput++;
 
         float xMovement = moveModifier * xInput / deltaTime;
         float yMovement = moveModifier * yInput / deltaTime;
