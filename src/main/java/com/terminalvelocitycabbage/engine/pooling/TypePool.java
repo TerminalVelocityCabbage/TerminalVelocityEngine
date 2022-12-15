@@ -106,6 +106,7 @@ public abstract class TypePool<T extends Poolable> {
      * @param maxSize the maximum number of free elements in this list
      */
     public void shrink(int maxSize) {
+        freeObjects.subList(min(freeObjects.size(), maxSize), freeObjects.size() - 1).forEach(Poolable::cleanup);
         freeObjects = new ArrayList<>(freeObjects.subList(0, min(freeObjects.size(), maxSize)));
     }
 }
