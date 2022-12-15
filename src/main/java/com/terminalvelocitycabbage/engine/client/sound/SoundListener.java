@@ -1,6 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.sound;
 
-import com.terminalvelocitycabbage.engine.client.renderer.Camera;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import static org.lwjgl.openal.AL10.*;
@@ -21,27 +21,26 @@ public class SoundListener {
         alDistanceModel(model.getAlModel());
     }
 
-    public void updateCameraOrientation(Camera camera) {
-
-        //Init vars for passing
-        Vector3f at = new Vector3f();
-        Vector3f up = new Vector3f();
-
-        //Get data from the camera
-        var cameraMatrix = camera.getViewMatrix();
-        cameraMatrix.positiveZ(at).negate();
-        cameraMatrix.positiveY(up);
-
-        //Pass data to the listener
-        setOrientation(at, up);
-    }
-
     public void setVelocity(Vector3f velocity) {
         alListener3f(AL_VELOCITY, velocity.x, velocity.y, velocity.z);
     }
 
     public void setPosition(Vector3f position) {
         alListener3f(AL_POSITION, position.x, position.y, position.z);
+    }
+
+    public void setOrientation(Matrix4f viewMatrix) {
+
+        //Init vars for passing
+        Vector3f at = new Vector3f();
+        Vector3f up = new Vector3f();
+
+        //Get data from the camera
+        viewMatrix.positiveZ(at).negate();
+        viewMatrix.positiveY(up);
+
+        //Pass data to the listener
+        setOrientation(at, up);
     }
 
     public void setOrientation(Vector3f position, Vector3f up) {

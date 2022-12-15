@@ -54,13 +54,9 @@ public class SoundManager {
     }
 
     public void cleanup() {
-        for (SoundSource soundSource : soundSources.values()) {
-            soundSource.destroy();
-        }
+        soundSources.values().forEach(SoundSource::destroy);
         soundSources.clear();
-        for (Sound soundBuffer : sounds.values()) {
-            soundBuffer.destroy();
-        }
+        sounds.values().forEach(Sound::destroy);
         sounds.clear();
     }
 

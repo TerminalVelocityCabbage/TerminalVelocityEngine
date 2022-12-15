@@ -6,8 +6,11 @@ import com.terminalvelocitycabbage.engine.client.renderer.shader.ShaderHandler;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.CanvasHandler;
 import com.terminalvelocitycabbage.engine.debug.Log;
 import com.terminalvelocitycabbage.engine.debug.SystemInfo;
+import com.terminalvelocitycabbage.engine.ecs.ComponentFilter;
+import com.terminalvelocitycabbage.engine.ecs.Entity;
 import com.terminalvelocitycabbage.engine.ecs.Manager;
 import com.terminalvelocitycabbage.engine.utils.TickManager;
+import com.terminalvelocitycabbage.templates.ecs.components.CameraComponent;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
@@ -177,23 +180,16 @@ public abstract class Renderer {
 		//Tell the tick manager the frame time change
 		tickManager.apply(getDeltaTimeInMillis());
 
-		//tick as many time as needed
+		//tick as many times as needed
 		while (tickManager.hasTick()) {
-			ClientBase.getScheduler().tick();
-			sceneHandler.getActiveScene().tick(deltaTime);
-			sceneHandler.getActiveScene().getInputHandler().tick();
-			canvasHandler.tick(
-					getWindow().getCursorX(),
-					getWindow().getCursorY(),
-					sceneHandler.getActiveScene().getInputHandler().isLeftButtonClicked(),
-					sceneHandler.getActiveScene().getInputHandler().isRightButtonClicked(),
-					sceneHandler.getActiveScene().getInputHandler().getTicksSinceLastClick()
-			);
+			ClientBase.instance.tick(getDeltaTimeInMillis());
 		}
 
 		if (window.isResized()) {
 			window.updateDisplay();
-			sceneHandler.getActiveScene().getCamera().updateProjectionMatrix(window.aspectRatio());
+			for (Entity matchingEntity : getManager().getMatchingEntities(ComponentFilter.builder().oneOf(CameraComponent.class).build())) {
+				matchingEntity.getComponent(CameraComponent.class).updateProjectionMatrix();
+			}
 		}
 	}
 

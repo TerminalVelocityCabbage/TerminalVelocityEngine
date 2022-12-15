@@ -65,6 +65,21 @@ public abstract class ClientBase extends EventDispatcher {
 		getSoundDeviceManager().cleanup();
 	}
 
+	public void tick(float deltaTime) {
+		getScheduler().tick();
+		ClientBase.getRenderer().getSceneHandler().getActiveScene().tick(deltaTime);
+		//TODO reimplement canvas ticking
+		/*
+		ClientBase.getRenderer().getCanvasHandler().tick(
+				window.getCursorX(),
+				window.getCursorY(),
+				scene.getInputHandler().isLeftButtonClicked(),
+				scene.getInputHandler().isRightButtonClicked(),
+				scene.getInputHandler().getTicksSinceLastClick()
+		);
+		 */
+	}
+
 	public void connect(String address, int port) {
 		//client.connect(address, port);
 		//shouldDisconnect = false;

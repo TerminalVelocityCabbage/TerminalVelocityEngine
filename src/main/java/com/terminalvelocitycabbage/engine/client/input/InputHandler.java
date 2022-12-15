@@ -38,10 +38,11 @@ public abstract class InputHandler {
 
 	private short ticksSinceLastClick = -1;
 
-	public InputHandler() {
+	public InputHandler(Window window) {
 		previousPos = new Vector2d(-10, -10);
 		deltaMouseVector = new Vector2f(0, 0);
 		deltaScrollVector = new Vector2i(0, 0);
+		init(window);
 	}
 
 	public void init(Window window) {
