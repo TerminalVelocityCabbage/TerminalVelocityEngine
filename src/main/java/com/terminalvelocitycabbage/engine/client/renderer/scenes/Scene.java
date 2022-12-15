@@ -33,6 +33,6 @@ public abstract class Scene {
 	}
 
 	public Manager getManager() {
-		return ClientBase.getRenderer().getManager();
+		return ClientBase.instance.getManager();
 	}
 }

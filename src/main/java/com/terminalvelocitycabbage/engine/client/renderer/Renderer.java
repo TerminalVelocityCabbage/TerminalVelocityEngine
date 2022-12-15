@@ -45,13 +45,10 @@ public abstract class Renderer {
 	private static int polygonMode;
 	private int lastPolygonMode;
 
-	Manager manager;
-
 	public Renderer(int width, int height, String title, float tickRate, boolean debugMode) {
 		window = new Window(width, height, title, false, true, true);
 		this.debugMode = debugMode;
 		tickManager = new TickManager(tickRate);
-		manager = new Manager();
 	}
 
 	public void run() {
@@ -274,7 +271,7 @@ public abstract class Renderer {
 	}
 
 	public Manager getManager() {
-		return manager;
+		return ClientBase.instance.getManager();
 	}
 
 	public ShaderHandler getShaderHandler() {

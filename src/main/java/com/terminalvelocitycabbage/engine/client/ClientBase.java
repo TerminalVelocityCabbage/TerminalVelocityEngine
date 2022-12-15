@@ -1,6 +1,7 @@
 package com.terminalvelocitycabbage.engine.client;
 
 import com.github.simplenet.Client;
+import com.terminalvelocitycabbage.engine.ecs.Manager;
 import com.terminalvelocitycabbage.templates.networking.PingClient;
 import com.terminalvelocitycabbage.engine.client.renderer.Renderer;
 import com.terminalvelocitycabbage.engine.client.sound.SoundDeviceManager;
@@ -23,12 +24,14 @@ public abstract class ClientBase extends EventDispatcher {
 	private static Renderer renderer;
 	private static SoundDeviceManager soundDeviceManager;
 	private static Scheduler scheduler;
+	Manager manager;
 
 	public ClientBase(Logger logger, Renderer renderer) {
 		this.logger = logger;
 		ClientBase.soundDeviceManager = new SoundDeviceManager();
 		ClientBase.renderer = renderer;
 		scheduler = new Scheduler();
+		manager = new Manager();
 	}
 
 	public void init() {
@@ -127,5 +130,9 @@ public abstract class ClientBase extends EventDispatcher {
 
 	public static Scheduler getScheduler() {
 		return scheduler;
+	}
+
+	public Manager getManager() {
+		return manager;
 	}
 }
