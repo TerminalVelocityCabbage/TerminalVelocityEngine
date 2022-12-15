@@ -1,5 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.sound;
 
+import com.terminalvelocitycabbage.engine.client.resources.Identifier;
 import com.terminalvelocitycabbage.engine.debug.Log;
 import org.joml.Vector3f;
 
@@ -9,6 +10,7 @@ import static org.lwjgl.openal.AL11.AL_SEC_OFFSET;
 public class SoundSource {
 
     private final int sourceID;
+    private SoundManager manager;
 
     public SoundSource() {
         this.sourceID = alGenSources();
@@ -16,9 +18,14 @@ public class SoundSource {
         alSourcei(sourceID, AL_SOURCE_RELATIVE, AL_TRUE);
     }
 
-    public SoundSource setSound(Sound sound) {
+    public SoundSource setManager(SoundManager manager) {
+        this.manager = manager;
+        return this;
+    }
+
+    public SoundSource setSound(Identifier sound) {
         stop();
-        alSourcei(sourceID, AL_BUFFER, sound.getSoundID());
+        alSourcei(sourceID, AL_BUFFER, manager.getSound(sound).getSoundID());
         return this;
     }
 
