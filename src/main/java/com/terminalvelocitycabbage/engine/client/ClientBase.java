@@ -37,6 +37,7 @@ public abstract class ClientBase extends EventDispatcher {
 		//Start up the network listeners
 		client = new Client();
 		dispatchEvent(new ClientStartEvent(ClientStartEvent.INIT, client));
+		getRenderer().init();
 		postInit();
 	}
 
@@ -53,6 +54,12 @@ public abstract class ClientBase extends EventDispatcher {
 		//client.preDisconnect(() -> dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.PRE_DISCONNECT, client)));
 		//client.postDisconnect(() -> dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.POST_DISCONNECT, client)));
 		dispatchEvent(new ClientStartEvent(ClientStartEvent.START, client));
+		getRenderer().run();
+	}
+
+	public void cleanup() {
+		getRenderer().destroy();
+		getSoundDeviceManager().cleanup();
 	}
 
 	public void connect(String address, int port) {
