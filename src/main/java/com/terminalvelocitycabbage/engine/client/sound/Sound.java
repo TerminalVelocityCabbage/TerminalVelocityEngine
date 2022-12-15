@@ -84,4 +84,12 @@ public class Sound {
             MemoryUtil.memFree(pcm);
         }
     }
+
+    public boolean isStereo() {
+        return stereo;
+    }
+
+    public int getSampleRate() {
+        return sampleRate;
+    }
 }

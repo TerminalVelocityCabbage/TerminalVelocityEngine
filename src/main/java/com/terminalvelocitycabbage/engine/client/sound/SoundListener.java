@@ -21,7 +21,7 @@ public class SoundListener {
         alDistanceModel(model.getAlModel());
     }
 
-    public void updateOrientationCamera(Camera camera) {
+    public void updateCameraOrientation(Camera camera) {
 
         //Init vars for passing
         Vector3f at = new Vector3f();
