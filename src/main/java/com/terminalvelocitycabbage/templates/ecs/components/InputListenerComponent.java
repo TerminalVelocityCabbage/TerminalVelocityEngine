@@ -9,7 +9,7 @@ public class InputListenerComponent implements Component {
 
     @Override
     public void setDefaults() {
-        currentInputFrame = null;
+        currentInputFrame = new InputFrame();
     }
 
     public InputFrame getCurrentInputFrame() {

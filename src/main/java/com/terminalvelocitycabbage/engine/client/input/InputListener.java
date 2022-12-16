@@ -1,6 +1,7 @@
 package com.terminalvelocitycabbage.engine.client.input;
 
 import com.terminalvelocitycabbage.engine.client.renderer.Window;
+import com.terminalvelocitycabbage.engine.debug.Log;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -38,7 +39,9 @@ public class InputListener {
 			currentFrame.deltaScrollVector.x += (float)xoffset;
 			currentFrame.deltaScrollVector.y += (float)yoffset;
 		});
-		glfwSetKeyCallback(window.getID(), (win, key, scancode, action, mods) -> currentFrame.seenKeys.add(new KeyBind(win, key, scancode, action, mods)));
+		glfwSetKeyCallback(window.getID(), (win, key, scancode, action, mods) -> {
+			currentFrame.seenKeys.add(new KeyBind(win, key, scancode, action, mods));
+		});
 	}
 
 	public void resetDeltas() {
@@ -47,7 +50,7 @@ public class InputListener {
 		currentFrame.seenKeys.clear();
 	}
 
-	public void tick() {
+	public void update() {
 		updateMouseButtons();
 	}
 

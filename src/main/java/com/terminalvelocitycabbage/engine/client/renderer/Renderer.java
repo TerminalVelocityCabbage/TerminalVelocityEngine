@@ -191,6 +191,8 @@ public abstract class Renderer {
 				matchingEntity.getComponent(CameraComponent.class).updateProjectionMatrix();
 			}
 		}
+
+		getWindow().getInputListener().update();
 	}
 
 	public void push() {
