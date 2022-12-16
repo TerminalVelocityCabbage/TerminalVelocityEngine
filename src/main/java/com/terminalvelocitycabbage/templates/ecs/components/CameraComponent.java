@@ -2,6 +2,7 @@ package com.terminalvelocitycabbage.templates.ecs.components;
 
 import com.terminalvelocitycabbage.engine.client.renderer.Renderer;
 import com.terminalvelocitycabbage.engine.ecs.Component;
+import org.joml.Math;
 import org.joml.Matrix4f;
 
 public class CameraComponent implements Component {
@@ -33,7 +34,7 @@ public class CameraComponent implements Component {
     }
 
     public void setFov(float fov) {
-        this.fov = fov;
+        this.fov = Math.toRadians(fov);
     }
 
     public float getClippingPlane() {
