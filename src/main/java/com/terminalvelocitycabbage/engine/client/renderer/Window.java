@@ -1,6 +1,7 @@
 package com.terminalvelocitycabbage.engine.client.renderer;
 
 import com.terminalvelocitycabbage.engine.client.ClientBase;
+import com.terminalvelocitycabbage.engine.client.input.InputListener;
 import com.terminalvelocitycabbage.engine.debug.Log;
 import com.terminalvelocitycabbage.templates.events.client.WindowResizeEvent;
 import org.joml.Matrix4f;
@@ -37,6 +38,8 @@ public class Window {
 	public double cursorY;
 
 	Matrix4f orthoProjectionMatrix;
+
+	private InputListener inputListener;
 
 	public Window(int width, int height, String title, boolean vSync, boolean center, boolean lockAndHideCursor) {
 		this.windowWidth = width;
@@ -93,6 +96,7 @@ public class Window {
 			sizeCallback = GLFWWindowSizeCallback.create(this::windowSizeCallback);
 			glfwSetWindowSizeCallback(windowID, sizeCallback);
 		}
+		inputListener = new InputListener(this);
 	}
 
 	public void queueClose() {
@@ -190,5 +194,9 @@ public class Window {
 
 	public void focus() {
 		glfwFocusWindow(windowID);
+	}
+
+	public InputListener getInputListener() {
+		return inputListener;
 	}
 }

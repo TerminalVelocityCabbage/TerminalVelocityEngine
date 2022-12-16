@@ -16,7 +16,19 @@ public class PositionComponent implements Component {
         this.position = position;
     }
 
+    public void setPosition(float x, float y, float z) {
+        this.position.set(x, y, z);
+    }
+
     public Vector3f getPosition() {
         return position;
+    }
+
+    public void move(float x, float y, float z) {
+        position.add(x, y, z);
+    }
+
+    public void move(Vector3f moveBy) {
+        position.add(moveBy);
     }
 }
