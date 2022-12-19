@@ -66,16 +66,22 @@ public class UrlResource implements Resource {
 		ByteBuffer buffer = null;
 		Path path = Paths.get(url.getPath().replaceFirst("/", "").replaceFirst("file:", ""));
 
+		Log.info(path.toString());
+
 		if (Files.isReadable(path)) {
 			try(SeekableByteChannel sbc = Files.newByteChannel(path)) {
 				buffer = BufferUtils.createByteBuffer((int)sbc.size() + 1);
 				while(sbc.read(buffer) != -1);
 			} catch(IOException e) {
-				return null;
+				Log.crash("Could not read byte channel", new IOException(e));
 			}
 		}
 
-		buffer.flip();
+		if (buffer != null) {
+			buffer.flip();
+		} else {
+			Log.crash("Could not get this URL Resource as a ByteBuffer: " + identifier.toString(), new RuntimeException());
+		}
 
 		return buffer;
 	}

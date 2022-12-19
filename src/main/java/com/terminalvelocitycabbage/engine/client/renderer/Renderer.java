@@ -168,7 +168,8 @@ public abstract class Renderer {
 
 		// Terminate GLFW and free the error callback
 		glfwTerminate();
-		Objects.requireNonNull(glfwSetErrorCallback(null)).free();
+		var errorCallback = glfwSetErrorCallback(null);
+		if (errorCallback != null) errorCallback.free();
 	}
 
 	public static Window getWindow() {
