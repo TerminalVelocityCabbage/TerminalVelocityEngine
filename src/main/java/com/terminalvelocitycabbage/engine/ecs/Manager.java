@@ -8,6 +8,7 @@ import com.terminalvelocitycabbage.engine.utils.ClassUtils;
 import javax.management.ReflectionException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * The Manager is what any implementation should interact with to "manage" their entities components and systems.
@@ -21,7 +22,7 @@ public class Manager {
     MultiPool componentPool;
 
     //The pool of free entities
-    ReflectionPool entityPool;
+    ReflectionPool<Entity> entityPool;
     //The list of active entities
     List<Entity> activeEntities;
 
@@ -34,7 +35,7 @@ public class Manager {
         systems = new HashMap<>();
 
         componentPool = new MultiPool();
-        entityPool = new ReflectionPool(Entity.class, 0);
+        entityPool = new ReflectionPool<>(Entity.class, 0);
     }
 
     /**
@@ -83,7 +84,7 @@ public class Manager {
      * @return the newly created entity
      */
     public Entity createEntity() {
-        Entity entity = (Entity)entityPool.obtain();
+        Entity entity = entityPool.obtain();
         entity.setManager(this);
         activeEntities.add(entity);
         return entity;
@@ -95,7 +96,7 @@ public class Manager {
      * @return the newly created entity
      */
     public Entity createEntity(Entity template) {
-        Entity entity = (Entity)entityPool.obtain();
+        Entity entity = entityPool.obtain();
         entity.setManager(this);
         entity.copyFrom(template);
         activeEntities.add(entity);
@@ -173,6 +174,13 @@ public class Manager {
             systems.put(systemClass, system);
             system.setManager(this);
             system.setPriority(priority);
+            systems = systems.entrySet().stream()
+                    .sorted(Map.Entry.comparingByValue())
+                    .collect(Collectors.toMap(
+                            Map.Entry::getKey,
+                            Map.Entry::getValue,
+                            (oldValue, newValue) -> oldValue, LinkedHashMap::new
+                    ));
             return system;
         } catch (ReflectionException e) {
             throw new RuntimeException(e);
@@ -202,7 +210,7 @@ public class Manager {
         if (systems.length < 1) Log.warn("Tried to update 0 systems with update call, specify systems you want to update");
         this.systems.values().stream()
                 .filter(system1 -> Arrays.stream(systems).toList().contains(system1.getClass()))
-                .sorted(System::compareTo)
+                //.sorted(System::compareTo)
                 .forEach(system2 -> system2.update(deltaTime));
     }
 }
