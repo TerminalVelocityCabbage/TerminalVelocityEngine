@@ -1,6 +1,7 @@
 package com.terminalvelocitycabbage.engine.client;
 
 import com.github.simplenet.Client;
+import com.terminalvelocitycabbage.engine.client.renderer.scenes.SceneHandler;
 import com.terminalvelocitycabbage.engine.ecs.Manager;
 import com.terminalvelocitycabbage.templates.networking.PingClient;
 import com.terminalvelocitycabbage.engine.client.renderer.Renderer;
@@ -22,6 +23,7 @@ public abstract class ClientBase extends EventDispatcher {
 	public static ClientBase instance;
 	private Logger logger;
 	private static Renderer renderer;
+	private final SceneHandler sceneHandler = new SceneHandler();
 	private static SoundDeviceManager soundDeviceManager;
 	private static Scheduler scheduler;
 	Manager manager;
@@ -62,12 +64,13 @@ public abstract class ClientBase extends EventDispatcher {
 
 	public void cleanup() {
 		getRenderer().destroy();
+		getSceneHandler().cleanup();
 		getSoundDeviceManager().cleanup();
 	}
 
 	public void tick(float deltaTime) {
 		getScheduler().tick();
-		ClientBase.getRenderer().getSceneHandler().getActiveScene().tick(deltaTime);
+		getSceneHandler().getActiveScene().tick(deltaTime);
 		//TODO reimplement canvas ticking
 		/*
 		ClientBase.getRenderer().getCanvasHandler().tick(
@@ -149,5 +152,9 @@ public abstract class ClientBase extends EventDispatcher {
 
 	public Manager getManager() {
 		return manager;
+	}
+
+	public SceneHandler getSceneHandler() {
+		return sceneHandler;
 	}
 }

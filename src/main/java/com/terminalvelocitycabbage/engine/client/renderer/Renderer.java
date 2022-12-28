@@ -37,7 +37,6 @@ public abstract class Renderer {
 	private final TickManager tickManager;
 
 	private final ShaderHandler shaderHandler = new ShaderHandler();
-	private final SceneHandler sceneHandler = new SceneHandler();
 	private final CanvasHandler canvasHandler = new CanvasHandler();
 
 	private boolean debugMode;
@@ -156,7 +155,6 @@ public abstract class Renderer {
 		//Cleanup handlers
 		shaderHandler.cleanup();
 		canvasHandler.cleanup();
-		sceneHandler.cleanup();
 
 		//Free debug
 		if (debugMode) {
@@ -214,10 +212,6 @@ public abstract class Renderer {
 
 	public static void setBeginMode(PolygonMode mode) {
 		polygonMode = mode.getMode();
-	}
-
-	public SceneHandler getSceneHandler() {
-		return sceneHandler;
 	}
 	
 	enum DrawBufferMode {
