@@ -1,7 +1,6 @@
 package com.terminalvelocitycabbage.templates.ecs.components;
 
-import com.terminalvelocitycabbage.engine.client.resources.Identifier;
-import com.terminalvelocitycabbage.engine.client.sound.Sound;
+import com.terminalvelocitycabbage.engine.resources.Identifier;
 import com.terminalvelocitycabbage.engine.client.sound.SoundSource;
 import com.terminalvelocitycabbage.engine.ecs.Component;
 

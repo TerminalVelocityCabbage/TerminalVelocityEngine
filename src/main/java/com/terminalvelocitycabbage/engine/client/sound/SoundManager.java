@@ -1,10 +1,8 @@
 package com.terminalvelocitycabbage.engine.client.sound;
 
-import com.terminalvelocitycabbage.engine.client.resources.Identifier;
+import com.terminalvelocitycabbage.engine.resources.Identifier;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class SoundManager {

@@ -1,4 +1,4 @@
-package com.terminalvelocitycabbage.engine.client.resources;
+package com.terminalvelocitycabbage.engine.resources;
 
 import java.util.Collection;
 import java.util.HashSet;

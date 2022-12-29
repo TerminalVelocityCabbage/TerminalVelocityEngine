@@ -1,8 +1,8 @@
 package com.terminalvelocitycabbage.engine.client.renderer.model;
 
 import com.terminalvelocitycabbage.engine.client.renderer.util.PNGDecoder;
-import com.terminalvelocitycabbage.engine.client.resources.Identifier;
-import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
+import com.terminalvelocitycabbage.engine.resources.Identifier;
+import com.terminalvelocitycabbage.engine.resources.ResourceManager;
 import com.terminalvelocitycabbage.engine.utils.BufferUtils;
 
 import java.io.FileInputStream;

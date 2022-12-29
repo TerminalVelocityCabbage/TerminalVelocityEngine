@@ -1,6 +1,6 @@
 package com.terminalvelocitycabbage.engine.scheduler;
 
-import com.terminalvelocitycabbage.engine.client.resources.Identifier;
+import com.terminalvelocitycabbage.engine.resources.Identifier;
 import com.terminalvelocitycabbage.engine.debug.Log;
 
 import java.util.ArrayList;

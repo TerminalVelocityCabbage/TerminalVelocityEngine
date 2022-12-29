@@ -1,4 +1,4 @@
-package com.terminalvelocitycabbage.engine.client.resources;
+package com.terminalvelocitycabbage.engine.resources;
 
 import com.terminalvelocitycabbage.engine.debug.Log;
 import org.apache.commons.io.IOUtils;

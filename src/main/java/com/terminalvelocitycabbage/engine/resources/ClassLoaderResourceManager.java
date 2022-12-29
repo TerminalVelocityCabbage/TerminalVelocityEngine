@@ -1,4 +1,4 @@
-package com.terminalvelocitycabbage.engine.client.resources;
+package com.terminalvelocitycabbage.engine.resources;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -14,6 +14,10 @@ public class ClassLoaderResourceManager implements ResourceManager {
 		this.classLoader = classLoader;
 		this.prefix = prefix;
 		this.root = root;
+	}
+
+	public static ClassLoaderResourceManager of(String prefix, String path) {
+		return new ClassLoaderResourceManager(ClassLoader.getSystemClassLoader(), prefix, path);
 	}
 
 	@Override

@@ -1,6 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.sound;
 
-import com.terminalvelocitycabbage.engine.client.resources.Identifier;
+import com.terminalvelocitycabbage.engine.resources.Identifier;
 import com.terminalvelocitycabbage.engine.debug.Log;
 import org.joml.Vector3f;
 

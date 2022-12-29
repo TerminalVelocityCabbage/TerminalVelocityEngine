@@ -1,8 +1,8 @@
 package com.terminalvelocitycabbage.engine.client.renderer.shader;
 
-import com.terminalvelocitycabbage.engine.client.resources.Identifier;
-import com.terminalvelocitycabbage.engine.client.resources.Resource;
-import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
+import com.terminalvelocitycabbage.engine.resources.Identifier;
+import com.terminalvelocitycabbage.engine.resources.Resource;
+import com.terminalvelocitycabbage.engine.resources.ResourceManager;
 import com.terminalvelocitycabbage.engine.debug.Log;
 import com.terminalvelocitycabbage.engine.utils.StringUtils;
 

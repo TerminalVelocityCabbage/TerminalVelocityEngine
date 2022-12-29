@@ -1,7 +1,7 @@
 package com.terminalvelocitycabbage.engine.client.renderer.util;
 
-import com.terminalvelocitycabbage.engine.client.resources.Identifier;
-import com.terminalvelocitycabbage.engine.client.resources.ResourceManager;
+import com.terminalvelocitycabbage.engine.resources.Identifier;
+import com.terminalvelocitycabbage.engine.resources.ResourceManager;
 import com.terminalvelocitycabbage.engine.debug.Log;
 import org.lwjgl.system.MemoryStack;
 

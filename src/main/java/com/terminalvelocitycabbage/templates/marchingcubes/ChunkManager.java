@@ -3,7 +3,7 @@ package com.terminalvelocitycabbage.templates.marchingcubes;
 import com.terminalvelocitycabbage.engine.client.ClientBase;
 import com.terminalvelocitycabbage.engine.client.renderer.model.MeshPart;
 import com.terminalvelocitycabbage.engine.client.renderer.shader.ShaderProgram;
-import com.terminalvelocitycabbage.engine.client.resources.Identifier;
+import com.terminalvelocitycabbage.engine.resources.Identifier;
 import com.terminalvelocitycabbage.engine.scheduler.TaskBuilder;
 
 import java.util.ArrayList;
