@@ -21,7 +21,7 @@ public abstract class ClientBase extends EventDispatcher implements SidedEntrypo
 	String id;
 	Client client;
 	boolean shouldDisconnect;
-	private static ClientBase instance;
+	protected static ClientBase instance;
 	private Logger logger;
 	private static Renderer renderer;
 	private final SceneHandler sceneHandler = new SceneHandler();

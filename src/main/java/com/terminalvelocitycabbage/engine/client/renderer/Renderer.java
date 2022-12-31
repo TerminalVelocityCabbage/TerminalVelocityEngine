@@ -1,7 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.renderer;
 
 import com.terminalvelocitycabbage.engine.client.ClientBase;
-import com.terminalvelocitycabbage.engine.client.renderer.scenes.SceneHandler;
 import com.terminalvelocitycabbage.engine.client.renderer.shader.ShaderHandler;
 import com.terminalvelocitycabbage.engine.client.renderer.ui.CanvasHandler;
 import com.terminalvelocitycabbage.engine.debug.Log;
@@ -18,7 +17,6 @@ import org.lwjgl.opengl.GLUtil;
 import org.lwjgl.opengl.KHRDebug;
 import org.lwjgl.system.Callback;
 
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -181,7 +179,7 @@ public abstract class Renderer {
 
 		//tick as many times as needed
 		while (tickManager.hasTick()) {
-			ClientBase.instance.tick(getDeltaTimeInMillis());
+			ClientBase.getInstance().tick(getDeltaTimeInMillis());
 		}
 
 		if (window.isResized()) {
@@ -264,7 +262,7 @@ public abstract class Renderer {
 	}
 
 	public Manager getManager() {
-		return ClientBase.instance.getManager();
+		return ClientBase.getInstance().getManager();
 	}
 
 	public ShaderHandler getShaderHandler() {

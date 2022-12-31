@@ -28,7 +28,7 @@ public class Canvas extends UIRenderable<Canvas> {
 		this.window = window;
 		active = false;
 		this.containers = new ArrayList<>();
-		ClientBase.instance.addEventHandler(EventContext.CLIENT, this);
+		ClientBase.getInstance().addEventHandler(EventContext.CLIENT, this);
 		this.backgroundAlpha = new AnimatableUIValue(0);
 
 		this.model = new Model(RenderFormat.UI, new RenderMode(RenderMode.Modes.TRIANGLES), new ArrayList<>());
