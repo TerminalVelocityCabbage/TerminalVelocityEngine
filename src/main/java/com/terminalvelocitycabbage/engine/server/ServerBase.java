@@ -2,50 +2,80 @@ package com.terminalvelocitycabbage.engine.server;
 
 import com.github.simplenet.Server;
 import com.terminalvelocitycabbage.engine.events.EventDispatcher;
+import com.terminalvelocitycabbage.engine.networking.SidedEntrypoint;
+import com.terminalvelocitycabbage.engine.networking.packet.SerializablePacket;
 import com.terminalvelocitycabbage.engine.scheduler.Scheduler;
-import com.terminalvelocitycabbage.engine.server.packet.PacketTypes;
 import com.terminalvelocitycabbage.engine.utils.TickManager;
-import com.terminalvelocitycabbage.templates.events.server.*;
+import com.terminalvelocitycabbage.templates.events.server.ServerClientConnectionEvent;
+import com.terminalvelocitycabbage.templates.events.server.ServerLifecycleEvent;
 
-public abstract class ServerBase extends EventDispatcher {
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 
+public abstract class ServerBase extends EventDispatcher implements SidedEntrypoint {
+
+	protected static ServerBase instance;
 	Server server;
-	//TODO should close should instead be a packet to call server.close() but I need to do it safely.
 	private boolean shouldClose;
 	String address;
 	int port;
-	private static Scheduler scheduler;
-	private TickManager tickManager;
+	final private static Scheduler scheduler = new Scheduler();
+	final private TickManager tickManager;
 	long lastTime;
 
 	public ServerBase(int ticksPerSecond) {
 		shouldClose = false;
-		scheduler = new Scheduler();
 		tickManager = new TickManager(ticksPerSecond);
 	}
 
-	public void init() {
+	public static ServerBase getInstance() {
+		return instance;
+	}
+
+	public void run() {
+
+		//Initialize server and broadcast lifecycle events for initialization
+		//The stage just before the server instance is created
 		preInit();
-		//Start up the network listeners
+		//The stage just after the server instance is created
+		init();
+
+		//Register server listeners that listen for packets and client connections
+		registerListeners();
+
+		//Bind this server to its address and port and dispatch events related to this lifecycle stage
+		//The stage just before the server is bound to its address and port
+		preBind();
+		//The stage just after the server is bound to its address and port
+		bind();
+
+		//At this point most server related things can take place
+		//The stage just before the game loop begins
+		start();
+
+		//Run the Server
+		//The stage that runs while this server is not marked for closure, schedulers and ecs managers will be ticking
+		loop();
+
+		//Dispatch server stopping events both before and after we release the server info.
+		//The phase just before the server stops
+		stopping();
+		//The phase just after the server stops
+		stop();
+	}
+
+	protected void init() {
 		this.server = new Server();
-		dispatchEvent(new ServerStartEvent(ServerStartEvent.INIT, getServer()));
-		postInit();
+		dispatchEvent(new ServerLifecycleEvent(ServerLifecycleEvent.INIT, getServer()));
 	}
 
 	//Basically set the server files up before starting any connections
-	public void preInit() {
-		dispatchEvent(new ServerStartEvent(ServerStartEvent.PRE_INIT, getServer()));
+	protected void preInit() {
+		dispatchEvent(new ServerLifecycleEvent(ServerLifecycleEvent.PRE_INIT, getServer()));
 	}
 
-	public void postInit() {
-		dispatchEvent(new ServerStartEvent(ServerStartEvent.POST_INIT, getServer()));
-	}
-
-	//Binds the server and begins allowing connections
-	public void start() {
-
-		//dispatch events
-		//Register server listeners
+	protected void registerListeners() {
 		getServer().onConnect(client -> {
 
 			dispatchEvent(new ServerClientConnectionEvent(ServerClientConnectionEvent.CONNECT, getServer(), client));
@@ -59,34 +89,35 @@ public abstract class ServerBase extends EventDispatcher {
 			});
 
 			//Read packets and dispatch events based on opcode
-			client.readByteAlways(opcode -> {
-				switch (opcode) {
-					case PacketTypes.CLIENT_VALIDATION:
-						client.readString(username -> {
-							super.dispatchEvent(new ServerClientPacketReceivedEvent(ServerClientPacketReceivedEvent.RECEIVED, client, username));
-						});
-						break;
-					case PacketTypes.CHAT:
-						client.readString(message -> {
-							if (message.startsWith("/")) {
-								super.dispatchEvent(new ServerCommandReceivedEvent(ServerCommandReceivedEvent.RECEIVED, client, message));
-							} else {
-								super.dispatchEvent(new ServerChatEvent(ServerChatEvent.RECEIVED, client, message));
-							}
-						});
-						break;
-				}
+			client.readIntAlways(opcode -> {
+				client.readInt(bytesSize -> {
+					client.readBytes(bytesSize, bytes -> {
+						try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes); ObjectInputStream ois = new ObjectInputStream(bis)) {
+							SerializablePacket received = (SerializablePacket) ois.readObject();
+							received.interpretC2S(client);
+						} catch (IOException | ClassNotFoundException e) {
+							throw new RuntimeException(e);
+						}
+					});
+				});
 			});
-
 		});
+	}
 
-		dispatchEvent(new ServerBindEvent(ServerBindEvent.PRE, getServer()));
+	protected void preBind() {
+		//Allows the program creator to add tasks via override before plugin authors who can only listen to events
+	}
+
+	protected void bind() {
+		dispatchEvent(new ServerLifecycleEvent(ServerLifecycleEvent.PRE_BIND, getServer()));
 		getServer().bind(getAddress(), getPort());
-		dispatchEvent(new ServerBindEvent(ServerBindEvent.POST, getServer()));
+	}
 
-		dispatchEvent(new ServerStartEvent(ServerStartEvent.START, getServer()));
+	protected void start() {
+		dispatchEvent(new ServerLifecycleEvent(ServerLifecycleEvent.STARTED, getServer()));
+	}
 
-		//Run the Server
+	protected void loop() {
 		while (!shouldClose) {
 			tickManager.apply(System.currentTimeMillis() - lastTime);
 			while (tickManager.hasTick()) {
@@ -94,6 +125,15 @@ public abstract class ServerBase extends EventDispatcher {
 			}
 			lastTime = System.currentTimeMillis();
 		}
+	}
+
+	protected void stopping() {
+		dispatchEvent(new ServerLifecycleEvent(ServerLifecycleEvent.STOPPING, getServer()));
+	}
+
+	protected void stop() {
+		server.close();
+		dispatchEvent(new ServerLifecycleEvent(ServerLifecycleEvent.STOPPED, getServer()));
 	}
 
 	public Server getServer() {
