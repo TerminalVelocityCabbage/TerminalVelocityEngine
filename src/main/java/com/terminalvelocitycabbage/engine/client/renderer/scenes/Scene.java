@@ -17,7 +17,7 @@ public abstract class Scene {
 	public abstract void destroy();
 
 	public Manager getManager() {
-		return ClientBase.instance.getManager();
+		return ClientBase.getInstance().getManager();
 	}
 
 	/**

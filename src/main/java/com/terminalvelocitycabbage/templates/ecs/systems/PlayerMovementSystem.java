@@ -20,7 +20,7 @@ public abstract class PlayerMovementSystem extends InputHandlerSystem {
     public void update(float deltaTime) {
         super.update(deltaTime);
 
-        Entity player = ClientBase.instance.getManager().getFirstMatchingEntity(
+        Entity player = ClientBase.getInstance().getManager().getFirstMatchingEntity(
                 ComponentFilter
                         .builder()
                         .allOf(

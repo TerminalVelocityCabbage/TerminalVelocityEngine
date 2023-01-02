@@ -116,7 +116,7 @@ public class Window {
 		this.windowWidth = w;
 		this.windowHeight = h;
 		isResized = true;
-		ClientBase.instance.dispatchEvent(new WindowResizeEvent(WindowResizeEvent.EVENT));
+		ClientBase.getInstance().dispatchEvent(new WindowResizeEvent(WindowResizeEvent.EVENT));
 	}
 
 	public void destroy() {

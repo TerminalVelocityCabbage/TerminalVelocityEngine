@@ -15,7 +15,7 @@ public abstract class UnsafeCanvasBuilder<T extends UnsafeCanvasBuilder<T>> exte
     public UnsafeCanvasBuilder(Window window) {
         this.window = window;
         this.containers = new ArrayList<>();
-        ClientBase.instance.addEventHandler(EventContext.CLIENT, this);
+        ClientBase.getInstance().addEventHandler(EventContext.CLIENT, this);
         this.backgroundAlpha = new AnimatableUIValue(0);
     }
 

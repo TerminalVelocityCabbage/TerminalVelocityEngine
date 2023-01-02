@@ -1,26 +1,27 @@
 package com.terminalvelocitycabbage.engine.client;
 
 import com.github.simplenet.Client;
-import com.terminalvelocitycabbage.engine.client.renderer.scenes.SceneHandler;
-import com.terminalvelocitycabbage.engine.ecs.Manager;
-import com.terminalvelocitycabbage.templates.networking.PingClient;
 import com.terminalvelocitycabbage.engine.client.renderer.Renderer;
+import com.terminalvelocitycabbage.engine.client.renderer.scenes.SceneHandler;
 import com.terminalvelocitycabbage.engine.client.sound.SoundDeviceManager;
 import com.terminalvelocitycabbage.engine.debug.Logger;
+import com.terminalvelocitycabbage.engine.ecs.Manager;
 import com.terminalvelocitycabbage.engine.events.EventDispatcher;
+import com.terminalvelocitycabbage.engine.networking.SidedEntrypoint;
+import com.terminalvelocitycabbage.engine.scheduler.Scheduler;
 import com.terminalvelocitycabbage.templates.events.client.ClientConnectionEvent;
 import com.terminalvelocitycabbage.templates.events.client.ClientStartEvent;
-import com.terminalvelocitycabbage.engine.scheduler.Scheduler;
+import com.terminalvelocitycabbage.templates.networking.PingClient;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-public abstract class ClientBase extends EventDispatcher {
+public abstract class ClientBase extends EventDispatcher implements SidedEntrypoint {
 
 	String id;
 	Client client;
 	boolean shouldDisconnect;
-	public static ClientBase instance;
+	protected static ClientBase instance;
 	private Logger logger;
 	private static Renderer renderer;
 	private final SceneHandler sceneHandler = new SceneHandler();
@@ -156,5 +157,13 @@ public abstract class ClientBase extends EventDispatcher {
 
 	public SceneHandler getSceneHandler() {
 		return sceneHandler;
+	}
+
+	public static ClientBase getInstance() {
+		return instance;
+	}
+
+	public Client getClient() {
+		return client;
 	}
 }
