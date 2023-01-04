@@ -2,7 +2,6 @@ package com.terminalvelocitycabbage.engine.client.renderer;
 
 import com.terminalvelocitycabbage.engine.client.ClientBase;
 import com.terminalvelocitycabbage.engine.client.renderer.shader.ShaderHandler;
-import com.terminalvelocitycabbage.engine.client.renderer.ui.CanvasHandler;
 import com.terminalvelocitycabbage.engine.debug.Log;
 import com.terminalvelocitycabbage.engine.debug.SystemInfo;
 import com.terminalvelocitycabbage.engine.ecs.ComponentFilter;
@@ -35,7 +34,6 @@ public abstract class Renderer {
 	private final TickManager tickManager;
 
 	private final ShaderHandler shaderHandler = new ShaderHandler();
-	private final CanvasHandler canvasHandler = new CanvasHandler();
 
 	private boolean debugMode;
 	private static Callback debugCallback;
@@ -152,7 +150,6 @@ public abstract class Renderer {
 
 		//Cleanup handlers
 		shaderHandler.cleanup();
-		canvasHandler.cleanup();
 
 		//Free debug
 		if (debugMode) {
@@ -267,9 +264,5 @@ public abstract class Renderer {
 
 	public ShaderHandler getShaderHandler() {
 		return shaderHandler;
-	}
-
-	public CanvasHandler getCanvasHandler() {
-		return canvasHandler;
 	}
 }
