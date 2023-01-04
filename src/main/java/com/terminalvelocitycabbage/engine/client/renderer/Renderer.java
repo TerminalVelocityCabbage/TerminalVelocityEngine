@@ -2,14 +2,12 @@ package com.terminalvelocitycabbage.engine.client.renderer;
 
 import com.terminalvelocitycabbage.engine.client.ClientBase;
 import com.terminalvelocitycabbage.engine.client.renderer.shader.ShaderHandler;
-import com.terminalvelocitycabbage.engine.debug.Log;
 import com.terminalvelocitycabbage.engine.debug.SystemInfo;
 import com.terminalvelocitycabbage.engine.ecs.ComponentFilter;
 import com.terminalvelocitycabbage.engine.ecs.Entity;
 import com.terminalvelocitycabbage.engine.ecs.Manager;
 import com.terminalvelocitycabbage.engine.utils.TickManager;
 import com.terminalvelocitycabbage.templates.ecs.components.CameraComponent;
-import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLUtil;
@@ -55,27 +53,8 @@ public abstract class Renderer {
 	}
 
 	public void init() {
-		// Setup an error callback. The default implementation
-		// will print the error message in System.err.
-		GLFWErrorCallback.createPrint(System.err).set();
 
-		// Initialize GLFW. Most GLFW functions will not work before doing this.
-		if (!glfwInit()) {
-			Log.crash("Initialization Error", new IllegalStateException("Unable to initialize GLFW"));
-		}
-
-		// Configure GLFW
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
-		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
-		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-		if (debugMode) {
-			glfwWindowHint( GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE );
-		}
-
-		window.create();
+		window.create(debugMode);
 		window.init();
 		window.show();
 		// creates the GLCapabilities instance and makes the OpenGL bindings available for use.

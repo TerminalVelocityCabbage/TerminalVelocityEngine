@@ -5,12 +5,14 @@ import com.terminalvelocitycabbage.engine.client.input.InputListener;
 import com.terminalvelocitycabbage.engine.debug.Log;
 import com.terminalvelocitycabbage.templates.events.client.WindowResizeEvent;
 import org.joml.Matrix4f;
+import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
 import org.lwjgl.system.MemoryStack;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
@@ -53,7 +55,29 @@ public class Window {
 		orthoProjectionMatrix = new Matrix4f();
 	}
 
-	public void create() {
+	public void create(boolean debugMode) {
+
+		// Setup an error callback. The default implementation
+		// will print the error message in System.err.
+		GLFWErrorCallback.createPrint(System.err).set();
+
+		// Initialize GLFW. Most GLFW functions will not work before doing this.
+		if (!glfwInit()) {
+			Log.crash("Initialization Error", new IllegalStateException("Unable to initialize GLFW"));
+		}
+
+		// Configure GLFW
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
+		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
+		glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
+		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+		if (debugMode) {
+			glfwWindowHint( GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE );
+		}
+
 		long tID = glfwCreateWindow(windowWidth, windowHeight, title, NULL, NULL);
 		if (tID == NULL) {
 			Log.crash("Failed to Initialize", "an error occurred trying to init the game", new RuntimeException("Failed to create the GLFW window"));
