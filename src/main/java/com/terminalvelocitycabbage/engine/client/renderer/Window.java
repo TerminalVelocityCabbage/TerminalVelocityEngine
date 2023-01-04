@@ -9,8 +9,6 @@ import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
 import org.lwjgl.system.MemoryStack;
 
-import java.nio.IntBuffer;
-
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.glViewport;
@@ -23,6 +21,10 @@ public class Window {
 
 	private int windowWidth;
 	private int windowHeight;
+
+	private int framebufferWidth;
+	private int framebufferHeight;
+
 	private String title;
 	private boolean vSync;
 	private boolean center;
@@ -62,15 +64,6 @@ public class Window {
 	public void init() {
 		// Get the thread stack and push a new frame
 		try (MemoryStack stack = stackPush()) {
-			IntBuffer pWidth = stack.mallocInt(1); // int*
-			IntBuffer pHeight = stack.mallocInt(1); // int*
-
-			// Get the window size passed to glfwCreateWindow
-			glfwGetWindowSize(windowID, pWidth, pHeight);
-
-			//Update window instance dimensions
-			windowWidth = pWidth.get();
-			windowHeight = pHeight.get();
 
 			// Get the resolution of the primary monitor
 			GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
@@ -86,7 +79,7 @@ public class Window {
 
 			// Center the window
 			if (center) {
-				glfwSetWindowPos(windowID, (videoMode.width() - pWidth.get(0))/2, (videoMode.height() - pHeight.get(0))/2);
+				glfwSetWindowPos(windowID, (monitorWidth - windowWidth) / 2, (monitorHeight - windowHeight) / 2);
 			}
 
 			if (lockAndHideCursor) {
@@ -95,6 +88,11 @@ public class Window {
 
 			sizeCallback = GLFWWindowSizeCallback.create(this::windowSizeCallback);
 			glfwSetWindowSizeCallback(windowID, sizeCallback);
+
+			glfwSetFramebufferSizeCallback(windowID, (handle, w, h) -> {
+				framebufferWidth = w;
+				framebufferHeight = h;
+			});
 		}
 		inputListener = new InputListener(this);
 	}
@@ -176,6 +174,8 @@ public class Window {
 	public int height() {
 		return windowHeight;
 	}
+
+
 
 	public float aspectRatio() {
 		return windowWidth / (float)windowHeight;
