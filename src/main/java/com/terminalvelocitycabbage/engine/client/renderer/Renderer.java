@@ -6,8 +6,10 @@ import com.terminalvelocitycabbage.engine.debug.SystemInfo;
 import com.terminalvelocitycabbage.engine.ecs.ComponentFilter;
 import com.terminalvelocitycabbage.engine.ecs.Entity;
 import com.terminalvelocitycabbage.engine.ecs.Manager;
+import com.terminalvelocitycabbage.engine.profiling.GPUTimer;
 import com.terminalvelocitycabbage.engine.utils.TickManager;
 import com.terminalvelocitycabbage.templates.ecs.components.CameraComponent;
+import org.lwjgl.nanovg.NanoVGGL3;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLUtil;
@@ -18,11 +20,10 @@ import java.util.concurrent.TimeUnit;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.system.MemoryUtil.NULL;
 
 public abstract class Renderer {
 
-	// The window handle
-	private static Window window;
 	private static float[] frameTimes = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	private static long endFrameTime = 0;
 	private static long previousFrameTime = 0;
@@ -33,7 +34,7 @@ public abstract class Renderer {
 
 	private final ShaderHandler shaderHandler = new ShaderHandler();
 
-	private boolean debugMode;
+	private boolean debugMode = false;
 	private static Callback debugCallback;
 
 	private static int drawBufferMode;
@@ -41,9 +42,10 @@ public abstract class Renderer {
 	private static int polygonMode;
 	private int lastPolygonMode;
 
-	public Renderer(int width, int height, String title, float tickRate, boolean debugMode) {
-		window = new Window(width, height, title, false, true, true);
-		this.debugMode = debugMode;
+	long nanoVG;
+	GPUTimer gpuTimer;
+
+	public Renderer(float tickRate) {
 		tickManager = new TickManager(tickRate);
 	}
 
@@ -54,9 +56,6 @@ public abstract class Renderer {
 
 	public void init() {
 
-		window.create(debugMode);
-		window.init();
-		window.show();
 		// creates the GLCapabilities instance and makes the OpenGL bindings available for use.
 		GL.createCapabilities();
 
@@ -78,11 +77,18 @@ public abstract class Renderer {
 
 		setBeginMode(PolygonMode.FILL);
 		setDrawBufferMode(DrawBufferMode.FRONT_AND_BACK);
+
+		nanoVG = NanoVGGL3.nvgCreate(NanoVGGL3.NVG_ANTIALIAS);
+		if (nanoVG == NULL) {
+			throw new RuntimeException("Could not init nanovg.");
+		}
+
+		gpuTimer = new GPUTimer();
 	}
 
 	private void start() {
 		endFrameTime = System.nanoTime();
-		while (!glfwWindowShouldClose(getWindow().getID())) {
+		while (!glfwWindowShouldClose(ClientBase.getWindow().getID())) {
 			previousFrameTime = endFrameTime;
 			loop();
 			endFrameTime = System.nanoTime();
@@ -134,18 +140,6 @@ public abstract class Renderer {
 		if (debugMode) {
 			debugCallback.free();
 		}
-
-		// Free the window callbacks and destroy the window
-		window.destroy();
-
-		// Terminate GLFW and free the error callback
-		glfwTerminate();
-		var errorCallback = glfwSetErrorCallback(null);
-		if (errorCallback != null) errorCallback.free();
-	}
-
-	public static Window getWindow() {
-		return window;
 	}
 
 	public void loop() {
@@ -158,14 +152,14 @@ public abstract class Renderer {
 			ClientBase.getInstance().tick(getDeltaTimeInMillis());
 		}
 
-		if (window.isResized()) {
-			window.updateDisplay();
+		if (ClientBase.getWindow().isResized()) {
+			ClientBase.getWindow().updateDisplay();
 			for (Entity matchingEntity : getManager().getMatchingEntities(ComponentFilter.builder().oneOf(CameraComponent.class).build())) {
 				matchingEntity.getComponent(CameraComponent.class).updateProjectionMatrix();
 			}
 		}
 
-		getWindow().getInputListener().update();
+		ClientBase.getWindow().getInputListener().update();
 	}
 
 	public void push() {
@@ -176,7 +170,7 @@ public abstract class Renderer {
 		lastDrawBufferMode = drawBufferMode;
 		lastPolygonMode = polygonMode;
 
-		glfwSwapBuffers(window.getID());
+		glfwSwapBuffers(ClientBase.getWindow().getID());
 		glfwPollEvents();
 	}
 
@@ -187,7 +181,11 @@ public abstract class Renderer {
 	public static void setBeginMode(PolygonMode mode) {
 		polygonMode = mode.getMode();
 	}
-	
+
+	public void setDebugMode(boolean debugMode) {
+		this.debugMode = debugMode;
+	}
+
 	enum DrawBufferMode {
 
 		NONE(GL11.GL_NONE),
@@ -233,15 +231,19 @@ public abstract class Renderer {
 		}
 	}
 
-	public void setVsync(boolean vsyncOn) {
-		window.setvSync(vsyncOn);
-	}
-
 	public Manager getManager() {
 		return ClientBase.getInstance().getManager();
 	}
 
 	public ShaderHandler getShaderHandler() {
 		return shaderHandler;
+	}
+
+	public GPUTimer getGpuTimer() {
+		return gpuTimer;
+	}
+
+	public long getNanoVG() {
+		return nanoVG;
 	}
 }

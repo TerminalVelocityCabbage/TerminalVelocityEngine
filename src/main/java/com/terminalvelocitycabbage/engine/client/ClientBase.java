@@ -2,6 +2,7 @@ package com.terminalvelocitycabbage.engine.client;
 
 import com.github.simplenet.Client;
 import com.terminalvelocitycabbage.engine.client.renderer.Renderer;
+import com.terminalvelocitycabbage.engine.client.renderer.Window;
 import com.terminalvelocitycabbage.engine.client.renderer.scenes.SceneHandler;
 import com.terminalvelocitycabbage.engine.client.sound.SoundDeviceManager;
 import com.terminalvelocitycabbage.engine.debug.Logger;
@@ -20,6 +21,7 @@ public abstract class ClientBase extends EventDispatcher implements SidedEntrypo
 
 	String id;
 	Client client;
+	private static Window window;
 	boolean shouldDisconnect;
 	protected static ClientBase instance;
 	private Logger logger;
@@ -28,11 +30,14 @@ public abstract class ClientBase extends EventDispatcher implements SidedEntrypo
 	private static SoundDeviceManager soundDeviceManager;
 	private static Scheduler scheduler;
 	Manager manager;
+	boolean debugMode;
 
-	public ClientBase(Logger logger, Renderer renderer) {
+	public ClientBase(Logger logger, Renderer renderer, boolean debugMode) {
+		this.debugMode = debugMode;
 		this.logger = logger;
 		ClientBase.soundDeviceManager = new SoundDeviceManager();
 		ClientBase.renderer = renderer;
+		ClientBase.renderer.setDebugMode(debugMode);
 		scheduler = new Scheduler();
 		manager = new Manager();
 	}
@@ -40,9 +45,15 @@ public abstract class ClientBase extends EventDispatcher implements SidedEntrypo
 	public void init() {
 		preInit();
 
+		setWindow(new Window(1900, 1000, "Outergrowth", false, true, true));
+		getWindow().create(isDebugMode());
+		getWindow().init();
+		getWindow().show();
+
 		//Start up the network listeners
 		client = new Client();
 		dispatchEvent(new ClientStartEvent(ClientStartEvent.INIT, client));
+		getWindow().init();
 		getRenderer().init();
 		postInit();
 	}
@@ -165,5 +176,17 @@ public abstract class ClientBase extends EventDispatcher implements SidedEntrypo
 
 	public Client getClient() {
 		return client;
+	}
+
+	public static Window getWindow() {
+		return window;
+	}
+
+	public static void setWindow(Window window) {
+		ClientBase.window = window;
+	}
+
+	public boolean isDebugMode() {
+		return debugMode;
 	}
 }

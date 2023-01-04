@@ -1,11 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.input;
 
-import com.terminalvelocitycabbage.engine.client.renderer.Renderer;
-import org.lwjgl.system.CallbackI;
-
-import java.util.Arrays;
-
-import static org.lwjgl.glfw.GLFW.*;
+import com.terminalvelocitycabbage.engine.client.ClientBase;
 
 public record KeyBind(long window, int keyCode, int scancode, int action, int modifiers) {
 
@@ -20,7 +15,7 @@ public record KeyBind(long window, int keyCode, int scancode, int action, int mo
      */
     @Deprecated()
     public KeyBind(int keyCode, int scancode, int action, int modifiers) {
-        this(Renderer.getWindow().getID(), keyCode, scancode, action, modifiers);
+        this(ClientBase.getWindow().getID(), keyCode, scancode, action, modifiers);
     }
 
     public static Builder builder() {

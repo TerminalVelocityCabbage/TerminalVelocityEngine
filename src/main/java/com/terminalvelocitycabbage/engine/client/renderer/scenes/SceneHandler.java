@@ -1,6 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.renderer.scenes;
 
-import com.terminalvelocitycabbage.engine.client.renderer.Renderer;
+import com.terminalvelocitycabbage.engine.client.ClientBase;
 import com.terminalvelocitycabbage.engine.debug.Log;
 
 import java.util.HashMap;
@@ -37,8 +37,8 @@ public class SceneHandler {
 				sceneHandler.get(activeScene).destroy();
 			}
 			activeScene = name;
-			sceneHandler.get(name).init(Renderer.getWindow());
-			Renderer.getWindow().focus();
+			sceneHandler.get(name).init(ClientBase.getWindow());
+			ClientBase.getWindow().focus();
 		} else {
 			Log.crash("Scene Load Exception", new RuntimeException("Could not load scene " + name + " not present in scene handler."));
 		}

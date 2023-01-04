@@ -1,6 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.renderer.util;
 
-import com.terminalvelocitycabbage.engine.client.renderer.Renderer;
+import com.terminalvelocitycabbage.engine.client.ClientBase;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -23,8 +23,8 @@ public class RayCaster {
         //Compute the ray
         projectionMatrix1.mul(viewMatrix).unprojectRay(
                 mouseX,
-                Renderer.getWindow().height() - mouseY,
-                new int[] {0, 0, Renderer.getWindow().width(), Renderer.getWindow().height()},
+                ClientBase.getWindow().height() - mouseY,
+                new int[] {0, 0, ClientBase.getWindow().width(), ClientBase.getWindow().height()},
                 rayStart, rayDirection);
 
         //Normalize the direction, so we can more accurately determine the length the ray should be

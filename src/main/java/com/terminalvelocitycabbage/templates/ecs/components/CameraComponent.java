@@ -1,6 +1,6 @@
 package com.terminalvelocitycabbage.templates.ecs.components;
 
-import com.terminalvelocitycabbage.engine.client.renderer.Renderer;
+import com.terminalvelocitycabbage.engine.client.ClientBase;
 import com.terminalvelocitycabbage.engine.ecs.Component;
 import org.joml.Math;
 import org.joml.Matrix4f;
@@ -58,10 +58,10 @@ public class CameraComponent implements Component {
     }
 
     public void createProjectionMatrix() {
-        projectionMatrix.identity().perspective(fov, Renderer.getWindow().aspectRatio(), clippingPlane, farPlane);
+        projectionMatrix.identity().perspective(fov, ClientBase.getWindow().aspectRatio(), clippingPlane, farPlane);
     }
 
     public void updateProjectionMatrix() {
-        projectionMatrix.setPerspective(fov, Renderer.getWindow().aspectRatio(), clippingPlane, farPlane);
+        projectionMatrix.setPerspective(fov, ClientBase.getWindow().aspectRatio(), clippingPlane, farPlane);
     }
 }
