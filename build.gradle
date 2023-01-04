@@ -23,7 +23,6 @@ buildscript {
 
 repositories {
 	mavenCentral()
-	jcenter()
 }
 
 project.ext.lwjglVersion = "3.2.3"
@@ -41,6 +40,8 @@ dependencies {
 	implementation "org.lwjgl:lwjgl-opengl"
 	implementation "org.lwjgl:lwjgl-shaderc"
 	implementation "org.lwjgl:lwjgl-stb"
+	implementation "org.joml:joml:${jomlVersion}"
+	implementation "org.lwjgl:lwjgl-nanovg"
 	runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
 	runtimeOnly "org.lwjgl:lwjgl-assimp::$lwjglNatives"
 	runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"
@@ -48,7 +49,7 @@ dependencies {
 	runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
 	runtimeOnly "org.lwjgl:lwjgl-shaderc::$lwjglNatives"
 	runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
-	implementation "org.joml:joml:${jomlVersion}"
+	runtimeOnly "org.lwjgl:lwjgl-nanovg::$lwjglNatives"
 
 	implementation 'com.github.jhg023:SimpleNet:1.6.4'
 
