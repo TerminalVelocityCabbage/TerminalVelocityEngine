@@ -85,4 +85,9 @@ public class UrlResource implements Resource {
 
 		return buffer;
 	}
+
+	public void printPath() {
+		Path path = Paths.get(url.getPath().replaceFirst("/", "").replaceFirst("file:", ""));
+		Log.info(path.toString());
+	}
 }
