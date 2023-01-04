@@ -78,11 +78,13 @@ public abstract class Renderer {
 		setBeginMode(PolygonMode.FILL);
 		setDrawBufferMode(DrawBufferMode.FRONT_AND_BACK);
 
+		//Init nanovg
 		nanoVG = NanoVGGL3.nvgCreate(NanoVGGL3.NVG_ANTIALIAS);
 		if (nanoVG == NULL) {
 			throw new RuntimeException("Could not init nanovg.");
 		}
 
+		//setup the gpu timer for profiling
 		gpuTimer = new GPUTimer();
 	}
 
@@ -140,6 +142,9 @@ public abstract class Renderer {
 		if (debugMode) {
 			debugCallback.free();
 		}
+
+		//cleanup nanovg
+		NanoVGGL3.nvgDelete(nanoVG);
 	}
 
 	public void loop() {
