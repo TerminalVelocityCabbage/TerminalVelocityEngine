@@ -10,6 +10,9 @@ import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
 import org.lwjgl.system.MemoryStack;
 
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.GL_TRUE;
@@ -44,6 +47,8 @@ public class Window {
 	Matrix4f orthoProjectionMatrix;
 
 	private InputListener inputListener;
+	private float contentScaleX;
+	private float contentScaleY;
 
 	public Window(int width, int height, String title, boolean vSync, boolean center, boolean lockAndHideCursor) {
 		this.windowWidth = width;
@@ -113,10 +118,27 @@ public class Window {
 			sizeCallback = GLFWWindowSizeCallback.create(this::windowSizeCallback);
 			glfwSetWindowSizeCallback(windowID, sizeCallback);
 
+			//Setup framebuffer size stuff
 			glfwSetFramebufferSizeCallback(windowID, (handle, w, h) -> {
 				framebufferWidth = w;
 				framebufferHeight = h;
 			});
+			IntBuffer fw = stack.mallocInt(1);
+			IntBuffer   fh = stack.mallocInt(1);
+			glfwGetFramebufferSize(windowID, fw, fh);
+			framebufferWidth = fw.get(0);
+			framebufferHeight = fh.get(0);
+
+			//Setup content scale stuff
+			glfwSetWindowContentScaleCallback(windowID, (handle, xscale, yscale) -> {
+				contentScaleX = xscale;
+				contentScaleY = yscale;
+			});
+			FloatBuffer sx = stack.mallocFloat(1);
+			FloatBuffer sy = stack.mallocFloat(1);
+			glfwGetWindowContentScale(windowID, sx, sy);
+			contentScaleX = sx.get(0);
+			contentScaleY = sy.get(0);
 		}
 		inputListener = new InputListener(this);
 	}
@@ -199,7 +221,21 @@ public class Window {
 		return windowHeight;
 	}
 
+	public int getFramebufferWidth() {
+		return framebufferWidth;
+	}
 
+	public int getFramebufferHeight() {
+		return framebufferHeight;
+	}
+
+	public float getContentScaleX() {
+		return contentScaleX;
+	}
+
+	public float getContentScaleY() {
+		return contentScaleY;
+	}
 
 	public float aspectRatio() {
 		return windowWidth / (float)windowHeight;
