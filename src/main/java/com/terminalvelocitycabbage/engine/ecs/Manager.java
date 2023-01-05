@@ -18,6 +18,7 @@ public class Manager {
 
     //The list of created components that can be added to any entity
     Set<Component> componentTypeSet;
+    Map<String, List<Class<? extends Component>>> componentTagMap;
     //The pool of free components
     MultiPool componentPool;
 
@@ -31,6 +32,7 @@ public class Manager {
 
     public Manager() {
         componentTypeSet = new HashSet<>();
+        componentTagMap = new HashMap<>();
         activeEntities = new ArrayList<>();
         systems = new HashMap<>();
 
@@ -44,12 +46,7 @@ public class Manager {
      * @param <T> The type of the component, must extend {@link Component}
      */
     public <T extends Component> void registerComponent(Class<T> componentType) {
-        try {
-            componentTypeSet.add(componentType.getDeclaredConstructor().newInstance());
-            componentPool.getPool(componentType, true);
-        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-            Log.crash("Could not Create Component", new RuntimeException(e));
-        }
+        registerComponent(componentType, 0);
     }
 
     /**
@@ -68,6 +65,34 @@ public class Manager {
     }
 
     /**
+     * Adds a component to the componentTypeSet
+     * @param componentType the class of the component you wish to add to the pool
+     * @param <T> The type of the component, must extend {@link Component}
+     */
+    public <T extends Component> void registerComponent(Class<T> componentType, String... componentTags) {
+        registerComponent(componentType, 0, componentTags);
+    }
+
+    /**
+     * Adds a component to the componentTypeSet
+     * @param componentType the class of the component you wish to add to the pool
+     * @param initialPoolSize The number of empty component to fill this pool with
+     * @param <T> The type of the component, must extend {@link Component}
+     */
+    public <T extends Component> void registerComponent(Class<T> componentType, int initialPoolSize, String... componentTags) {
+        try {
+            componentTypeSet.add(componentType.getDeclaredConstructor().newInstance());
+            componentPool.getPool(componentType, true, initialPoolSize);
+            Arrays.stream(componentTags).toList().forEach(tag -> {
+                if (!componentTagMap.containsKey(tag)) componentTagMap.put(tag, new ArrayList<>());
+                componentTagMap.get(tag).add(componentType);
+            });
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            Log.crash("Could not Create Component", new RuntimeException(e));
+        }
+    }
+
+    /**
      * Gets a component of the type requested from the componentTypeSet
      * @param type the class of the component you wish to retrieve
      * @param <T> any component which extends {@link Component}
@@ -76,6 +101,28 @@ public class Manager {
     public <T extends Component> T obtainComponent(Class<T> type) {
         if (!componentPool.hasType(type)) Log.crash("Could not retrieve pool of type " + type.getName() + " has this pool been added?", new RuntimeException("No pool exists of type " + type.getName()));
         return componentPool.obtain(type);
+    }
+
+    /**
+     * @param tag a string representing a tag associated with the components you want to retrieve
+     * @param <T> any class that implements component
+     * @return a list of components with this tag
+     */
+    public <T extends Component> List<T> obtainComponentsOf(String tag) {
+        List<T> components = new ArrayList<>();
+        for (Class<? extends Component> componentType: getComponentTypesOf(tag)) {
+            components.add((T)obtainComponent(componentType));
+        }
+        return components;
+    }
+
+    /**
+     * @param tag a string representing a tag associated with the components you want to retrieve
+     * @return a list of component types associated with the given tag
+     */
+    public List<Class<? extends Component>> getComponentTypesOf(String tag) {
+        if (!componentTagMap.containsKey(tag)) Log.warn("No components exist on tag " + tag);
+        return componentTagMap.get(tag);
     }
 
     /**
@@ -139,9 +186,9 @@ public class Manager {
     }
 
     /**
-     * Gets all entities that match the provided filter
-     * @param filter the filter for which you want to get matching entities
-     * @return a List of entities that match the filter provided
+     * @param componentClass the class of the entity you want to retrieve
+     * @param <T> and class that extends component
+     * @return the first matching component to the class you requested
      */
     public <T extends Component> T getComponentOfFirstMatchingEntity(Class<T> componentClass) {
         return getFirstMatchingEntity(ComponentFilter.builder().oneOf(componentClass).build()).getComponent(componentClass);

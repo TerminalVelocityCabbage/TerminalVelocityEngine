@@ -4,9 +4,7 @@ import com.terminalvelocitycabbage.engine.debug.Log;
 import com.terminalvelocitycabbage.engine.pooling.Poolable;
 import com.terminalvelocitycabbage.engine.utils.FieldMapper;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * An entity is meant to be a container for components, provided is a Collection for your components
@@ -20,7 +18,7 @@ public class Entity implements Poolable {
     //The unique identifier of this entity
     private UUID uniqueID;
     //The container of components that defined this entity
-    private Map<Class<?>, Component> components;
+    private Map<Class<? extends Component>, Component> components;
 
     /**
      * Creates a new entity object, this should not be instantiated on its own but should rather be created with
@@ -82,7 +80,29 @@ public class Entity implements Poolable {
             Log.warn("Entity does not contain component " + componentClass.getName() + " but it was attempted to be retrieved.");
             return null;
         }
+        return getComponentUnsafe(componentClass);
+    }
+
+    /**
+     * Does the same as above but without logs if you are certain this entity contains the specified component
+     *
+     * @param componentClass The class of the component you want to retrieve from this entity
+     * @param <T> A class that implements {@link Component}
+     * @return The component requested or null
+     */
+    public <T extends Component> T getComponentUnsafe(Class<T> componentClass) {
         return (T) components.get(componentClass);
+    }
+
+    /**
+     * @param tag the tage you want to get components for
+     * @return a list of components that extend the specified class
+     */
+    public List<Class<? extends Component>> getComponentTypesWithTag(String tag) {
+        var taggedComponents = manager.getComponentTypesOf(tag);
+        List<Class<? extends Component>> returnList = new ArrayList<>(components.keySet());
+        returnList.retainAll(taggedComponents);
+        return returnList;
     }
 
     /**

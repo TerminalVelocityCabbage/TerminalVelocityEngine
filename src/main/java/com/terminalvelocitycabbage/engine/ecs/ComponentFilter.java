@@ -132,7 +132,19 @@ public class ComponentFilter {
          * @return the current builder
          */
         public Builder onlyOneOf(Class<? extends Component>... requiredComponents) {
-            this.requiredOnlyOneOfComponents.add(new ArrayList<>(Arrays.stream(requiredComponents).toList()));
+            this.onlyOneOf(new ArrayList<>(Arrays.stream(requiredComponents).toList()));
+            return this;
+        }
+
+        /**
+         * Adds the specified components to the only one of required components list, when used to filter any entity
+         * which does not contain exactly one of the specified components will not be added to the filtered list
+         *
+         * @param requiredComponents the components that you want exactly one of to match
+         * @return the current builder
+         */
+        public Builder onlyOneOf(List<Class<? extends Component>> requiredComponents) {
+            this.requiredOnlyOneOfComponents.add(requiredComponents);
             return this;
         }
 
@@ -144,7 +156,19 @@ public class ComponentFilter {
          * @return the current builder
          */
         public Builder anyOf(Class<? extends Component>... requiredComponents) {
-            this.requiredAnyOfComponents.add(new ArrayList<>(Arrays.stream(requiredComponents).toList()));
+            this.anyOf(new ArrayList<>(Arrays.stream(requiredComponents).toList()));
+            return this;
+        }
+
+        /**
+         * Adds the specified components to the any required components list, when used to filter any of the entities
+         * which do not contain at least one of the specified components will not be added to the filtered list
+         *
+         * @param requiredComponents the components you want at least one of to match
+         * @return the current builder
+         */
+        public Builder anyOf(List<Class<? extends Component>> requiredComponents) {
+            this.requiredAnyOfComponents.add(requiredComponents);
             return this;
         }
 
@@ -168,7 +192,19 @@ public class ComponentFilter {
          * @return the current builder
          */
         public Builder allOf(Class<? extends Component>... requiredComponents) {
-            this.requiredAllOfComponents.addAll(Arrays.stream(requiredComponents).toList());
+            this.allOf(Arrays.stream(requiredComponents).toList());
+            return this;
+        }
+
+        /**
+         * Adds the specified components to the required components list, when used to filter any entities which do not
+         * contain ALL of the specified components will not be added to the filtered list
+         *
+         * @param requiredComponents the components that must all exist to match
+         * @return the current builder
+         */
+        public Builder allOf(List<Class<? extends Component>> requiredComponents) {
+            this.requiredAllOfComponents.addAll(requiredComponents);
             return this;
         }
 
@@ -180,7 +216,19 @@ public class ComponentFilter {
          * @return the current builder
          */
         public Builder excludes(Class<? extends Component>... excludedComponents) {
-            this.excludedComponents.addAll(Arrays.stream(excludedComponents).toList());
+            this.excludes(Arrays.stream(excludedComponents).toList());
+            return this;
+        }
+
+        /**
+         * Adds the specified components to the excluded components list, when used to filter any entities which contain
+         * the specified components will not be added to the filtered list
+         *
+         * @param excludedComponents the components you want none of to match
+         * @return the current builder
+         */
+        public Builder excludes(List<Class<? extends Component>> excludedComponents) {
+            this.excludedComponents.addAll(excludedComponents);
             return this;
         }
 
