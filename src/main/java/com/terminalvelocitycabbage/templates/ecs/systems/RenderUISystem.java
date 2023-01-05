@@ -2,7 +2,6 @@ package com.terminalvelocitycabbage.templates.ecs.systems;
 
 import com.terminalvelocitycabbage.engine.client.ClientBase;
 import com.terminalvelocitycabbage.engine.client.ui.UIRenderable;
-import com.terminalvelocitycabbage.engine.debug.Log;
 import com.terminalvelocitycabbage.engine.ecs.ComponentFilter;
 import com.terminalvelocitycabbage.engine.ecs.Entity;
 import com.terminalvelocitycabbage.engine.ecs.System;
@@ -14,9 +13,7 @@ public class RenderUISystem extends System {
 
     @Override
     public List<Entity> getEntities() {
-        var entities = getManager().getMatchingEntities(ComponentFilter.builder().anyOf(getManager().getComponentTypesOf("uirenderable")).build());
-        Log.info(entities.size());
-        return entities;
+        return getManager().getMatchingEntities(ComponentFilter.builder().anyOf(getManager().getComponentTypesOf("uirenderable")).build());
     }
 
     @Override

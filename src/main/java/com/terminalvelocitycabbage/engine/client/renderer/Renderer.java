@@ -148,6 +148,8 @@ public abstract class Renderer {
 
 	public void loop() {
 
+		ClientBase.getRenderer().getGpuTimer().startGPUTimer();
+
 		//Tell the tick manager the frame time change
 		tickManager.apply(getDeltaTimeInMillis());
 
@@ -174,6 +176,7 @@ public abstract class Renderer {
 		lastDrawBufferMode = drawBufferMode;
 		lastPolygonMode = polygonMode;
 
+		ClientBase.getRenderer().getGpuTimer().stopGPUTimer(3);
 		glfwSwapBuffers(ClientBase.getWindow().getID());
 		glfwPollEvents();
 	}

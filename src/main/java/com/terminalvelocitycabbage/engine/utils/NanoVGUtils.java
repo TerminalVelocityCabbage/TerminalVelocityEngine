@@ -22,7 +22,8 @@ public class NanoVGUtils {
     public static String loadFont(ResourceManager resourceManager, Identifier identifier) {
         var optionalResource = resourceManager.getResource(identifier);
         if (optionalResource.isPresent()) {
-            var font = nvgCreateFontMem(ClientBase.getRenderer().getNanoVG(), identifier.toString(), optionalResource.get().asByteBuffer(), false);
+            var buff = optionalResource.get().asByteBuffer(true);
+            var font = nvgCreateFontMem(ClientBase.getRenderer().getNanoVG(), identifier.toString(), buff, false);
             if (font == -1) {
                 Log.error("Could not add font " + identifier);
             }

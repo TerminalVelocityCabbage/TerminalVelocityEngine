@@ -13,7 +13,11 @@ public interface Resource {
 
 	DataInputStream asDataStream();
 
-	ByteBuffer asByteBuffer();
+	default ByteBuffer asByteBuffer() {
+		return asByteBuffer(false);
+	}
+
+	ByteBuffer asByteBuffer(boolean keepAlive);
 
 	String asString();
 }
