@@ -170,15 +170,6 @@ public class Model {
 		}
 	}
 
-	public Model setMaterial(Material material) {
-		this.mesh.setMaterial(material);
-		return this;
-	}
-
-	public Material getMaterial() {
-		return this.mesh.getMaterial();
-	}
-
 	public Matrix4f getTransformationMatrix() {
 		return transformationMatrix;
 	}

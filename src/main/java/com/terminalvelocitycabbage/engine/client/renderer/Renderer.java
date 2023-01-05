@@ -74,7 +74,6 @@ public abstract class Renderer {
 		glEnable(GL_BLEND);
 		//TODO make ways to swap between blend functions like render modes
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 		setBeginMode(PolygonMode.FILL);
 		setDrawBufferMode(DrawBufferMode.FRONT_AND_BACK);
 

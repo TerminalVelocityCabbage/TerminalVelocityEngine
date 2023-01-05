@@ -2,7 +2,6 @@ package com.terminalvelocitycabbage.templates.marchingcubes;
 
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderFormat;
 import com.terminalvelocitycabbage.engine.client.renderer.elements.RenderMode;
-import com.terminalvelocitycabbage.engine.client.renderer.model.Material;
 import com.terminalvelocitycabbage.engine.client.renderer.model.MeshPart;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Model;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Vertex;
@@ -38,7 +37,6 @@ public class Chunk {
         this.colourGetter = colourGetter;
 
         this.chunkModel = new Model(RenderFormat.POSITION_UV_NORMAL_COLOUR, new RenderMode(RenderMode.Modes.TRIANGLES), new ArrayList<>());
-        this.chunkModel.setMaterial(Material.builder().build());
         this.chunkModel.bind();
 
         //this.boundary = new BoxLine(new Vector3f(x * SIZE_PER_CHUNK, y * SIZE_PER_CHUNK, z * SIZE_PER_CHUNK), SIZE_PER_CHUNK, SIZE_PER_CHUNK, SIZE_PER_CHUNK, new Vector4f(1, 0, 0, 1));
@@ -74,10 +72,6 @@ public class Chunk {
         //boundary.bind();                                        //Has gl calls
         //boundary.queueAndUpdate();
         this.generated = true;
-    }
-
-    public Material getMaterial() {
-        return this.chunkModel.getMaterial();
     }
 
     public void render() {
