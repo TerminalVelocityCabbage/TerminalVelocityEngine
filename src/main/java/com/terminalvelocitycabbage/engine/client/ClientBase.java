@@ -5,6 +5,7 @@ import com.terminalvelocitycabbage.engine.client.renderer.Renderer;
 import com.terminalvelocitycabbage.engine.client.renderer.Window;
 import com.terminalvelocitycabbage.engine.client.renderer.scenes.SceneHandler;
 import com.terminalvelocitycabbage.engine.client.sound.SoundDeviceManager;
+import com.terminalvelocitycabbage.engine.client.state.StateHandler;
 import com.terminalvelocitycabbage.engine.debug.Logger;
 import com.terminalvelocitycabbage.engine.ecs.Manager;
 import com.terminalvelocitycabbage.engine.events.EventDispatcher;
@@ -31,6 +32,7 @@ public abstract class ClientBase extends EventDispatcher implements SidedEntrypo
 	private static Scheduler scheduler;
 	Manager manager;
 	boolean debugMode;
+	StateHandler stateHandler;
 
 	public ClientBase(Logger logger, Renderer renderer, boolean debugMode) {
 		this.debugMode = debugMode;
@@ -40,6 +42,7 @@ public abstract class ClientBase extends EventDispatcher implements SidedEntrypo
 		ClientBase.renderer.setDebugMode(debugMode);
 		scheduler = new Scheduler();
 		manager = new Manager();
+		stateHandler = new StateHandler();
 	}
 
 	public void init() {
@@ -189,5 +192,9 @@ public abstract class ClientBase extends EventDispatcher implements SidedEntrypo
 
 	public boolean isDebugMode() {
 		return debugMode;
+	}
+
+	public StateHandler getStateHandler() {
+		return stateHandler;
 	}
 }

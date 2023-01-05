@@ -7,34 +7,29 @@ import java.util.Map;
 
 public class StateHandler {
 
-	public static State DEFAULT_STATE = new State("default").setDetails("The default state.");
+	public static State DEFAULT_STATE = new State("default", "The default state.");
 
 	public Map<String, State> states;
-	public State activeState;
 
 	public StateHandler() {
 		this.states = new HashMap<>();
-		this.activeState = DEFAULT_STATE;
+		addState(DEFAULT_STATE, true);
 	}
 
 	public void addState(State state) {
-		states.put(state.getState(), state);
+		addState(state, false);
 	}
 
-	public void setState(String state) {
-		if (states.containsKey(state)) {
-			activeState = states.get(state);
-		} else {
-			Log.crash("State Error", new RuntimeException("No state defined by " + state));
-		}
+	public void addState(State state, boolean enable) {
+		states.put(state.getName(), state.setEnabled(enable));
 	}
 
-	public void resetState() {
-		this.activeState = DEFAULT_STATE;
+	public void toggleState(String name) {
+		states.get(name).toggle();
 	}
 
-	public boolean isActive(String state) {
-		return activeState.state.equals(state);
+	public boolean isStateActive(String name) {
+		if (!states.containsKey(name)) Log.crash("State not found " + name, new RuntimeException("no state of name " + name + " registered in this state handler"));
+		return states.get(name).enabled();
 	}
-
 }
