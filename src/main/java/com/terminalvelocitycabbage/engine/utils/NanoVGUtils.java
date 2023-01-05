@@ -1,6 +1,12 @@
 package com.terminalvelocitycabbage.engine.utils;
 
+import com.terminalvelocitycabbage.engine.client.ClientBase;
+import com.terminalvelocitycabbage.engine.debug.Log;
+import com.terminalvelocitycabbage.engine.resources.Identifier;
+import com.terminalvelocitycabbage.engine.resources.ResourceManager;
 import org.lwjgl.nanovg.NVGColor;
+
+import static org.lwjgl.nanovg.NanoVG.nvgCreateFontMem;
 
 public class NanoVGUtils {
 
@@ -11,6 +17,17 @@ public class NanoVGUtils {
         color.a(a / 255.0f);
 
         return color;
+    }
+
+    public static String loadFont(ResourceManager resourceManager, Identifier identifier) {
+        var optionalResource = resourceManager.getResource(identifier);
+        if (optionalResource.isPresent()) {
+            var font = nvgCreateFontMem(ClientBase.getRenderer().getNanoVG(), identifier.toString(), optionalResource.get().asByteBuffer(), false);
+            if (font == -1) {
+                Log.error("Could not add font " + identifier);
+            }
+        }
+        return identifier.toString();
     }
 
 }
