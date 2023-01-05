@@ -24,7 +24,7 @@ public class MultiPool {
         if (!pools.containsKey(type) && createIfNull) {
             createPool(type, new ReflectionPool<>(type), initialCountIfCreated);
         }
-        return getPool(type);
+        return pools.get(type);
     }
 
     /**
@@ -35,10 +35,7 @@ public class MultiPool {
      */
     @SuppressWarnings("unchecked")
     public <T extends Poolable> TypePool<T> getPool(Class<T> type, boolean createIfNull) {
-        if (!pools.containsKey(type) && createIfNull) {
-            createPool(type, new ReflectionPool<>(type));
-        }
-        return getPool(type);
+        return getPool(type, createIfNull, 0);
     }
 
     /**
@@ -48,7 +45,7 @@ public class MultiPool {
      */
     @SuppressWarnings("unchecked")
     public <T extends Poolable> TypePool<T> getPool(Class<T> type) {
-       return pools.get(type);
+       return getPool(type, false, 0);
     }
 
     /**
@@ -57,7 +54,7 @@ public class MultiPool {
      * @param <T> the type of the pool requested
      */
     public <T extends Poolable> void createPool(Class<T> type, TypePool<T> pool) {
-        pools.put(type, pool);
+        createPool(type, pool, 0);
     }
 
     /**
@@ -67,7 +64,7 @@ public class MultiPool {
      * @param <T> the type of the pool requested
      */
     public <T extends Poolable> void createPool(Class<T> type, TypePool<T> pool, int initialCount) {
-        pool.fill(initialCount);
+        if (initialCount > 0) pool.fill(initialCount);
         pools.put(type, pool);
     }
 
