@@ -78,6 +78,7 @@ public abstract class ClientBase extends EventDispatcher implements SidedEntrypo
 		getRenderer().destroy();
 		getSceneHandler().cleanup();
 		getSoundDeviceManager().cleanup();
+		getWindow().destroy();
 	}
 
 	public void tick(float deltaTime) {
