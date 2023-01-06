@@ -1,6 +1,7 @@
 package com.terminalvelocitycabbage.engine.client.renderer.lights;
 
 import com.terminalvelocitycabbage.engine.debug.Log;
+import com.terminalvelocitycabbage.engine.utils.Color;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -10,13 +11,13 @@ public class SpotLight {
 	private Vector3f position;
 	private Vector3f coneDirection;
 	private float cutoff;
-	private Vector4f color;
+	private Color color;
 	protected float intensity;
 	private Attenuation attenuation;
 
-	public SpotLight(Vector3f position, Vector3f color, float intensity, Attenuation attenuation, Vector3f coneDirection, float cutoffAngle) {
+	public SpotLight(Vector3f position, Color color, float intensity, Attenuation attenuation, Vector3f coneDirection, float cutoffAngle) {
 		this.position = position;
-		this.color = new Vector4f(color, 1.0f);
+		this.color = color;
 		if (intensity > 1 || intensity < 0) {
 			Log.warn("Intensity of a light should be from 0 to 1, one or more light has been capped.");
 			intensity = intensity > 1 ? 1 : 0;
@@ -55,12 +56,12 @@ public class SpotLight {
 		this.position = position;
 	}
 
-	public Vector4f getColor() {
+	public Color getColor() {
 		return color;
 	}
 
-	public void setColor(Vector3f color) {
-		this.color = new Vector4f(color, 1.0f);
+	public void setColor(Color color) {
+		this.color = color;
 	}
 
 	public float getIntensity() {

@@ -1,13 +1,14 @@
 package com.terminalvelocitycabbage.engine.client.renderer.shader;
 
+import com.terminalvelocitycabbage.engine.client.renderer.lights.Attenuation;
 import com.terminalvelocitycabbage.engine.client.renderer.lights.DirectionalLight;
 import com.terminalvelocitycabbage.engine.client.renderer.lights.PointLight;
 import com.terminalvelocitycabbage.engine.client.renderer.lights.SpotLight;
-import com.terminalvelocitycabbage.engine.client.renderer.lights.Attenuation;
 import com.terminalvelocitycabbage.engine.client.renderer.model.Material;
+import com.terminalvelocitycabbage.engine.debug.Log;
 import com.terminalvelocitycabbage.engine.resources.Identifier;
 import com.terminalvelocitycabbage.engine.resources.ResourceManager;
-import com.terminalvelocitycabbage.engine.debug.Log;
+import com.terminalvelocitycabbage.engine.utils.Color;
 import org.joml.*;
 import org.lwjgl.system.MemoryStack;
 
@@ -201,6 +202,14 @@ public class ShaderProgram {
 		int id = uniforms.computeIfAbsent(name, this::getUniformId);
 		if(id != -1) {
 			glUniform4f(id, value.x, value.y, value.z, value.w);
+		}
+	}
+
+	public void setUniform(String name, Color value) {
+		test();
+		int id = uniforms.computeIfAbsent(name, this::getUniformId);
+		if(id != -1) {
+			glUniform4f(id, value.r(), value.g(), value.b(), value.a());
 		}
 	}
 

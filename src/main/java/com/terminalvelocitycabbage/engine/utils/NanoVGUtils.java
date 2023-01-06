@@ -10,6 +10,15 @@ import static org.lwjgl.nanovg.NanoVG.nvgCreateFontMem;
 
 public class NanoVGUtils {
 
+    public static NVGColor rgba(Color color, NVGColor nvgColor) {
+        nvgColor.r(color.r);
+        nvgColor.g(color.g);
+        nvgColor.b(color.b);
+        nvgColor.a(color.a);
+
+        return nvgColor;
+    }
+
     public static NVGColor rgba(int r, int g, int b, int a, NVGColor color) {
         color.r(r / 255.0f);
         color.g(g / 255.0f);
