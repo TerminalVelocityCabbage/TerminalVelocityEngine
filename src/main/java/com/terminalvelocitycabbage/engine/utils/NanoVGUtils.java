@@ -6,7 +6,10 @@ import com.terminalvelocitycabbage.engine.resources.Identifier;
 import com.terminalvelocitycabbage.engine.resources.ResourceManager;
 import org.lwjgl.nanovg.NVGColor;
 
+import java.nio.ByteBuffer;
+
 import static org.lwjgl.nanovg.NanoVG.nvgCreateFontMem;
+import static org.lwjgl.system.MemoryUtil.memUTF8;
 
 public class NanoVGUtils {
 
@@ -40,4 +43,7 @@ public class NanoVGUtils {
         return identifier.toString();
     }
 
+    public static ByteBuffer cpToUTF8(int cp) {
+        return memUTF8(new String(Character.toChars(cp)), false);
+    }
 }

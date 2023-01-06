@@ -1,4 +1,4 @@
-package com.terminalvelocitycabbage.templates.ecs.components;
+package com.terminalvelocitycabbage.templates.ecs.components.ui;
 
 public abstract class UITransformComponent {
 

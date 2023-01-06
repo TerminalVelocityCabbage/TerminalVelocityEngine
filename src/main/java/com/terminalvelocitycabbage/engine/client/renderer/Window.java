@@ -197,12 +197,20 @@ public class Window {
 		}
 	}
 
-	public double getCursorX() {
+	public double getCursorXOGL() {
 		return ((cursorX / width()) * 2) - 1;
 	}
 
-	public double getCursorY() {
+	public double getCursorYOGL() {
 		return ((-cursorY / height()) * 2) + 1;
+	}
+
+	public double getCursorX() {
+		return cursorX;
+	}
+
+	public double getCursorY() {
+		return cursorY;
 	}
 
 	public long getID() {
