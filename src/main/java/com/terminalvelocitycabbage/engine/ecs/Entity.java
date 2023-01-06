@@ -96,13 +96,24 @@ public class Entity implements Poolable {
 
     /**
      * @param tag the tage you want to get components for
-     * @return a list of components that extend the specified class
+     * @return a list of component classes that extend the specified class
      */
     public List<Class<? extends Component>> getComponentTypesWithTag(String tag) {
         var taggedComponents = manager.getComponentTypesOf(tag);
         List<Class<? extends Component>> returnList = new ArrayList<>(components.keySet());
         returnList.retainAll(taggedComponents);
         return returnList;
+    }
+
+    /**
+     * @param tag the tage you want to get components for
+     * @return a list of components that extend the specified class
+     */
+    public List<? extends Component> getComponentsWithTag(String tag) {
+        var taggedComponents = manager.getComponentTypesOf(tag);
+        List<Class<? extends Component>> classList = new ArrayList<>(components.keySet());
+        classList.retainAll(taggedComponents);
+        return classList.stream().map(clazz -> components.get(clazz)).toList();
     }
 
     /**
