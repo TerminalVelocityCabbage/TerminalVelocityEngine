@@ -184,18 +184,18 @@ public class TVEUI {
         private static final NVGGlyphPosition.Buffer glyphs    = NVGGlyphPosition.create(100);
         private static final FloatBuffer lineh  = BufferUtils.createFloatBuffer(1);
         private static final FloatBuffer bounds = BufferUtils.createFloatBuffer(4);
-        private static final ByteBuffer paragraph = memUTF8(
-                "This is longer chunk of text.\n  \n  Would have used lorem ipsum but she    was busy jumping over the lazy dog with the fox and all the men " +
-                        "who came to the aid of the party.🎉",
-                false
-        );
         private static final ByteBuffer hoverText = memASCII("Hover your mouse over the text to see calculated caret position.", false);
 
         static final NVGColor color = NVGColor.create();
         String font;
+        String text;
 
         public void initParagraph(String font) {
             this.font = font;
+        }
+
+        public void updateParagraph(String text) {
+            this.text = text;
         }
 
         public void drawParagraph(long vg, float x, float y, float width, float height, float mx, float my) {
@@ -213,6 +213,7 @@ public class TVEUI {
             // The text break API can be used to fill a large buffer of rows,
             // or to iterate over the text just few lines (or just one) at a time.
             // The "next" variable of the last returned item tells where to continue.
+            ByteBuffer paragraph = memUTF8(text, false);
             long start = memAddress(paragraph);
             long end = start + paragraph.remaining();
             int  nrows, lnum = 0;
