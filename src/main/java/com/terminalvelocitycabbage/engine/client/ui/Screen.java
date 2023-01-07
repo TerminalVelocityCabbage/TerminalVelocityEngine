@@ -1,6 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.ui;
 
-public abstract class GUI {
+public abstract class Screen {
 
     public abstract void init();
     public abstract void draw(long vg);

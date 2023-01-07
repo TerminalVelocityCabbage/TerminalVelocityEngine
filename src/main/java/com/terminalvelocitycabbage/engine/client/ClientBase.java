@@ -6,6 +6,7 @@ import com.terminalvelocitycabbage.engine.client.renderer.Window;
 import com.terminalvelocitycabbage.engine.client.renderer.scenes.SceneHandler;
 import com.terminalvelocitycabbage.engine.client.sound.SoundDeviceManager;
 import com.terminalvelocitycabbage.engine.client.state.StateHandler;
+import com.terminalvelocitycabbage.engine.client.ui.ScreenHandler;
 import com.terminalvelocitycabbage.engine.debug.Logger;
 import com.terminalvelocitycabbage.engine.ecs.Manager;
 import com.terminalvelocitycabbage.engine.events.EventDispatcher;
@@ -33,6 +34,7 @@ public abstract class ClientBase extends EventDispatcher implements SidedEntrypo
 	Manager manager;
 	boolean debugMode;
 	StateHandler stateHandler;
+	ScreenHandler screenHandler;
 
 	public ClientBase(Logger logger, Renderer renderer, boolean debugMode) {
 		this.debugMode = debugMode;
@@ -43,6 +45,7 @@ public abstract class ClientBase extends EventDispatcher implements SidedEntrypo
 		scheduler = new Scheduler();
 		manager = new Manager();
 		stateHandler = new StateHandler();
+		screenHandler = new ScreenHandler();
 	}
 
 	public void init() {
@@ -58,7 +61,6 @@ public abstract class ClientBase extends EventDispatcher implements SidedEntrypo
 		dispatchEvent(new ClientStartEvent(ClientStartEvent.INIT, client));
 		getWindow().init();
 		getRenderer().init();
-		postInit();
 	}
 
 	private void preInit() {
@@ -66,10 +68,12 @@ public abstract class ClientBase extends EventDispatcher implements SidedEntrypo
 	}
 
 	private void postInit() {
+		getScreenHandler().init();
 		dispatchEvent(new ClientStartEvent(ClientStartEvent.POST_INIT, client));
 	}
 
 	public void start() {
+		postInit();
 		//client.onConnect(() -> dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.CONNECT, client)));
 		//client.preDisconnect(() -> dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.PRE_DISCONNECT, client)));
 		//client.postDisconnect(() -> dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.POST_DISCONNECT, client)));
@@ -79,6 +83,7 @@ public abstract class ClientBase extends EventDispatcher implements SidedEntrypo
 
 	public void cleanup() {
 		getRenderer().destroy();
+		getScreenHandler().cleanup();
 		getSceneHandler().cleanup();
 		getSoundDeviceManager().cleanup();
 		getWindow().destroy();
@@ -196,5 +201,9 @@ public abstract class ClientBase extends EventDispatcher implements SidedEntrypo
 
 	public StateHandler getStateHandler() {
 		return stateHandler;
+	}
+
+	public ScreenHandler getScreenHandler() {
+		return screenHandler;
 	}
 }
