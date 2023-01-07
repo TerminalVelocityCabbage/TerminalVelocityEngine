@@ -25,8 +25,9 @@ public class State {
 		return this;
 	}
 
-	public void toggle() {
+	public boolean toggle() {
 		enabled = !enabled;
+		return enabled;
 	}
 
 	public boolean enabled() {

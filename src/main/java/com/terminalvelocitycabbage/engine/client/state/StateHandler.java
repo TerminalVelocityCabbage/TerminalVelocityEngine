@@ -24,12 +24,16 @@ public class StateHandler {
 		states.put(state.getName(), state.setEnabled(enable));
 	}
 
-	public void toggleState(String name) {
-		states.get(name).toggle();
+	public boolean toggleState(String name) {
+		return states.get(name).toggle();
 	}
 
 	public boolean isStateActive(String name) {
 		if (!states.containsKey(name)) Log.crash("State not found " + name, new RuntimeException("no state of name " + name + " registered in this state handler"));
 		return states.get(name).enabled();
+	}
+
+	public boolean isStateActive(State state) {
+		return isStateActive(state.getName());
 	}
 }
