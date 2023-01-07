@@ -9,6 +9,7 @@ import com.terminalvelocitycabbage.engine.ecs.Manager;
 import com.terminalvelocitycabbage.engine.profiling.GPUTimer;
 import com.terminalvelocitycabbage.engine.utils.TickManager;
 import com.terminalvelocitycabbage.templates.ecs.components.CameraComponent;
+import org.lwjgl.nanovg.NanoVG;
 import org.lwjgl.nanovg.NanoVGGL3;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
@@ -169,6 +170,18 @@ public abstract class Renderer {
 	}
 
 	public void push() {
+
+		var window = ClientBase.getWindow();
+		int width = (int) (window.getEffectiveWidth());
+		int height = (int) (window.getEffectiveHeight());
+
+		var screenHandler = ClientBase.getInstance().getScreenHandler();
+
+		screenHandler.update();
+
+		NanoVG.nvgBeginFrame(getNanoVG(), width, height, Math.max(window.getContentScaleX(), window.getContentScaleY()));
+		screenHandler.draw(getNanoVG());
+		NanoVG.nvgEndFrame(getNanoVG());
 
 		if (lastDrawBufferMode != drawBufferMode || lastPolygonMode != polygonMode) {
 			glPolygonMode(drawBufferMode, polygonMode);
