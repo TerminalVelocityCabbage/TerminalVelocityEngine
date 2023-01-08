@@ -180,23 +180,37 @@ public class TVEUI {
 
     public static class Paragraph {
 
-        private static final NVGTextRow.Buffer       rows      = NVGTextRow.create(3);
-        private static final NVGGlyphPosition.Buffer glyphs    = NVGGlyphPosition.create(100);
-        private static final FloatBuffer lineh  = BufferUtils.createFloatBuffer(1);
+        private static final NVGTextRow.Buffer rows = NVGTextRow.create(3);
+        private static final NVGGlyphPosition.Buffer glyphs = NVGGlyphPosition.create(100);
+        private static final FloatBuffer lineh = BufferUtils.createFloatBuffer(1);
 
         static final NVGColor color = NVGColor.create();
         String font;
-        String text;
+        boolean caret;
+        boolean boundingBox;
 
-        public void initParagraph(String font) {
+        public void initParagraph(String font, boolean caret, boolean boundingBox) {
             this.font = font;
+            this.caret = caret;
+            this.boundingBox = boundingBox;
         }
 
-        public void updateParagraph(String text) {
-            this.text = text;
+        public int getNumberOfRows(long vg, String text, float width) {
+            ByteBuffer paragraph = memUTF8(text, false);
+            long start = memAddress(paragraph);
+            long end = start + paragraph.remaining();
+            return NanoVG.nnvgTextBreakLines(vg, start, end, width, MemoryUtil.memAddress(rows), 3);
         }
 
-        public void drawParagraph(long vg, float x, float y, float width, float height, float mx, float my) {
+        public float getLineHeight(long vg) {
+            NanoVG.nvgFontSize(vg, 18.0f);
+            NanoVG.nvgFontFace(vg, font);
+            NanoVG.nvgTextAlign(vg, NanoVG.NVG_ALIGN_LEFT | NanoVG.NVG_ALIGN_TOP);
+            NanoVG.nvgTextMetrics(vg, null, null, lineh);
+            return lineh.get(0);
+        }
+
+        public float drawParagraph(long vg, String text, float x, float y, float width, float height, float mx, float my) {
 
             NanoVG.nvgSave(vg);
 
@@ -215,17 +229,19 @@ public class TVEUI {
             while ((nrows = NanoVG.nnvgTextBreakLines(vg, start, end, width, MemoryUtil.memAddress(rows), 3)) != 0) {
                 for (int i = 0; i < nrows; i++) {
                     NVGTextRow row = rows.get(i);
-                    boolean    hit = mx > x && mx < (x + width) && my >= y && my < (y + lineh.get(0));
+                    boolean hit = mx > x && mx < (x + width) && my >= y && my < (y + lineh.get(0));
 
-                    NanoVG.nvgBeginPath(vg);
-                    NanoVG.nvgFillColor(vg, rgba(255, 255, 255, hit ? 64 : 16, color));
-                    NanoVG.nvgRect(vg, x, y, row.width(), lineh.get(0));
-                    NanoVG.nvgFill(vg);
+                    if (boundingBox) {
+                        NanoVG.nvgBeginPath(vg);
+                        NanoVG.nvgFillColor(vg, rgba(255, 255, 255, hit ? 64 : 16, color));
+                        NanoVG.nvgRect(vg, x, y, row.width(), lineh.get(0));
+                        NanoVG.nvgFill(vg);
+                    }
 
                     NanoVG.nvgFillColor(vg, rgba(255, 255, 255, 255, color));
                     NanoVG.nnvgText(vg, x, y, row.start(), row.end());
 
-                    if (hit) {
+                    if (hit && caret) {
                         drawCaret(vg, row, lineh.get(0), x, y, mx);
                     }
                     lnum++;
@@ -234,6 +250,7 @@ public class TVEUI {
                 // Keep going...
                 start = rows.get(nrows - 1).next();
             }
+            return lnum * lineh.get(0);
         }
 
         private static void drawCaret(long vg, NVGTextRow row, float lineh, float x, float y, float mx) {
