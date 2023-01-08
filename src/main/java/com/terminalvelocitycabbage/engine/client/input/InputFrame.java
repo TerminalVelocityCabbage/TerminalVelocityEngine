@@ -3,7 +3,6 @@ package com.terminalvelocitycabbage.engine.client.input;
 import org.joml.Vector2d;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
-import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +33,7 @@ public class InputFrame {
     //Track last click time for double-clicking
     short ticksSinceLastClick;
     List<KeyBind> seenKeys;
+    String seenChars;
 
     public InputFrame() {
         this(
@@ -190,5 +190,10 @@ public class InputFrame {
             if (keyBind1.matches(keyBind, matchAction, matchModifiers)) return true;
         }
         return false;
+    }
+
+    public String getSeenChars() {
+        if (seenChars == null) return "";
+        return seenChars;
     }
 }

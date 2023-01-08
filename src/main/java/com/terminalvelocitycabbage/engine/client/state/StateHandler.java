@@ -28,6 +28,14 @@ public class StateHandler {
 		return states.get(name).toggle();
 	}
 
+	public void enable(String name) {
+		states.get(name).enable();
+	}
+
+	public void disable(String name) {
+		states.get(name).disable();
+	}
+
 	public boolean isStateActive(String name) {
 		if (!states.containsKey(name)) Log.crash("State not found " + name, new RuntimeException("no state of name " + name + " registered in this state handler"));
 		return states.get(name).enabled();
@@ -35,5 +43,18 @@ public class StateHandler {
 
 	public boolean isStateActive(State state) {
 		return isStateActive(state.getName());
+	}
+
+	private boolean wasStateActiveLastTick(String name) {
+		if (!states.containsKey(name)) Log.crash("State not found " + name, new RuntimeException("no state of name " + name + " registered in this state handler"));
+		return states.get(name).wasEnabledLastTick();
+	}
+
+	public boolean wasStateActiveLastTick(State state) {
+		return wasStateActiveLastTick(state.getName());
+	}
+
+	public void tick() {
+		states.forEach((s, state) -> state.tick());
 	}
 }

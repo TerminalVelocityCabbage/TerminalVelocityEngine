@@ -92,6 +92,7 @@ public abstract class ClientBase extends EventDispatcher implements SidedEntrypo
 	public void tick(float deltaTime) {
 		getScheduler().tick();
 		getSceneHandler().getActiveScene().tick(deltaTime);
+		getStateHandler().tick();
 		//TODO reimplement canvas ticking
 		/*
 		ClientBase.getRenderer().getCanvasHandler().tick(

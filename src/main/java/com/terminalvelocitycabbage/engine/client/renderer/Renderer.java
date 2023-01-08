@@ -191,6 +191,7 @@ public abstract class Renderer {
 
 		ClientBase.getRenderer().getGpuTimer().stopGPUTimer(3);
 		glfwSwapBuffers(ClientBase.getWindow().getID());
+		ClientBase.getWindow().getInputListener().resetDeltas();
 		glfwPollEvents();
 	}
 

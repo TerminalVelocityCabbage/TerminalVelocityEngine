@@ -183,8 +183,6 @@ public class TVEUI {
         private static final NVGTextRow.Buffer       rows      = NVGTextRow.create(3);
         private static final NVGGlyphPosition.Buffer glyphs    = NVGGlyphPosition.create(100);
         private static final FloatBuffer lineh  = BufferUtils.createFloatBuffer(1);
-        private static final FloatBuffer bounds = BufferUtils.createFloatBuffer(4);
-        private static final ByteBuffer hoverText = memASCII("Hover your mouse over the text to see calculated caret position.", false);
 
         static final NVGColor color = NVGColor.create();
         String font;
@@ -199,9 +197,6 @@ public class TVEUI {
         }
 
         public void drawParagraph(long vg, float x, float y, float width, float height, float mx, float my) {
-            float gx = 0.0f, gy = 0.0f;
-
-            int gutter = 0;
 
             NanoVG.nvgSave(vg);
 
@@ -232,10 +227,6 @@ public class TVEUI {
 
                     if (hit) {
                         drawCaret(vg, row, lineh.get(0), x, y, mx);
-
-                        gutter = lnum + 1;
-                        gx = x - 10;
-                        gy = y + lineh.get(0) / 2;
                     }
                     lnum++;
                     y += lineh.get(0);
@@ -243,14 +234,6 @@ public class TVEUI {
                 // Keep going...
                 start = rows.get(nrows - 1).next();
             }
-
-            if (gutter != 0) {
-                drawLineNumber(vg, gutter, gx, gy, bounds);
-            }
-
-            y += 20.0f;
-
-            drawTooltip(vg, x, y, mx, my);
         }
 
         private static void drawCaret(long vg, NVGTextRow row, float lineh, float x, float y, float mx) {
@@ -276,28 +259,13 @@ public class TVEUI {
             NanoVG.nvgRect(vg, caretx, y, 1, lineh);
             NanoVG.nvgFill(vg);
         }
+    }
 
-        private static void drawLineNumber(long vg, int gutter, float gx, float gy, FloatBuffer bounds) {
-            String txt = Integer.toString(gutter);
+    public static class Tooltip {
 
-            NanoVG.nvgFontSize(vg, 13.0f);
-            NanoVG.nvgTextAlign(vg, NanoVG.NVG_ALIGN_RIGHT | NanoVG.NVG_ALIGN_MIDDLE);
-
-            NanoVG.nvgTextBounds(vg, gx, gy, txt, bounds);
-
-            NanoVG.nvgBeginPath(vg);
-            NanoVG.nvgFillColor(vg, rgba(255, 192, 0, 255, color));
-            NanoVG.nvgRoundedRect(vg,
-                    (int)bounds.get(0) - 4,
-                    (int)bounds.get(1) - 2,
-                    (int)(bounds.get(2) - bounds.get(0)) + 8,
-                    (int)(bounds.get(3) - bounds.get(1)) + 4,
-                    ((int)(bounds.get(3) - bounds.get(1)) + 4) / 2 - 1);
-            NanoVG.nvgFill(vg);
-
-            NanoVG.nvgFillColor(vg, rgba(32, 32, 32, 255, color));
-            NanoVG.nvgText(vg, gx, gy, txt);
-        }
+        private static final FloatBuffer bounds = BufferUtils.createFloatBuffer(4);
+        private static final ByteBuffer hoverText = memASCII("Hover your mouse over the text to see calculated caret position.", false);
+        static final NVGColor color = NVGColor.create();
 
         private static void drawTooltip(long vg, float x, float y, float mx, float my) {
             NanoVG.nvgFontSize(vg, 13.0f);
@@ -321,5 +289,4 @@ public class TVEUI {
             NanoVG.nvgRestore(vg);
         }
     }
-
 }
