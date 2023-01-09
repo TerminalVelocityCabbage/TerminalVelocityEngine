@@ -2,6 +2,7 @@ package com.terminalvelocitycabbage.engine.server;
 
 import com.github.simplenet.Client;
 import com.github.simplenet.Server;
+import com.terminalvelocitycabbage.engine.debug.Log;
 import com.terminalvelocitycabbage.engine.debug.Logger;
 import com.terminalvelocitycabbage.engine.debug.LoggerSource;
 import com.terminalvelocitycabbage.engine.events.EventDispatcher;
@@ -98,8 +99,8 @@ public abstract class ServerBase extends EventDispatcher implements SidedEntrypo
 				client.readInt(bytesSize -> {
 					client.readBytes(bytesSize, bytes -> {
 						try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes); ObjectInputStream ois = new ObjectInputStream(bis)) {
-							SerializablePacket received = (SerializablePacket) ois.readObject();
-							received.interpretC2S(client);
+							SerializablePacket<?> received = (SerializablePacket<?>) ois.readObject();
+							received.interpretReceivedByServer(server, client);
 						} catch (IOException | ClassNotFoundException e) {
 							throw new RuntimeException(e);
 						}

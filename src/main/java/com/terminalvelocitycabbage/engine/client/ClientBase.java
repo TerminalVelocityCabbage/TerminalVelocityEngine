@@ -7,16 +7,22 @@ import com.terminalvelocitycabbage.engine.client.renderer.scenes.SceneHandler;
 import com.terminalvelocitycabbage.engine.client.sound.SoundDeviceManager;
 import com.terminalvelocitycabbage.engine.client.state.StateHandler;
 import com.terminalvelocitycabbage.engine.client.ui.ScreenHandler;
+import com.terminalvelocitycabbage.engine.debug.Log;
 import com.terminalvelocitycabbage.engine.debug.Logger;
 import com.terminalvelocitycabbage.engine.debug.LoggerSource;
 import com.terminalvelocitycabbage.engine.ecs.Manager;
 import com.terminalvelocitycabbage.engine.events.EventDispatcher;
 import com.terminalvelocitycabbage.engine.networking.SidedEntrypoint;
+import com.terminalvelocitycabbage.engine.networking.packet.SerializablePacket;
+import com.terminalvelocitycabbage.engine.networking.packet.SyncPacketRegistryPacket;
 import com.terminalvelocitycabbage.engine.scheduler.Scheduler;
 import com.terminalvelocitycabbage.templates.events.client.ClientConnectionEvent;
 import com.terminalvelocitycabbage.templates.events.client.ClientStartEvent;
 import com.terminalvelocitycabbage.templates.networking.PingClient;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -59,27 +65,56 @@ public abstract class ClientBase extends EventDispatcher implements SidedEntrypo
 
 		//Start up the network listeners
 		client = new Client();
+		client.onConnect(this::onConnect);
+		client.preDisconnect(this::onPreDisconnect);
+		client.postDisconnect(this::onDisconnected);
 		dispatchEvent(new ClientStartEvent(ClientStartEvent.INIT, client));
 		getWindow().init();
 		getRenderer().init();
 	}
 
-	private void preInit() {
+	public void preInit() {
 		dispatchEvent(new ClientStartEvent(ClientStartEvent.PRE_INIT, client));
 	}
 
-	private void postInit() {
+	public void postInit() {
 		getScreenHandler().init();
 		dispatchEvent(new ClientStartEvent(ClientStartEvent.POST_INIT, client));
 	}
 
 	public void start() {
 		postInit();
-		//client.onConnect(() -> dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.CONNECT, client)));
-		//client.preDisconnect(() -> dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.PRE_DISCONNECT, client)));
-		//client.postDisconnect(() -> dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.POST_DISCONNECT, client)));
 		dispatchEvent(new ClientStartEvent(ClientStartEvent.START, client));
 		getRenderer().run();
+	}
+
+	public void onConnect() {
+		client.readIntAlways(opcode -> {
+			client.readInt(bytesSize -> {
+				client.readBytes(bytesSize, bytes -> {
+					try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes); ObjectInputStream ois = new ObjectInputStream(bis)) {
+						SerializablePacket<?> received = (SerializablePacket<?>) ois.readObject();
+						received.interpretReceivedByClient(client);
+					} catch (IOException | ClassNotFoundException e) {
+						throw new RuntimeException(e);
+					}
+				});
+			});
+		});
+		requestOpcodesSync();
+		dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.CONNECT, client));
+	}
+
+	public void requestOpcodesSync() {
+		sendPacket(new SyncPacketRegistryPacket(), SyncPacketRegistryPacket.class);
+	}
+
+	public void onPreDisconnect() {
+		dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.PRE_DISCONNECT, client));
+	}
+
+	public void onDisconnected() {
+		dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.POST_DISCONNECT, client));
 	}
 
 	public void cleanup() {
@@ -94,26 +129,16 @@ public abstract class ClientBase extends EventDispatcher implements SidedEntrypo
 		getScheduler().tick();
 		getSceneHandler().getActiveScene().tick(deltaTime);
 		getStateHandler().tick();
-		//TODO reimplement canvas ticking
-		/*
-		ClientBase.getRenderer().getCanvasHandler().tick(
-				window.getCursorX(),
-				window.getCursorY(),
-				scene.getInputHandler().isLeftButtonClicked(),
-				scene.getInputHandler().isRightButtonClicked(),
-				scene.getInputHandler().getTicksSinceLastClick()
-		);
-		 */
 	}
 
 	public void connect(String address, int port) {
-		//client.connect(address, port);
-		//shouldDisconnect = false;
+		client.connect(address, port);
+		shouldDisconnect = false;
 	}
 
 	public void disconnect() {
-		//shouldDisconnect = true;
-		//client.close();
+		shouldDisconnect = true;
+		client.close();
 	}
 
 	public boolean shouldDisconnect() {
@@ -157,6 +182,7 @@ public abstract class ClientBase extends EventDispatcher implements SidedEntrypo
 		return this.id;
 	}
 
+	@Override
 	public Logger getLogger() {
 		return logger;
 	}
@@ -207,5 +233,9 @@ public abstract class ClientBase extends EventDispatcher implements SidedEntrypo
 
 	public ScreenHandler getScreenHandler() {
 		return screenHandler;
+	}
+
+	public void sendPacket(SerializablePacket packet, Class<? extends SerializablePacket> packetClass) {
+		packet.pack(getInstance(), packetClass).queueAndFlush(client);
 	}
 }

@@ -8,19 +8,21 @@ import com.terminalvelocitycabbage.engine.networking.SidedEntrypoint;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 
-public abstract class SerializablePacket implements Serializable {
+public abstract class SerializablePacket<T extends SerializablePacket<?>> {
 
-    public abstract void interpretC2S(Client client);
+    public abstract void interpretReceivedByClient(Client client);
 
-    public abstract void interpretS2C(Server server, Client clientSender);
+    public abstract void interpretReceivedByServer(Server server, Client clientSender);
 
-    public Packet pack(SidedEntrypoint entrypointInstance) {
+    public Packet pack(SidedEntrypoint entrypointInstance, Class<T> aClass) {
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
              ObjectOutputStream oos = new ObjectOutputStream(bos)) {
-            oos.writeObject(this);
-            return Packet.builder().putInt(entrypointInstance.getPacketRegistry().getOpcodeForPacket(this.getClass())); //TODO verify that this.getClass works
+            oos.writeObject(aClass.cast(this));
+            return Packet.builder()
+                    .putInt(entrypointInstance.getPacketRegistry().getOpcodeForPacket(aClass))
+                    .putInt(bos.size())
+                    .putBytes(bos.toByteArray());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
