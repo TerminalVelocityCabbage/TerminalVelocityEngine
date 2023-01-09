@@ -1,6 +1,9 @@
 package com.terminalvelocitycabbage.engine.server;
 
+import com.github.simplenet.Client;
 import com.github.simplenet.Server;
+import com.terminalvelocitycabbage.engine.debug.Logger;
+import com.terminalvelocitycabbage.engine.debug.LoggerSource;
 import com.terminalvelocitycabbage.engine.events.EventDispatcher;
 import com.terminalvelocitycabbage.engine.networking.SidedEntrypoint;
 import com.terminalvelocitycabbage.engine.networking.packet.SerializablePacket;
@@ -13,7 +16,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-public abstract class ServerBase extends EventDispatcher implements SidedEntrypoint {
+public abstract class ServerBase extends EventDispatcher implements SidedEntrypoint, LoggerSource {
 
 	protected static ServerBase instance;
 	Server server;
@@ -23,10 +26,12 @@ public abstract class ServerBase extends EventDispatcher implements SidedEntrypo
 	final private static Scheduler scheduler = new Scheduler();
 	final private TickManager tickManager;
 	long lastTime;
+	private Logger logger;
 
-	public ServerBase(int ticksPerSecond) {
+	public ServerBase(Logger logger, int ticksPerSecond) {
 		shouldClose = false;
 		tickManager = new TickManager(ticksPerSecond);
+		this.logger = logger;
 	}
 
 	public static ServerBase getInstance() {
@@ -78,14 +83,14 @@ public abstract class ServerBase extends EventDispatcher implements SidedEntrypo
 	protected void registerListeners() {
 		getServer().onConnect(client -> {
 
-			dispatchEvent(new ServerClientConnectionEvent(ServerClientConnectionEvent.CONNECT, getServer(), client));
+			onPlayerJoined(client);
 
 			client.preDisconnect(() -> {
-				super.dispatchEvent(new ServerClientConnectionEvent(ServerClientConnectionEvent.PRE_DISCONNECT, getServer(), client));
+				onPlayerPreDisconnect(client);
 			});
 
 			client.postDisconnect(() -> {
-				super.dispatchEvent(new ServerClientConnectionEvent(ServerClientConnectionEvent.POST_DISCONNECT, getServer(), client));
+				onPlayerDisconnected(client);
 			});
 
 			//Read packets and dispatch events based on opcode
@@ -102,6 +107,18 @@ public abstract class ServerBase extends EventDispatcher implements SidedEntrypo
 				});
 			});
 		});
+	}
+
+	protected void onPlayerJoined(Client client) {
+		dispatchEvent(new ServerClientConnectionEvent(ServerClientConnectionEvent.CONNECT, getServer(), client));
+	}
+
+	protected void onPlayerPreDisconnect(Client client) {
+		super.dispatchEvent(new ServerClientConnectionEvent(ServerClientConnectionEvent.PRE_DISCONNECT, getServer(), client));
+	}
+
+	protected void onPlayerDisconnected(Client client) {
+		super.dispatchEvent(new ServerClientConnectionEvent(ServerClientConnectionEvent.POST_DISCONNECT, getServer(), client));
 	}
 
 	protected void preBind() {
@@ -162,5 +179,10 @@ public abstract class ServerBase extends EventDispatcher implements SidedEntrypo
 
 	public static Scheduler getScheduler() {
 		return scheduler;
+	}
+
+	@Override
+	public Logger getLogger() {
+		return logger;
 	}
 }

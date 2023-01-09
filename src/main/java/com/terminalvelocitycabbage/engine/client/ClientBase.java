@@ -8,6 +8,7 @@ import com.terminalvelocitycabbage.engine.client.sound.SoundDeviceManager;
 import com.terminalvelocitycabbage.engine.client.state.StateHandler;
 import com.terminalvelocitycabbage.engine.client.ui.ScreenHandler;
 import com.terminalvelocitycabbage.engine.debug.Logger;
+import com.terminalvelocitycabbage.engine.debug.LoggerSource;
 import com.terminalvelocitycabbage.engine.ecs.Manager;
 import com.terminalvelocitycabbage.engine.events.EventDispatcher;
 import com.terminalvelocitycabbage.engine.networking.SidedEntrypoint;
@@ -19,7 +20,7 @@ import com.terminalvelocitycabbage.templates.networking.PingClient;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-public abstract class ClientBase extends EventDispatcher implements SidedEntrypoint {
+public abstract class ClientBase extends EventDispatcher implements SidedEntrypoint, LoggerSource {
 
 	String id;
 	Client client;
