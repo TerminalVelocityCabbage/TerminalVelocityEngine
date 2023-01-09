@@ -9,13 +9,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
-public abstract class SerializablePacket<T extends SerializablePacket<?>> {
+public abstract class SerializablePacket {
 
     public abstract void interpretReceivedByClient(Client client);
 
     public abstract void interpretReceivedByServer(Server server, Client clientSender);
 
-    public Packet pack(SidedEntrypoint entrypointInstance, Class<T> aClass) {
+    public Packet pack(SidedEntrypoint entrypointInstance, Class<? extends SerializablePacket> aClass) {
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
              ObjectOutputStream oos = new ObjectOutputStream(bos)) {
             oos.writeObject(aClass.cast(this));

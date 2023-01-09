@@ -7,7 +7,7 @@ import com.terminalvelocitycabbage.engine.server.ServerBase;
 
 import java.io.Serializable;
 
-public class SyncPacketRegistryPacket extends SerializablePacket<SyncPacketRegistryPacket> implements Serializable {
+public class SyncPacketRegistryPacket extends SerializablePacket implements Serializable {
 
     private PacketRegistry packetRegistry;
 

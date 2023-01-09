@@ -7,7 +7,6 @@ import com.terminalvelocitycabbage.engine.client.renderer.scenes.SceneHandler;
 import com.terminalvelocitycabbage.engine.client.sound.SoundDeviceManager;
 import com.terminalvelocitycabbage.engine.client.state.StateHandler;
 import com.terminalvelocitycabbage.engine.client.ui.ScreenHandler;
-import com.terminalvelocitycabbage.engine.debug.Log;
 import com.terminalvelocitycabbage.engine.debug.Logger;
 import com.terminalvelocitycabbage.engine.debug.LoggerSource;
 import com.terminalvelocitycabbage.engine.ecs.Manager;
@@ -93,7 +92,7 @@ public abstract class ClientBase extends EventDispatcher implements SidedEntrypo
 			client.readInt(bytesSize -> {
 				client.readBytes(bytesSize, bytes -> {
 					try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes); ObjectInputStream ois = new ObjectInputStream(bis)) {
-						SerializablePacket<?> received = (SerializablePacket<?>) ois.readObject();
+						SerializablePacket received = (SerializablePacket) ois.readObject();
 						received.interpretReceivedByClient(client);
 					} catch (IOException | ClassNotFoundException e) {
 						throw new RuntimeException(e);
