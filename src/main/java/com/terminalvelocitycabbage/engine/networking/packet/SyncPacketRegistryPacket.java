@@ -5,9 +5,7 @@ import com.github.simplenet.Server;
 import com.terminalvelocitycabbage.engine.client.ClientBase;
 import com.terminalvelocitycabbage.engine.server.ServerBase;
 
-import java.io.Serializable;
-
-public class SyncPacketRegistryPacket extends SerializablePacket implements Serializable {
+public class SyncPacketRegistryPacket extends SerializablePacket {
 
     private PacketRegistry packetRegistry;
 

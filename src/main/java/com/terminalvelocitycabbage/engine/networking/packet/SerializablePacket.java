@@ -8,8 +8,9 @@ import com.terminalvelocitycabbage.engine.networking.SidedEntrypoint;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
-public abstract class SerializablePacket {
+public abstract class SerializablePacket implements Serializable {
 
     public abstract void interpretReceivedByClient(Client client);
 
