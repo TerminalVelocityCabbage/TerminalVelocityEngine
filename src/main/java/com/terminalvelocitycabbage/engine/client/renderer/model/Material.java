@@ -1,17 +1,17 @@
 package com.terminalvelocitycabbage.engine.client.renderer.model;
 
 import com.terminalvelocitycabbage.engine.debug.Log;
-import org.joml.Vector4f;
+import com.terminalvelocitycabbage.engine.utils.Color;
 
 public class Material {
 
-	public static final Vector4f DEFAULT_ALBEDO_COLOR = new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
+	public static final Color DEFAULT_ALBEDO_COLOR = new Color(1.0f, 1.0f, 1.0f, 1.0f);
 
 	//if the texture exists the colors below will be ignored by the shader.
 	protected Texture texture;
-	private Vector4f ambientColor;
-	private Vector4f diffuseColor;
-	private Vector4f specularColor;
+	private Color ambientColor;
+	private Color diffuseColor;
+	private Color specularColor;
 
 	//One of these will be null
 	private float reflectivity;
@@ -21,7 +21,7 @@ public class Material {
 		return new Builder();
 	}
 
-	protected Material(Texture albedo, Vector4f ambientColor, Vector4f diffuseColor, Vector4f specularColor, float reflectivity, Texture reflectivityTexture) {
+	protected Material(Texture albedo, Color ambientColor, Color diffuseColor, Color specularColor, float reflectivity, Texture reflectivityTexture) {
 		this.texture = albedo;
 		this.ambientColor = ambientColor;
 		this.diffuseColor = diffuseColor;
@@ -38,9 +38,9 @@ public class Material {
 		private Texture reflectivityTexture;
 
 		//If the albedo texture isn't set there needs to be some way of determining colors
-		private Vector4f ambientColor;
-		private Vector4f diffuseColor;
-		private Vector4f specularColor;
+		private Color ambientColor;
+		private Color diffuseColor;
+		private Color specularColor;
 		//If a reflectivity texture isn't present
 		private float reflectivity;
 
@@ -60,22 +60,42 @@ public class Material {
 		}
 
 		public Builder color(float r, float g, float b, float a) {
-			this.ambientColor = new Vector4f(r, g, b, a);
+			this.ambientColor = new Color(r, g, b, a);
 			return this;
 		}
 
 		public Builder ambientColor(float r, float g, float b, float a) {
-			this.ambientColor = new Vector4f(r, g, b, a);
+			this.ambientColor = new Color(r, g, b, a);
 			return this;
 		}
 
 		public Builder diffuseColor(float r, float g, float b, float a) {
-			this.diffuseColor = new Vector4f(r, g, b, a);
+			this.diffuseColor = new Color(r, g, b, a);
 			return this;
 		}
 
 		public Builder specularColor(float r, float g, float b, float a) {
-			this.specularColor = new Vector4f(r, g, b, a);
+			this.specularColor = new Color(r, g, b, a);
+			return this;
+		}
+
+		public Builder color(Color color) {
+			this.ambientColor = color;
+			return this;
+		}
+
+		public Builder ambientColor(Color color) {
+			this.ambientColor = color;
+			return this;
+		}
+
+		public Builder diffuseColor(Color color) {
+			this.diffuseColor = color;
+			return this;
+		}
+
+		public Builder specularColor(Color color) {
+			this.specularColor = color;
 			return this;
 		}
 
@@ -95,15 +115,15 @@ public class Material {
 		return texture;
 	}
 
-	public Vector4f getAmbientColor() {
+	public Color getAmbientColor() {
 		return ambientColor;
 	}
 
-	public Vector4f getDiffuseColor() {
+	public Color getDiffuseColor() {
 		return diffuseColor;
 	}
 
-	public Vector4f getSpecularColor() {
+	public Color getSpecularColor() {
 		return specularColor;
 	}
 

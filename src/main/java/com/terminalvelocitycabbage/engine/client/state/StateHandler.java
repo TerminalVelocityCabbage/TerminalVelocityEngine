@@ -7,34 +7,54 @@ import java.util.Map;
 
 public class StateHandler {
 
-	public static State DEFAULT_STATE = new State("default").setDetails("The default state.");
+	public static State DEFAULT_STATE = new State("default", "The default state.");
 
 	public Map<String, State> states;
-	public State activeState;
 
 	public StateHandler() {
 		this.states = new HashMap<>();
-		this.activeState = DEFAULT_STATE;
+		addState(DEFAULT_STATE, true);
 	}
 
 	public void addState(State state) {
-		states.put(state.getState(), state);
+		addState(state, false);
 	}
 
-	public void setState(String state) {
-		if (states.containsKey(state)) {
-			activeState = states.get(state);
-		} else {
-			Log.crash("State Error", new RuntimeException("No state defined by " + state));
-		}
+	public void addState(State state, boolean enable) {
+		states.put(state.getName(), state.setEnabled(enable));
 	}
 
-	public void resetState() {
-		this.activeState = DEFAULT_STATE;
+	public boolean toggleState(String name) {
+		return states.get(name).toggle();
 	}
 
-	public boolean isActive(String state) {
-		return activeState.state.equals(state);
+	public void enable(String name) {
+		states.get(name).enable();
 	}
 
+	public void disable(String name) {
+		states.get(name).disable();
+	}
+
+	public boolean isStateActive(String name) {
+		if (!states.containsKey(name)) Log.crash("State not found " + name, new RuntimeException("no state of name " + name + " registered in this state handler"));
+		return states.get(name).enabled();
+	}
+
+	public boolean isStateActive(State state) {
+		return isStateActive(state.getName());
+	}
+
+	private boolean wasStateActiveLastTick(String name) {
+		if (!states.containsKey(name)) Log.crash("State not found " + name, new RuntimeException("no state of name " + name + " registered in this state handler"));
+		return states.get(name).wasEnabledLastTick();
+	}
+
+	public boolean wasStateActiveLastTick(State state) {
+		return wasStateActiveLastTick(state.getName());
+	}
+
+	public void tick() {
+		states.forEach((s, state) -> state.tick());
+	}
 }

@@ -31,4 +31,9 @@ public class ModelComponent implements Component {
     public Model getModel() {
         return model;
     }
+
+    @Override
+    public void cleanup() {
+        model.destroy();
+    }
 }

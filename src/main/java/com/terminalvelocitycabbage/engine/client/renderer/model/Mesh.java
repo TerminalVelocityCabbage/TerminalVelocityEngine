@@ -34,7 +34,6 @@ public class Mesh {
 
 	protected FloatBuffer vertexBuffer;
 	protected IntBuffer indexBuffer;
-	private Material material;
 
 	public Mesh(RenderFormat format, RenderMode mode) {
 		this.format = format;
@@ -88,11 +87,6 @@ public class Mesh {
 		// Bind to the VAO that has all the information about the vertices
 		glBindVertexArray(vaoID);
 
-		//Bind Textures
-		if (material != null && material.hasTexture()) {
-			material.getTexture().bind();
-		}
-
 		// Bind to the index VBO/EBO that has all the information about the order of the vertices
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
 
@@ -116,10 +110,6 @@ public class Mesh {
 		glDeleteBuffers(vboID);
 		glDeleteBuffers(eboID);
 		glDeleteVertexArrays(vaoID);
-
-		if (material != null && material.hasTexture()) {
-			material.getTexture().destroy();
-		}
 	}
 
 	public void updateVertexData() {
@@ -140,14 +130,6 @@ public class Mesh {
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexBuffer, GL_STATIC_DRAW);
-	}
-
-	public void setMaterial(Material material) {
-		this.material = material;
-	}
-
-	public Material getMaterial() {
-		return material;
 	}
 
 	public RenderFormat getFormat() {

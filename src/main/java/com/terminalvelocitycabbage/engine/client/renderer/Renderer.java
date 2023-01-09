@@ -9,6 +9,7 @@ import com.terminalvelocitycabbage.engine.ecs.Manager;
 import com.terminalvelocitycabbage.engine.profiling.GPUTimer;
 import com.terminalvelocitycabbage.engine.utils.TickManager;
 import com.terminalvelocitycabbage.templates.ecs.components.CameraComponent;
+import org.lwjgl.nanovg.NanoVG;
 import org.lwjgl.nanovg.NanoVGGL3;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
@@ -74,15 +75,16 @@ public abstract class Renderer {
 		glEnable(GL_BLEND);
 		//TODO make ways to swap between blend functions like render modes
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 		setBeginMode(PolygonMode.FILL);
 		setDrawBufferMode(DrawBufferMode.FRONT_AND_BACK);
 
+		//Init nanovg
 		nanoVG = NanoVGGL3.nvgCreate(NanoVGGL3.NVG_ANTIALIAS);
 		if (nanoVG == NULL) {
 			throw new RuntimeException("Could not init nanovg.");
 		}
 
+		//setup the gpu timer for profiling
 		gpuTimer = new GPUTimer();
 	}
 
@@ -140,9 +142,14 @@ public abstract class Renderer {
 		if (debugMode) {
 			debugCallback.free();
 		}
+
+		//cleanup nanovg
+		NanoVGGL3.nvgDelete(nanoVG);
 	}
 
 	public void loop() {
+
+		ClientBase.getRenderer().getGpuTimer().startGPUTimer();
 
 		//Tell the tick manager the frame time change
 		tickManager.apply(getDeltaTimeInMillis());
@@ -164,13 +171,27 @@ public abstract class Renderer {
 
 	public void push() {
 
+		var window = ClientBase.getWindow();
+		int width = (int) (window.getEffectiveWidth());
+		int height = (int) (window.getEffectiveHeight());
+
+		var screenHandler = ClientBase.getInstance().getScreenHandler();
+
+		screenHandler.update();
+
+		NanoVG.nvgBeginFrame(getNanoVG(), width, height, Math.max(window.getContentScaleX(), window.getContentScaleY()));
+		screenHandler.draw(getNanoVG());
+		NanoVG.nvgEndFrame(getNanoVG());
+
 		if (lastDrawBufferMode != drawBufferMode || lastPolygonMode != polygonMode) {
 			glPolygonMode(drawBufferMode, polygonMode);
 		}
 		lastDrawBufferMode = drawBufferMode;
 		lastPolygonMode = polygonMode;
 
+		ClientBase.getRenderer().getGpuTimer().stopGPUTimer(3);
 		glfwSwapBuffers(ClientBase.getWindow().getID());
+		ClientBase.getWindow().getInputListener().resetDeltas();
 		glfwPollEvents();
 	}
 

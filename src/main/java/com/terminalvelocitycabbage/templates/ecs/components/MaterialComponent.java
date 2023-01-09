@@ -26,4 +26,9 @@ public class MaterialComponent implements Component {
     public void setMaterialWithTexture(ResourceManager resourceManager, Identifier resourceLocation) {
         this.material = Material.builder().texture(new Texture(resourceManager, resourceLocation)).build();
     }
+
+    @Override
+    public void cleanup() {
+        if (material.hasTexture()) material.getTexture().destroy();
+    }
 }

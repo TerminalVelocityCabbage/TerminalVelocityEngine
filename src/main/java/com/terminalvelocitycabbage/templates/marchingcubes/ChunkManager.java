@@ -17,7 +17,8 @@ public class ChunkManager {
 
     public void render(ShaderProgram program) {
         for (Chunk chunk : this.chunks) {
-            program.setUniform("material", chunk.getMaterial());
+            //TODO when this becomes ECS based add a material component to the chunk entities
+            //program.setUniform("material", chunk.getMaterial());
             chunk.render();
         }
     }

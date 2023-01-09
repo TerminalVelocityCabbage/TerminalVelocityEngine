@@ -35,4 +35,8 @@ public class NumUtils {
         return digits;
     }
 
+    public static float clampf(float a, float mn, float mx) {
+        return a < mn ? mn : Math.min(a, mx);
+    }
+
 }

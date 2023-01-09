@@ -1,7 +1,6 @@
 package com.terminalvelocitycabbage.engine.client.input;
 
 import com.terminalvelocitycabbage.engine.client.renderer.Window;
-import com.terminalvelocitycabbage.engine.debug.Log;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -42,12 +41,16 @@ public class InputListener {
 		glfwSetKeyCallback(window.getID(), (win, key, scancode, action, mods) -> {
 			currentFrame.seenKeys.add(new KeyBind(win, key, scancode, action, mods));
 		});
+		glfwSetCharCallback(window.getID(), (window1, codepoint) -> {
+			currentFrame.seenChars = currentFrame.seenChars + String.copyValueOf(Character.toChars(codepoint));
+		});
 	}
 
 	public void resetDeltas() {
 		currentFrame.deltaMouseVector.zero();
 		currentFrame.deltaScrollVector.zero();
 		currentFrame.seenKeys.clear();
+		currentFrame.seenChars = "";
 	}
 
 	public void update() {

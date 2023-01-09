@@ -1,15 +1,15 @@
 package com.terminalvelocitycabbage.engine.client.renderer.lights;
 
+import com.terminalvelocitycabbage.engine.utils.Color;
 import org.joml.Vector3f;
-import org.joml.Vector4f;
 
 public class DirectionalLight {
 
 	Vector3f direction; //TODO replace with rotation component
-	Vector4f color;
+	Color color;
 	float intensity;
 
-	public DirectionalLight(Vector3f direction, Vector4f color, float intensity) {
+	public DirectionalLight(Vector3f direction, Color color, float intensity) {
 		this.direction = direction;
 		this.color = color;
 		this.intensity = intensity;
@@ -24,11 +24,11 @@ public class DirectionalLight {
 		return this;
 	}
 
-	public Vector4f getColor() {
+	public Color getColor() {
 		return color;
 	}
 
-	public DirectionalLight setColor(Vector4f color) {
+	public DirectionalLight setColor(Color color) {
 		this.color = color;
 		return this;
 	}

@@ -3,6 +3,7 @@ package com.terminalvelocitycabbage.engine.resources;
 import com.terminalvelocitycabbage.engine.debug.Log;
 import org.apache.commons.io.IOUtils;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.system.MemoryUtil;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -61,16 +62,18 @@ public class UrlResource implements Resource {
 	}
 
 	@Override
-	public ByteBuffer asByteBuffer() {
+	public ByteBuffer asByteBuffer(boolean keepAlive) {
 
 		ByteBuffer buffer = null;
 		Path path = Paths.get(url.getPath().replaceFirst("/", "").replaceFirst("file:", ""));
 
-		Log.info(path.toString());
-
 		if (Files.isReadable(path)) {
 			try(SeekableByteChannel sbc = Files.newByteChannel(path)) {
-				buffer = BufferUtils.createByteBuffer((int)sbc.size() + 1);
+				if (keepAlive) {
+					buffer = MemoryUtil.memCalloc((int)sbc.size() + 1);
+				} else {
+					buffer = BufferUtils.createByteBuffer((int)sbc.size() + 1);
+				}
 				while(sbc.read(buffer) != -1);
 			} catch(IOException e) {
 				Log.crash("Could not read byte channel", new IOException(e));

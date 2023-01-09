@@ -13,6 +13,7 @@ import org.lwjgl.system.MemoryStack;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
+import static java.util.Objects.requireNonNull;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.GL_TRUE;
@@ -166,6 +167,9 @@ public class Window {
 	public void destroy() {
 		glfwFreeCallbacks(windowID);
 		glfwDestroyWindow(windowID);
+		// Terminate GLFW and free the error callback
+		glfwTerminate();
+		requireNonNull(glfwSetErrorCallback(null)).free();
 	}
 
 	public void setvSync(boolean vSync) {
@@ -193,12 +197,20 @@ public class Window {
 		}
 	}
 
-	public double getCursorX() {
+	public double getCursorXOGL() {
 		return ((cursorX / width()) * 2) - 1;
 	}
 
-	public double getCursorY() {
+	public double getCursorYOGL() {
 		return ((-cursorY / height()) * 2) + 1;
+	}
+
+	public double getCursorX() {
+		return cursorX;
+	}
+
+	public double getCursorY() {
+		return cursorY;
 	}
 
 	public long getID() {
@@ -235,6 +247,14 @@ public class Window {
 
 	public float getContentScaleY() {
 		return contentScaleY;
+	}
+
+	public float getEffectiveWidth() {
+		return framebufferWidth / contentScaleX;
+	}
+
+	public float getEffectiveHeight() {
+		return framebufferHeight / contentScaleY;
 	}
 
 	public float aspectRatio() {
