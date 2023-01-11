@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class ClientBase extends EventDispatcher implements SidedEntrypoint, LoggerSource {
 
-	String id;
+	final String id;
 	Client client;
 	private static Window window;
 	boolean shouldDisconnect;
@@ -42,9 +42,10 @@ public abstract class ClientBase extends EventDispatcher implements SidedEntrypo
 	StateHandler stateHandler;
 	ScreenHandler screenHandler;
 
-	public ClientBase(Logger logger, Renderer renderer, boolean debugMode) {
+	public ClientBase(String id, Renderer renderer, boolean debugMode) {
+		this.id = id;
 		this.debugMode = debugMode;
-		this.logger = logger;
+		this.logger = new Logger(id);
 		ClientBase.soundDeviceManager = new SoundDeviceManager();
 		ClientBase.renderer = renderer;
 		ClientBase.renderer.setDebugMode(debugMode);
@@ -57,7 +58,7 @@ public abstract class ClientBase extends EventDispatcher implements SidedEntrypo
 	public void init() {
 		preInit();
 
-		setWindow(new Window(1900, 1000, "Outergrowth", false, true, true));
+		setWindow(new Window(1900, 1000, id, false, true, true));
 		getWindow().create(isDebugMode());
 		getWindow().init();
 		getWindow().show();
@@ -171,10 +172,6 @@ public abstract class ClientBase extends EventDispatcher implements SidedEntrypo
 		} else {
 			dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.RECONNECT_FAIL, client));
 		}
-	}
-
-	public void setId(String id) {
-		this.id = id;
 	}
 
 	public String getID() {
