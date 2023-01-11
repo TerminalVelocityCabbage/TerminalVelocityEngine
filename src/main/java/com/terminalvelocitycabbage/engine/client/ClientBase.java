@@ -2,8 +2,9 @@ package com.terminalvelocitycabbage.engine.client;
 
 import com.github.simplenet.Client;
 import com.terminalvelocitycabbage.engine.client.renderer.Renderer;
-import com.terminalvelocitycabbage.engine.client.renderer.Window;
 import com.terminalvelocitycabbage.engine.client.renderer.scenes.SceneHandler;
+import com.terminalvelocitycabbage.engine.client.renderer.window.Window;
+import com.terminalvelocitycabbage.engine.client.renderer.window.WindowConfig;
 import com.terminalvelocitycabbage.engine.client.sound.SoundDeviceManager;
 import com.terminalvelocitycabbage.engine.client.state.StateHandler;
 import com.terminalvelocitycabbage.engine.client.ui.ScreenHandler;
@@ -17,13 +18,10 @@ import com.terminalvelocitycabbage.engine.networking.packet.SyncPacketRegistryPa
 import com.terminalvelocitycabbage.engine.scheduler.Scheduler;
 import com.terminalvelocitycabbage.templates.events.client.ClientConnectionEvent;
 import com.terminalvelocitycabbage.templates.events.client.ClientStartEvent;
-import com.terminalvelocitycabbage.templates.networking.PingClient;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 public abstract class ClientBase extends EventDispatcher implements SidedEntrypoint, LoggerSource {
 
@@ -55,10 +53,10 @@ public abstract class ClientBase extends EventDispatcher implements SidedEntrypo
 		screenHandler = new ScreenHandler();
 	}
 
-	public void init() {
+	public void init(WindowConfig windowConfig) {
 		preInit();
 
-		setWindow(new Window(1900, 1000, id, false, true, true));
+		setWindow(new Window(windowConfig));
 		getWindow().create(isDebugMode());
 		getWindow().init();
 		getWindow().show();
@@ -145,6 +143,7 @@ public abstract class ClientBase extends EventDispatcher implements SidedEntrypo
 		return shouldDisconnect;
 	}
 
+	/*
 	public void reconnect(String address, int port, int delay, int tries) throws InterruptedException {
 
 		dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.PRE_RECONNECT, client));
@@ -173,6 +172,7 @@ public abstract class ClientBase extends EventDispatcher implements SidedEntrypo
 			dispatchEvent(new ClientConnectionEvent(ClientConnectionEvent.RECONNECT_FAIL, client));
 		}
 	}
+	 */
 
 	public String getID() {
 		return this.id;

@@ -1,7 +1,7 @@
 package com.terminalvelocitycabbage.engine.client.renderer.scenes;
 
 import com.terminalvelocitycabbage.engine.client.ClientBase;
-import com.terminalvelocitycabbage.engine.client.renderer.Window;
+import com.terminalvelocitycabbage.engine.client.renderer.window.Window;
 import com.terminalvelocitycabbage.engine.ecs.ComponentFilter;
 import com.terminalvelocitycabbage.engine.ecs.Manager;
 import com.terminalvelocitycabbage.templates.ecs.components.ModelComponent;

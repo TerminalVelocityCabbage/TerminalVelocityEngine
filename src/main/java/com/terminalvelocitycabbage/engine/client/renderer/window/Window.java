@@ -1,4 +1,4 @@
-package com.terminalvelocitycabbage.engine.client.renderer;
+package com.terminalvelocitycabbage.engine.client.renderer.window;
 
 import com.terminalvelocitycabbage.engine.client.ClientBase;
 import com.terminalvelocitycabbage.engine.client.input.InputListener;
@@ -35,10 +35,13 @@ public class Window {
 	private boolean vSync;
 	private boolean center;
 	private boolean lockAndHideCursor;
+	private boolean fullscreen;
+	private boolean blit;
 
 	private boolean isResized;
 	private GLFWWindowSizeCallback sizeCallback;
 
+	private long primaryMonitor;
 	private int monitorWidth;
 	private int monitorHeight;
 
@@ -51,14 +54,16 @@ public class Window {
 	private float contentScaleX;
 	private float contentScaleY;
 
-	public Window(int width, int height, String title, boolean vSync, boolean center, boolean lockAndHideCursor) {
-		this.windowWidth = width;
-		this.windowHeight = height;
-		this.title = title;
-		this.vSync = vSync;
-		this.center = center;
-		this.lockAndHideCursor = lockAndHideCursor;
+	public Window(WindowConfig windowConfig) {
+		this.windowWidth = windowConfig.width;
+		this.windowHeight = windowConfig.height;
+		this.title = windowConfig.title;
+		this.vSync = windowConfig.vSync;
+		this.center = windowConfig.center;
+		this.lockAndHideCursor = windowConfig.lockAndHideCursor;
 		orthoProjectionMatrix = new Matrix4f();
+		this.fullscreen = windowConfig.fullscreen;
+		this.blit = windowConfig.blit;
 	}
 
 	public void create(boolean debugMode) {
@@ -73,22 +78,44 @@ public class Window {
 		}
 
 		// Configure GLFW
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+
+		//If rendering offscreen to an fbo and blitting to screen
+		if (blit) {
+			glfwWindowHint(GLFW_DEPTH_BITS, 0);
+			glfwWindowHint(GLFW_STENCIL_BITS, 0);
+			glfwWindowHint(GLFW_ALPHA_BITS, 0);
+		}
+
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
-		glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
-		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+		glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_TRUE);
+
+		//glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
+		if (fullscreen) {
+			glfwWindowHint(GLFW_FLOATING, GLFW_TRUE);
+			glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+		}
 		if (debugMode) {
 			glfwWindowHint( GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE );
 		}
 
-		long tID = glfwCreateWindow(windowWidth, windowHeight, title, NULL, NULL);
-		if (tID == NULL) {
+		primaryMonitor = glfwGetPrimaryMonitor();
+		windowWidth = fullscreen ? 1 : windowWidth;
+		windowHeight = fullscreen ? 1 : windowHeight;
+
+		windowID = glfwCreateWindow(windowWidth, windowHeight, title, fullscreen ? primaryMonitor : NULL, NULL);
+
+		if (lockAndHideCursor) {
+			glfwSetInputMode(windowID, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		}
+
+		if (windowID == NULL) {
 			Log.crash("Failed to Initialize", "an error occurred trying to init the game", new RuntimeException("Failed to create the GLFW window"));
 		}
-		windowID = tID;
 	}
 
 	public void init() {
@@ -96,7 +123,7 @@ public class Window {
 		try (MemoryStack stack = stackPush()) {
 
 			// Get the resolution of the primary monitor
-			GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+			GLFWVidMode videoMode = glfwGetVideoMode(primaryMonitor);
 
 			if (videoMode == null) {
 				Log.error("Could not start window");
@@ -110,10 +137,6 @@ public class Window {
 			// Center the window
 			if (center) {
 				glfwSetWindowPos(windowID, (monitorWidth - windowWidth) / 2, (monitorHeight - windowHeight) / 2);
-			}
-
-			if (lockAndHideCursor) {
-				glfwSetInputMode(windowID, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 			}
 
 			sizeCallback = GLFWWindowSizeCallback.create(this::windowSizeCallback);
