@@ -1,12 +1,17 @@
 package com.terminalvelocitycabbage.engine.client.renderer.shader;
 
+import com.terminalvelocitycabbage.engine.debug.Log;
 import com.terminalvelocitycabbage.engine.resources.Identifier;
 import com.terminalvelocitycabbage.engine.resources.Resource;
 import com.terminalvelocitycabbage.engine.resources.ResourceManager;
-import com.terminalvelocitycabbage.engine.debug.Log;
+import com.terminalvelocitycabbage.engine.utils.Pair;
 import com.terminalvelocitycabbage.engine.utils.StringUtils;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.opengl.GL20.*;
@@ -20,12 +25,15 @@ public class Shader {
 	private final int shaderProgram;
 	private final ResourceManager resourceManager;
 	private final Identifier identifier;
+	private final Map<String, String> defines;
 
-	Shader(int type, int shaderProgram, ResourceManager resourceManager, Identifier identifier) {
+	Shader(int type, int shaderProgram, ResourceManager resourceManager, Identifier identifier, Pair<String, String>... defines) {
 		this.type = type;
 		this.shaderProgram = shaderProgram;
 		this.resourceManager = resourceManager;
 		this.identifier = identifier;
+		this.defines = new HashMap<>();
+		Arrays.stream(defines).forEach(define -> this.defines.put(define.key(), define.value()));
 	}
 
 	public void create() {
@@ -34,6 +42,7 @@ public class Shader {
 		while (src.contains("#include")) {
 			src = parseInclusions(src);
 		}
+		src = src.replace("#pragma {{DEFINES}}", defines.entrySet().stream().map(e -> "#define " + e.getKey() + " " + e.getValue()).collect(Collectors.joining("\n")));
 		int shader = glCreateShader(type);
 		glShaderSource(shader, src);
 		glCompileShader(shader);
@@ -52,7 +61,7 @@ public class Shader {
 	private String parseInclusions(String source) {
 		//Get the name of the shader that the parent shader is trying to import
 		String importName = StringUtils.getStringBetween(source, "#include \"", "\";");
-		//If we dont find anything here then we just return the source
+		//If we don't find anything here then we just return the source
 		if (importName == null) return source;
 
 		String[] importNameSplit = importName.split(":");

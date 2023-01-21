@@ -9,6 +9,7 @@ import com.terminalvelocitycabbage.engine.debug.Log;
 import com.terminalvelocitycabbage.engine.resources.Identifier;
 import com.terminalvelocitycabbage.engine.resources.ResourceManager;
 import com.terminalvelocitycabbage.engine.utils.Color;
+import com.terminalvelocitycabbage.engine.utils.Pair;
 import org.joml.*;
 import org.lwjgl.system.MemoryStack;
 
@@ -49,12 +50,12 @@ public class ShaderProgram {
 			.queueShader(FRAGMENT, resourceManager, new Identifier(namespace, this.name + ".frag"));
 	}
 
-	public ShaderProgram queueShader(Shader.Type type, ResourceManager resourceManager, Identifier identifier) {
-		return this.queueShader(type.getGLType(), resourceManager, identifier);
+	public ShaderProgram queueShader(Shader.Type type, ResourceManager resourceManager, Identifier identifier, Pair<String, String>... defines) {
+		return this.queueShader(type.getGLType(), resourceManager, identifier, defines);
 	}
 
-	public ShaderProgram queueShader(int type, ResourceManager resourceManager, Identifier identifier) {
-		shaderQueue.add(new Shader(type, id, resourceManager, identifier));
+	public ShaderProgram queueShader(int type, ResourceManager resourceManager, Identifier identifier, Pair<String, String>... defines) {
+		shaderQueue.add(new Shader(type, id, resourceManager, identifier, defines));
 		return this;
 	}
 
