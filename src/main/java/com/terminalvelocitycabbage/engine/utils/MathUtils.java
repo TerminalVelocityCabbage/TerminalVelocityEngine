@@ -1,6 +1,6 @@
 package com.terminalvelocitycabbage.engine.utils;
 
-public class NumUtils {
+public class MathUtils {
 
     public static int orderOfMultiple(int number, int factor) {
         int currentOrder = 0;
@@ -37,6 +37,19 @@ public class NumUtils {
 
     public static float clampf(float a, float mn, float mx) {
         return a < mn ? mn : Math.min(a, mx);
+    }
+
+    /**
+     * @param num A positive number to round up
+     * @param factor the factor to round number up to
+     * @return the rounded number
+     */
+    public static int roundUpToNextMultiple(int num, int factor) {
+        return num + factor - 1 - (num + factor - 1) % factor;
+    }
+
+    public static boolean isPositiveSide(int side) {
+        return (side & 1) != 0;
     }
 
 }
