@@ -67,6 +67,10 @@ public class Color {
         return a;
     }
 
+    public int toInt() {
+        return (int)(r*255) | (int)(g*255) << 8 | (int)(b*255) << 16 | 0xFF << 24;
+    }
+
     @Override
     public String toString() {
         return "Color{r=" + r + " g=" + g + " b=" + b + " a=" + a + "}";

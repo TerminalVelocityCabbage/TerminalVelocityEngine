@@ -64,7 +64,17 @@ public class Material {
 			return this;
 		}
 
+		public Builder color(int r, int g, int b, int a) {
+			this.ambientColor = new Color(r, g, b, a);
+			return this;
+		}
+
 		public Builder ambientColor(float r, float g, float b, float a) {
+			this.ambientColor = new Color(r, g, b, a);
+			return this;
+		}
+
+		public Builder ambientColor(int r, int g, int b, int a) {
 			this.ambientColor = new Color(r, g, b, a);
 			return this;
 		}
@@ -74,7 +84,17 @@ public class Material {
 			return this;
 		}
 
+		public Builder diffuseColor(int r, int g, int b, int a) {
+			this.diffuseColor = new Color(r, g, b, a);
+			return this;
+		}
+
 		public Builder specularColor(float r, float g, float b, float a) {
+			this.specularColor = new Color(r, g, b, a);
+			return this;
+		}
+
+		public Builder specularColor(int r, int g, int b, int a) {
 			this.specularColor = new Color(r, g, b, a);
 			return this;
 		}
