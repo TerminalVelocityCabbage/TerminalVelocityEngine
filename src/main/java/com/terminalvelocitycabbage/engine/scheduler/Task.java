@@ -18,13 +18,14 @@ public final class Task {
     private long lastExecuteTimeMillis;
     private boolean delay;
     private final long delayTime; //In millis
+    private int delayTicks;
     private long executeTime;
     private final boolean async;
     private volatile boolean running;
     private final TaskContext context;
     private final List<Task> subsequentTasks;
 
-    public Task(Identifier identifier, Consumer<TaskContext> consumer, boolean repeat, long repeatInterval, boolean delay, long delayInMillis, boolean async, List<Task> subsequentTasks) {
+    public Task(Identifier identifier, Consumer<TaskContext> consumer, boolean repeat, long repeatInterval, boolean delay, long delayInMillis, int delayInTicks, boolean async, List<Task> subsequentTasks) {
         this.identifier = identifier;
         this.consumer = consumer;
         this.remove = false;
@@ -32,6 +33,7 @@ public final class Task {
         this.repeatInterval = repeatInterval;
         this.delay = delay;
         this.delayTime = delayInMillis;
+        this.delayTicks = delayInTicks;
         this.async = async;
         this.running = false;
         this.context = new TaskContext(this);
@@ -103,6 +105,10 @@ public final class Task {
         return executeTime;
     }
 
+    public int tickDelay() {
+        return delayTicks;
+    }
+
     public boolean initialized() {
         return initialized;
     }
@@ -133,5 +139,9 @@ public final class Task {
 
     public StampedLock getLock() {
         return lock;
+    }
+
+    public void decrimentTickDelay() {
+        delayTicks--;
     }
 }

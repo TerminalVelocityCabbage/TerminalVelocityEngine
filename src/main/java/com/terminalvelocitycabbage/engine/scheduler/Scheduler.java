@@ -65,6 +65,11 @@ public class Scheduler {
             if (!task.initialized()) Log.crash("Task not initialized error", new IllegalStateException("Schedulers can only execute initialized tasks"));
             //Skip this task if it's delayed and not time to execute yet
             if (task.delay() && task.executeTime() > System.currentTimeMillis()) return;
+            //Skip this task if it has a tick delay and decrement that delay
+            if (task.delay() && task.tickDelay() > 0) {
+                task.decrimentTickDelay();
+                return;
+            }
             //Run the consumer
             if (task.repeat()) {
                 if (System.currentTimeMillis() - task.lastExecuteTimeMillis() >= task.repeatInterval()) task.execute();
