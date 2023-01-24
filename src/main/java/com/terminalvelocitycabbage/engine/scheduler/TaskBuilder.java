@@ -53,7 +53,7 @@ public class TaskBuilder {
         return this;
     }
 
-    public TaskBuilder delayTick(int interval, int ticks) {
+    public TaskBuilder delayTick(int ticks) {
         delay = true;
         delayInTicks = ticks;
         return this;

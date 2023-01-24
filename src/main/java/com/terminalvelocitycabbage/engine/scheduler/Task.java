@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.concurrent.locks.StampedLock;
 import java.util.function.Consumer;
 
-public final class Task {
+public final class Task implements Comparable<Task> {
 
     private final StampedLock lock = new StampedLock();
     private boolean initialized;
@@ -143,5 +143,10 @@ public final class Task {
 
     public void decrimentTickDelay() {
         delayTicks--;
+    }
+
+    @Override
+    public int compareTo(Task o) {
+        return (int) (o.delayTime - delayTime) + (o.delayTicks - delayTicks);
     }
 }

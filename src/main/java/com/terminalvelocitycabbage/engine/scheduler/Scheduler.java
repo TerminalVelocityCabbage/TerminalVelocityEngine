@@ -1,27 +1,41 @@
 package com.terminalvelocitycabbage.engine.scheduler;
 
-import com.terminalvelocitycabbage.engine.resources.Identifier;
 import com.terminalvelocitycabbage.engine.debug.Log;
+import com.terminalvelocitycabbage.engine.resources.Identifier;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Optional;
+import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Scheduler {
 
     //Stores all tasks that need to be added to the taskList.
     //Allow tasks to be scheduled by other tasks without concurrent modification exceptions.
-    private final List<Task> taskQueue;
+    private final Queue<Task> taskQueue;
     //The current task list that is being executed
-    private final List<Task> taskList;
-    //The list of tasks that need to be removed, empty expect turing task processing
-    private final List<Task> toRemove;
+    private final Queue<Task> taskList;
 
     public Scheduler() {
-        taskList = new ArrayList<>();
-        toRemove = new ArrayList<>();
-        taskQueue = new ArrayList<>();
+        taskList = new ConcurrentLinkedQueue<>();
+        taskQueue = new ConcurrentLinkedQueue<>();
+    }
+
+    /**
+     * Drains all tasks in this queue until completed
+     */
+    public void drain() {
+
+        //Execute all immediate tasks
+        tick();
+
+        //Add tasks scheduled for execution last tick and reset the queue for this tick
+        taskList.addAll(taskQueue);
+        taskQueue.clear();
+
+        //Execute remaining tasks in order of the least delay
+        taskList.stream().sorted().forEach(Task::execute);
     }
 
     /**
@@ -34,22 +48,20 @@ public class Scheduler {
         taskQueue.clear();
 
         //Those tasks marked for removal with subsequent tasks need those to be scheduled for this run
-        taskList.forEach(task -> {
+        Iterator<Task> it = taskList.iterator();
+        while (it.hasNext()) {
+            Task task = it.next();
             long l = task.getLock().readLock();
             if (task.remove()) {
-                toRemove.add(task);
                 if (task.hasSubsequentTasks()) {
                     task.subsequentTasks().forEach((task1) -> {
                         scheduleTask(task1, task.context().value());
                     });
                 }
+                it.remove();
             }
             task.getLock().unlockRead(l);
-        });
-
-        //Remove tasks that need to be removed and reset list for next tick
-        taskList.removeAll(toRemove);
-        toRemove.clear();
+        }
 
         //Process all the tasks
         taskList.forEach(task -> {
@@ -136,4 +148,11 @@ public class Scheduler {
         return Optional.empty();
     }
 
+    public int getTaskQueueSize() {
+        return taskQueue.size();
+    }
+
+    public int getTaskListSize() {
+        return taskList.size();
+    }
 }
