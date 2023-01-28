@@ -2,6 +2,7 @@ package com.terminalvelocitycabbage.engine.client.renderer;
 
 import com.terminalvelocitycabbage.engine.client.ClientBase;
 import com.terminalvelocitycabbage.engine.client.renderer.shader.ShaderHandler;
+import com.terminalvelocitycabbage.engine.client.renderer.util.Capabilities;
 import com.terminalvelocitycabbage.engine.debug.SystemInfo;
 import com.terminalvelocitycabbage.engine.ecs.ComponentFilter;
 import com.terminalvelocitycabbage.engine.ecs.Entity;
@@ -45,6 +46,7 @@ public abstract class Renderer {
 
 	long nanoVG;
 	GPUTimer gpuTimer;
+	Capabilities capabilities;
 
 	public Renderer(float tickRate) {
 		tickManager = new TickManager(tickRate);
@@ -59,6 +61,8 @@ public abstract class Renderer {
 
 		// creates the GLCapabilities instance and makes the OpenGL bindings available for use.
 		GL.createCapabilities();
+		capabilities = new Capabilities();
+		capabilities.determineOpenGLCapabilities();
 
 		if (debugMode) {
 			glEnable(KHRDebug.GL_DEBUG_OUTPUT_SYNCHRONOUS);
@@ -266,5 +270,9 @@ public abstract class Renderer {
 
 	public long getNanoVG() {
 		return nanoVG;
+	}
+
+	public Capabilities getCapabilities() {
+		return capabilities;
 	}
 }
