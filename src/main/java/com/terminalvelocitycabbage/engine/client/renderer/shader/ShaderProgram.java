@@ -50,11 +50,13 @@ public class ShaderProgram {
 			.queueShader(FRAGMENT, resourceManager, new Identifier(namespace, this.name + ".frag"));
 	}
 
-	public ShaderProgram queueShader(Shader.Type type, ResourceManager resourceManager, Identifier identifier, Pair<String, String>... defines) {
+	@SafeVarargs
+	public final ShaderProgram queueShader(Shader.Type type, ResourceManager resourceManager, Identifier identifier, Pair<String, String>... defines) {
 		return this.queueShader(type.getGLType(), resourceManager, identifier, defines);
 	}
 
-	public ShaderProgram queueShader(int type, ResourceManager resourceManager, Identifier identifier, Pair<String, String>... defines) {
+	@SafeVarargs
+	public final ShaderProgram queueShader(int type, ResourceManager resourceManager, Identifier identifier, Pair<String, String>... defines) {
 		shaderQueue.add(new Shader(type, id, resourceManager, identifier, defines));
 		return this;
 	}

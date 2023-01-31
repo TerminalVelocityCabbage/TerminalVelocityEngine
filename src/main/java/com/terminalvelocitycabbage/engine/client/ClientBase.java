@@ -223,6 +223,10 @@ public abstract class ClientBase extends EventDispatcher implements SidedEntrypo
 		return debugMode;
 	}
 
+	public boolean debugGL() {
+		return debugMode;
+	}
+
 	public StateHandler getStateHandler() {
 		return stateHandler;
 	}

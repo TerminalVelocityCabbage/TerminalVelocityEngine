@@ -26,7 +26,7 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 public abstract class Renderer {
 
-	private static float[] frameTimes = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	private static final float[] frameTimes = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	private static long endFrameTime = 0;
 	private static long previousFrameTime = 0;
 	private static long deltaTime = 0;
@@ -88,7 +88,7 @@ public abstract class Renderer {
 			throw new RuntimeException("Could not init nanovg.");
 		}
 
-		//setup the gpu timer for profiling
+		//set up the gpu timer for profiling
 		gpuTimer = new GPUTimer();
 	}
 
@@ -111,8 +111,8 @@ public abstract class Renderer {
 
 	public float getFrameTimeAverageMillis() {
 		float total = 0;
-		for (int i = 0; i < frameTimes.length; i++) {
-			total += frameTimes[i];
+		for (float frameTime : frameTimes) {
+			total += frameTime;
 		}
 		return total / frameTimes.length;
 	}

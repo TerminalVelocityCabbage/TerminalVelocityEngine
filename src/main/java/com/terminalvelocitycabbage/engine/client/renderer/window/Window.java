@@ -302,4 +302,44 @@ public class Window {
 	public InputListener getInputListener() {
 		return inputListener;
 	}
+
+	public int getWindowWidth() {
+		return windowWidth;
+	}
+
+	public int getWindowHeight() {
+		return windowHeight;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public boolean isvSync() {
+		return vSync;
+	}
+
+	public boolean isCenter() {
+		return center;
+	}
+
+	public boolean isLockAndHideCursor() {
+		return lockAndHideCursor;
+	}
+
+	public boolean isFullscreen() {
+		return fullscreen;
+	}
+
+	public boolean isBlit() {
+		return blit;
+	}
+
+	public int getMonitorWidth() {
+		return monitorWidth;
+	}
+
+	public int getMonitorHeight() {
+		return monitorHeight;
+	}
 }

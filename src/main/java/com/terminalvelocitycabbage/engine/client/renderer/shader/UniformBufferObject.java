@@ -74,8 +74,6 @@ public class UniformBufferObject {
 
     public static FloatBuffer std140izeFloatArrayToBuffer(float[] data) {
         //Create Data Allocation
-        //Floats are 4 bytes
-        int size = data.length * 16;
         float[] std140data = new float[data.length * 4];
         for (int i = 0; i < data.length; i++) {
             std140data[i * 4] = data[i];
