@@ -1,4 +1,6 @@
-# Terminal Velocity Engine 2
+# Terminal Velocity Engine
+
+THIS PROJECT IS SUPERCEEDED BY [Terminal Velocity Engine 2](https://github.com/TerminalVelocityCabbage/TerminalVelocityEngine2) AND IS NO LONGER IN DEVELOPMENT.
 
 The goal of the Terminal Velocity engine (TVE) is to provide barebones tools for all aspects of game development. 
 
